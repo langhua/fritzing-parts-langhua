@@ -10,8 +10,32 @@
    width="0.53125in"
    x="0in"
    y="0in"
+   sodipodi:docname="svg.schematic.YC164_dba884c43b3f4a095028f2c065fc457d_1_schematic.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview72"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="in"
+     showgrid="false"
+     inkscape:zoom="22.814396"
+     inkscape:cx="10.607338"
+     inkscape:cy="26.64984"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="gge65" />
   <defs
      id="defs72" />
   <g
@@ -211,6 +235,17 @@
          stroke-width="1"
          id="connector0pin"
          style="stroke-linejoin:round;shape-rendering:crispEdges" />
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector0terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="379.99399"
+         y="350.05872" />
       <circle
          cx="380"
          cy="333"
@@ -241,6 +276,17 @@
        id="gge23"
        locked="0"
        c_rotation="270">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector1terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="389.96933"
+         y="350.00943" />
       <text
          x="393"
          y="328"
@@ -309,6 +355,17 @@
        id="gge30"
        locked="0"
        c_rotation="270">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector2terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="400."
+         y="350.09711" />
       <text
          x="403"
          y="328"
@@ -367,6 +424,17 @@
        id="gge37"
        locked="0"
        c_rotation="270">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector3terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="410.04437"
+         y="350.05325" />
       <text
          x="413"
          y="328"
@@ -435,6 +503,17 @@
        id="gge44"
        locked="0"
        c_rotation="90">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector4terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="410.04437"
+         y="270.05991" />
       <text
          x="413"
          y="292"
@@ -503,6 +582,17 @@
        id="gge51"
        locked="0"
        c_rotation="90">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector5terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="400.00687"
+         y="270.05991" />
       <text
          x="403"
          y="292"
@@ -571,6 +661,17 @@
        id="gge58"
        locked="0"
        c_rotation="90">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector6terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="389.96933"
+         y="270.10376" />
       <text
          x="393"
          y="292"
@@ -639,6 +740,17 @@
        id="gge65"
        locked="0"
        c_rotation="90">
+      <rect
+         class="terminal"
+         fill="none"
+         gorn="0.2.0.19"
+         height="0.00037795262"
+         id="connector7terminal"
+         stroke="none"
+         stroke-width="0"
+         width="0.00037795262"
+         x="380.0195"
+         y="270.23523" />
       <text
          x="383"
          y="292"
