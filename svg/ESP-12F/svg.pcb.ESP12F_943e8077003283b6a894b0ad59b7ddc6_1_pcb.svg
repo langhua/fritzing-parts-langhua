@@ -26,7 +26,7 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="17.165312"
-     inkscape:cx="10.544521"
+     inkscape:cx="-0.17477107"
      inkscape:cy="45.61525"
      inkscape:window-width="3840"
      inkscape:window-height="2036"
@@ -50,7 +50,7 @@
          height="0.0070859999"
          y="996.375"
          stroke-width="0"
-         id="connector0terminal"
+         id="connector15terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.1" />
       <rect
@@ -60,7 +60,7 @@
          height="0.0070859999"
          y="1003.46"
          stroke-width="0"
-         id="connector1terminal"
+         id="connector14terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.3" />
       <rect
@@ -70,7 +70,7 @@
          height="0.0070859999"
          y="1010.55"
          stroke-width="0"
-         id="connector2terminal"
+         id="connector13terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.5" />
       <rect
@@ -80,7 +80,7 @@
          height="0.0070859999"
          y="1017.6381"
          stroke-width="0"
-         id="connector3terminal"
+         id="connector12terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.47" />
       <rect
@@ -90,7 +90,7 @@
          height="0.0070859999"
          y="1024.72"
          stroke-width="0"
-         id="connector4terminal"
+         id="connector11terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.8" />
       <rect
@@ -100,7 +100,7 @@
          height="0.0070859999"
          y="1031.8101"
          stroke-width="0"
-         id="connector5terminal"
+         id="connector10terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.10" />
       <rect
@@ -110,7 +110,7 @@
          height="0.0070858002"
          y="1038.79"
          stroke-width="0"
-         id="connector6terminal"
+         id="connector9terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.12" />
       <rect
@@ -120,7 +120,7 @@
          height="0.0070859999"
          y="1045.98"
          stroke-width="0"
-         id="connector7terminal"
+         id="connector8terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.14" />
       <rect
@@ -130,7 +130,7 @@
          height="0.0070859999"
          y="1045.98"
          stroke-width="0"
-         id="connector8terminal"
+         id="connector7terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.28" />
       <rect
@@ -140,7 +140,7 @@
          height="0.0070859999"
          y="1038.89"
          stroke-width="0"
-         id="connector9terminal"
+         id="connector6terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.30" />
       <rect
@@ -150,7 +150,7 @@
          height="0.0070859999"
          y="1031.8101"
          stroke-width="0"
-         id="connector10terminal"
+         id="connector5terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.32" />
       <rect
@@ -160,7 +160,7 @@
          height="0.0070859999"
          y="1024.72"
          stroke-width="0"
-         id="connector11terminal"
+         id="connector4terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.34" />
       <rect
@@ -170,7 +170,7 @@
          height="0.0070859999"
          y="1017.63"
          stroke-width="0"
-         id="connector12terminal"
+         id="connector3terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.36" />
       <rect
@@ -180,7 +180,7 @@
          height="0.0070859999"
          y="1010.55"
          stroke-width="0"
-         id="connector13terminal"
+         id="connector2terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.38" />
       <rect
@@ -190,7 +190,7 @@
          height="0.0070859999"
          y="1003.46"
          stroke-width="0"
-         id="connector14terminal"
+         id="connector1terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.40" />
       <rect
@@ -200,7 +200,7 @@
          height="0.0070859999"
          y="996.375"
          stroke-width="0"
-         id="connector15terminal"
+         id="connector0terminal"
          stroke="none"
          gorn="0.3.0.0.0.0.42" />
       <g
@@ -208,7 +208,7 @@
          transform="rotate(180,28.346458,509.90878)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector0pin"
+           id="connector15pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -225,7 +225,7 @@
          transform="rotate(180,28.346458,513.45208)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector1pin"
+           id="connector14pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -242,7 +242,7 @@
          transform="rotate(180,28.346458,516.99539)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector2pin"
+           id="connector13pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -259,7 +259,7 @@
          transform="rotate(180,28.346458,520.5387)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector3pin"
+           id="connector12pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -276,7 +276,7 @@
          transform="rotate(180,28.346458,524.08201)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector4pin"
+           id="connector11pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -293,7 +293,7 @@
          transform="rotate(180,28.346458,527.62531)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector5pin"
+           id="connector10pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -310,7 +310,7 @@
          transform="rotate(180,28.346458,531.16862)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector6pin"
+           id="connector9pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -327,7 +327,7 @@
          transform="rotate(180,28.346458,534.71193)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector7pin"
+           id="connector8pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -344,7 +344,7 @@
          transform="translate(3.2001291e-8,1022.5456)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector8pin"
+           id="connector7pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -361,7 +361,7 @@
          transform="translate(3.2001291e-8,1015.459)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector9pin"
+           id="connector6pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -378,7 +378,7 @@
          transform="translate(3.200129e-8,1008.3724)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector10pin"
+           id="connector5pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -395,7 +395,7 @@
          transform="translate(0.00134398,1001.2858)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector11pin"
+           id="connector4pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -412,7 +412,7 @@
          transform="translate(3.2001291e-8,994.19916)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector12pin"
+           id="connector3pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -429,7 +429,7 @@
          transform="translate(3.2001291e-8,987.11255)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector13pin"
+           id="connector2pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -446,7 +446,7 @@
          transform="translate(3.200129e-8,980.02593)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector14pin"
+           id="connector1pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
@@ -463,7 +463,7 @@
          transform="translate(0,972.93932)">
         <rect
            style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:#ffcc00;stroke-width:1.06153;stroke-miterlimit:3.9"
-           id="connector15pin"
+           id="connector0pin"
            width="7.4424109"
            height="2.4820588"
            x="-3.012542"
