@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   gorn="0"
+   height="1.3020886mm"
+   id="svg2"
+   version="1.1"
+   viewBox="0 0 409.56883 130.20887"
+   width="4.0956883mm"
+   sodipodi:docname="svg.pcb.SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1_pcb.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview22"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="116.15854"
+     inkscape:cx="6.4653017"
+     inkscape:cy="2.2297113"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="copper1" />
+  <desc
+     id="desc2">
+    <referenceFile>SOD123_03874d05d1f0a70f16469b746a39ee19_1_pcb.svg</referenceFile>
+  </desc>
+  <defs
+     id="defs13" />
+  <g
+     transform="matrix(0.96534656,0,0,1.1,-9.1945047,-11.970739)"
+     id="g8">
+    <g
+       gorn="0.1.0"
+       id="copper1">
+      <rect
+         gorn="0.1.0.0"
+         height="100"
+         id="connector0pin"
+         style="fill:#f7bf13;fill-opacity:1;stroke:none;stroke-width:0.479792"
+         width="93.230766"
+         x="19.883537"
+         y="19.9734" />
+      <rect
+         gorn="0.1.0.1"
+         height="100"
+         id="connector1pin"
+         style="fill:#f7bf13;fill-opacity:1;stroke:none;stroke-width:0.479792"
+         width="93.230766"
+         x="330.65277"
+         y="20.102654" />
+    </g>
+  </g>
+  <g
+     transform="matrix(0.59421455,0,0,0.41934385,-0.00401219,0.00283845)"
+     id="g19">
+    <g
+       gorn="0.2.0"
+       id="silkscreen">
+      <g
+         transform="matrix(28.222222,0,0,28.222222,-238.10304,3.6027585)"
+         id="g12">
+        <g
+           gorn="0.2.0.0.0"
+           id="g11">
+          <rect
+             gorn="0.2.0.0.0.0"
+             height="9.5669289"
+             id="rect3601"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0"
+             width="1.7716535"
+             x="16.037304"
+             y="0.68746716" />
+        </g>
+      </g>
+      <g
+         transform="scale(28.222222)"
+         id="g16">
+        <g
+           gorn="0.2.0.1.0"
+           id="g14">
+          <rect
+             gorn="0.2.0.1.0.0"
+             height="10.629921"
+             id="rect3603"
+             style="fill:none;stroke:#ffffff;stroke-width:0.354331;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             width="24.094488"
+             x="0.17716536"
+             y="0.17716536" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

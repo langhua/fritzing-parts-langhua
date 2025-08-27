@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module fritzingVersion="1.0.3" moduleId="SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1" referenceFile="SOD123_03874d05d1f0a70f16469b746a39ee19_1.fzp">
+ <version>4</version>
+ <author>Shi Jinghai</author>
+ <title>Transient Voltage Suppressor</title>
+ <label>D</label>
+ <date>Wed Aug 27 2025</date>
+ <tags>
+  <tag>diode</tag>
+  <tag>TVS</tag>
+  <tag>Transient Voltage Suppressor</tag>
+  <tag>SMD</tag>
+ </tags>
+ <properties>
+  <property name="family">diode</property>
+  <property name="type">TVS</property>
+  <property name="part number"></property>
+  <property name="package">SOD123FL[SMD]</property>
+  <property name="mn"></property>
+  <property name="layer"></property>
+  <property name="mpn"></property>
+ </properties>
+ <description>A standard TVS diode</description>
+ <spice/>
+ <views>
+  <iconView>
+   <layers image="icon/SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true">
+   <layers image="breadboard/SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1_breadboard.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </breadboardView>
+  <schematicView>
+   <layers image="schematic/SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1_schematic.svg">
+    <layer layerId="schematic"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1_pcb.svg">
+    <layer layerId="silkscreen"/>
+    <layer layerId="copper1"/>
+   </layers>
+  </pcbView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="cathode" type="male">
+   <description>Cathode Pin</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector0pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector0pin" terminalId="connector0terminal"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector0pin"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector id="connector1" name="anode" type="male">
+   <description>Anode Pin</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector1pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector1pin" terminalId="connector1terminal"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector1pin"/>
+    </pcbView>
+   </views>
+  </connector>
+ </connectors>
+</module>
