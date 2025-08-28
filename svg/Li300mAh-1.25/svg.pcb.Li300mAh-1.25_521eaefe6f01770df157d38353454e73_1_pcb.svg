@@ -3,7 +3,7 @@
 
 <svg
    gorn="0"
-   height="19.089167"
+   height="24.229387"
    id="svg4364"
    version="1.1"
    width="17.589888"
@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="35.115234"
-     inkscape:cx="4.9266367"
-     inkscape:cy="11.277157"
+     inkscape:cx="-0.31325436"
+     inkscape:cy="16.460093"
      inkscape:window-width="3840"
      inkscape:window-height="2036"
      inkscape:window-x="-12"
@@ -33,44 +33,11 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="silkscreen" />
   <defs
-     id="defs4366">
-    <inkscape:path-effect
-       effect="spiro"
-       id="path-effect13087"
-       is_visible="true"
-       lpeversion="1" />
-    <inkscape:path-effect
-       effect="simplify"
-       id="path-effect13085"
-       is_visible="true"
-       lpeversion="1"
-       steps="1"
-       threshold="0.00172414"
-       smooth_angles="360"
-       helper_size="0"
-       simplify_individual_paths="false"
-       simplify_just_coalesce="false" />
-    <inkscape:path-effect
-       effect="simplify"
-       id="path-effect13085-1"
-       is_visible="true"
-       lpeversion="1"
-       steps="1"
-       threshold="0.00172414"
-       smooth_angles="360"
-       helper_size="0"
-       simplify_individual_paths="false"
-       simplify_just_coalesce="false" />
-    <inkscape:path-effect
-       effect="spiro"
-       id="path-effect13087-9"
-       is_visible="true"
-       lpeversion="1" />
-  </defs>
+     id="defs4366" />
   <g
      gorn="0.1"
      id="pcb"
-     transform="translate(-6.2781164,11.042774)">
+     transform="translate(-6.2781164,16.182994)">
     <g
        transform="matrix(0.94815735,0,0,0.99352625,0.59290585,0.12807969)"
        id="g8">
@@ -111,7 +78,7 @@
              r="1.378"
              layerid="11"
              stroke-width="0"
-             id="connector1pin"
+             id="connector2pin"
              style="fill:#ffffff;stroke:#000000;shape-rendering:crispEdges" />
         </g>
         <g
@@ -148,7 +115,7 @@
              r="1.378"
              layerid="11"
              stroke-width="0"
-             id="connector2pin"
+             id="connector1pin"
              style="fill:#ffffff;stroke:#000000;shape-rendering:crispEdges" />
         </g>
       </g>
@@ -238,18 +205,17 @@
         </g>
       </g>
       <g
-         id="g13151">
+         id="g13151"
+         transform="translate(-0.11391068,-12.444741)">
         <path
            style="opacity:1;fill:none;fill-rule:evenodd;stroke:#333333;stroke-width:0.755906;stroke-miterlimit:3.9"
            d="m 11.062365,-2.1292637 h 3.274932"
            id="path13083"
-           inkscape:path-effect="#path-effect13085;#path-effect13087"
            inkscape:original-d="m 11.062365,-2.1292637 h 3.274932" />
         <path
            style="fill:none;fill-rule:evenodd;stroke:#333333;stroke-width:0.755906;stroke-miterlimit:3.9"
            d="m 12.771025,-3.7382525 v 3.27493247"
            id="path13083-3"
-           inkscape:path-effect="#path-effect13085-1;#path-effect13087-9"
            inkscape:original-d="m 12.771025,-3.7382525 v 3.27493247" />
       </g>
     </g>
