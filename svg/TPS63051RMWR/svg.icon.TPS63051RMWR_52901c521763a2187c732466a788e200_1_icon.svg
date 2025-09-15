@@ -1,0 +1,1150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+
+<svg
+   height="0.4in"
+   version="1.2"
+   viewBox="0 0 800 400"
+   width="0.8in"
+   x="0in"
+   y="0in"
+   id="svg463"
+   sodipodi:docname="svg.breadboard.TPS63051RMWR_52901c521763a2187c732466a788e200_1_breadboard.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs467" />
+  <sodipodi:namedview
+     id="namedview465"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="in"
+     showgrid="false"
+     inkscape:zoom="24.375"
+     inkscape:cx="23.302564"
+     inkscape:cy="19.2"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="icon" />
+  <g
+     gorn="0.1"
+     id="breadboard">
+    <g
+       gorn="0.1.0"
+       id="icon">
+      <path
+         d="M0,0L0,170A30,30 0 0 1 0,230L0,400L800,400L800,0L0,0z"
+         fill="#1F7A34"
+         stroke="none"
+         stroke-width="0"
+         id="path6" />
+      <g
+         transform="translate(307.48,107.48)"
+         id="g58">
+        <g
+           id="g56">
+          <g
+             transform="matrix(0.5, 0, 0, 0.5, 46.2598, 46.2598)"
+             id="g54">
+            <g
+               id="g52">
+              <rect
+                 connectorname="2"
+                 fill="#8c8c8c"
+                 height="15.748"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="39.37"
+                 x="0"
+                 y="71.8503"
+                 id="rect10" />
+              <rect
+                 connectorname="3"
+                 fill="#8c8c8c"
+                 height="15.748"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="39.37"
+                 x="0"
+                 y="97.4408"
+                 id="rect12" />
+              <rect
+                 connectorname="5"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="46.2598"
+                 y="145.669"
+                 id="rect16" />
+              <rect
+                 connectorname="6"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="71.8503"
+                 y="145.669"
+                 id="rect18" />
+              <rect
+                 connectorname="7"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="97.4408"
+                 y="145.669"
+                 id="rect20" />
+              <rect
+                 connectorname="8"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="123.031"
+                 y="145.669"
+                 id="rect22" />
+              <rect
+                 connectorname="10"
+                 fill="#8c8c8c"
+                 height="15.748"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="39.37"
+                 x="145.669"
+                 y="97.4408"
+                 id="rect26" />
+              <rect
+                 connectorname="11"
+                 fill="#8c8c8c"
+                 height="15.748"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="39.37"
+                 x="145.669"
+                 y="71.8503"
+                 id="rect28" />
+              <rect
+                 connectorname="13"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="123.031"
+                 y="0"
+                 id="rect32" />
+              <rect
+                 connectorname="14"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="97.4408"
+                 y="0"
+                 id="rect34" />
+              <rect
+                 connectorname="15"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="71.8503"
+                 y="0"
+                 id="rect36" />
+              <rect
+                 connectorname="16"
+                 fill="#8c8c8c"
+                 height="39.37"
+                 stroke="none"
+                 stroke-linecap="round"
+                 stroke-width="0"
+                 width="15.748"
+                 x="46.2598"
+                 y="0"
+                 id="rect38" />
+              <rect
+                 fill="#303030"
+                 height="164.48"
+                 stroke="none"
+                 stroke-width="0"
+                 width="164.48"
+                 x="10.2795"
+                 y="10.2795"
+                 id="rect40" />
+              <polygon
+                 fill="#1f1f1f"
+                 points="10.2795,10.2795 174.76,10.2795 164.76,20.2795 20.2795,20.2795"
+                 id="polygon42" />
+              <polygon
+                 fill="#1f1f1f"
+                 points="10.2795,174.76 174.76,174.76 164.76,164.76 20.2795,164.76"
+                 id="polygon44" />
+              <polygon
+                 fill="#000000"
+                 points="10.2795,10.2795 10.2795,174.76 20.2795,164.76 20.2795,20.2795"
+                 id="polygon46" />
+              <polygon
+                 fill="#3d3d3d"
+                 points="174.76,10.2795 174.76,174.76 164.76,164.76 164.76,20.2795"
+                 id="polygon48" />
+              <circle
+                 cx="40.2795"
+                 cy="144.76"
+                 fill="#1f1f1f"
+                 r="10"
+                 stroke="none"
+                 stroke-width="0"
+                 id="circle50" />
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         aria-label="VQFN-HR 12 2.5X2.5"
+         id="label"
+         style="font-size:65px;font-family:OCRA;fill:#ffffff;stroke-width:0">
+        <path
+           d="m 100.11111,174.54621 -16.574999,46.41 h -5.85 l -16.575,-46.41 h 6.11 l 10.465,29.77 q 1.04,2.86 1.755,5.395 0.715,2.47 1.17,4.745 0.455,-2.275 1.17,-4.81 0.715,-2.535 1.755,-5.46 l 10.4,-29.64 z"
+           id="path496" />
+        <path
+           d="m 146.26112,197.68621 q 0,8.515 -3.445,14.495 -3.38,5.98 -10.075,8.255 l 11.115,11.57 h -8.385 l -8.97,-10.465 q -0.39,0 -0.845,0 -0.39,0.065 -0.78,0.065 -7.215,0 -12.025,-2.99 -4.745,-2.99 -7.085,-8.385 -2.34,-5.395 -2.34,-12.61 0,-7.15 2.34,-12.48 2.34,-5.33 7.085,-8.32 4.81,-2.99 12.09,-2.99 6.955,0 11.7,2.99 4.745,2.925 7.15,8.32 2.47,5.33 2.47,12.545 z m -36.66,0 q 0,8.775 3.705,13.845 3.705,5.005 11.57,5.005 7.93,0 11.57,-5.005 3.64,-5.07 3.64,-13.845 0,-8.775 -3.64,-13.715 -3.64,-5.005 -11.505,-5.005 -7.865,0 -11.635,5.005 -3.705,4.94 -3.705,13.715 z"
+           id="path498" />
+        <path
+           d="m 162.38113,220.95621 h -5.85 v -46.41 h 25.935 v 5.135 h -20.085 v 16.445 h 18.85 v 5.135 h -18.85 z"
+           id="path500" />
+        <path
+           d="m 227.05607,220.95621 h -6.825 l -24.83,-38.545 h -0.26 q 0.13,2.275 0.325,5.655 0.195,3.38 0.195,6.955 v 25.935 h -5.395 v -46.41 h 6.76 l 24.765,38.415 h 0.26 q -0.065,-1.04 -0.195,-3.12 -0.065,-2.08 -0.195,-4.55 -0.065,-2.47 -0.065,-4.55 v -26.195 h 5.46 z"
+           id="path502" />
+        <path
+           d="m 235.96108,206.07121 v -5.07 h 15.73 v 5.07 z"
+           id="path504" />
+        <path
+           d="m 296.08612,220.95621 h -5.85 v -21.645 h -23.79 v 21.645 h -5.85 v -46.41 h 5.85 v 19.63 h 23.79 v -19.63 h 5.85 z"
+           id="path506" />
+        <path
+           d="m 321.56607,174.54621 q 8.645,0 12.74,3.315 4.16,3.25 4.16,9.88 0,3.705 -1.365,6.175 -1.365,2.47 -3.51,3.965 -2.08,1.43 -4.42,2.275 l 12.74,20.8 h -6.825 l -11.245,-19.175 h -9.23 v 19.175 h -5.85 v -46.41 z m -0.325,5.07 h -6.63 v 17.225 h 6.955 q 5.655,0 8.255,-2.21 2.6,-2.275 2.6,-6.63 0,-4.55 -2.73,-6.435 -2.73,-1.95 -8.45,-1.95 z"
+           id="path508" />
+        <path
+           d="m 382.86107,220.95621 h -5.59 v -32.435 q 0,-2.795 0.065,-4.485 0.065,-1.69 0.195,-3.51 -1.04,1.04 -1.885,1.755 -0.845,0.715 -2.145,1.82 l -4.94,4.03 -2.99,-3.835 12.545,-9.75 h 4.745 z"
+           id="path510" />
+        <path
+           d="m 430.76609,220.95621 h -30.68 v -4.745 l 12.155,-12.285 q 3.51,-3.51 5.915,-6.24 2.405,-2.73 3.64,-5.33 1.235,-2.665 1.235,-5.785 0,-3.835 -2.275,-5.785 -2.275,-2.015 -5.915,-2.015 -3.38,0 -5.98,1.17 -2.535,1.17 -5.2,3.25 l -3.055,-3.835 q 2.73,-2.275 6.24,-3.835 3.575,-1.625 7.995,-1.625 6.5,0 10.27,3.315 3.77,3.25 3.77,9.035 0,3.64 -1.495,6.825 -1.495,3.185 -4.16,6.305 -2.665,3.055 -6.24,6.565 l -9.685,9.555 v 0.26 h 23.465 z"
+           id="path512" />
+        <path
+           d="m 484.84614,220.95621 h -30.68 v -4.745 l 12.155,-12.285 q 3.51,-3.51 5.915,-6.24 2.405,-2.73 3.64,-5.33 1.235,-2.665 1.235,-5.785 0,-3.835 -2.275,-5.785 -2.275,-2.015 -5.915,-2.015 -3.38,0 -5.98,1.17 -2.535,1.17 -5.2,3.25 l -3.055,-3.835 q 2.73,-2.275 6.24,-3.835 3.575,-1.625 7.995,-1.625 6.5,0 10.27,3.315 3.77,3.25 3.77,9.035 0,3.64 -1.495,6.825 -1.495,3.185 -4.16,6.305 -2.665,3.055 -6.24,6.565 l -9.685,9.555 v 0.26 h 23.465 z"
+           id="path514" />
+        <path
+           d="m 492.90616,217.44621 q 0,-2.405 1.17,-3.38 1.17,-0.975 2.795,-0.975 1.69,0 2.86,0.975 1.235,0.975 1.235,3.38 0,2.34 -1.235,3.38 -1.17,1.04 -2.86,1.04 -1.625,0 -2.795,-1.04 -1.17,-1.04 -1.17,-3.38 z"
+           id="path516" />
+        <path
+           d="m 523.52114,192.48621 q 7.15,0 11.375,3.575 4.225,3.575 4.225,10.075 0,7.215 -4.615,11.375 -4.55,4.095 -12.74,4.095 -3.575,0 -6.76,-0.65 -3.12,-0.65 -5.265,-1.885 v -5.395 q 2.34,1.43 5.655,2.275 3.38,0.78 6.435,0.78 5.135,0 8.255,-2.405 3.185,-2.47 3.185,-7.605 0,-4.55 -2.795,-6.955 -2.795,-2.47 -8.84,-2.47 -1.82,0 -4.16,0.325 -2.34,0.325 -3.77,0.65 l -2.86,-1.82 1.755,-21.905 h 23.27 v 5.2 h -18.395 l -1.105,13.455 q 1.105,-0.195 2.99,-0.455 1.885,-0.26 4.16,-0.26 z"
+           id="path518" />
+        <path
+           d="m 580.65617,220.95621 h -6.63 l -12.285,-20.15 -12.48,20.15 h -6.175 l 15.405,-24.18 -14.43,-22.23 h 6.5 l 11.375,18.2 11.44,-18.2 h 6.175 l -14.365,22.1 z"
+           id="path520" />
+        <path
+           d="m 614.71623,220.95621 h -30.68 v -4.745 l 12.155,-12.285 q 3.51,-3.51 5.915,-6.24 2.405,-2.73 3.64,-5.33 1.235,-2.665 1.235,-5.785 0,-3.835 -2.275,-5.785 -2.275,-2.015 -5.915,-2.015 -3.38,0 -5.98,1.17 -2.535,1.17 -5.2,3.25 l -3.055,-3.835 q 2.73,-2.275 6.24,-3.835 3.575,-1.625 7.995,-1.625 6.5,0 10.27,3.315 3.77,3.25 3.77,9.035 0,3.64 -1.495,6.825 -1.495,3.185 -4.16,6.305 -2.665,3.055 -6.24,6.565 l -9.685,9.555 v 0.26 h 23.465 z"
+           id="path522" />
+        <path
+           d="m 622.77622,217.44621 q 0,-2.405 1.17,-3.38 1.17,-0.975 2.795,-0.975 1.69,0 2.86,0.975 1.235,0.975 1.235,3.38 0,2.34 -1.235,3.38 -1.17,1.04 -2.86,1.04 -1.625,0 -2.795,-1.04 -1.17,-1.04 -1.17,-3.38 z"
+           id="path524" />
+        <path
+           d="m 653.3912,192.48621 q 7.15,0 11.375,3.575 4.225,3.575 4.225,10.075 0,7.215 -4.615,11.375 -4.55,4.095 -12.74,4.095 -3.575,0 -6.76,-0.65 -3.12,-0.65 -5.265,-1.885 v -5.395 q 2.34,1.43 5.655,2.275 3.38,0.78 6.435,0.78 5.135,0 8.255,-2.405 3.185,-2.47 3.185,-7.605 0,-4.55 -2.795,-6.955 -2.795,-2.47 -8.84,-2.47 -1.82,0 -4.16,0.325 -2.34,0.325 -3.77,0.65 l -2.86,-1.82 1.755,-21.905 h 23.27 v 5.2 h -18.395 l -1.105,13.455 q 1.105,-0.195 2.99,-0.455 1.885,-0.26 4.16,-0.26 z"
+           id="path526" />
+      </g>
+      <g
+         transform="translate(63.5,326.05)"
+         id="g69">
+        <g
+           id="g67">
+          <g
+             transform="rotate(-90)"
+             id="g65">
+            <g
+               id="g63">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text61">1</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(163.5,326.05)"
+         id="g89">
+        <g
+           id="g87">
+          <g
+             transform="rotate(-90)"
+             id="g85">
+            <g
+               id="g83">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text81">2</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(163.5,73.95)"
+         id="g99">
+        <g
+           id="g97">
+          <g
+             transform="rotate(-90)"
+             id="g95">
+            <g
+               id="g93">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text91">12</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(263.5,326.05)"
+         id="g109">
+        <g
+           id="g107">
+          <g
+             transform="rotate(-90)"
+             id="g105">
+            <g
+               id="g103">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text101">3</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(263.5,73.95)"
+         id="g119">
+        <g
+           id="g117">
+          <g
+             transform="rotate(-90)"
+             id="g115">
+            <g
+               id="g113">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text111">11</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(363.5,326.05)"
+         id="g129">
+        <g
+           id="g127">
+          <g
+             transform="rotate(-90)"
+             id="g125">
+            <g
+               id="g123">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text121">4</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(463.5,73.95)"
+         id="g159">
+        <g
+           id="g157">
+          <g
+             transform="rotate(-90)"
+             id="g155">
+            <g
+               id="g153">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text151">10</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(563.5,326.05)"
+         id="g169">
+        <g
+           id="g167">
+          <g
+             transform="rotate(-90)"
+             id="g165">
+            <g
+               id="g163">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text161">5</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(563.5,73.95)"
+         id="g179">
+        <g
+           id="g177">
+          <g
+             transform="rotate(-90)"
+             id="g175">
+            <g
+               id="g173">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text171">9</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(663.5,326.05)"
+         id="g189">
+        <g
+           id="g187">
+          <g
+             transform="rotate(-90)"
+             id="g185">
+            <g
+               id="g183">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="start"
+                 x="0"
+                 y="0"
+                 id="text181">6</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(663.5,73.95)"
+         id="g199">
+        <g
+           id="g197">
+          <g
+             transform="rotate(-90)"
+             id="g195">
+            <g
+               id="g193">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text191">8</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(763.5,73.95)"
+         id="g219">
+        <g
+           id="g217">
+          <g
+             transform="rotate(-90)"
+             id="g215">
+            <g
+               id="g213">
+              <text
+                 fill="white"
+                 font-family="OCRA"
+                 font-size="45"
+                 stroke="none"
+                 stroke-width="0"
+                 text-anchor="end"
+                 x="0"
+                 y="0"
+                 id="text211">7</text>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       transform="translate(34.035,334.05)"
+       id="g235">
+      <g
+         id="g233">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.1.0.0"
+           height="31.9"
+           id="connector0pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect223" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon225" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon227" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon229" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon231" />
+      </g>
+    </g>
+    <g
+       transform="translate(34.035,34.05)"
+       id="g250">
+      <g
+         id="g248">
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect238" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon240" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon242" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon244" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon246" />
+      </g>
+    </g>
+    <g
+       transform="translate(134.035,334.05)"
+       id="g265">
+      <g
+         id="g263">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.3.0.0"
+           height="31.9"
+           id="connector1pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect253" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon255" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon257" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon259" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon261" />
+      </g>
+    </g>
+    <g
+       transform="translate(134.035,34.05)"
+       id="g280">
+      <g
+         id="g278">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.4.0.0"
+           height="31.9"
+           id="connector11pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect268" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon270" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon272" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon274" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon276" />
+      </g>
+    </g>
+    <g
+       transform="translate(234.035,334.05)"
+       id="g295">
+      <g
+         id="g293">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.5.0.0"
+           height="31.9"
+           id="connector2pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect283" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon285" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon287" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon289" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon291" />
+      </g>
+    </g>
+    <g
+       transform="translate(234.035,34.05)"
+       id="g310">
+      <g
+         id="g308">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.6.0.0"
+           height="31.9"
+           id="connector10pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect298" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon300" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon302" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon304" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon306" />
+      </g>
+    </g>
+    <g
+       transform="translate(334.035,334.05)"
+       id="g325">
+      <g
+         id="g323">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.7.0.0"
+           height="31.9"
+           id="connector3pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect313" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon315" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon317" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon319" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon321" />
+      </g>
+    </g>
+    <g
+       transform="translate(334.035,34.05)"
+       id="g340">
+      <g
+         id="g338">
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect328" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon330" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon332" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon334" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon336" />
+      </g>
+    </g>
+    <g
+       transform="translate(434.035,334.05)"
+       id="g355">
+      <g
+         id="g353">
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect343" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon345" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon347" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon349" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon351" />
+      </g>
+    </g>
+    <g
+       transform="translate(434.035,34.05)"
+       id="g370">
+      <g
+         id="g368">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.10.0.0"
+           height="31.9"
+           id="connector9pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect358" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon360" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon362" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon364" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon366" />
+      </g>
+    </g>
+    <g
+       transform="translate(534.035,334.05)"
+       id="g385">
+      <g
+         id="g383">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.11.0.0"
+           height="31.9"
+           id="connector4pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect373" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon375" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon377" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon379" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon381" />
+      </g>
+    </g>
+    <g
+       transform="translate(534.035,34.05)"
+       id="g400">
+      <g
+         id="g398">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.12.0.0"
+           height="31.9"
+           id="connector8pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect388" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon390" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon392" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon394" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon396" />
+      </g>
+    </g>
+    <g
+       transform="translate(634.035,334.05)"
+       id="g415">
+      <g
+         id="g413">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.13.0.0"
+           height="31.9"
+           id="connector5pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect403" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon405" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon407" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon409" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon411" />
+      </g>
+    </g>
+    <g
+       transform="translate(634.035,34.05)"
+       id="g430">
+      <g
+         id="g428">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.14.0.0"
+           height="31.9"
+           id="connector7pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect418" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon420" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon422" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon424" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon426" />
+      </g>
+    </g>
+    <g
+       transform="translate(734.035,334.05)"
+       id="g445">
+      <g
+         id="g443">
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect433" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon435" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon437" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon439" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon441" />
+      </g>
+    </g>
+    <g
+       transform="translate(734.035,34.05)"
+       id="g460">
+      <g
+         id="g458">
+        <rect
+           fill="#8D8C8C"
+           gorn="0.1.16.0.0"
+           height="31.9"
+           id="connector6pin"
+           width="31.93"
+           x="0"
+           y="0" />
+        <rect
+           fill="#8C8663"
+           height="16.4152"
+           width="16.4442"
+           x="7.79153"
+           y="7.73544"
+           id="rect448" />
+        <polygon
+           fill="#B8AF82"
+           points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
+           id="polygon450" />
+        <polygon
+           fill="#80795B"
+           points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
+           id="polygon452" />
+        <polygon
+           fill="#5E5B43"
+           points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
+           id="polygon454" />
+        <polygon
+           fill="#9A916C"
+           points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
+           id="polygon456" />
+      </g>
+    </g>
+  </g>
+</svg>
