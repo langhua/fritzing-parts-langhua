@@ -2,10 +2,10 @@
 <!-- Created with Fritzing (http://www.fritzing.org/) -->
 
 <svg
-   height="3.0999999mm"
+   height="3.1000011mm"
    version="1.2"
-   viewBox="0 0 3.0999999 3.1"
-   width="3.0999999mm"
+   viewBox="0 0 3.1458151 3.1000012"
+   width="3.1458151mm"
    x="0in"
    y="0in"
    id="svg37"
@@ -29,17 +29,18 @@
      inkscape:document-units="in"
      showgrid="false"
      inkscape:zoom="57.814389"
-     inkscape:cx="0.69186929"
+     inkscape:cx="-2.3004654"
      inkscape:cy="4.7393046"
      inkscape:window-width="3840"
      inkscape:window-height="2036"
      inkscape:window-x="-12"
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
-     inkscape:current-layer="copper1" />
+     inkscape:current-layer="silkscreen" />
   <g
      gorn="0.0"
-     id="copper1">
+     id="copper1"
+     transform="translate(0.04581398)">
     <rect
        connectorname="1"
        fill="#f7bd13"
@@ -191,17 +192,7 @@
   <g
      gorn="0.1"
      id="silkscreen"
-     transform="matrix(0.62230042,0,0,0.62231382,0.08751736,0.08751386)">
-    <line
-       class="other"
-       stroke="#f0f0f0"
-       stroke-linecap="round"
-       stroke-width="0.1102"
-       x1="0.31619975"
-       x2="0.68808216"
-       y1="0.68807167"
-       y2="0.31619975"
-       id="line22" />
+     transform="matrix(0.62230042,0,0,0.62231382,0.13333134,0.08751386)">
     <line
        class="other"
        stroke="#f0f0f0"
@@ -262,5 +253,32 @@
        y1="0.31619981"
        y2="0.31619981"
        id="line34" />
+    <line
+       class="other"
+       stroke="#f0f0f0"
+       stroke-linecap="round"
+       stroke-width="0.1102"
+       x1="0.32262778"
+       x2="0.32262778"
+       y1="0.32262766"
+       y2="0.69449985"
+       id="line32-9" />
+    <line
+       class="other"
+       stroke="#f0f0f0"
+       stroke-linecap="round"
+       stroke-width="0.1102"
+       x1="0.69451022"
+       x2="0.32262778"
+       y1="0.32262766"
+       y2="0.32262766"
+       id="line34-1" />
+    <ellipse
+       style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.139013;stroke-miterlimit:3.9"
+       id="path428"
+       cx="-0.053561497"
+       cy="0.47608536"
+       rx="0.16069409"
+       ry="0.16069064" />
   </g>
 </svg>
