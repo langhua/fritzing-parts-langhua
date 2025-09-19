@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg xmlns="http://www.w3.org/2000/svg" gorn="0" height="3.54926in" id="svg13574" version="1.2" viewBox="0 0 56.693 255.547" width="0.787403in" x="0px" xml:space="preserve"  xmlns:xml="http://www.w3.org/XML/1998/namespace" y="0px">
+    <desc>
+        <referenceFile>Li300mAh-1.25_521eaefe6f01770df157d38353454e73_1_breadboard.svg</referenceFile>
+    </desc>
+    <defs id="defs19129" />
+    <g gorn="0.1" id="g19124" >
+        <path d="M24.746,154.335V20.409" fill="none" gorn="0.1.0" id="path3821_11_" stroke="#CB1717" stroke-linejoin="round" stroke-width="3.6" />
+        <path d="M31.946,154.335V20.409" fill="none" gorn="0.1.1" id="path3815_11_" stroke="#202020" stroke-linejoin="round" stroke-width="3.6" />
+        <path d="M23.683,151.335l0.142-129.688" fill="none" gorn="0.1.2" id="path3821_10_" stroke="#E58B8B" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5669" />
+        <path d="M31.025,151.335V21.647" fill="none" gorn="0.1.3" id="path3815_10_" stroke="#909090" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5669" />
+        <rect fill="none" gorn="0.1.4" height="5.669" id="connector2pin" width="5.669" x="21.912" />
+        <rect fill="none" gorn="0.1.5" height="5.669" id="connector1pin" width="5.669" x="29.112" />
+        <polygon fill="#EAEAEA" gorn="0.1.6" id="polygon19086" points="35.433,14.74 35.433,2.835 21.26,2.835 21.26,14.74 19.842,20.409 21.26,20.409 35.433,20.409 36.85,20.409 " stroke="#C8C8C8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="0.5669" />
+        <polygon fill="#C8C8C8" gorn="0.1.7" id="polygon19088" points="26.575,20.126 27.283,20.126 27.283,3.402 26.575,4.11 " />
+        <polygon fill="#FFFFFF" gorn="0.1.8" id="polygon19090" points="29.409,20.126 29.835,20.126 29.835,3.827 29.409,3.402 " />
+        <path d="M0,167.06h56.693v87.192c0,0.715-0.592,1.295-1.323,1.295H1.323c-0.73,0-1.323-0.58-1.323-1.295V167.06z" fill="#E6E6E6" gorn="0.1.9" id="rect2997_5_" />
+        <g transform="matrix(-1 -4.325885e-11 4.325885e-11 -1 7.1158 418.9515)" >
+            <g gorn="0.1.10.0" id="g43" >
+                <g gorn="0.1.10.0.0" id="g19099" >
+                    <g gorn="0.1.10.0.0.0" id="g19097" >
+                        <g gorn="0.1.10.0.0.0.0" id="g19095" >
+                            <rect fill="#F3F3F3" gorn="0.1.10.0.0.0.0.0" height="84.831" id="rect19093" width="3.616" x="1.75"  y="167.06"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <path d="M55.37,255.547c0.73,0,1.323-0.58,1.323-1.295v-0.533h-1.75V167.06h-3.616v86.659H0v0.533c0,0.715,0.592,1.295,1.323,1.295H55.37z" fill="#ADADAD" gorn="0.1.11" id="path19101" />
+        <path d="M56.693,169.631H0v-17.657c0-0.723,0.586-1.309,1.309-1.309h54.075c0.723,0,1.309,0.586,1.309,1.309V169.631z" fill="#FFCC00" gorn="0.1.12" id="path19103" />
+        <rect fill="#C09900" gorn="0.1.13" height="18.966" id="rect19105" width="3.616" x="51.327"  y="150.665"/>
+        <g transform="matrix(-1 -4.426471e-11 4.426471e-11 -1 7.1158 320.2963)" >
+            <g gorn="0.1.14.0" id="g52" >
+                <g gorn="0.1.14.0.0" id="g19113" >
+                    <g gorn="0.1.14.0.0.0" id="g19111" >
+                        <g gorn="0.1.14.0.0.0.0" id="g19109" >
+                            <rect fill="#FFE680" gorn="0.1.14.0.0.0.0.0" height="18.966" id="rect19107" width="3.616" x="1.75"  y="150.665"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <g gorn="0.1.15" id="tspan3851_6_" >
+            <g transform="matrix(0 1 -1 0 24.9562 186.4683)" >
+                <g gorn="0.1.15.0.0" id="g58" >
+                    <g gorn="0.1.15.0.0.0" id="g19121" >
+                        <g gorn="0.1.15.0.0.0.0" id="g19119" >
+                            <g gorn="0.1.15.0.0.0.0.0" id="g19117" >
+                                <text fill="#808080" font-family="OCRA" font-size="8" gorn="0.1.15.0.0.0.0.0.0" id="text19115" >300mAh</text>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

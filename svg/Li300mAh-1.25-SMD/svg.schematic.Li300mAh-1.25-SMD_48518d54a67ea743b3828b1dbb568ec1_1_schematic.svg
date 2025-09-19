@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Generator: Adobe Illustrator 20.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg xmlns="http://www.w3.org/2000/svg" gorn="0" height="1.0039288in" id="svg5926" version="1.2" viewBox="0 0 78.30957 72.282852" width="1.0876316in" x="0px" xml:space="preserve"  xmlns:xml="http://www.w3.org/XML/1998/namespace" y="0px">
+    <desc>
+        <referenceFile>Li300mAh-1.25_521eaefe6f01770df157d38353454e73_1_schematic.svg</referenceFile>
+    </desc>
+    <defs id="defs19342" />
+    <g transform="translate(-9.13,-23.032055)" >
+        <g gorn="0.1.0" id="g1587" >
+            <g gorn="0.1.0.0" id="schematic" >
+                <path d="M 26.575,53.15 V 26.575" fill="none" gorn="0.1.0.0.0" id="path10461" stroke="#000000" stroke-width="3" />
+                <rect fill="none" gorn="0.1.0.0.1" height="7.0869999" id="connector2pin" width="7.0869999" x="23.032"  y="23.032"/>
+                <path d="M 26.575,92.373988 V 65.798954" fill="none" gorn="0.1.0.0.2" id="path10453" stroke="#000000" stroke-width="3" />
+                <rect fill="none" gorn="0.1.0.0.3" height="7.0869999" id="connector1pin" width="7.0869999" x="23.031"  y="88.227959"/>
+                <g transform="translate(0,-15.000019)" >
+                    <g gorn="0.1.0.0.4.0" id="g1570" >
+                        <g gorn="0.1.0.0.4.0.0" id="tspan4621" >
+                            <g transform="translate(53.1496,74.4094)" >
+                                <g gorn="0.1.0.0.4.0.0.0.0" id="g1567" >
+                                    <g gorn="0.1.0.0.4.0.0.0.0.0" id="g19362" >
+                                        <g gorn="0.1.0.0.4.0.0.0.0.0.0" id="g19360" >
+                                            <g gorn="0.1.0.0.4.0.0.0.0.0.0.0" id="g19358" >
+                                                <text font-family="DroidSans" font-size="7.16802" gorn="0.1.0.0.4.0.0.0.0.0.0.0.0" id="tspan88499" >3.7V</text>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+                <g transform="translate(0,-15.000019)" >
+                    <g gorn="0.1.0.0.5.0" id="g1579" >
+                        <g gorn="0.1.0.0.5.0.0" id="text4046" >
+                            <g transform="translate(53.1496,93.8976)" >
+                                <g gorn="0.1.0.0.5.0.0.0.0" id="g1576" >
+                                    <g gorn="0.1.0.0.5.0.0.0.0.0" id="g19370" >
+                                        <g gorn="0.1.0.0.5.0.0.0.0.0.0" id="g19368" >
+                                            <g gorn="0.1.0.0.5.0.0.0.0.0.0.0" id="g19366" >
+                                                <text font-family="DroidSans" font-size="7.16802" gorn="0.1.0.0.5.0.0.0.0.0.0.0.0" id="tspan88497" >300mAh</text>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+                <path d="M 10.63,56.693 H 42.52" fill-opacity="0.7663" gorn="0.1.0.0.6" id="path87954" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                <path d="M 17.717,65.551 H 35.434" fill-opacity="0.7663" gorn="0.1.0.0.7" id="path88474" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                <path d="m 26.575,53.15 v 3.543" fill-opacity="0.7663" gorn="0.1.0.0.8" id="path88493" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                <path d="m 38.976,40.748 v 7.087" fill-opacity="0.7663" gorn="0.1.0.0.9" id="path88522" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5309" />
+                <path d="M 35.433,44.291 H 42.52" fill-opacity="0.7663" gorn="0.1.0.0.10" id="path88524" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5309" />
+            </g>
+        </g>
+    </g>
+</svg>
