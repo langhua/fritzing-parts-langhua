@@ -10,6 +10,7 @@
   <tag>TPS63051RMWR</tag>
   <tag>VQFN-HR-12</tag>
   <tag>VQFN-HR</tag>
+  <tag>LGA-16</tag>
  </tags>
  <properties>
   <property name="package">VQFN-HR-12</property>
@@ -212,10 +213,5 @@
    </views>
   </connector>
  </connectors>
- <buses>
-  <bus id="GND">
-   <nodeMember connectorId="connector1"/>
-   <nodeMember connectorId="connector8"/>
-  </bus>
- </buses>
+ <buses/>
 </module>
