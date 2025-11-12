@@ -26,9 +26,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="in"
      showgrid="false"
-     inkscape:zoom="61.908687"
-     inkscape:cx="10.160125"
-     inkscape:cy="13.762204"
+     inkscape:zoom="43.773879"
+     inkscape:cx="7.1960723"
+     inkscape:cy="18.938235"
      inkscape:window-width="3840"
      inkscape:window-height="2036"
      inkscape:window-x="-12"
@@ -83,11 +83,11 @@
        style="fill:#ffbf00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.10962"
        d="m 17.665332,5.6109324 h 0.851563 V 1.0754993 h -0.851563 z m 0,0"
        id="connector3pin" /><circle
-       style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.26715;stroke-linejoin:round;stroke-miterlimit:3.9"
        id="path367"
        cx="13.368137"
        cy="7.0480385"
-       r="0.92686993" /><path
+       r="0.92686993"
+       style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:3.9" /><path
        style="fill:#ffbf00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.10962"
        d="m 16.247363,5.6109324 h 0.851563 V 1.0754993 h -0.851563 z m 0,0"
        id="connector2pin" /><path
@@ -464,7 +464,7 @@
            cx="33.884144"
            cy="18.44318"
            r="0.92686993" /></g></g><circle
-       style="fill:#000000;fill-rule:evenodd;stroke-width:0.26715;stroke-linejoin:round;stroke-miterlimit:3.9"
+       style="fill:#000000;fill-rule:evenodd;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:3.9"
        id="path367-2"
        cx="29.761782"
        cy="7.0575871"
