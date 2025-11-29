@@ -2,7 +2,7 @@
 <module moduleId="PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1" referenceFile="PB86-A0_7072363ba1b31d70136d785d0604754f_2.fzp" fritzingVersion="0.9.3">
  <version>4</version>
  <title>PB86-A0-GRAY</title>
- <label>PB86-A0/</label>
+ <label>B</label>
  <date>周日 9月 22 2024</date>
  <tags>
   <tag>Pushbutton</tag>
@@ -13,10 +13,10 @@
  </tags>
  <properties>
   <property name="part number"></property>
-  <property name="family">PB86-A0 Switch</property>
+  <property name="family">PB86</property>
   <property name="layer"></property>
   <property name="variant">Gray</property>
-  <property name="package">[sandflower]</property>
+  <property name="package">PB86-A0</property>
  </properties>
  <description>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">

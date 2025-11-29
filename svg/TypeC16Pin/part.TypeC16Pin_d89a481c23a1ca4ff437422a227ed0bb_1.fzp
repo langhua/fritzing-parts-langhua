@@ -1,13 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <module fritzingVersion="1.0.3" moduleId="TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1">
- <version>4</version>
+ <version>1</version>
  <date>Sat Dec 21 2024</date>
  <author>Shi Jinghai</author>
- <title>USB Type C 16-Pin Connector</title>
- <label>J</label>
- <tags/>
+ <title>TypeC</title>
+ <description>16-Pin USC Type-C Connector</description>
+ <label>U</label>
+ <tags>
+  <tag>USB</tag>
+  <tag>Type-C</tag>
+  <tag>16-Pin</tag>
+ </tags>
  <properties>
-  <property name="family">Type C Connector</property>
+  <property name="package">usb-typec</property>
+  <property name="family">usb connector</property>
+  <property name="variant">16P</property>
   <property name="part number"></property>
   <property name="layer"></property>
   <property name="mn"></property>
@@ -26,9 +33,9 @@
   </schematicView>
   <pcbView>
    <layers image="pcb/TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1_pcb.svg">
-    <layer layerId="copper0"/>
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
+    <layer layerId="copper0"/>
    </layers>
   </pcbView>
   <iconView>
@@ -206,6 +213,73 @@
     </pcbView>
    </views>
   </connector>
+  <connector id="connector12" name="Plated Slot" type="pad">
+   <description>Plated Slot</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector12pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector12pin"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector12pad"/>
+     <p layer="copper0" svgId="connector12pad"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector id="connector13" name="Plated Slot" type="pad">
+   <description>Plated Slot</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector13pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector13pin"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector13pad"/>
+     <p layer="copper0" svgId="connector13pad"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector id="connector14" name="Plated Slot" type="pad">
+   <description>Plated Slot</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector14pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector14pin"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector14pad"/>
+     <p layer="copper0" svgId="connector14pad"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector id="connector15" name="Plated Slot" type="pad">
+   <description>Plated Slot</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector15pin"/>
+    </breadboardView>
+    <schematicView>
+     <p layer="schematic" svgId="connector15pin"/>
+    </schematicView>
+    <pcbView>
+     <p layer="copper1" svgId="connector15pad"/>
+     <p layer="copper0" svgId="connector15pad"/>
+    </pcbView>
+   </views>
+  </connector>
  </connectors>
- <buses/>
+ <buses>
+  <bus id="Plated-Slots">
+   <nodeMember connectorId="connector12"/>
+   <nodeMember connectorId="connector13"/>
+   <nodeMember connectorId="connector14"/>
+   <nodeMember connectorId="connector15"/>
+  </bus>
+ </buses>
 </module>
