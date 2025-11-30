@@ -216,12 +216,6 @@
   <connector id="connector12" name="Plated Slot" type="pad">
    <description>Plated Slot</description>
    <views>
-    <breadboardView>
-     <p layer="breadboard" svgId="connector12pin"/>
-    </breadboardView>
-    <schematicView>
-     <p layer="schematic" svgId="connector12pin"/>
-    </schematicView>
     <pcbView>
      <p layer="copper1" svgId="connector12pad"/>
      <p layer="copper0" svgId="connector12pad"/>
@@ -231,12 +225,6 @@
   <connector id="connector13" name="Plated Slot" type="pad">
    <description>Plated Slot</description>
    <views>
-    <breadboardView>
-     <p layer="breadboard" svgId="connector13pin"/>
-    </breadboardView>
-    <schematicView>
-     <p layer="schematic" svgId="connector13pin"/>
-    </schematicView>
     <pcbView>
      <p layer="copper1" svgId="connector13pad"/>
      <p layer="copper0" svgId="connector13pad"/>
@@ -246,12 +234,6 @@
   <connector id="connector14" name="Plated Slot" type="pad">
    <description>Plated Slot</description>
    <views>
-    <breadboardView>
-     <p layer="breadboard" svgId="connector14pin"/>
-    </breadboardView>
-    <schematicView>
-     <p layer="schematic" svgId="connector14pin"/>
-    </schematicView>
     <pcbView>
      <p layer="copper1" svgId="connector14pad"/>
      <p layer="copper0" svgId="connector14pad"/>
@@ -261,12 +243,6 @@
   <connector id="connector15" name="Plated Slot" type="pad">
    <description>Plated Slot</description>
    <views>
-    <breadboardView>
-     <p layer="breadboard" svgId="connector15pin"/>
-    </breadboardView>
-    <schematicView>
-     <p layer="schematic" svgId="connector15pin"/>
-    </schematicView>
     <pcbView>
      <p layer="copper1" svgId="connector15pad"/>
      <p layer="copper0" svgId="connector15pad"/>
