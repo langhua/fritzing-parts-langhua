@@ -13,7 +13,7 @@ Connectors (3):
     connector1 = pin 2 (K2)
     connector2 = pin 3 (node)
 
-Follows the Fritzing part-dev-guide (docs/fritzing-part-dev-guide.md):
+Follows the Fritzing part-dev-guide (docs/part-dev-guide.md):
   - .fzp image refs use subdirectory paths
   - schematic pins need class='pin'/connectorname + class='terminal'
   - PCB pads appear once, on copper1 (SMD package, no through-hole)
