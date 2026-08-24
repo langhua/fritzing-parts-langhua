@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.9b" moduleId="BAT54S_SOT23_1">
+ <version>1</version>
+ <author>Shi Jinghai</author>
+ <title>BAT54S</title>
+ <label>D</label>
+ <date>2026-08-24</date>
+ <tags><tag>diode</tag><tag>schottky</tag><tag>BAT54S</tag><tag>SOT-23</tag></tags>
+ <properties>
+  <property name="family">diode</property>
+  <property name="type">Schottky</property>
+  <property name="part number">BAT54S</property>
+  <property name="package">SOT23-3</property>
+ </properties>
+ <description>Dual series Schottky diode, SOT-23. Two diodes: pin1->pin3->pin2.</description>
+ <views>
+  <iconView>
+   <layers image="icon/BAT54S_SOT23_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true">
+   <layers image="breadboard/BAT54S_SOT23_1_breadboard.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </breadboardView>
+  <schematicView fliphorizontal="true" flipvertical="true">
+   <layers image="schematic/BAT54S_SOT23_1_schematic.svg">
+    <layer layerId="schematic"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/BAT54S_SOT23_1_pcb.svg">
+    <layer layerId="silkscreen"/>
+    <layer layerId="copper1"/>
+   </layers>
+  </pcbView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="A1" type="male">
+   <description>Pin 1 - diode 1 anode</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector0pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector0pin" terminalId="connector0terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector0pin"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector1" name="K2" type="male">
+   <description>Pin 2 - diode 2 cathode</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector1pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector1pin" terminalId="connector1terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector1pin"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector2" name="node" type="male">
+   <description>Pin 3 - internal node (D1 cathode + D2 anode)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector2pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector2pin" terminalId="connector2terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector2pin"/></pcbView>
+   </views>
+  </connector>
+ </connectors>
+</module>
