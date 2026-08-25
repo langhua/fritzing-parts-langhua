@@ -11,6 +11,8 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 | NFC Coil | 20mm、6 匝平面感应线圈（通孔） | `fzpz/NFC-Coil.fzpz` |
 | coil_4x4_array | φ19mm 4×4 阵列铜层 SVG | `svg/NFC-Coil/coil_4x4_array.svg` |
 | BAT54S | SOT-23 双肖特基二极管（3 脚） | `fzpz/BAT54S.fzpz` |
+| WS2812B-2020 | 2.0×2.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-2020.fzpz` |
+| WS2812B-5050 | 5.0×5.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-5050.fzpz` |
 
 ## 开发指南
 

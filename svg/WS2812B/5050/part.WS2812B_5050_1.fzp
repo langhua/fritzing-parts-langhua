@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.9b" moduleId="WS2812B_5050_1">
+ <version>1</version>
+ <author>Shi Jinghai</author>
+ <title>WS2812B-5050</title>
+ <label>LED</label>
+ <date>2026-08-24</date>
+ <tags><tag>LED</tag><tag>RGB</tag><tag>addressable</tag><tag>WS2812B</tag></tags>
+ <properties>
+  <property name="family">LED</property>
+  <property name="package">WS2812B-5050 (5.0x5.0mm)</property>
+  <property name="part number">WS2812B-5050</property>
+ </properties>
+ <description>WS2812B-5050 addressable RGB LED, 5.0x5.0 mm, integrated driver.</description>
+ <views>
+  <iconView>
+   <layers image="icon/WS2812B_5050_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true">
+   <layers image="breadboard/WS2812B_5050_1_breadboard.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </breadboardView>
+  <schematicView fliphorizontal="true" flipvertical="true">
+   <layers image="schematic/WS2812B_5050_1_schematic.svg">
+    <layer layerId="schematic"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/WS2812B_5050_1_pcb.svg">
+    <layer layerId="silkscreen"/>
+    <layer layerId="copper1"/>
+   </layers>
+  </pcbView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="DO" type="male">
+   <description>Pin 1 - data output</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector0pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector0pin" terminalId="connector0terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector0pin"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector1" name="VDD" type="male">
+   <description>Pin 2 - power supply</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector1pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector1pin" terminalId="connector1terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector1pin"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector2" name="DI" type="male">
+   <description>Pin 3 - data input</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector2pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector2pin" terminalId="connector2terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector2pin"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector3" name="GND" type="male">
+   <description>Pin 4 - ground</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector3pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector3pin" terminalId="connector3terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector3pin"/></pcbView>
+   </views>
+  </connector>
+ </connectors>
+</module>
