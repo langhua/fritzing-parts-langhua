@@ -253,8 +253,8 @@ def typec_art(cx, bottom_y, width_mm=8.94):
     if _TYPEC_ART is None:
         return ('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#333333" '
                 'stroke="#999999" stroke-width="5"/>\\n' % (ox, oy, 25.34 * s, 21.64 * s))
-    return ('  <g transform="translate(%.2f %.2f) rotate(180 %.2f %.2f) scale(%.5f)">\\n'
-            '%s\\n  </g>\\n' % (ox, oy, rcx, rcy, s, _TYPEC_ART))
+    return ('  <g transform="translate(%.2f %.2f) rotate(180 %.2f %.2f) scale(%.5f)">\n'
+            '%s\n  </g>\n' % (ox, oy, rcx, rcy, s, _TYPEC_ART))
 
 # --------------------------------------------------------------------------
 # WS2812B 5050 RGB LED art, reused from the WS2812B/5050 part's breadboard view

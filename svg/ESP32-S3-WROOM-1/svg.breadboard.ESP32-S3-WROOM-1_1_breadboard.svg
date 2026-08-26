@@ -313,7 +313,8 @@
   <rect x="851" y="1956" width="32" height="16" fill="#8c8c8c"/>
   <rect x="774" y="1895" width="48" height="48" fill="#555555"/>
   <text x="798" y="1828" font-size="20" fill="#cccccc" text-anchor="middle" font-family="DroidSans">CH343p</text>
-  <g transform="translate(124.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">\n<g
+  <g transform="translate(124.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">
+<g
      transform="translate(-16.129,3.990882e-4)"><g
        transform="rotate(180,28.8,10.4173)"><g><rect
            fill="#dcdcdc"
@@ -377,7 +378,10 @@
        height="1.424"
        width="3.4630001"
        x="22.02"
-       y="13.593" /></g>\n  </g>\n  <g transform="translate(614.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">\n<g
+       y="13.593" /></g>
+  </g>
+  <g transform="translate(614.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">
+<g
      transform="translate(-16.129,3.990882e-4)"><g
        transform="rotate(180,28.8,10.4173)"><g><rect
            fill="#dcdcdc"
@@ -441,7 +445,9 @@
        height="1.424"
        width="3.4630001"
        x="22.02"
-       y="13.593" /></g>\n  </g>\n  <text x="300" y="2130" font-size="20" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans">OTG</text>
+       y="13.593" /></g>
+  </g>
+  <text x="300" y="2130" font-size="20" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans">OTG</text>
   <text x="790" y="2130" font-size="20" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans">UART</text>
   <circle cx="1050" cy="321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector0pin"/>
   <text x="1014" y="321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 321)">GND</text>
