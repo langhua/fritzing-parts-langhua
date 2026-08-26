@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="27.94mm" height="63.39mm" viewBox="0 0 79.2 179.7">
+ <defs>
+  <linearGradient id="bbShield" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#e2e2e2"/>
+   <stop offset="0.45" stop-color="#b4b4b4"/>
+   <stop offset="1" stop-color="#7c7c7c"/>
+  </linearGradient>
+ </defs>
+ <g id="breadboard" transform="scale(0.072)">
+  <rect x="0" y="246" width="1100" height="2250" fill="#262626" stroke="#000000" stroke-width="6"/>
+  <path d="M 196.00 0.00  L 904.66 0.00  L 904.66 264.37 A 10.827 10.827 0 0 0 904.66 286.02  L 904.66 314.37 A 10.827 10.827 0 0 0 904.66 336.02  L 904.66 364.37 A 10.827 10.827 0 0 0 904.66 386.02  L 904.66 414.37 A 10.827 10.827 0 0 0 904.66 436.02  L 904.66 464.37 A 10.827 10.827 0 0 0 904.66 486.02  L 904.66 514.37 A 10.827 10.827 0 0 0 904.66 536.02  L 904.66 564.37 A 10.827 10.827 0 0 0 904.66 586.02  L 904.66 614.37 A 10.827 10.827 0 0 0 904.66 636.02  L 904.66 664.37 A 10.827 10.827 0 0 0 904.66 686.02  L 904.66 714.37 A 10.827 10.827 0 0 0 904.66 736.02  L 904.66 764.37 A 10.827 10.827 0 0 0 904.66 786.02  L 904.66 814.37 A 10.827 10.827 0 0 0 904.66 836.02  L 904.66 864.37 A 10.827 10.827 0 0 0 904.66 886.02  L 904.66 914.37 A 10.827 10.827 0 0 0 904.66 936.02  L 904.66 984.25  L 859.98 984.25 A 10.827 10.827 0 0 0 838.32 984.25  L 805.64 984.25 A 10.827 10.827 0 0 0 783.99 984.25  L 751.31 984.25 A 10.827 10.827 0 0 0 729.66 984.25  L 696.98 984.25 A 10.827 10.827 0 0 0 675.33 984.25  L 642.65 984.25 A 10.827 10.827 0 0 0 621.00 984.25  L 588.32 984.25 A 10.827 10.827 0 0 0 566.67 984.25  L 533.99 984.25 A 10.827 10.827 0 0 0 512.34 984.25  L 479.66 984.25 A 10.827 10.827 0 0 0 458.01 984.25  L 425.33 984.25 A 10.827 10.827 0 0 0 403.68 984.25  L 371.00 984.25 A 10.827 10.827 0 0 0 349.35 984.25  L 316.67 984.25 A 10.827 10.827 0 0 0 295.02 984.25  L 262.34 984.25 A 10.827 10.827 0 0 0 240.68 984.25  L 196.00 984.25  L 196.00 936.02 A 10.827 10.827 0 0 0 196.00 914.37  L 196.00 886.02 A 10.827 10.827 0 0 0 196.00 864.37  L 196.00 836.02 A 10.827 10.827 0 0 0 196.00 814.37  L 196.00 786.02 A 10.827 10.827 0 0 0 196.00 764.37  L 196.00 736.02 A 10.827 10.827 0 0 0 196.00 714.37  L 196.00 686.02 A 10.827 10.827 0 0 0 196.00 664.37  L 196.00 636.02 A 10.827 10.827 0 0 0 196.00 614.37  L 196.00 586.02 A 10.827 10.827 0 0 0 196.00 564.37  L 196.00 536.02 A 10.827 10.827 0 0 0 196.00 514.37  L 196.00 486.02 A 10.827 10.827 0 0 0 196.00 464.37  L 196.00 436.02 A 10.827 10.827 0 0 0 196.00 414.37  L 196.00 386.02 A 10.827 10.827 0 0 0 196.00 364.37  L 196.00 336.02 A 10.827 10.827 0 0 0 196.00 314.37  L 196.00 286.02 A 10.827 10.827 0 0 0 196.00 264.37  L 196.00 0.00 Z" fill="#2b2b2b"/>
+  <polygon points="325.37,160.16 456.77,160.16 456.77,38.90 539.61,38.90 539.61,160.16 670.00,160.16 670.00,38.90 750.57,38.90 750.57,228.14 769.78,228.14 769.78,38.90 856.23,38.90 856.23,228.19 875.16,228.19 875.16,19.68 650.79,19.68 650.79,140.94 558.82,140.94 558.82,19.68 437.56,19.68 437.56,140.94 344.58,140.94 344.58,19.68 225.53,19.68 225.53,228.19 244.74,228.19 244.74,38.90 325.37,38.90" fill="#9aa0a6"/>
+  <circle cx="760.17" cy="227.95" r="9.449" fill="#e3b23c"/>
+  <circle cx="865.68" cy="228.35" r="9.449" fill="#e3b23c"/>
+  <rect x="239.31" y="250.00" width="622.05" height="692.91" fill="url(#bbShield)"/>
+  <text x="550.33" y="480.31" font-size="90.55" font-weight="bold" fill="#111111" text-anchor="middle" font-family="Arial">ESPRESSIF</text>
+  <text x="550.33" y="582.68" font-size="62.99" fill="#333333" text-anchor="middle" font-family="Arial">ESP32-S3-WROOM-1</text>
+  <text x="550.33" y="661.42" font-size="47.24" fill="#555555" text-anchor="middle" font-family="Arial">乐鑫信息科技</text>
+  <g fill="#111111">
+   <rect x="692.06" y="692.91" width="39.37" height="39.37"/>
+   <rect x="739.31" y="692.91" width="39.37" height="39.37"/>
+   <rect x="786.55" y="692.91" width="39.37" height="39.37"/>
+   <rect x="692.06" y="740.16" width="39.37" height="39.37"/>
+   <rect x="739.31" y="740.16" width="39.37" height="39.37"/>
+   <rect x="692.06" y="787.40" width="39.37" height="39.37"/>
+   <rect x="786.55" y="787.40" width="39.37" height="39.37"/>
+   <rect x="739.31" y="787.40" width="39.37" height="39.37"/>
+   <rect x="786.55" y="740.16" width="39.37" height="39.37"/>
+   <rect x="786.55" y="763.78" width="39.37" height="39.37"/>
+   <rect x="692.06" y="763.78" width="39.37" height="39.37"/>
+  </g>
+  <g fill="#e3b23c">
+   <path d="M 213.72 907.48 L 196.00 907.48 L 196.00 914.37 A 10.827 10.827 0 0 1 196.00 936.02 L 196.00 942.91 L 213.72 942.91 Z"/>
+   <path d="M 886.94 907.48 L 904.66 907.48 L 904.66 914.37 A 10.827 10.827 0 0 0 904.66 936.02 L 904.66 942.91 L 886.94 942.91 Z"/>
+   <path d="M 213.72 857.48 L 196.00 857.48 L 196.00 864.37 A 10.827 10.827 0 0 1 196.00 886.02 L 196.00 892.91 L 213.72 892.91 Z"/>
+   <path d="M 886.94 857.48 L 904.66 857.48 L 904.66 864.37 A 10.827 10.827 0 0 0 904.66 886.02 L 904.66 892.91 L 886.94 892.91 Z"/>
+   <path d="M 213.72 807.48 L 196.00 807.48 L 196.00 814.37 A 10.827 10.827 0 0 1 196.00 836.02 L 196.00 842.91 L 213.72 842.91 Z"/>
+   <path d="M 886.94 807.48 L 904.66 807.48 L 904.66 814.37 A 10.827 10.827 0 0 0 904.66 836.02 L 904.66 842.91 L 886.94 842.91 Z"/>
+   <path d="M 213.72 757.48 L 196.00 757.48 L 196.00 764.37 A 10.827 10.827 0 0 1 196.00 786.02 L 196.00 792.91 L 213.72 792.91 Z"/>
+   <path d="M 886.94 757.48 L 904.66 757.48 L 904.66 764.37 A 10.827 10.827 0 0 0 904.66 786.02 L 904.66 792.91 L 886.94 792.91 Z"/>
+   <path d="M 213.72 707.48 L 196.00 707.48 L 196.00 714.37 A 10.827 10.827 0 0 1 196.00 736.02 L 196.00 742.91 L 213.72 742.91 Z"/>
+   <path d="M 886.94 707.48 L 904.66 707.48 L 904.66 714.37 A 10.827 10.827 0 0 0 904.66 736.02 L 904.66 742.91 L 886.94 742.91 Z"/>
+   <path d="M 213.72 657.48 L 196.00 657.48 L 196.00 664.37 A 10.827 10.827 0 0 1 196.00 686.02 L 196.00 692.91 L 213.72 692.91 Z"/>
+   <path d="M 886.94 657.48 L 904.66 657.48 L 904.66 664.37 A 10.827 10.827 0 0 0 904.66 686.02 L 904.66 692.91 L 886.94 692.91 Z"/>
+   <path d="M 213.72 607.48 L 196.00 607.48 L 196.00 614.37 A 10.827 10.827 0 0 1 196.00 636.02 L 196.00 642.91 L 213.72 642.91 Z"/>
+   <path d="M 886.94 607.48 L 904.66 607.48 L 904.66 614.37 A 10.827 10.827 0 0 0 904.66 636.02 L 904.66 642.91 L 886.94 642.91 Z"/>
+   <path d="M 213.72 557.48 L 196.00 557.48 L 196.00 564.37 A 10.827 10.827 0 0 1 196.00 586.02 L 196.00 592.91 L 213.72 592.91 Z"/>
+   <path d="M 886.94 557.48 L 904.66 557.48 L 904.66 564.37 A 10.827 10.827 0 0 0 904.66 586.02 L 904.66 592.91 L 886.94 592.91 Z"/>
+   <path d="M 213.72 507.48 L 196.00 507.48 L 196.00 514.37 A 10.827 10.827 0 0 1 196.00 536.02 L 196.00 542.91 L 213.72 542.91 Z"/>
+   <path d="M 886.94 507.48 L 904.66 507.48 L 904.66 514.37 A 10.827 10.827 0 0 0 904.66 536.02 L 904.66 542.91 L 886.94 542.91 Z"/>
+   <path d="M 213.72 457.48 L 196.00 457.48 L 196.00 464.37 A 10.827 10.827 0 0 1 196.00 486.02 L 196.00 492.91 L 213.72 492.91 Z"/>
+   <path d="M 886.94 457.48 L 904.66 457.48 L 904.66 464.37 A 10.827 10.827 0 0 0 904.66 486.02 L 904.66 492.91 L 886.94 492.91 Z"/>
+   <path d="M 213.72 407.48 L 196.00 407.48 L 196.00 414.37 A 10.827 10.827 0 0 1 196.00 436.02 L 196.00 442.91 L 213.72 442.91 Z"/>
+   <path d="M 886.94 407.48 L 904.66 407.48 L 904.66 414.37 A 10.827 10.827 0 0 0 904.66 436.02 L 904.66 442.91 L 886.94 442.91 Z"/>
+   <path d="M 213.72 357.48 L 196.00 357.48 L 196.00 364.37 A 10.827 10.827 0 0 1 196.00 386.02 L 196.00 392.91 L 213.72 392.91 Z"/>
+   <path d="M 886.94 357.48 L 904.66 357.48 L 904.66 364.37 A 10.827 10.827 0 0 0 904.66 386.02 L 904.66 392.91 L 886.94 392.91 Z"/>
+   <path d="M 213.72 307.48 L 196.00 307.48 L 196.00 314.37 A 10.827 10.827 0 0 1 196.00 336.02 L 196.00 342.91 L 213.72 342.91 Z"/>
+   <path d="M 886.94 307.48 L 904.66 307.48 L 904.66 314.37 A 10.827 10.827 0 0 0 904.66 336.02 L 904.66 342.91 L 886.94 342.91 Z"/>
+   <path d="M 213.72 257.48 L 196.00 257.48 L 196.00 264.37 A 10.827 10.827 0 0 1 196.00 286.02 L 196.00 292.91 L 213.72 292.91 Z"/>
+   <path d="M 886.94 257.48 L 904.66 257.48 L 904.66 264.37 A 10.827 10.827 0 0 0 904.66 286.02 L 904.66 292.91 L 886.94 292.91 Z"/>
+   <path d="M 233.80 966.53 L 233.80 984.25 L 240.68 984.25 A 10.827 10.827 0 0 1 262.34 984.25 L 269.23 984.25 L 269.23 966.53 Z"/>
+   <path d="M 288.13 966.53 L 288.13 984.25 L 295.02 984.25 A 10.827 10.827 0 0 1 316.67 984.25 L 323.56 984.25 L 323.56 966.53 Z"/>
+   <path d="M 342.46 966.53 L 342.46 984.25 L 349.35 984.25 A 10.827 10.827 0 0 1 371.00 984.25 L 377.89 984.25 L 377.89 966.53 Z"/>
+   <path d="M 396.79 966.53 L 396.79 984.25 L 403.68 984.25 A 10.827 10.827 0 0 1 425.33 984.25 L 432.22 984.25 L 432.22 966.53 Z"/>
+   <path d="M 451.12 966.53 L 451.12 984.25 L 458.01 984.25 A 10.827 10.827 0 0 1 479.66 984.25 L 486.55 984.25 L 486.55 966.53 Z"/>
+   <path d="M 505.45 966.53 L 505.45 984.25 L 512.34 984.25 A 10.827 10.827 0 0 1 533.99 984.25 L 540.88 984.25 L 540.88 966.53 Z"/>
+   <path d="M 559.78 966.53 L 559.78 984.25 L 566.67 984.25 A 10.827 10.827 0 0 1 588.32 984.25 L 595.21 984.25 L 595.21 966.53 Z"/>
+   <path d="M 614.11 966.53 L 614.11 984.25 L 621.00 984.25 A 10.827 10.827 0 0 1 642.65 984.25 L 649.54 984.25 L 649.54 966.53 Z"/>
+   <path d="M 668.44 966.53 L 668.44 984.25 L 675.33 984.25 A 10.827 10.827 0 0 1 696.98 984.25 L 703.87 984.25 L 703.87 966.53 Z"/>
+   <path d="M 722.77 966.53 L 722.77 984.25 L 729.66 984.25 A 10.827 10.827 0 0 1 751.31 984.25 L 758.20 984.25 L 758.20 966.53 Z"/>
+   <path d="M 777.10 966.53 L 777.10 984.25 L 783.99 984.25 A 10.827 10.827 0 0 1 805.64 984.25 L 812.53 984.25 L 812.53 966.53 Z"/>
+   <path d="M 831.43 966.53 L 831.43 984.25 L 838.32 984.25 A 10.827 10.827 0 0 1 859.98 984.25 L 866.86 984.25 L 866.86 966.53 Z"/>
+  </g>
+  <g transform="translate(302 1771) rotate(180) scale(13.89000) translate(-10.8 -21.6)">
+<g transform="translate(10.8000,21.6000) rotate(90) translate(-10.8000,-21.6000)">
+		<g>
+			<g>
+				<rect x="13.919" y="27.551" fill="#B3B3B3" width="2.834" height="1.542"/>
+				<rect x="4.847" y="27.551" fill="#B3B3B3" width="2.834" height="1.542"/>
+				<rect x="13.919" y="13.8" fill="#B3B3B3" width="2.834" height="1.543"/>
+				<rect x="4.847" y="13.8" fill="#B3B3B3" width="2.834" height="1.543"/>
+			</g>
+			<rect x="3.714" y="14.36" fill="#E6E6E6" width="14.172" height="14.174"/>
+			<circle fill="#CCCCCC" cx="10.801" cy="21.633" r="5.613"/>
+			<circle fill="#E6E6E6" cx="10.801" cy="21.633" r="4.796"/>
+			<g>
+				<g>
+					<g>
+						<path fill="#999999" d="M8.906,24.6v1.438c0.581,0.25,1.223,0.393,1.896,0.393c0.682,0,1.329-0.146,1.917-0.404V24.6H8.906z"/>
+						<path fill="#999999" d="M13.718,18.581c-0.146,0-0.645,0-1,0c-0.354,0-0.395,0.395-0.395,0.395v1.396l0.625,0.625h2.584        c-0.156-1.162-0.72-2.184-1.552-2.928C13.962,18.321,13.851,18.581,13.718,18.581z"/>
+						<path fill="#999999" d="M9.313,20.372v-1.396c0,0-0.041-0.395-0.395-0.395c-0.355,0-0.854,0-1,0        c-0.14,0-0.254-0.279-0.268-0.539c-0.851,0.746-1.426,1.779-1.583,2.955h2.619L9.313,20.372z"/>
+						<path fill="#999999" d="M13.212,22.6l0.006,1.084c0.008,0,0.061,0,0.334,0c0.418,0,0.438,0.459,0.438,0.459v1.049        c0.883-0.793,1.459-1.9,1.565-3.154c-0.399,0-1.375,0-1.815,0C13.177,22.038,13.212,22.6,13.212,22.6z"/>
+						<path fill="#999999" d="M7.612,25.192v-1.049c0,0,0.021-0.459,0.437-0.459c0.271,0,0.326,0,0.334,0L8.389,22.6        c0,0,0.033-0.563-0.529-0.563c-0.44,0-1.414,0-1.813,0C6.152,23.292,6.728,24.399,7.612,25.192z"/>
+						<path fill="#999999" d="M10.145,21.448c0,0-0.041,0.271-0.457,0.271c-0.418,0-0.418,0-0.418,0v1.686        c0,0-0.084,0.392,0.313,0.392c0.181,0,0.526,0,0.854,0c0,0,0.36,0,0.752,0c0.327,0,0.672,0,0.854,0        c0.396,0,0.313-0.392,0.313-0.392v-1.686c0,0,0,0-0.418,0c-0.416,0-0.457-0.271-0.457-0.271v-3.555l1.052-0.721        c-0.537-0.209-1.117-0.334-1.729-0.334c-0.605,0-1.181,0.123-1.715,0.328l1.059,0.727v3.555H10.145z"/>
+					</g>
+					<rect x="9.796" y="21.85" fill="#4F423C" width="2.229" height="3.105"/>
+				</g>
+				<rect x="10.503" y="20.1" fill="#4D4D4D" width="0.695" height="0.646"/>
+				<rect x="8.093" y="18.999" fill="#4D4D4D" width="0.961" height="0.988"/>
+				<g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M7.781,22.918c0.075,0.033,1.903,0.82,2.588,1.317l-0.06,0.082c-0.676-0.491-2.551-1.299-2.567-1.308         L7.781,22.918z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="7.76" cy="22.965" r="0.132"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.338" cy="24.278" r="0.131"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M6.938,20.702c0.115,0.059,2.806,1.441,3.101,1.645l-0.058,0.082         C9.69,22.23,6.92,20.806,6.893,20.792L6.938,20.702z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="6.917" cy="20.747" r="0.132"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.01" cy="22.387" r="0.131"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M8.428,19.825c0.08,0.098,1.986,2.433,2.082,2.734l-0.096,0.031         c-0.074-0.236-1.517-2.031-2.064-2.703L8.428,19.825z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="8.389" cy="19.856" r="0.132"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.464" cy="22.575" r="0.131"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M10.587,17.78l0.098,0.02c-0.016,0.127-1.153,1.035-1.83,1.564l-0.063-0.078         C9.458,18.764,10.536,17.893,10.587,17.78z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="8.823" cy="19.325" r="0.131"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.635" cy="17.793" r="0.132"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M11.057,18.098c0.665,0.563,1.95,1.643,2.06,1.717l-0.056,0.082         c-0.143-0.094-1.991-1.656-2.068-1.723L11.057,18.098z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.025" cy="18.136" r="0.132"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="13.088" cy="19.856" r="0.132"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M13.409,20.198l0.075,0.064c-0.069,0.086-1.748,2.074-2.361,2.357l-0.041-0.091         C11.675,22.256,13.392,20.219,13.409,20.198z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="13.448" cy="20.231" r="0.131"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.104" cy="22.575" r="0.131"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M10.906,20.426c0.063,0.393-0.085,2.08-0.093,2.152l-0.1-0.009c0.002-0.018,0.156-1.748,0.092-2.129         L10.906,20.426z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.764" cy="22.575" r="0.131"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="10.855" cy="20.434" r="0.132"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M13.634,22.482l0.096,0.029c-0.006,0.022-0.174,0.546-1.002,0.706         c-0.793,0.154-1.504,0.447-1.51,0.451l-0.039-0.095c0.008-0.002,0.728-0.3,1.53-0.454         C13.474,22.971,13.628,22.502,13.634,22.482z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.198" cy="23.622" r="0.131"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="13.682" cy="22.497" r="0.132"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M14.316,23.745l0.017,0.099c-0.017,0.004-1.648,0.25-2.771,0l0.021-0.099         C12.687,23.989,14.3,23.747,14.316,23.745z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="14.323" cy="23.793" r="0.131"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.573" cy="23.792" r="0.132"/>
+							</g>
+						</g>
+					</g>
+					<g>
+						<g>
+							<path fill="#E6C47E" d="M11.075,24.323c0.03,0.768,0.65,1.366,0.656,1.372l-0.067,0.072c-0.027-0.024-0.657-0.632-0.688-1.44         L11.075,24.323z"/>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.698" cy="25.731" r="0.132"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<circle fill="#E6C47E" cx="11.025" cy="24.325" r="0.132"/>
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+</g>
+  </g>
+  <g transform="rotate(90 291 1371)">
+  <rect x="163" y="1302" width="256" height="138" rx="8" fill="#303030" stroke="#4a4a4a" stroke-width="4"/>
+  <rect x="191" y="1254" width="200" height="46" rx="4" fill="#8c8c8c"/>
+  <rect x="176" y="1442" width="50" height="38" rx="4" fill="#8c8c8c"/>
+  <rect x="266" y="1442" width="50" height="38" rx="4" fill="#8c8c8c"/>
+  <rect x="356" y="1442" width="50" height="38" rx="4" fill="#8c8c8c"/>
+  <text x="291" y="1379" font-size="28" fill="#ffffff" text-anchor="middle" font-family="DroidSans">CJ6107A33GW</text>
+  </g>
+  <g transform="translate(788 1171) scale(0.60)">
+  <rect x="-75.5" y="-58" width="151" height="116" fill="#cccccc"/>
+  <rect x="-78.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="-78.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="-102.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="74.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="-76.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="-76.5" y="0" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="0" width="21" height="8" fill="#333333"/>
+  <ellipse cx="-2.5" cy="-1" rx="37.766" ry="36.967" fill="#333333" stroke="#1a1a1a" stroke-width="3.03"/>
+  <path d="m -15.02,-36.72 c 5.29,-2.70 7.93,-2.70 13.19,-2.70 13.19,0 23.78,5.40 29.07,16.19" fill="none" stroke="#ffffff" stroke-width="3.03"/>
+  </g>
+  <text x="863" y="1171" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 863 1171)">RST</text>
+  <g transform="translate(788 1371) scale(0.60)">
+  <rect x="-75.5" y="-58" width="151" height="116" fill="#cccccc"/>
+  <rect x="-78.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="-78.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="-102.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="74.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="-76.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="-76.5" y="0" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="0" width="21" height="8" fill="#333333"/>
+  <ellipse cx="-2.5" cy="-1" rx="37.766" ry="36.967" fill="#333333" stroke="#1a1a1a" stroke-width="3.03"/>
+  <path d="m -15.02,-36.72 c 5.29,-2.70 7.93,-2.70 13.19,-2.70 13.19,0 23.78,5.40 29.07,16.19" fill="none" stroke="#ffffff" stroke-width="3.03"/>
+  </g>
+  <text x="863" y="1371" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 863 1371)">BOOT</text>
+  <rect x="729" y="1850" width="138" height="138" fill="#303030" stroke="#4a4a4a" stroke-width="4"/>
+  <rect x="745" y="1834" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="745" y="1972" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="775" y="1834" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="775" y="1972" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="805" y="1834" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="805" y="1972" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="835" y="1834" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="835" y="1972" width="16" height="32" fill="#8c8c8c"/>
+  <rect x="713" y="1866" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="851" y="1866" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="713" y="1896" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="851" y="1896" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="713" y="1926" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="851" y="1926" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="713" y="1956" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="851" y="1956" width="32" height="16" fill="#8c8c8c"/>
+  <rect x="774" y="1895" width="48" height="48" fill="#555555"/>
+  <text x="798" y="1828" font-size="20" fill="#cccccc" text-anchor="middle" font-family="DroidSans">CH343p</text>
+  <g transform="translate(124.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">
+<g
+     transform="translate(-16.129,3.990882e-4)"><g
+       transform="rotate(180,28.8,10.4173)"><g><rect
+           fill="#dcdcdc"
+           height="20.834999"
+           width="25.341999"
+           x="16.129"
+           y="0" /></g></g><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.32863,21.54826 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.871,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 21.596629,21.643222 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 22.139,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 23.556,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 24.973,21.572 H 25.54 V 20.671593 H 24.973 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 26.391,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 27.808,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 29.225,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 30.643,21.572 H 31.21 V 20.671593 H 30.643 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 32.06,21.572 h 0.567 V 20.671593 H 32.06 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 33.477,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 34.894,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 35.460111,21.619481 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.162,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.68063,20.742816 h 0.567 v 0.900407 h -0.567 z" /><g
+       transform="rotate(180,38.7781,10.4173)"><g><rect
+           fill="#f0f0f0"
+           height="20.834999"
+           width="1.2970001"
+           x="38.129002"
+           y="0" /></g></g><g
+       transform="rotate(180,18.8219,10.4173)"><g><rect
+           fill="#bebebe"
+           height="20.834999"
+           width="1.2970001"
+           x="18.173"
+           y="0" /></g></g><path
+       d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z"
+       fill="#8c8c8c" /><g
+       transform="rotate(180,33.84895,14.3053)"><g><rect
+           fill="#8c8c8c"
+           height="1.424"
+           width="3.4630001"
+           x="32.117001"
+           y="13.593" /></g></g><rect
+       fill="#8c8c8c"
+       height="1.424"
+       width="3.4630001"
+       x="22.02"
+       y="13.593" /></g>
+  </g>
+  <g transform="translate(614.02 2195.42) rotate(180 175.98 150.29) scale(13.88981)">
+<g
+     transform="translate(-16.129,3.990882e-4)"><g
+       transform="rotate(180,28.8,10.4173)"><g><rect
+           fill="#dcdcdc"
+           height="20.834999"
+           width="25.341999"
+           x="16.129"
+           y="0" /></g></g><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.32863,21.54826 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.871,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 21.596629,21.643222 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 22.139,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 23.556,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 24.973,21.572 H 25.54 V 20.671593 H 24.973 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 26.391,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 27.808,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 29.225,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 30.643,21.572 H 31.21 V 20.671593 H 30.643 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 32.06,21.572 h 0.567 V 20.671593 H 32.06 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 33.477,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 34.894,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 35.460111,21.619481 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.162,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.68063,20.742816 h 0.567 v 0.900407 h -0.567 z" /><g
+       transform="rotate(180,38.7781,10.4173)"><g><rect
+           fill="#f0f0f0"
+           height="20.834999"
+           width="1.2970001"
+           x="38.129002"
+           y="0" /></g></g><g
+       transform="rotate(180,18.8219,10.4173)"><g><rect
+           fill="#bebebe"
+           height="20.834999"
+           width="1.2970001"
+           x="18.173"
+           y="0" /></g></g><path
+       d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z"
+       fill="#8c8c8c" /><g
+       transform="rotate(180,33.84895,14.3053)"><g><rect
+           fill="#8c8c8c"
+           height="1.424"
+           width="3.4630001"
+           x="32.117001"
+           y="13.593" /></g></g><rect
+       fill="#8c8c8c"
+       height="1.424"
+       width="3.4630001"
+       x="22.02"
+       y="13.593" /></g>
+  </g>
+  <text x="300" y="2130" font-size="20" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans">OTG</text>
+  <text x="790" y="2130" font-size="20" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans">UART</text>
+  <circle cx="1050" cy="321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector0pin"/>
+  <text x="1014" y="321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 321)">GND</text>
+  <circle cx="50" cy="321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector1pin"/>
+  <text x="86" y="321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 321)">3V3</text>
+  <circle cx="50" cy="521" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector2pin"/>
+  <text x="86" y="521" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 521)">RST</text>
+  <circle cx="50" cy="621" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector3pin"/>
+  <text x="86" y="621" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 621)">4</text>
+  <circle cx="50" cy="721" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector4pin"/>
+  <text x="86" y="721" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 721)">5</text>
+  <circle cx="50" cy="821" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector5pin"/>
+  <text x="86" y="821" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 821)">6</text>
+  <circle cx="50" cy="921" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector6pin"/>
+  <text x="86" y="921" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 921)">7</text>
+  <circle cx="50" cy="1021" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector7pin"/>
+  <text x="86" y="1021" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1021)">15</text>
+  <circle cx="50" cy="1121" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector8pin"/>
+  <text x="86" y="1121" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1121)">16</text>
+  <circle cx="50" cy="1221" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector9pin"/>
+  <text x="86" y="1221" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1221)">17</text>
+  <circle cx="50" cy="1321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector10pin"/>
+  <text x="86" y="1321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1321)">18</text>
+  <circle cx="50" cy="1421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector11pin"/>
+  <text x="86" y="1421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1421)">8</text>
+  <circle cx="1050" cy="2221" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector12pin"/>
+  <text x="1014" y="2221" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 2221)">19</text>
+  <circle cx="1050" cy="2121" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector13pin"/>
+  <text x="1014" y="2121" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 2121)">20</text>
+  <circle cx="50" cy="1521" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector14pin"/>
+  <text x="86" y="1521" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1521)">3</text>
+  <circle cx="50" cy="1621" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector15pin"/>
+  <text x="86" y="1621" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1621)">46</text>
+  <circle cx="50" cy="1721" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector16pin"/>
+  <text x="86" y="1721" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1721)">9</text>
+  <circle cx="50" cy="1821" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector17pin"/>
+  <text x="86" y="1821" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1821)">10</text>
+  <circle cx="50" cy="1921" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector18pin"/>
+  <text x="86" y="1921" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 1921)">11</text>
+  <circle cx="50" cy="2021" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector19pin"/>
+  <text x="86" y="2021" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 2021)">12</text>
+  <circle cx="50" cy="2121" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector20pin"/>
+  <text x="86" y="2121" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 2121)">13</text>
+  <circle cx="50" cy="2221" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector21pin"/>
+  <text x="86" y="2221" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 2221)">14</text>
+  <circle cx="1050" cy="2021" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector22pin"/>
+  <text x="1014" y="2021" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 2021)">21</text>
+  <circle cx="1050" cy="1921" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector23pin"/>
+  <text x="1014" y="1921" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1921)">47</text>
+  <circle cx="1050" cy="1821" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector24pin"/>
+  <text x="1014" y="1821" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1821)">48</text>
+  <circle cx="1050" cy="1721" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector25pin"/>
+  <text x="1014" y="1721" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1721)">45</text>
+  <circle cx="1050" cy="1621" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector26pin"/>
+  <text x="1014" y="1621" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1621)">0</text>
+  <circle cx="1050" cy="1521" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector27pin"/>
+  <text x="1014" y="1521" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1521)">35</text>
+  <circle cx="1050" cy="1421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector28pin"/>
+  <text x="1014" y="1421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1421)">36</text>
+  <circle cx="1050" cy="1321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector29pin"/>
+  <text x="1014" y="1321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1321)">37</text>
+  <circle cx="1050" cy="1221" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector30pin"/>
+  <text x="1014" y="1221" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1221)">38</text>
+  <circle cx="1050" cy="1121" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector31pin"/>
+  <text x="1014" y="1121" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1121)">39</text>
+  <circle cx="1050" cy="1021" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector32pin"/>
+  <text x="1014" y="1021" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 1021)">40</text>
+  <circle cx="1050" cy="921" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector33pin"/>
+  <text x="1014" y="921" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 921)">41</text>
+  <circle cx="1050" cy="821" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector34pin"/>
+  <text x="1014" y="821" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 821)">42</text>
+  <circle cx="1050" cy="521" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector35pin"/>
+  <text x="1014" y="521" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 521)">RX</text>
+  <circle cx="1050" cy="421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector36pin"/>
+  <text x="1014" y="421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 421)">TX</text>
+  <circle cx="1050" cy="621" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector37pin"/>
+  <text x="1014" y="621" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 621)">1</text>
+  <circle cx="1050" cy="721" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector38pin"/>
+  <text x="1014" y="721" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 721)">2</text>
+  <circle cx="50" cy="2421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector39pin"/>
+  <text x="86" y="2421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 2421)">GND</text>
+  <circle cx="1050" cy="2321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector40pin"/>
+  <text x="1014" y="2321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 2321)">GND</text>
+  <circle cx="50" cy="421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector41pin"/>
+  <text x="86" y="421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 421)">3V3</text>
+  <circle cx="50" cy="2321" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector42pin"/>
+  <text x="86" y="2321" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(90 86 2321)">5Vin</text>
+  <circle cx="1050" cy="2421" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector43pin"/>
+  <text x="1014" y="2421" font-size="52" fill="#ffffff" text-anchor="middle" font-family="DroidSans" transform="rotate(-90 1014 2421)">GND</text>
+ </g>
+</svg>
