@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+ <g id="icon" transform="rotate(-90 16 16)">
+  <rect x="7.2" y="6.0" width="17.6" height="20.0" rx="0.4" ry="0.4" fill="#303030" stroke="none"/>
+  <rect x="3.2" y="6.42" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="6.42" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="9.02" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="9.02" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="11.62" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="11.62" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="14.22" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="14.22" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="16.82" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="16.82" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="19.42" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="19.42" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="22.02" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="22.02" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="3.2" y="24.62" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <rect x="24.8" y="24.62" width="4.0" height="0.96" fill="#f7bf13" stroke="none"/>
+  <circle cx="10.4" cy="9.5" r="1.4" fill="#c0c0c0" stroke="none"/>
+  <text x="16" y="16.6" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0" transform="rotate(90 16 15.5)">YC4159</text>
+ </g>
+</svg>
