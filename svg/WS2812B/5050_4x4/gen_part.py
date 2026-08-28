@@ -180,6 +180,8 @@ def schematic_svg():
     s.append('<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="110px" height="70px" viewBox="0 0 110 70" xml:space="preserve">')
     s.append(' <g id="schematic">')
     s.append('  <rect x="%.0f" y="%.0f" width="%.0f" height="%.0f" fill="#FFFFFF" stroke="#000000" stroke-width="0.9"/>' % (x, y, w, h))
+    # pin-1 index dot (connector0 = bottom header GND) at the symbol's top-left
+    s.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#000000" stroke="none"/>' % (x + 1.5, y + 3.0, 1.3))
     s.append('  <text transform="matrix(1 0 0 1 %.1f %.1f)" fill="#000000" font-family="DroidSans" font-size="4.2" text-anchor="middle">WS2812B</text>' % (x + w / 2, y + 20))
     s.append('  <text transform="matrix(1 0 0 1 %.1f %.1f)" fill="#000000" font-family="DroidSans" font-size="3.4" text-anchor="middle">4x4 RGB</text>' % (x + w / 2, y + 28))
     for cid, name, py in left:
@@ -278,6 +280,10 @@ def pcb_svg():
     s.append('  <rect x="0" y="0" width="%.0f" height="%.0f" fill="none" stroke="#000000" stroke-width="0.2"/>' % (BOARD_MM, BOARD_MM))
     for mx, my in MOUNT_HOLES_MM:
         s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="#000000" stroke-width="0.2"/>' % (mx, my, MOUNT_R_MM))
+    # pin-1 index dot (connector0 = bottom header pin 1) + DIN/DOUT direction labels
+    s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="#000000" stroke="none"/>' % (PIN_X_MM[0], BOARD_MM - 6.0, 0.9))
+    s.append('  <text x="%.2f" y="%.2f" font-size="2.5" fill="#000000" font-family="DroidSans" text-anchor="middle">DIN</text>' % (PIN_X_MM[2], BOARD_MM - 7.0))
+    s.append('  <text x="%.2f" y="%.2f" font-size="2.5" fill="#000000" font-family="DroidSans" text-anchor="middle">DOUT</text>' % (PIN_X_MM[2], 7.0))
     s.append(' </g>')
     s.append('</svg>')
     return "\n".join(s)
