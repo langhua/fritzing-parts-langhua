@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="34mm" height="36mm" viewBox="-2 -3 34 36" xml:space="preserve">
+ <g id="copper0">
+  <g id="copper1">
+   <rect id="connector0pin" x="10.39" y="25.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector1pin" x="12.93" y="25.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector2pin" x="15.47" y="25.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector3pin" x="18.01" y="25.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector4pin" x="10.39" y="-1.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector5pin" x="12.93" y="-1.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector6pin" x="15.47" y="-1.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+   <rect id="connector7pin" x="18.01" y="-1.50" width="1.60" height="6.00" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>
+  </g>
+ </g>
+ <g id="silkscreen">
+  <rect x="0" y="0" width="30" height="30" fill="none" stroke="#000000" stroke-width="0.2"/>
+  <circle cx="7.50" cy="7.50" r="1.30" fill="none" stroke="#000000" stroke-width="0.2"/>
+  <circle cx="22.50" cy="7.50" r="1.30" fill="none" stroke="#000000" stroke-width="0.2"/>
+  <circle cx="7.50" cy="22.50" r="1.30" fill="none" stroke="#000000" stroke-width="0.2"/>
+  <circle cx="22.50" cy="22.50" r="1.30" fill="none" stroke="#000000" stroke-width="0.2"/>
+ </g>
+</svg>
