@@ -12,7 +12,7 @@
   <property name="package">WS2812B-5050 4x4 Module (30x30mm)</property>
   <property name="part number">WS2812B-5050-4x4</property>
  </properties>
- <description>4x4 WS2812B-5050 RGB matrix module, black board ~30x30mm, LEDs spread evenly (pitch 7.5mm), 12 bypass caps, 4 mount holes. 8 pins: bottom GND/VCC/DIN/GND, top GND/VCC/DOUT/GND (2.54mm). LED scan order serpentine from bottom-right (1..16) - verify against the real module silkscreen.</description>
+ <description>4x4 WS2812B-5050 RGB matrix module, black board ~30x30mm, LEDs spread evenly (pitch 7.5mm), 12 bypass caps, 4 mount holes. 8 pins: bottom GND/VCC/DIN/GND, top GND/VCC/DOUT/GND (2.54mm). LED scan order: each column climbs bottom->top from bottom-right (grid top->bottom 16 12 8 4 / 15 11 7 3 / 14 10 6 2 / 13 9 5 1) - verified against the real module.</description>
  <views>
   <iconView>
    <layers image="icon/WS2812B_5050_4x4_1_icon.svg">

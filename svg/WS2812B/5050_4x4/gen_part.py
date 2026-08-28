@@ -20,9 +20,12 @@ Physical module (user-confirmed 2026-08-28, module in hand + photos):
         bottom (left->right): GND, VCC, DIN, GND
         top    (left->right): GND, VCC, DOUT, GND
     Pins centred, 2.54 mm pitch, no pin text.
-  - LED scan order (serpentine, bottom-right start):
-        1@BR; bottom row L->R: 4 3 2 1; row2: 5 6 7 8;
-        row3: 12 11 10 9; top row: 13 14 15 16  (DOUT exits top-right).
+  - LED scan order (each column climbs bottom->top, columns joined at bottom):
+        1@BR; right col up: 1 2 3 4; col2 up: 5 6 7 8;
+        col1 up: 9 10 11 12; left col up: 13 14 15 16.
+        Grid (rows top->bottom, cols left->right):
+        16 12 8 4 / 15 11 7 3 / 14 10 6 2 / 13 9 5 1
+        (verified against the real module).
 
 Fritzing breadboard view scale (from the LM393 module part, which renders
 correctly in Fritzing): viewBox 140.494 units = declared width 49.553791 mm,
@@ -127,11 +130,13 @@ TOP_PINS = [
 CONN = BOTTOM_PINS + TOP_PINS
 
 # LED scan order: number -> (col_idx, row_idx); row 3 = bottom, col 3 = right
+# Verified against the real module: each column climbs bottom->top,
+# columns joined at the bottom (1 = bottom-right).
 ORDER = {
-    1: (3, 3), 2: (2, 3), 3: (1, 3), 4: (0, 3),
-    5: (0, 2), 6: (1, 2), 7: (2, 2), 8: (3, 2),
-    9: (3, 1), 10: (2, 1), 11: (1, 1), 12: (0, 1),
-    13: (0, 0), 14: (1, 0), 15: (2, 0), 16: (3, 0),
+    1: (3, 3), 2: (3, 2), 3: (3, 1), 4: (3, 0),
+    5: (2, 3), 6: (2, 2), 7: (2, 1), 8: (2, 0),
+    9: (1, 3), 10: (1, 2), 11: (1, 1), 12: (1, 0),
+    13: (0, 3), 14: (0, 2), 15: (0, 1), 16: (0, 0),
 }
 
 
@@ -365,7 +370,7 @@ def fzp_xml():
         '  <property name="package">%s</property>\n'
         '  <property name="part number">%s</property>\n'
         ' </properties>\n'
-        ' <description>4x4 WS2812B-5050 RGB matrix module, black board ~30x30mm, LEDs spread evenly (pitch 7.5mm), 12 bypass caps, 4 mount holes. 8 pins: bottom GND/VCC/DIN/GND, top GND/VCC/DOUT/GND (2.54mm). LED scan order serpentine from bottom-right (1..16) - verify against the real module silkscreen.</description>\n'
+        ' <description>4x4 WS2812B-5050 RGB matrix module, black board ~30x30mm, LEDs spread evenly (pitch 7.5mm), 12 bypass caps, 4 mount holes. 8 pins: bottom GND/VCC/DIN/GND, top GND/VCC/DOUT/GND (2.54mm). LED scan order: each column climbs bottom->top from bottom-right (grid top->bottom 16 12 8 4 / 15 11 7 3 / 14 10 6 2 / 13 9 5 1) - verified against the real module.</description>\n'
         ' <views>\n'
         '  <iconView>\n'
         '   <layers image="%s">\n'
