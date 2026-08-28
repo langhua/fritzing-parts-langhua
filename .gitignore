@@ -1,0 +1,6 @@
+# VS Code workspace-local config (machine-specific tasks etc.)
+.vscode/
+
+# Python (part generator scripts)
+__pycache__/
+*.pyc
