@@ -180,8 +180,11 @@ def schematic_svg():
     s.append('<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="110px" height="70px" viewBox="0 0 110 70" xml:space="preserve">')
     s.append(' <g id="schematic">')
     s.append('  <rect x="%.0f" y="%.0f" width="%.0f" height="%.0f" fill="#FFFFFF" stroke="#000000" stroke-width="0.9"/>' % (x, y, w, h))
-    # pin-1 index dot (connector0 = bottom header GND) at the symbol's top-left
-    s.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#000000" stroke="none"/>' % (x + 1.5, y + 3.0, 1.3))
+    # pin-1 index dot: on the right of pin 1 (connector0). Dot centre sits 2.5 x radius
+    # from the box's left edge (1.5r + one extra radius); the triangles use the same gap.
+    pin_r = 1.3
+    edge_gap = 2.5 * pin_r
+    s.append('  <circle cx="%.2f" cy="%.0f" r="%.1f" fill="#000000" stroke="none"/>' % (x + edge_gap, left[0][2], pin_r))
     s.append('  <text transform="matrix(1 0 0 1 %.1f %.1f)" fill="#000000" font-family="DroidSans" font-size="4.2" text-anchor="middle">WS2812B</text>' % (x + w / 2, y + 20))
     s.append('  <text transform="matrix(1 0 0 1 %.1f %.1f)" fill="#000000" font-family="DroidSans" font-size="3.4" text-anchor="middle">4x4 RGB</text>' % (x + w / 2, y + 28))
     for cid, name, py in left:
@@ -192,6 +195,18 @@ def schematic_svg():
         s.append('  <line class="pin" id="%spin" connectorname="%s" x1="%.0f" y1="%.0f" x2="94" y2="%.0f" stroke="#787878" stroke-width="0.75"/>' % (cid, name, x + w, py, py))
         s.append('  <rect class="terminal" id="%sterminal" x="94" y="%.0f" width="0.0001" height="0.0001" fill="none"/>' % (cid, py))
         s.append('  <text transform="matrix(1 0 0 1 93 %.1f)" fill="#8C8C8C" font-family="DroidSans" font-size="2.6" text-anchor="end">%s</text>' % (py - 0.8, name))
+    # DIN/DOUT data-flow triangles INSIDE the box, equilateral, height = pin-1 dot
+    # diameter. DIN (left) is placed with its base at edge_gap from the left edge,
+    # DOUT (right) with its tip at edge_gap from the right edge - so both use the
+    # SAME distance to their side edge as the pin-1 dot centre.
+    din_y = left[2][2]    # connector2 = DIN
+    dout_y = right[2][2]  # connector6 = DOUT
+    dot_d = 2.0 * pin_r
+    half_base = dot_d / 3 ** 0.5
+    s.append('  <polygon points="%.2f,%.0f %.2f,%.1f %.2f,%.1f" fill="#000000" stroke="none"/>' % (
+        x + edge_gap + dot_d, din_y, x + edge_gap, din_y - half_base, x + edge_gap, din_y + half_base))
+    s.append('  <polygon points="%.2f,%.0f %.2f,%.1f %.2f,%.1f" fill="#000000" stroke="none"/>' % (
+        x + w - edge_gap, dout_y, x + w - edge_gap - dot_d, dout_y - half_base, x + w - edge_gap - dot_d, dout_y + half_base))
     s.append(' </g>')
     s.append('</svg>')
     return "\n".join(s)
@@ -267,7 +282,7 @@ def pcb_svg():
     """Module footprint: 8 rectangular header pads (1.6 x 6 mm, overhang 1.5 mm), mm units."""
     s = []
     s.append('<?xml version="1.0" encoding="utf-8"?>')
-    s.append('<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="34mm" height="36mm" viewBox="-2 -3 34 36" xml:space="preserve">')
+    s.append('<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="34mm" height="38mm" viewBox="-2 -4 34 38" xml:space="preserve">')
     s.append(' <g id="copper0">')
     s.append('  <g id="copper1">')
     for (cid, _, _), px in zip(BOTTOM_PINS, PIN_X_MM):
@@ -277,13 +292,28 @@ def pcb_svg():
     s.append('  </g>')
     s.append(' </g>')
     s.append(' <g id="silkscreen">')
-    s.append('  <rect x="0" y="0" width="%.0f" height="%.0f" fill="none" stroke="#000000" stroke-width="0.2"/>' % (BOARD_MM, BOARD_MM))
+    # Board outline. The top/bottom edges are left OPEN where the header pads
+    # cross the board edge, so silkscreen NEVER overlaps a pad (a silkscreen
+    # line on a pad would block soldering / cause poor contact).
+    OPEN_L = min(PIN_X_MM) - PAD_W_MM / 2 - 0.3
+    OPEN_R = max(PIN_X_MM) + PAD_W_MM / 2 + 0.3
+    s.append('  <line x1="0" y1="0" x2="0" y2="%.0f" stroke="#000000" stroke-width="0.2"/>' % BOARD_MM)
+    s.append('  <line x1="%.0f" y1="0" x2="%.0f" y2="%.0f" stroke="#000000" stroke-width="0.2"/>' % (BOARD_MM, BOARD_MM, BOARD_MM))
+    s.append('  <line x1="0" y1="0" x2="%.2f" y2="0" stroke="#000000" stroke-width="0.2"/>' % OPEN_L)
+    s.append('  <line x1="%.2f" y1="0" x2="%.0f" y2="0" stroke="#000000" stroke-width="0.2"/>' % (OPEN_R, BOARD_MM))
+    s.append('  <line x1="0" y1="%.0f" x2="%.2f" y2="%.0f" stroke="#000000" stroke-width="0.2"/>' % (BOARD_MM, OPEN_L, BOARD_MM))
+    s.append('  <line x1="%.2f" y1="%.0f" x2="%.0f" y2="%.0f" stroke="#000000" stroke-width="0.2"/>' % (OPEN_R, BOARD_MM, BOARD_MM, BOARD_MM))
     for mx, my in MOUNT_HOLES_MM:
         s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="#000000" stroke-width="0.2"/>' % (mx, my, MOUNT_R_MM))
-    # pin-1 index dot (connector0 = bottom header pin 1) + DIN/DOUT direction labels
+    # pin-1 index dot (connector0 = bottom header pin 1), clear of the pads
     s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="#000000" stroke="none"/>' % (PIN_X_MM[0], BOARD_MM - 6.0, 0.9))
-    s.append('  <text x="%.2f" y="%.2f" font-size="2.5" fill="#000000" font-family="DroidSans" text-anchor="middle">DIN</text>' % (PIN_X_MM[2], BOARD_MM - 7.0))
-    s.append('  <text x="%.2f" y="%.2f" font-size="2.5" fill="#000000" font-family="DroidSans" text-anchor="middle">DOUT</text>' % (PIN_X_MM[2], 7.0))
+    # DIN/DOUT data-flow triangles OUTSIDE the board, clear of the pads:
+    #   DIN (bottom): tip points up INTO the board (data enters the chip)
+    #   DOUT (top):   tip points up AWAY from the board (data exits the chip)
+    s.append('  <polygon points="%.2f,%.2f %.2f,%.2f %.2f,%.2f" fill="#000000" stroke="none"/>' % (
+        PIN_X_MM[2], BOARD_MM + 1.9, PIN_X_MM[2] - 1.0, BOARD_MM + 3.7, PIN_X_MM[2] + 1.0, BOARD_MM + 3.7))
+    s.append('  <polygon points="%.2f,%.2f %.2f,%.2f %.2f,%.2f" fill="#000000" stroke="none"/>' % (
+        PIN_X_MM[2], -3.5, PIN_X_MM[2] - 1.0, -1.9, PIN_X_MM[2] + 1.0, -1.9))
     s.append(' </g>')
     s.append('</svg>')
     return "\n".join(s)
