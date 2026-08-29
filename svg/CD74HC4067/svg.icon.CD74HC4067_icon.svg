@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+ <g id="icon">
+  <rect x="9.40" y="4.30" width="13.20" height="23.40" rx="0.3" ry="0.3" fill="#303030" stroke="none"/>
+  <rect x="6.40" y="4.82" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="4.82" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="6.77" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="6.77" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="8.72" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="8.72" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="10.68" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="10.68" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="12.62" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="12.62" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="14.57" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="14.57" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="16.53" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="16.53" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="18.48" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="18.48" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="20.43" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="20.43" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="22.38" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="22.38" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="24.32" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="24.32" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="6.40" y="26.28" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <rect x="22.60" y="26.28" width="3.00" height="0.90" fill="#f7bf13" stroke="none"/>
+  <circle cx="11.30" cy="6.20" r="0.9" fill="#c0c0c0" stroke="none"/>
+  <text x="16" y="16" font-size="2.4" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" transform="rotate(90 16 16)" stroke="none" stroke-width="0">HP4067</text>
+ </g>
+</svg>
