@@ -592,10 +592,87 @@ def fzp_xml():
     ) % (PART_ID, TITLE, ICON_REF, BB_REF, SCHEM_REF, PCB_REF, "".join(conns))
 
 
+# -------------------------------------------------- schematic 裁边 (trim)
+def _num_attrs(tag, names):
+    out = {}
+    for n in names:
+        m = re.search(r'\b%s="(-?[\d.]+)"' % n, tag)
+        if m:
+            out[n] = float(m.group(1))
+    return out
+
+
+def content_bbox(text):
+    xs, ys = [], []
+    for m in re.finditer(r'<(rect|circle|ellipse|line|polygon|polyline|path|text)(\b[^>]*?)/?>', text):
+        tag, attrs = m.group(1), m.group(2)
+        a = _num_attrs(attrs, ["x", "y", "cx", "cy", "r", "rx", "ry", "x1", "y1", "x2", "y2", "width", "height"])
+        if tag == "rect":
+            if "x" in a and "y" in a:
+                xs += [a["x"], a["x"] + a.get("width", 0)]
+                ys += [a["y"], a["y"] + a.get("height", 0)]
+        elif tag in ("circle", "ellipse"):
+            if "cx" in a and "cy" in a:
+                r = a.get("r", max(a.get("rx", 0), a.get("ry", 0)))
+                xs += [a["cx"] - r, a["cx"] + r]; ys += [a["cy"] - r, a["cy"] + r]
+        elif tag == "line":
+            for k in ("x1", "x2"):
+                if k in a: xs.append(a[k])
+            for k in ("y1", "y2"):
+                if k in a: ys.append(a[k])
+        elif tag in ("polygon", "polyline"):
+            pts = re.search(r'\bpoints="([^"]+)"', attrs)
+            if pts:
+                nums = [float(z) for z in re.findall(r'-?[\d.]+', pts.group(1))]
+                xs += nums[::2]; ys += nums[1::2]
+        elif tag == "text":
+            if "x" in a: xs.append(a["x"])
+            if "y" in a: ys.append(a["y"])
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def _shift_attr(tag, sx, sy):
+    def sh(attr, dx, dy):
+        def rep(m):
+            v = float(m.group(1)) - (dx if attr in ("x", "cx", "x1", "x2") else dy)
+            return f'{attr}="{v:.4f}"'
+        return re.sub(r'\b%s="(-?[\d.]+)"' % attr, rep, tag)
+    for attr in ("x", "y", "cx", "cy", "x1", "y1", "x2", "y2"):
+        tag = sh(attr, sx, sy)
+    return tag
+
+
+def trim_svg(text, margin=3.0):
+    """裁边: shift content so its bbox starts at `margin` and set the svg
+    width/height/viewBox to "0 0 W H" (content + 2*margin). Preserves
+    self-closing tags. Returns (new_text, bbox, shift, size)."""
+    mnx, mny, mxx, mxy = content_bbox(text)
+    sx, sy = mnx - margin, mny - margin
+    w, h = (mxx - mnx) + 2 * margin, (mxy - mny) + 2 * margin
+
+    def shift_element(m):
+        tag, attrs, selfclose = m.group(1), m.group(2), m.group(3)
+        attrs2 = _shift_attr(attrs, sx, sy)
+        pm = re.search(r'\bpoints="([^"]+)"', attrs2)
+        if pm and tag in ("polygon", "polyline"):
+            nums = [float(z) for z in re.findall(r'-?[\d.]+', pm.group(1))]
+            new = []
+            for i in range(0, len(nums), 2):
+                new.append(f"{nums[i] - sx:.4f},{nums[i + 1] - sy:.4f}")
+            attrs2 = re.sub(r'\bpoints="[^"]+"', f'points="{" ".join(new)}"', attrs2)
+        return f"<{tag}{attrs2}{selfclose}>"
+
+    out = re.sub(r'<(rect|circle|ellipse|line|polygon|polyline|path|text)(\b[^>]*?)(/?)>', shift_element, text)
+    out = re.sub(r'\bviewBox="[^"]*"', f'viewBox="0 0 {w:.4f} {h:.4f}"', out, count=1)
+    out = re.sub(r'\bwidth="[^"]*"', f'width="{w:.4f}"', out, count=1)
+    out = re.sub(r'\bheight="[^"]*"', f'height="{h:.4f}"', out, count=1)
+    return out, (mnx, mny, mxx, mxy), (sx, sy), (w, h)
+
+
 def main():
     files = {
         BB_SVG: breadboard_svg(),
-        SCHEM_SVG: schematic_svg(),
+        SCHEM_SVG: trim_svg(schematic_svg())[0],
         PCB_SVG: pcb_svg(),
         ICON_SVG: icon_svg(),
         FZP: fzp_xml(),
