@@ -556,6 +556,24 @@ def icon_svg():
     return "".join(L)
 
 
+def buses_xml():
+    """Declare internally-connected (互通) power pins via <buses>: all GND pins
+    and both 3V3 pins are the same net inside the part (matches the
+    ESP32-S3-WROOM-1-N16R8-dev-board part)."""
+    buses = [
+        ("GND", ["connector0", "connector39", "connector40", "connector43"]),
+        ("3V3", ["connector1", "connector41"]),
+    ]
+    L = [" <buses>\n"]
+    for bid, members in buses:
+        L.append('  <bus id="%s">\n' % bid)
+        for cid in members:
+            L.append('   <nodeMember connectorId="%s"/>\n' % cid)
+        L.append("  </bus>\n")
+    L.append(" </buses>\n")
+    return "".join(L)
+
+
 def fzp_xml():
     conns = []
     rows = [(LEFT_PINS, range(N_L)),
@@ -620,8 +638,9 @@ def fzp_xml():
         '  <pcbView><layers image="%s"><layer layerId="silkscreen"/><layer layerId="copper1"/></layers></pcbView>\n'
         ' </views>\n'
         ' <connectors>\n%s</connectors>\n'
+        '%s'
         '</module>\n'
-    ) % (PART_ID, TITLE, ICON_REF, BB_REF, SCHEM_REF, PCB_REF, "".join(conns))
+    ) % (PART_ID, TITLE, ICON_REF, BB_REF, SCHEM_REF, PCB_REF, "".join(conns), buses_xml())
 
 
 def main():

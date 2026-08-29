@@ -373,4 +373,16 @@
    </views>
   </connector>
 </connectors>
+ <buses>
+  <bus id="GND">
+   <nodeMember connectorId="connector0"/>
+   <nodeMember connectorId="connector39"/>
+   <nodeMember connectorId="connector40"/>
+   <nodeMember connectorId="connector43"/>
+  </bus>
+  <bus id="3V3">
+   <nodeMember connectorId="connector1"/>
+   <nodeMember connectorId="connector41"/>
+  </bus>
+ </buses>
 </module>
