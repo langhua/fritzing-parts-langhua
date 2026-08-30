@@ -4,3 +4,5 @@
 # Python (part generator scripts)
 __pycache__/
 *.pyc
+
+**/gerber*/

@@ -25,304 +25,274 @@
        gorn="0.2.0"
        id="copper1"
        transform="matrix(0.94526357,0,0,1.0002463,2.3752342,-0.02175424)">
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="30.81181"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.0"
          id="connector0pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="38.000809"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.1"
          id="connector1pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="45.189808"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.2"
          id="connector2pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="52.378807"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.3"
          id="connector3pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="59.567802"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.4"
          id="connector4pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="66.756805"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.5"
          id="connector5pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="73.945801"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.6"
          id="connector6pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="81.134804"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.7"
          id="connector7pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="88.323799"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.8"
          id="connector8pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="95.512802"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.9"
          id="connector9pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="102.7018"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.10"
          id="connector10pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="109.89079"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.11"
          id="connector11pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="117.07979"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.12"
          id="connector12pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="124.26878"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.13"
          id="connector13pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="85.701576"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="131.45798"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.14"
          id="connector14pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="131.45798"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.15"
          id="connector15pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="124.26878"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.16"
          id="connector16pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="117.07979"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.17"
          id="connector17pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="109.89079"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.18"
          id="connector18pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="102.7018"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.19"
          id="connector19pad" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="30.81181"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.20"
          id="connector42pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="38.000809"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.21"
          id="connector41pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="45.189808"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.22"
          id="connector40pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="52.378807"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.23"
          id="connector39pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="59.567802"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.24"
          id="connector38pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="66.756805"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.25"
          id="connector37pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="73.945801"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.26"
          id="connector36pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="81.134804"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.27"
          id="connector35pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="88.323799"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.28"
          id="connector34pin" />
-      <ellipse
-         stroke-width="0.919538"
+      <circle
+         stroke-width="1.418"
          cx="1.4894221"
          fill="none"
-         ry="1.2652637"
          stroke="#ffbf00"
          cy="95.512802"
-         rx="1.2634668"
+         r="2.126"
          gorn="0.2.0.29"
          id="connector33pin" />
     </g>
