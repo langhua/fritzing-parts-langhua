@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.9b" moduleId="NetLabel-Pad">
+ <version>1</version>
+ <author>Shi Jinghai</author>
+ <title>NET LABEL PAD</title>
+ <label>P</label>
+ <date>2026-08-30</date>
+ <tags><tag>net label</tag><tag>pad</tag><tag>through-hole</tag><tag>header</tag><tag>test point</tag></tags>
+ <properties>
+  <property name="family">connector</property>
+  <property name="type">through-hole pad</property>
+  <property name="part number">NetLabel-Pad</property>
+  <property name="package">PAD-1.2-H0.6</property>
+ </properties>
+ <description>Net label that becomes a small round through-hole pad on the PCB (1.2 mm pad / 0.56 mm hole). No breadboard view.</description>
+ <views>
+  <iconView>
+   <layers image="icon/NetLabel-Pad_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+  <schematicView fliphorizontal="true" flipvertical="true">
+   <layers image="schematic/NetLabel-Pad_1_schematic.svg">
+    <layer layerId="schematic"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/NetLabel-Pad_1_pcb.svg">
+    <layer layerId="copper1"/>
+    <layer layerId="copper0"/>
+   </layers>
+  </pcbView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="PAD" type="male">
+   <description>Through-hole round pad (header pin capable)</description>
+   <views>
+    <schematicView><p layer="schematic" svgId="connector0pin" terminalId="connector0terminal"/></schematicView>
+    <pcbView>
+     <p layer="copper0" svgId="connector0pad"/>
+     <p layer="copper1" svgId="connector0pad"/>
+    </pcbView>
+   </views>
+  </connector>
+ </connectors>
+</module>
