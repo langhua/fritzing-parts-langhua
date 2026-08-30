@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 """Generate a complete Fritzing part: NetLabel-Pad.
 
-A net-label style part whose PCB footprint is a small round through-hole
-pad matching svg/esp8266-ch340-ssd1306 pcb (outer ~1.22 mm / hole ~0.58 mm).
+A net-label style part whose PCB footprint is a round through-hole pad
+matching the 2.54mm pin-header footprint of svg/TFTSPI1.9in pcb
+(outer ~2.0 mm / hole ~1.0 mm — standard 2.54mm header pad).
 
 Views:
   - schematic: wire stub + junction dot (no label text), compact — right
                blank trimmed.
-  - pcb:       small round through-hole pad (copper0 > copper1 nesting, single
-               pad ellipse ring on both layers), silkscreen dashed ring.
-               Pad = ellipse rx=0.446 / stroke=0.324 -> outer ~1.22 mm /
-               hole ~0.58 mm (exact match to reference).
+  - pcb:       round through-hole pad (copper0 > copper1 nesting, single
+               pad ellipse ring on both layers).
+               Pad = ellipse rx=0.737 / stroke=0.508 -> outer ~1.98 mm /
+               hole ~0.97 mm (exact match to svg/TFTSPI1.9in pcb).
   - icon:      32x32 round pad.
   No breadboard view (schematic + PCB only).
 
@@ -41,29 +42,31 @@ PCB_REF = "pcb/%s_pcb.svg" % PART_ID
 SCHEM_REF = "schematic/%s_schematic.svg" % PART_ID
 ICON_REF = "icon/%s_icon.svg" % PART_ID
 
-# Pad geometry (mm) — exact match to svg/esp8266-ch340-ssd1306 pcb
-# reference: rx=1.2635@0.352776mm/u -> 0.4457 mm centerline; stroke=0.9195u->0.3244mm
-# outer = rx+stroke/2 = 0.608 mm (1.216 mm), hole = rx-stroke/2 = 0.283 mm (0.567 mm)
-PAD_R = 0.446        # ellipse centerline radius
-PAD_STROKE = 0.324   # copper ring width
+# Pad geometry (mm) — exact match to svg/TFTSPI1.9in pcb 2.54mm pin-header
+# footprint (circle r=29mil, stroke=20mil, 100mil pitch):
+#   outer = r + stroke/2 = 39 mil = 0.991 mm
+#   hole  = r - stroke/2 = 19 mil = 0.483 mm
+# ellipse ring: outer = rx + stroke/2 = 0.991, hole = rx - stroke/2 = 0.483
+#   => rx = 0.737 mm, stroke = 0.508 mm
+PAD_R = 0.737        # ellipse centerline radius
+PAD_STROKE = 0.508   # copper ring width
 
 
 # ---------------------------------------------------------------- PCB view
 def pcb_svg():
-    """Small round through-hole pad (reference style): copper0 > copper1
-    nesting with a single pad ellipse (stroke ring) on both layers, plus a
-    small silkscreen dashed ring."""
+    """Round through-hole pad (TFTSPI1.9in header style): copper0 > copper1
+    nesting with a single pad ellipse (stroke ring) on both layers."""
     s = (
         '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" '
-        'width="2.4mm" height="2.4mm" viewBox="-1.2 -1.2 2.4 2.4">\n'
+        'width="3mm" height="3mm" viewBox="-1.5 -1.5 3 3">\n'
         '  <g id="copper0">\n'
         '    <g id="copper1">\n'
-        '      <ellipse id="connector0pad" connectorname="PAD" cx="0" cy="0" rx="%g" ry="%g" fill="none" stroke="#f7bf13" stroke-width="%g"/>\n'
+        '      <circle id="connector0pad" connectorname="PAD" cx="0" cy="0" r="%g" fill="none" stroke="#f7bf13" stroke-width="%g"/>\n'
         '    </g>\n'
         '  </g>\n'
         '</svg>\n'
-    ) % (PAD_R, PAD_R, PAD_STROKE)
+    ) % (PAD_R, PAD_STROKE)
     return s
 
 
@@ -95,12 +98,12 @@ def icon_svg():
     same relative size in the inspector (symmetric with the PCB thumbnail)."""
     s = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-1.2 -1.2 2.4 2.4">\n'
+        '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-1.5 -1.5 3 3">\n'
         '  <g id="breadboard">\n'
-        '    <circle cx="0" cy="0" r="0.446" fill="none" stroke="#f7bf13" stroke-width="0.324"/>\n'
+        '    <circle cx="0" cy="0" r="%g" fill="none" stroke="#f7bf13" stroke-width="%g"/>\n'
         '  </g>\n'
         "</svg>\n"
-    )
+    ) % (PAD_R, PAD_STROKE)
     return s
 
 
@@ -119,9 +122,9 @@ def fzp_xml():
         '  <property name="family">connector</property>\n'
         '  <property name="type">through-hole pad</property>\n'
         '  <property name="part number">NetLabel-Pad</property>\n'
-        '  <property name="package">PAD-1.2-H0.6</property>\n'
+        '  <property name="package">PAD-2.0-H1.0</property>\n'
         ' </properties>\n'
-        ' <description>Net label that becomes a small round through-hole pad on the PCB (1.2 mm pad / 0.56 mm hole). No breadboard view.</description>\n'
+        ' <description>Net label that becomes a round through-hole pad on the PCB (2.0 mm pad / 1.0 mm hole, 2.54mm header-compatible). No breadboard view.</description>\n'
         ' <views>\n'
         '  <iconView>\n'
         '   <layers image="%s">\n'

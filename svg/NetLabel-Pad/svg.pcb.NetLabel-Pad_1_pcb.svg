@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="2.4mm" height="2.4mm" viewBox="-1.2 -1.2 2.4 2.4">
+<svg xmlns="http://www.w3.org/2000/svg" width="3mm" height="3mm" viewBox="-1.5 -1.5 3 3">
   <g id="copper0">
     <g id="copper1">
-      <ellipse id="connector0pad" connectorname="PAD" cx="0" cy="0" rx="0.446" ry="0.446" fill="none" stroke="#f7bf13" stroke-width="0.324"/>
+      <circle id="connector0pad" connectorname="PAD" cx="0" cy="0" r="0.737" fill="none" stroke="#f7bf13" stroke-width="0.508"/>
     </g>
   </g>
 </svg>
