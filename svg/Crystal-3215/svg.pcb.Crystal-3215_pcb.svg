@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="4.10mm" height="2.40mm" viewBox="-2.05 -1.20 4.10 2.40">
+ <g id="copper1">
+  <rect id="connector0pad" x="-1.75" y="-0.90" width="1.00" height="1.80" fill="#F7BD13" stroke="none"/>
+  <rect id="connector1pad" x="0.75" y="-0.90" width="1.00" height="1.80" fill="#F7BD13" stroke="none"/>
+  <g id="silkscreen">
+   <rect x="-1.90" y="-1.05" width="3.80" height="2.10" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
+  </g>
+ </g>
+</svg>

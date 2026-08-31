@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="15.1" height="10.8" viewBox="0 0 15.1 10.8">
+ <g id="schematic">
+  <line class="pin" id="connector0pin" connectorname="0" x1="0.35" y1="5.4" x2="4.67" y2="5.4" stroke="#8c8c8c" stroke-width="0.75" stroke-linecap="round"/>
+  <rect class="terminal" id="connector0terminal" x="0.35" y="5.4" width="0.0001" height="0.0001" fill="none"/>
+  <line class="pin" id="connector2pin" connectorname="2" x1="10.43" y1="5.4" x2="14.75" y2="5.4" stroke="#8c8c8c" stroke-width="0.75" stroke-linecap="round"/>
+  <rect class="terminal" id="connector2terminal" x="14.75" y="5.4" width="0.0001" height="0.0001" fill="none"/>
+  <line x1="4.67" y1="0.36" x2="4.67" y2="10.44" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="6.47" y1="1.08" x2="6.47" y2="9.72" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="6.47" y1="9.72" x2="8.63" y2="9.72" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="8.63" y1="9.72" x2="8.63" y2="1.08" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="8.63" y1="1.08" x2="6.47" y2="1.08" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="10.43" y1="0.36" x2="10.43" y2="10.44" stroke="#000000" stroke-width="0.9" stroke-linecap="round"/>
+  <text x="1.5364" y="4.3486" font-size="2.5" fill="#8c8c8c" font-family="Noto Sans">1</text>
+  <text x="12.4036" y="4.3486" font-size="2.5" fill="#8c8c8c" font-family="Noto Sans">3</text>
+ </g>
+</svg>

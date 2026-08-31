@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="5.08mm" height="12.70mm" viewBox="0 0 200 500">
+ <g id="breadboard">
+  <rect x="0" y="0" width="200" height="500" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="64.57" y="279.53" width="70.87" height="39.37" fill="#f7bf13" stroke="none"/>
+  <rect x="64.57" y="181.10" width="70.87" height="39.37" fill="#f7bf13" stroke="none"/>
+  <rect x="70.47" y="187.01" width="59.05" height="125.98" rx="7.87" ry="7.87" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="3.15"/>
+  <circle id="connector0pin" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector1pin" cx="100.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+ </g>
+</svg>

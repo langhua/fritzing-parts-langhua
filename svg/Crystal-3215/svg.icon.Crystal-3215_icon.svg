@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.50mm" height="1.80mm" viewBox="-1.75 -0.90 3.50 1.80">
+ <g id="icon">
+  <rect x="-1.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
+  <rect x="0.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-1.60" y="-0.75" width="3.20" height="1.50" rx="0.2" ry="0.2" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
+ </g>
+</svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.30mm" height="2.70mm" viewBox="-1.65 -1.35 3.30 2.70">
+ <g id="icon">
+  <rect x="-1.65" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+  <rect x="0.55" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+  <rect x="0.55" y="0.15" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+  <rect x="-1.65" y="0.15" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+  <rect x="-1.60" y="-1.25" width="3.20" height="2.50" rx="0.25" ry="0.25" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
+ </g>
+</svg>
