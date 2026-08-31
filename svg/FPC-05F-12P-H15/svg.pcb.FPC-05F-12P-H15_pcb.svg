@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="11.30mm" height="5.80mm" viewBox="-5.65 -1.45 11.30 5.80">
+ <g id="copper1">
+  <rect id="connector0pad" x="-2.900" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector1pad" x="-2.400" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector2pad" x="-1.900" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector3pad" x="-1.400" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector4pad" x="-0.900" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector5pad" x="-0.400" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector6pad" x="0.100" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector7pad" x="0.600" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector8pad" x="1.100" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector9pad" x="1.600" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector10pad" x="2.100" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect id="connector11pad" x="2.600" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
+  <rect x="-5.450" y="0.0" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
+  <rect x="4.350" y="0.0" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
+  <g id="silkscreen">
+   <path d="M -5.20 -1.15 L 5.20 -1.15 M 5.20 -1.15 L 5.20 -0.10 M 5.20 1.90 L 5.20 3.25 M 5.20 3.25 L 3.00 3.25 M -3.00 3.25 L -5.20 3.25 M -5.20 3.25 L -5.20 1.90 M -5.20 -0.10 L -5.20 -1.15" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
+  </g>
+ </g>
+</svg>

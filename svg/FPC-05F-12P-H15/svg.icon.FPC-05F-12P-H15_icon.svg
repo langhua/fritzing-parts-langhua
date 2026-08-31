@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="10.10mm" height="4.90mm" viewBox="-5.05 -2.85 10.10 4.90">
+ <g id="icon">
+  <rect x="-5.05" y="-2.05" width="10.10" height="4.10" fill="#f2f2f2" stroke="#9a9a9a" stroke-width="0.08"/>
+  <rect x="-2.90" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-2.40" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-1.90" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-1.40" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.90" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.40" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="0.10" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="0.60" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="1.10" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="1.60" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="2.10" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="2.60" y="-2.85" width="0.30" height="0.80" fill="#f7bf13" stroke="none"/>
+  <rect x="-2.85" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-2.35" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-1.85" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-1.35" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-0.85" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-0.35" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="0.15" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="0.65" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="1.15" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="1.65" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="2.15" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="2.65" y="-2.55" width="0.20" height="0.50" fill="#c9c9c9" stroke="none"/>
+  <rect x="-3.29" y="0.95" width="6.57" height="1.10" fill="#2b2b2b" stroke="none"/>
+  <text x="0.00" y="-1.20" font-size="0.9" fill="#666666" text-anchor="middle" font-family="DroidSans">12P</text>
+ </g>
+</svg>
