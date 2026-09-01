@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created for TXW8301 Simulator -->
+<svg xmlns="http://www.w3.org/2000/svg" width="9.9mm" height="6mm" viewBox="-5.5 -3.5 9.9 6">
+  <g id="icon" transform="translate(-0.55,-0.5)">
+    <rect x="-4.95" y="-1.95" width="9.9" height="3.9" fill="#303030" stroke="none"/>
+    <rect x="-4.645" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.645" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-3.375" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-3.375" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-2.105" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-2.105" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.835" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.835" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.435" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.435" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.705" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.705" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="2.975" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="2.975" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="4.245" y="-3" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="4.245" y="1.95" width="0.40" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <circle cx="-4.2704968" cy="1.2750731" r="0.4" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="0.6" font-size="1.6" fill="#ffffff" text-anchor="middle" font-family="DroidSans">CH340C</text>
+  </g>
+</svg>

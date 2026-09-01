@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="22.86mm" height="18.26mm" viewBox="0 40.6 900 718.8">
+ <g id="breadboard">
+  <rect x="0" y="40.6" width="900" height="718.8" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="255.12" y="323.23" width="389.76" height="153.54" fill="#303030" stroke="none"/>
+  <rect x="267.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="267.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="317.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="317.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="367.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="367.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="417.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="417.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="467.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="467.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="517.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="517.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="567.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="567.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="617.13" y="281.89" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="617.13" y="476.77" width="15.75" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <circle cx="281.87" cy="450.20" r="15.75" fill="#c0c0c0" stroke="none"/>
+  <text x="450.00" y="402.79" font-size="62.99" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">CH340C</text>
+  <circle id="connector15pin" connectorname="VCC" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector0pin" connectorname="GND" cx="100.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector14pin" connectorname="R232" cx="200.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector1pin" connectorname="TXD" cx="200.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector13pin" connectorname="RTS#" cx="300.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector2pin" connectorname="RXD" cx="300.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector12pin" connectorname="DTR#" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector3pin" connectorname="V3" cx="400.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector11pin" connectorname="DCD#" cx="500.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="500.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector4pin" connectorname="UD+" cx="500.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="500.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector10pin" connectorname="RI#" cx="600.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector5pin" connectorname="UD-" cx="600.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector9pin" connectorname="DSR#" cx="700.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="700.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector6pin" connectorname="NC" cx="700.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="700.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector8pin" connectorname="CTS#" cx="800.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="800.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector7pin" connectorname="OUT#/DTR#" cx="800.0" cy="700.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="800.0" cy="700.0" r="19.1" fill="#2b2b2b"/>
+  <text x="100.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 180)">16</text>
+  <text x="100.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 620)">1</text>
+  <text x="200.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 180)">15</text>
+  <text x="200.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 620)">2</text>
+  <text x="300.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 180)">14</text>
+  <text x="300.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 620)">3</text>
+  <text x="400.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 180)">13</text>
+  <text x="400.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 620)">4</text>
+  <text x="500.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 500.0 180)">12</text>
+  <text x="500.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 500.0 620)">5</text>
+  <text x="600.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 600.0 180)">11</text>
+  <text x="600.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 600.0 620)">6</text>
+  <text x="700.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 700.0 180)">10</text>
+  <text x="700.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 700.0 620)">7</text>
+  <text x="800.0" y="180" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 800.0 180)">9</text>
+  <text x="800.0" y="620" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 800.0 620)">8</text>
+ </g>
+</svg>

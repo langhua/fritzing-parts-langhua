@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created for TXW8301 Simulator -->
+<svg xmlns="http://www.w3.org/2000/svg" width="10.70mm" height="9.90mm" viewBox="-5.35 -4.95 10.70 9.90">
+  <g id="copper1">
+<rect id="connector0pad" x="-4.795" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="GND"/>
+<rect id="connector1pad" x="-3.525" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="TXD"/>
+<rect id="connector2pad" x="-2.255" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="RXD"/>
+<rect id="connector3pad" x="-0.985" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="V3"/>
+<rect id="connector4pad" x="0.285" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="UD+"/>
+<rect id="connector5pad" x="1.555" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="UD-"/>
+<rect id="connector6pad" x="2.825" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="NC"/>
+<rect id="connector7pad" x="4.095" y="2.600" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="OUT#/DTR#"/>
+<rect id="connector15pad" x="-4.795" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="VCC"/>
+<rect id="connector14pad" x="-3.525" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="R232"/>
+<rect id="connector13pad" x="-2.255" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="RTS#"/>
+<rect id="connector12pad" x="-0.985" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="DTR#"/>
+<rect id="connector11pad" x="0.285" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="DCD#"/>
+<rect id="connector10pad" x="1.555" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="RI#"/>
+<rect id="connector9pad" x="2.825" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="DSR#"/>
+<rect id="connector8pad" x="4.095" y="-4.800" width="0.700" height="2.200" fill="#F7BD13" stroke="none" connectorname="CTS#"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<rect x="-5.2" y="-2.25" width="10.4" height="4.5" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+<circle cx="-4.445" cy="1.9" r="0.25" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+  </g>
+</svg>
