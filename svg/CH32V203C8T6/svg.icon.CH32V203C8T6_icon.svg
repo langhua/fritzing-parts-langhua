@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created for TXW8301 Simulator -->
+<svg xmlns="http://www.w3.org/2000/svg" width="9mm" height="9mm" viewBox="7 7 18 18">
+ <g id="icon">
+<rect x="9.000" y="9.000" width="14.000" height="14.000" rx="0.4" ry="0.4" fill="#303030" stroke="none"/>
+<rect x="10.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="10.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="10.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="10.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="11.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="11.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="11.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="11.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="12.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="12.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="12.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="12.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="13.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="13.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="13.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="13.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="14.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="14.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="14.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="14.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="15.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="15.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="15.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="15.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="16.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="16.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="16.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="16.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="17.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="17.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="17.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="17.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="18.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="18.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="18.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="18.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="19.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="19.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="19.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="19.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="20.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="20.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="20.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="20.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="21.300" y="7.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="21.300" y="23.000" width="0.400" height="2.000" fill="#f7bf13" stroke="none"/>
+<rect x="7.000" y="21.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<rect x="23.000" y="21.300" width="2.000" height="0.400" fill="#f7bf13" stroke="none"/>
+<circle cx="11.200" cy="20.800" r="0.8" fill="#c0c0c0" stroke="none"/>
+<text x="10.8" y="13.0" font-size="2.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="start" stroke="none" stroke-width="0">CH32V203</text>
+<text x="10.8" y="15.0" font-size="2.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="start" stroke="none" stroke-width="0">C8T6</text>
+ </g>
+</svg>

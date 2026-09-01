@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="51.99mm" height="30.00mm" viewBox="0 0 147.4 85.0">
+ <g id="breadboard" transform="scale(0.072)">
+  <rect x="0" y="0" width="2047" height="1181" fill="#262626" stroke="#000000" stroke-width="6"/>
+  <text x="1205" y="1003" font-size="52" fill="#7a7a7a" text-anchor="start" font-family="DroidSans">nanoCH32V203</text>
+  <g transform="translate(-26.19 180.21) rotate(-90 175.98 149.79) scale(13.88762)">
+<g
+     transform="translate(-16.129,3.990882e-4)"><g
+       transform="rotate(180,28.8,10.4173)"><g><rect
+           fill="#dcdcdc"
+           height="20.834999"
+           width="25.341999"
+           x="16.129"
+           y="0" /></g></g><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.32863,21.54826 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.871,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 21.596629,21.643222 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 22.139,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 23.556,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 24.973,21.572 H 25.54 V 20.671593 H 24.973 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 26.391,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 27.808,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 29.225,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 30.643,21.572 H 31.21 V 20.671593 H 30.643 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 32.06,21.572 h 0.567 V 20.671593 H 32.06 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 33.477,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 34.894,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 35.460111,21.619481 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.162,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.68063,20.742816 h 0.567 v 0.900407 h -0.567 z" /><g
+       transform="rotate(180,38.7781,10.4173)"><g><rect
+           fill="#f0f0f0"
+           height="20.834999"
+           width="1.2970001"
+           x="38.129002"
+           y="0" /></g></g><g
+       transform="rotate(180,18.8219,10.4173)"><g><rect
+           fill="#bebebe"
+           height="20.834999"
+           width="1.2970001"
+           x="18.173"
+           y="0" /></g></g><path
+       d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z"
+       fill="#8c8c8c" /><g
+       transform="rotate(180,33.84895,14.3053)"><g><rect
+           fill="#8c8c8c"
+           height="1.424"
+           width="3.4630001"
+           x="32.117001"
+           y="13.593" /></g></g><rect
+       fill="#8c8c8c"
+       height="1.424"
+       width="3.4630001"
+       x="22.02"
+       y="13.593" /></g>
+  </g>
+  <g transform="translate(-26.19 700.21) rotate(-90 175.98 149.79) scale(13.88762)">
+<g
+     transform="translate(-16.129,3.990882e-4)"><g
+       transform="rotate(180,28.8,10.4173)"><g><rect
+           fill="#dcdcdc"
+           height="20.834999"
+           width="25.341999"
+           x="16.129"
+           y="0" /></g></g><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.32863,21.54826 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 19.871,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 21.596629,21.643222 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 22.139,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 23.556,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 24.973,21.572 H 25.54 V 20.671593 H 24.973 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 26.391,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 27.808,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 29.225,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="M 30.643,21.572 H 31.21 V 20.671593 H 30.643 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 32.06,21.572 h 0.567 V 20.671593 H 32.06 Z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 33.477,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 34.894,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 35.460111,21.619481 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.162,21.572 h 0.567 v -0.900407 h -0.567 z" /><path
+       style="fill:#ffcc00;stroke-width:0.830961"
+       d="m 37.68063,20.742816 h 0.567 v 0.900407 h -0.567 z" /><g
+       transform="rotate(180,38.7781,10.4173)"><g><rect
+           fill="#f0f0f0"
+           height="20.834999"
+           width="1.2970001"
+           x="38.129002"
+           y="0" /></g></g><g
+       transform="rotate(180,18.8219,10.4173)"><g><rect
+           fill="#bebebe"
+           height="20.834999"
+           width="1.2970001"
+           x="18.173"
+           y="0" /></g></g><path
+       d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z"
+       fill="#8c8c8c" /><g
+       transform="rotate(180,33.84895,14.3053)"><g><rect
+           fill="#8c8c8c"
+           height="1.424"
+           width="3.4630001"
+           x="32.117001"
+           y="13.593" /></g></g><rect
+       fill="#8c8c8c"
+       height="1.424"
+       width="3.4630001"
+       x="22.02"
+       y="13.593" /></g>
+  </g>
+  <text x="310" y="330" font-size="34" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans" transform="rotate(90 310 330)">USB1D</text>
+  <text x="310" y="850" font-size="34" fill="#aaaaaa" text-anchor="middle" font-family="DroidSans" transform="rotate(90 310 850)">USB2HD</text>
+  <g transform="translate(519 189) scale(0.6)">
+  <rect x="-75.5" y="-58" width="151" height="116" fill="#cccccc"/>
+  <rect x="-78.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="-78.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="-102.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="74.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="-76.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="-76.5" y="0" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="0" width="21" height="8" fill="#333333"/>
+  <ellipse cx="-2.5" cy="-1" rx="37.766" ry="36.967" fill="#333333" stroke="#1a1a1a" stroke-width="3.03"/>
+  <path d="m -15.02,-36.72 c 5.29,-2.70 7.93,-2.70 13.19,-2.70 13.19,0 23.78,5.40 29.07,16.19" fill="none" stroke="#ffffff" stroke-width="3.03"/>
+  </g>
+  <g transform="translate(519 991) scale(0.6)">
+  <rect x="-75.5" y="-58" width="151" height="116" fill="#cccccc"/>
+  <rect x="-78.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="-31" width="8" height="13" fill="#333333"/>
+  <rect x="-78.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="66.5" y="15" width="8" height="13" fill="#333333"/>
+  <rect x="-102.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="74.5" y="-28" width="26" height="54" fill="#e6e6e6"/>
+  <rect x="-76.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="-58" width="21" height="8" fill="#333333"/>
+  <rect x="-76.5" y="0" width="21" height="8" fill="#333333"/>
+  <rect x="53.5" y="0" width="21" height="8" fill="#333333"/>
+  <ellipse cx="-2.5" cy="-1" rx="37.766" ry="36.967" fill="#333333" stroke="#1a1a1a" stroke-width="3.03"/>
+  <path d="m -15.02,-36.72 c 5.29,-2.70 7.93,-2.70 13.19,-2.70 13.19,0 23.78,5.40 29.07,16.19" fill="none" stroke="#ffffff" stroke-width="3.03"/>
+  </g>
+  <text x="592" y="201" font-size="34" fill="#aaaaaa" text-anchor="start" font-family="DroidSans">RST</text>
+  <text x="592" y="1003" font-size="34" fill="#aaaaaa" text-anchor="start" font-family="DroidSans">BOOT</text>
+  <g transform="rotate(-135 1024.0 590.0)">
+  <rect x="886.2" y="452.2" width="275.6" height="275.6" rx="7.9" ry="7.9" fill="#303030" stroke="none"/>
+  <rect x="846.8" y="477.8" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="477.8" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="497.5" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="497.5" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="517.2" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="517.2" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="536.9" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="536.9" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="556.5" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="556.5" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="576.2" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="576.2" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="595.9" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="595.9" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="615.6" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="615.6" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="635.3" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="635.3" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="655.0" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="655.0" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="674.6" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="674.6" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="846.8" y="694.3" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="1161.8" y="694.3" width="39.4" height="7.9" fill="#f7bf13"/>
+  <rect x="911.8" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="911.8" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="931.5" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="931.5" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="951.2" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="951.2" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="970.9" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="970.9" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="990.5" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="990.5" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1010.2" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1010.2" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1029.9" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1029.9" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1049.6" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1049.6" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1069.3" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1069.3" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1089.0" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1089.0" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1108.6" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1108.6" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1128.3" y="412.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <rect x="1128.3" y="727.8" width="7.9" height="39.4" fill="#f7bf13"/>
+  <circle cx="929.5" cy="684.5" r="15.7" fill="#c0c0c0"/>
+  <text x="1024" y="594.0" font-size="39.4" fill="#c0c0c0" text-anchor="middle" font-family="DroidSans">CH32V203</text>
+
+  </g>
+  <rect x="1466.9" y="481.7" width="47.2" height="43.3" fill="#f7bf13" stroke="none"/>
+  <rect x="1466.9" y="395.0" width="47.2" height="43.3" fill="#f7bf13" stroke="none"/>
+  <rect x="1525.9" y="395.0" width="47.2" height="43.3" fill="#f7bf13" stroke="none"/>
+  <rect x="1525.9" y="481.7" width="47.2" height="43.3" fill="#f7bf13" stroke="none"/>
+  <rect x="1470.8" y="397.0" width="98.4" height="126.0" rx="9.8" ry="9.8" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="3.15"/>
+  <text x="1520.0" y="460.0" font-size="31.8" fill="#333333" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 1520.0 460.0)">8MHz</text>
+  <rect x="1484.6" y="759.5" width="70.9" height="39.4" fill="#f7bf13" stroke="none"/>
+  <rect x="1484.6" y="661.1" width="70.9" height="39.4" fill="#f7bf13" stroke="none"/>
+  <rect x="1490.5" y="667.0" width="59.1" height="126.0" rx="7.9" ry="7.9" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="3.15"/>
+  <text x="1520.0" y="730.0" font-size="19.3" fill="#333333" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 1520.0 730.0)">32.768K</text>
+  <rect x="1885.6" y="391.2" width="161.4" height="397.6" fill="#f2f2f2" stroke="#9a9a9a" stroke-width="3.15"/>
+  <rect x="1854.1" y="692.4" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="672.7" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="653.0" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="633.3" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="613.6" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="593.9" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="574.3" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="554.6" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="534.9" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="515.2" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="495.5" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1854.1" y="475.8" width="31.5" height="11.8" fill="#f7bf13" stroke="none"/>
+  <rect x="1865.9" y="694.3" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="674.6" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="655.0" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="635.3" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="615.6" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="595.9" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="576.2" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="556.5" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="536.9" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="517.2" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="497.5" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="1865.9" y="477.8" width="19.7" height="7.9" fill="#c9c9c9" stroke="none"/>
+  <rect x="2003.7" y="460.9" width="43.3" height="258.7" fill="#2b2b2b" stroke="none"/>
+  <text x="1919.0" y="590.0" font-size="35.4" fill="#666666" text-anchor="middle" font-family="DroidSans" transform="rotate(90 1919.0 590.0)">12P</text>
+  <circle cx="74" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector22pin"/>
+  <text x="74" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">G</text>
+  <circle cx="174" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector48pin"/>
+  <text x="174" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">5V</text>
+  <circle cx="274" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector21pin"/>
+  <text x="274" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B11</text>
+  <circle cx="374" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector20pin"/>
+  <text x="374" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B10</text>
+  <circle cx="474" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector18pin"/>
+  <text x="474" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B1</text>
+  <circle cx="574" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector17pin"/>
+  <text x="574" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B0</text>
+  <circle cx="674" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector7pin"/>
+  <text x="674" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">G</text>
+  <circle cx="774" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector16pin"/>
+  <text x="774" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A7</text>
+  <circle cx="874" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector15pin"/>
+  <text x="874" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A6</text>
+  <circle cx="974" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector14pin"/>
+  <text x="974" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A5</text>
+  <circle cx="1074" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector13pin"/>
+  <text x="1074" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A4</text>
+  <circle cx="1174" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector12pin"/>
+  <text x="1174" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A3</text>
+  <circle cx="1274" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector11pin"/>
+  <text x="1274" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A2</text>
+  <circle cx="1374" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector10pin"/>
+  <text x="1374" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A1</text>
+  <circle cx="1474" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector9pin"/>
+  <text x="1474" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A0</text>
+  <circle cx="1574" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector1pin"/>
+  <text x="1574" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">C13</text>
+  <circle cx="1674" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector44pin"/>
+  <text x="1674" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B8</text>
+  <circle cx="1774" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector45pin"/>
+  <text x="1774" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B9</text>
+  <circle cx="1874" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector23pin"/>
+  <text x="1874" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">3V3</text>
+  <circle cx="1974" cy="74" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector34pin"/>
+  <text x="1974" y="134" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">G</text>
+  <circle cx="74" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector46pin"/>
+  <text x="74" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">G</text>
+  <circle cx="174" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector49pin"/>
+  <text x="174" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">5V</text>
+  <circle cx="274" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector24pin"/>
+  <text x="274" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B12</text>
+  <circle cx="374" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector25pin"/>
+  <text x="374" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B13</text>
+  <circle cx="474" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector26pin"/>
+  <text x="474" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B14</text>
+  <circle cx="574" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector27pin"/>
+  <text x="574" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B15</text>
+  <circle cx="674" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector28pin"/>
+  <text x="674" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A8</text>
+  <circle cx="774" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector29pin"/>
+  <text x="774" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A9</text>
+  <circle cx="874" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector30pin"/>
+  <text x="874" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A10</text>
+  <circle cx="974" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector31pin"/>
+  <text x="974" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A11</text>
+  <circle cx="1074" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector32pin"/>
+  <text x="1074" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A12</text>
+  <circle cx="1174" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector33pin"/>
+  <text x="1174" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A13</text>
+  <circle cx="1274" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector36pin"/>
+  <text x="1274" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A14</text>
+  <circle cx="1374" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector37pin"/>
+  <text x="1374" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">A15</text>
+  <circle cx="1474" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector38pin"/>
+  <text x="1474" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B3</text>
+  <circle cx="1574" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector39pin"/>
+  <text x="1574" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B4</text>
+  <circle cx="1674" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector40pin"/>
+  <text x="1674" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B5</text>
+  <circle cx="1774" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector41pin"/>
+  <text x="1774" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B6</text>
+  <circle cx="1874" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector42pin"/>
+  <text x="1874" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">B7</text>
+  <circle cx="1974" cy="1107" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" id="connector50pin"/>
+  <text x="1974" y="1063" font-size="34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">G</text>
+ </g>
+</svg>

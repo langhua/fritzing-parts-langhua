@@ -12,7 +12,7 @@
   <property name="part number">NetLabel-Pad</property>
   <property name="package">PAD-2.0-H1.0</property>
  </properties>
- <description>Net label that becomes a round through-hole pad on the PCB (2.0 mm pad / 1.0 mm hole, 2.54mm header-compatible). No breadboard view.</description>
+ <description>Net label that becomes a round through-hole pad on the PCB (2.0 mm pad / 1.0 mm hole, 2.54mm header-compatible).</description>
  <views>
   <iconView>
    <layers image="icon/NetLabel-Pad_1_icon.svg">

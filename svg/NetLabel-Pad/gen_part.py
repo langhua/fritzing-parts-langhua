@@ -54,19 +54,20 @@ PAD_STROKE = 0.508   # copper ring width
 
 # ---------------------------------------------------------------- PCB view
 def pcb_svg():
-    """Round through-hole pad (TFTSPI1.9in header style): copper0 > copper1
-    nesting with a single pad ellipse (stroke ring) on both layers."""
+    """Round through-hole pad (TFTSPI1.9in header style): copper1 OUTER >
+    copper0 INNER nesting (Fritzing convention), a pad ring on EACH layer."""
     s = (
         '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" '
         'width="3mm" height="3mm" viewBox="-1.5 -1.5 3 3">\n'
-        '  <g id="copper0">\n'
-        '    <g id="copper1">\n'
+        '  <g id="copper1">\n'
+        '    <circle id="connector0pad" connectorname="PAD" cx="0" cy="0" r="%g" fill="none" stroke="#f7bf13" stroke-width="%g"/>\n'
+        '    <g id="copper0">\n'
         '      <circle id="connector0pad" connectorname="PAD" cx="0" cy="0" r="%g" fill="none" stroke="#f7bf13" stroke-width="%g"/>\n'
         '    </g>\n'
         '  </g>\n'
         '</svg>\n'
-    ) % (PAD_R, PAD_STROKE)
+    ) % (PAD_R, PAD_STROKE, PAD_R, PAD_STROKE)
     return s
 
 
@@ -124,7 +125,7 @@ def fzp_xml():
         '  <property name="part number">NetLabel-Pad</property>\n'
         '  <property name="package">PAD-2.0-H1.0</property>\n'
         ' </properties>\n'
-        ' <description>Net label that becomes a round through-hole pad on the PCB (2.0 mm pad / 1.0 mm hole, 2.54mm header-compatible). No breadboard view.</description>\n'
+        ' <description>Net label that becomes a round through-hole pad on the PCB (2.0 mm pad / 1.0 mm hole, 2.54mm header-compatible).</description>\n'
         ' <views>\n'
         '  <iconView>\n'
         '   <layers image="%s">\n'
