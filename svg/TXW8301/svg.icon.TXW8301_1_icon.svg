@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="6.2mm" height="6.2mm" viewBox="0 0 6.2 6.2">
+ <g id="icon">
+<rect x="0.100" y="0.100" width="6.00" height="6.00" rx="0.15" ry="0.15" fill="#303030" stroke="none"/>
+<rect x="0.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="0.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="0.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="1.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="1.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="1.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="1.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="1.600" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="1.600" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="1.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="1.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.000" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.000" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.400" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.400" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="3.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="3.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="3.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="3.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="3.600" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="3.600" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="3.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="3.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.000" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.000" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.400" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.400" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="5.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="5.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<circle cx="0.90" cy="0.90" r="0.25" fill="#c0c0c0" stroke="none"/>
+<text x="3.100" y="3.20" font-size="0.95" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">TXW8301</text>
+<text x="3.100" y="4.25" font-size="0.55" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">802.11ah</text>
+ </g>
+</svg>

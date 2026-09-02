@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32mm" height="32mm" viewBox="0 0 32 32">
+ <g id="breadboard">
+  <path d="M0 0 H32.00 V32.00 H0 Z M3.50 27.50 A1.00 1.00 0 1 1 3.50 29.50 A1.00 1.00 0 1 1 3.50 27.50 Z M28.50 2.50 A1.00 1.00 0 1 1 28.50 4.50 A1.00 1.00 0 1 1 28.50 2.50 Z" fill="#1F7A34" fill-rule="evenodd" stroke="#0f4d20" stroke-width="0.15"/>
+  <rect x="13.000" y="13.000" width="6" height="6" rx="0.15" fill="#303030"/>
+  <rect x="13.700" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.100" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.500" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.900" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="15.300" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="15.700" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.100" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.500" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.900" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="17.300" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="17.700" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="18.100" y="12.900" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="18.950" y="13.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="14.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="14.500" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="14.900" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="15.300" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="15.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="16.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="16.500" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="16.900" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="17.300" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="17.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.950" y="18.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="18.100" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="17.700" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="17.300" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.900" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.500" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="16.100" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="15.700" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="15.300" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.900" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.500" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="14.100" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="13.700" y="18.950" width="0.2" height="0.1" fill="#f7bf13"/>
+  <rect x="12.900" y="18.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="17.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="17.300" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="16.900" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="16.500" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="16.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="15.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="15.300" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="14.900" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="14.500" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="14.100" width="0.1" height="0.2" fill="#f7bf13"/>
+  <rect x="12.900" y="13.700" width="0.1" height="0.2" fill="#f7bf13"/>
+  <circle cx="13.800" cy="13.800" r="0.25" fill="#c0c0c0"/>
+  <circle id="connector0pin" cx="3.200" cy="9.650" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="9.650" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="10.120" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">1</text>
+  <circle id="connector1pin" cx="5.740" cy="9.650" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="9.650" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="10.120" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">2</text>
+  <circle id="connector2pin" cx="3.200" cy="12.190" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="12.190" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="12.660" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">3</text>
+  <circle id="connector3pin" cx="5.740" cy="12.190" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="12.190" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="12.660" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">4</text>
+  <circle id="connector4pin" cx="3.200" cy="14.730" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="14.730" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="15.200" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">5</text>
+  <circle id="connector5pin" cx="5.740" cy="14.730" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="14.730" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="15.200" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">6</text>
+  <circle id="connector6pin" cx="3.200" cy="17.270" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="17.270" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="17.740" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">7</text>
+  <circle id="connector7pin" cx="5.740" cy="17.270" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="17.270" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="17.740" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">8</text>
+  <circle id="connector8pin" cx="3.200" cy="19.810" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="19.810" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="20.280" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">9</text>
+  <circle id="connector9pin" cx="5.740" cy="19.810" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="19.810" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="20.280" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">10</text>
+  <circle id="connector10pin" cx="3.200" cy="22.350" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="22.350" r="0.350" fill="#2b2b2b"/>
+  <text x="1.300" y="22.820" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">11</text>
+  <circle id="connector11pin" cx="5.740" cy="22.350" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="5.740" cy="22.350" r="0.350" fill="#2b2b2b"/>
+  <text x="7.440" y="22.820" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">12</text>
+  <circle id="connector12pin" cx="9.650" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="9.650" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="9.650" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">13</text>
+  <circle id="connector13pin" cx="9.650" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="9.650" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="9.650" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">14</text>
+  <circle id="connector14pin" cx="12.190" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="12.190" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="12.190" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">15</text>
+  <circle id="connector15pin" cx="12.190" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="12.190" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="12.190" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">16</text>
+  <circle id="connector16pin" cx="14.730" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="14.730" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="14.730" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">17</text>
+  <circle id="connector17pin" cx="14.730" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="14.730" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="14.730" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">18</text>
+  <circle id="connector18pin" cx="17.270" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="17.270" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="17.270" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">19</text>
+  <circle id="connector19pin" cx="17.270" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="17.270" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="17.270" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">20</text>
+  <circle id="connector20pin" cx="19.810" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="19.810" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="19.810" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">21</text>
+  <circle id="connector21pin" cx="19.810" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="19.810" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="19.810" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">22</text>
+  <circle id="connector22pin" cx="22.350" cy="28.800" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="22.350" cy="28.800" r="0.350" fill="#2b2b2b"/>
+  <text x="22.350" y="31.170" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">23</text>
+  <circle id="connector23pin" cx="22.350" cy="26.260" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="22.350" cy="26.260" r="0.350" fill="#2b2b2b"/>
+  <text x="22.350" y="25.030" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">24</text>
+  <circle id="connector24pin" cx="28.800" cy="22.350" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="22.350" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="22.820" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">25</text>
+  <circle id="connector25pin" cx="26.260" cy="22.350" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="22.350" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="22.820" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">26</text>
+  <circle id="connector26pin" cx="28.800" cy="19.810" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="19.810" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="20.280" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">27</text>
+  <circle id="connector27pin" cx="26.260" cy="19.810" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="19.810" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="20.280" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">28</text>
+  <circle id="connector28pin" cx="28.800" cy="17.270" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="17.270" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="17.740" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">29</text>
+  <circle id="connector29pin" cx="26.260" cy="17.270" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="17.270" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="17.740" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">30</text>
+  <circle id="connector30pin" cx="28.800" cy="14.730" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="14.730" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="15.200" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">31</text>
+  <circle id="connector31pin" cx="26.260" cy="14.730" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="14.730" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="15.200" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">32</text>
+  <circle id="connector32pin" cx="28.800" cy="12.190" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="12.190" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="12.660" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">33</text>
+  <circle id="connector33pin" cx="26.260" cy="12.190" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="12.190" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="12.660" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">34</text>
+  <circle id="connector34pin" cx="28.800" cy="9.650" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="28.800" cy="9.650" r="0.350" fill="#2b2b2b"/>
+  <text x="30.700" y="10.120" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">35</text>
+  <circle id="connector35pin" cx="26.260" cy="9.650" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="26.260" cy="9.650" r="0.350" fill="#2b2b2b"/>
+  <text x="24.560" y="10.120" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">36</text>
+  <circle id="connector36pin" cx="22.350" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="22.350" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="22.350" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">37</text>
+  <circle id="connector37pin" cx="22.350" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="22.350" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="22.350" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">38</text>
+  <circle id="connector38pin" cx="19.810" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="19.810" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="19.810" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">39</text>
+  <circle id="connector39pin" cx="19.810" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="19.810" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="19.810" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">40</text>
+  <circle id="connector40pin" cx="17.270" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="17.270" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="17.270" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">41</text>
+  <circle id="connector41pin" cx="17.270" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="17.270" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="17.270" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">42</text>
+  <circle id="connector42pin" cx="14.730" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="14.730" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="14.730" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">43</text>
+  <circle id="connector43pin" cx="14.730" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="14.730" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="14.730" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">44</text>
+  <circle id="connector44pin" cx="12.190" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="12.190" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="12.190" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">45</text>
+  <circle id="connector45pin" cx="12.190" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="12.190" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="12.190" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">46</text>
+  <circle id="connector46pin" cx="9.650" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="9.650" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="9.650" y="1.770" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">47</text>
+  <circle id="connector47pin" cx="9.650" cy="5.740" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="9.650" cy="5.740" r="0.350" fill="#2b2b2b"/>
+  <text x="9.650" y="7.910" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">48</text>
+  <circle id="connector48pin" cx="3.200" cy="3.200" r="1.000" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>
+  <circle cx="3.200" cy="3.200" r="0.350" fill="#2b2b2b"/>
+  <text x="3.200" y="5.500" font-size="1.3" fill="#E8F0E4" text-anchor="middle" font-family="Arial">49</text>
+ </g>
+</svg>
