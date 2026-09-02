@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="7.8mm" height="7.8mm" viewBox="0.6 0.6 7.8 7.8">
   <g id="copper1">
-<rect id="connector0pad" x="0.900" y="2.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="0"/>
-<rect id="connector1pad" x="0.900" y="2.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="1"/>
-<rect id="connector2pad" x="0.900" y="3.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="2"/>
-<rect id="connector3pad" x="0.900" y="3.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="3"/>
-<rect id="connector4pad" x="0.900" y="3.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="4"/>
-<rect id="connector5pad" x="0.900" y="4.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="5"/>
-<rect id="connector6pad" x="0.900" y="4.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="6"/>
-<rect id="connector7pad" x="0.900" y="5.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="7"/>
-<rect id="connector8pad" x="0.900" y="5.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="8"/>
-<rect id="connector9pad" x="0.900" y="5.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="9"/>
-<rect id="connector10pad" x="0.900" y="6.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="10"/>
-<rect id="connector11pad" x="0.900" y="6.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="11"/>
-<rect id="connector12pad" x="2.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="12"/>
-<rect id="connector13pad" x="2.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="13"/>
-<rect id="connector14pad" x="3.000" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="14"/>
-<rect id="connector15pad" x="3.400" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="15"/>
-<rect id="connector16pad" x="3.800" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="16"/>
-<rect id="connector17pad" x="4.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="17"/>
-<rect id="connector18pad" x="4.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="18"/>
-<rect id="connector19pad" x="5.000" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="19"/>
-<rect id="connector20pad" x="5.400" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="20"/>
-<rect id="connector21pad" x="5.800" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="21"/>
-<rect id="connector22pad" x="6.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="22"/>
-<rect id="connector23pad" x="6.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="23"/>
-<rect id="connector24pad" x="7.100" y="6.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="24"/>
-<rect id="connector25pad" x="7.100" y="6.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="25"/>
-<rect id="connector26pad" x="7.100" y="5.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="26"/>
-<rect id="connector27pad" x="7.100" y="5.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="27"/>
-<rect id="connector28pad" x="7.100" y="5.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="28"/>
-<rect id="connector29pad" x="7.100" y="4.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="29"/>
-<rect id="connector30pad" x="7.100" y="4.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="30"/>
-<rect id="connector31pad" x="7.100" y="3.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="31"/>
-<rect id="connector32pad" x="7.100" y="3.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="32"/>
-<rect id="connector33pad" x="7.100" y="3.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="33"/>
-<rect id="connector34pad" x="7.100" y="2.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="34"/>
-<rect id="connector35pad" x="7.100" y="2.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="35"/>
-<rect id="connector36pad" x="6.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="36"/>
-<rect id="connector37pad" x="6.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="37"/>
-<rect id="connector38pad" x="5.800" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="38"/>
-<rect id="connector39pad" x="5.400" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="39"/>
-<rect id="connector40pad" x="5.000" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="40"/>
-<rect id="connector41pad" x="4.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="41"/>
-<rect id="connector42pad" x="4.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="42"/>
-<rect id="connector43pad" x="3.800" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="43"/>
-<rect id="connector44pad" x="3.400" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="44"/>
-<rect id="connector45pad" x="3.000" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="45"/>
-<rect id="connector46pad" x="2.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="46"/>
-<rect id="connector47pad" x="2.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="47"/>
+<rect id="connector0pad" x="2.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="0"/>
+<rect id="connector1pad" x="2.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="1"/>
+<rect id="connector2pad" x="3.000" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="2"/>
+<rect id="connector3pad" x="3.400" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="3"/>
+<rect id="connector4pad" x="3.800" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="4"/>
+<rect id="connector5pad" x="4.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="5"/>
+<rect id="connector6pad" x="4.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="6"/>
+<rect id="connector7pad" x="5.000" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="7"/>
+<rect id="connector8pad" x="5.400" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="8"/>
+<rect id="connector9pad" x="5.800" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="9"/>
+<rect id="connector10pad" x="6.200" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="10"/>
+<rect id="connector11pad" x="6.600" y="7.100" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="11"/>
+<rect id="connector12pad" x="7.100" y="6.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="12"/>
+<rect id="connector13pad" x="7.100" y="6.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="13"/>
+<rect id="connector14pad" x="7.100" y="5.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="14"/>
+<rect id="connector15pad" x="7.100" y="5.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="15"/>
+<rect id="connector16pad" x="7.100" y="5.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="16"/>
+<rect id="connector17pad" x="7.100" y="4.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="17"/>
+<rect id="connector18pad" x="7.100" y="4.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="18"/>
+<rect id="connector19pad" x="7.100" y="3.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="19"/>
+<rect id="connector20pad" x="7.100" y="3.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="20"/>
+<rect id="connector21pad" x="7.100" y="3.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="21"/>
+<rect id="connector22pad" x="7.100" y="2.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="22"/>
+<rect id="connector23pad" x="7.100" y="2.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="23"/>
+<rect id="connector24pad" x="6.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="24"/>
+<rect id="connector25pad" x="6.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="25"/>
+<rect id="connector26pad" x="5.800" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="26"/>
+<rect id="connector27pad" x="5.400" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="27"/>
+<rect id="connector28pad" x="5.000" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="28"/>
+<rect id="connector29pad" x="4.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="29"/>
+<rect id="connector30pad" x="4.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="30"/>
+<rect id="connector31pad" x="3.800" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="31"/>
+<rect id="connector32pad" x="3.400" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="32"/>
+<rect id="connector33pad" x="3.000" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="33"/>
+<rect id="connector34pad" x="2.600" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="34"/>
+<rect id="connector35pad" x="2.200" y="0.900" width="0.200" height="1.000" fill="#F7BD13" stroke="none" connectorname="35"/>
+<rect id="connector36pad" x="0.900" y="2.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="36"/>
+<rect id="connector37pad" x="0.900" y="2.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="37"/>
+<rect id="connector38pad" x="0.900" y="3.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="38"/>
+<rect id="connector39pad" x="0.900" y="3.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="39"/>
+<rect id="connector40pad" x="0.900" y="3.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="40"/>
+<rect id="connector41pad" x="0.900" y="4.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="41"/>
+<rect id="connector42pad" x="0.900" y="4.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="42"/>
+<rect id="connector43pad" x="0.900" y="5.000" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="43"/>
+<rect id="connector44pad" x="0.900" y="5.400" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="44"/>
+<rect id="connector45pad" x="0.900" y="5.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="45"/>
+<rect id="connector46pad" x="0.900" y="6.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="46"/>
+<rect id="connector47pad" x="0.900" y="6.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="47"/>
 <rect id="connector48pad" x="2.400" y="2.400" width="4.200" height="4.200" fill="#F7BD13" stroke="none" connectorname="48"/>
 <g id="copper0"/>
   </g>
@@ -61,6 +61,6 @@
 <line x1="2.050" y1="7.500" x2="1.500" y2="7.500" stroke="#f0f0f0" stroke-width="0.12"/>
 <line x1="1.500" y1="7.500" x2="1.500" y2="6.950" stroke="#f0f0f0" stroke-width="0.12"/>
 <line x1="1.500" y1="2.050" x2="1.500" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
-<circle cx="1.500" cy="1.500" r="0.22" fill="#f0f0f0" stroke="none" class="other"/>
+<circle cx="1.500" cy="7.500" r="0.22" fill="#f0f0f0" stroke="none" class="other"/>
   </g>
 </svg>

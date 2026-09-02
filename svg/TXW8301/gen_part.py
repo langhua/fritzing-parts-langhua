@@ -95,8 +95,8 @@ def icon_svg():
         # 右：x 6.6..7.2
         L.append('<rect x="%.3f" y="%.3f" width="%.3f" height="%.2f" fill="%s" stroke="none"/>\n'
                  % (TOT - PAD_LEN, c - PAD_W / 2, PAD_LEN, PAD_W, PAD))
-    # pin1 圆点（左上角，圆心对齐上排首脚 x=0.9 与左排首脚 y=0.9，r=0.25）
-    L.append('<circle cx="0.90" cy="0.90" r="0.25" fill="%s" stroke="none"/>\n' % MARK)
+    # pin1 圆点（左下角，圆心对齐下排首脚 x=0.9 与左排末脚 y=5.3，r=0.25）
+    L.append('<circle cx="0.90" cy="5.30" r="0.25" fill="%s" stroke="none"/>\n' % MARK)
     # 芯片名（居中对齐于本体中心 3.6）
     cx = TOT / 2.0
     L.append('<text x="%.3f" y="3.20" font-size="0.95" font-family="DroidSans" fill="%s"'
@@ -129,8 +129,8 @@ HOLE_R = 0.35           # 钻孔
 R0 = 3.2                # 每侧外排孔中心距板边
 ROW = 2.54              # 内外排间距（2.54 网格）
 MOUNT_R = 1.0           # 安装孔半径（M2 螺钉，孔径 2mm，透明空心）
-MOUNT_HOLES = [(3.5, 28.5), (28.5, 3.5)]   # 左下角 + 右上角（透明孔）
-EPAD_BB = (3.2, 3.2)    # 49 EPAD 排针中心 = (pin1.x, pin47.y) = (R0, R0)，左上角外排网格交点
+MOUNT_HOLES = [(3.5, 3.5), (28.5, 28.5)]   # 左上角 + 右下角（透明孔）
+EPAD_BB = (3.2, 28.8)    # 49 EPAD 排针中心 = (pin47.x, pin1.y)：左下角
 
 
 def _holes_pinorder():
@@ -158,16 +158,17 @@ def _holes_pinorder():
 
 
 def _chip_pad_center(pin, c=16.0):
-    """芯片第 pin(1..48) 个边脚的外端中心（芯片中心 c,c，体 6x6，边脚外伸 0.1）。"""
+    """芯片第 pin(1..48) 个边脚的外端中心（芯片中心 c,c，体 6x6，边脚外伸 0.1）。
+    pin1 左下角、逆时针：下 1-12(左->右)、右 13-24(下->上)、上 25-36(右->左)、左 37-48(上->下)。"""
     i = pin - 1
     half = 6.0 / 2.0
-    if 1 <= pin <= 12:                    # 上：左->右
-        return (c - 2.2 + i * 0.4, c - half - 0.05)
-    if 13 <= pin <= 24:                   # 右：上->下
-        return (c + half + 0.05, c - 2.2 + (i - 12) * 0.4)
-    if 25 <= pin <= 36:                   # 下：右->左
-        return (c + 2.2 - (i - 24) * 0.4, c + half + 0.05)
-    return (c - half - 0.05, c + 2.2 - (i - 36) * 0.4)         # 左：下->上
+    if 1 <= pin <= 12:                    # 下：左->右
+        return (c - 2.2 + i * 0.4, c + half + 0.05)
+    if 13 <= pin <= 24:                   # 右：下->上
+        return (c + half + 0.05, c + 2.2 - (i - 12) * 0.4)
+    if 25 <= pin <= 36:                   # 上：右->左
+        return (c + 2.2 - (i - 24) * 0.4, c - half - 0.05)
+    return (c - half - 0.05, c - 2.2 + (i - 36) * 0.4)         # 左：上->下
 
 
 def chip_art(c=16.0):
@@ -184,14 +185,19 @@ def chip_art(c=16.0):
             L.append('  <rect x="%.3f" y="%.3f" width="0.1" height="0.2" fill="%s"/>\n'
                      % (min(x0, c + 3.0) - 0.05, y0 - 0.1, PAD))
     L.append('  <circle cx="%.3f" cy="%.3f" r="0.25" fill="%s"/>\n'
-             % (c - 3.0 + 0.8, c - 3.0 + 0.8, MARK))           # pin1 圆点（芯片左上）
+             % (c - 3.0 + 0.8, c + 3.0 - 0.8, MARK))           # pin1 圆点（芯片左下）
+    L.append('  <text x="%.2f" y="%.2f" font-size="0.90" font-family="DroidSans" fill="%s" '
+             'text-anchor="middle" stroke="none">TXW8301</text>\n' % (c, c - 0.6, TXT))
+    L.append('  <text x="%.2f" y="%.2f" font-size="0.50" font-family="DroidSans" fill="%s" '
+             'text-anchor="middle" stroke="none">802.11ah</text>\n' % (c, c + 0.5, TXT))
     return "".join(L)
 
 
 def breadboard_svg():
-    """绿色 QFN48 转接板面包板视图 v4：32x32 板，中央芯片，每边 6 列 x 2 排排针。
-    编号 1..48（左 1-12 -> 下 13-24 -> 右 25-36 -> 上 37-48，奇=外/偶=内）；
-    49 EPAD 金盘在左上角（connector48，可连线）；左下/右上透明安装孔；无走线。"""
+    """绿色 QFN48 转接板面包板视图 v5：32x32 板，中央芯片，每边 6 列 x 2 排排针。
+    编号 1..48（pin1 左下角）：下 1-12(左->右)、右 13-24(下->上)、上 25-36(右->左)、
+    左 37-48(上->下)，奇=外/偶=内（= 旧方案整体前移 12：原 13 位 -> 1）。
+    49 EPAD 在左上角（connector48）；左下/右上透明安装孔；无走线。"""
     L = []
     L.append('<?xml version="1.0" encoding="UTF-8"?>\n')
     L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%dmm" height="%dmm" viewBox="0 0 %d %d">\n'
@@ -209,6 +215,7 @@ def breadboard_svg():
     L.append(chip_art(16.0))
     # 48 排针（连接器 + 钻孔 + 编号）
     holes = _holes_pinorder()
+    holes = holes[12:] + holes[:12]    # 编号整体前移 12：原 13 位（下排左）-> 1，pin1 落左下
     for k, (hx, hy) in enumerate(holes):
         L.append('  <circle id="connector%dpin" cx="%.3f" cy="%.3f" r="%.3f" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>\n'
                  % (k, hx, hy, HOLER))
@@ -227,13 +234,13 @@ def breadboard_svg():
         ny = hy + s * oy * off
         L.append('  <text x="%.3f" y="%.3f" font-size="1.3" fill="%s" text-anchor="middle" font-family="Arial">%d</text>\n'
                  % (nx, ny + 0.47, SILK, k + 1))
-    # 49 EPAD —— 左上角（同其它排针样式：焊盘环 + 中央钻孔；connector48）
+    # 49 EPAD —— 左下角（同其它排针样式：焊盘环 + 中央钻孔；connector48）
     epx, epy = EPAD_BB
     L.append('  <circle id="connector48pin" cx="%.3f" cy="%.3f" r="%.3f" fill="#cbb768" stroke="#4a3f12" stroke-width="0.10"/>\n'
              % (epx, epy, HOLER))
     L.append('  <circle cx="%.3f" cy="%.3f" r="%.3f" fill="#2b2b2b"/>\n' % (epx, epy, HOLE_R))
     L.append('  <text x="%.3f" y="%.3f" font-size="1.3" fill="%s" text-anchor="middle" font-family="Arial">49</text>\n'
-             % (epx, epy + 2.3, SILK))
+             % (epx, epy - 2.0, SILK))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)
@@ -274,20 +281,9 @@ def schematic_svg():
     L.append(' <g id="schematic">\n')
     L.append('  <rect x="%d" y="%d" width="%d" height="%d" fill="#FFFFFF" stroke="#c00000" stroke-width="5"/>\n'
              % (BX0, BY0, BOX, BOX))
-    # 左 1-12（上→下）：数字在引线上方；名在框内居中于引脚、距左边框一个字符
+    # 下 1-12（左→右，pin1 左下）：数字在引脚左侧（从下至上 rotate 270）；名在框内靠下
     for i in range(12):
         cn = i
-        y = BY0 + CORNER + P // 2 + i * P
-        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
-                 f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
-        L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-                 f'font-family="DroidSans">{i + 1}</text>\n')
-        L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="start" '
-                 f'font-family="DroidSans">{esc(PIN_NAMES[cn])}</text>\n')
-    # 下 13-24（左→右）：数字在引脚左侧（从下至上 rotate 270）；名在框内靠下
-    for i in range(12):
-        cn = 12 + i
         x = BX0 + CORNER + P // 2 + i * P
         lab = PIN_NAMES[cn]
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
@@ -295,44 +291,54 @@ def schematic_svg():
         L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY1 + WIRE}" width="22" height="22" fill="none"/>\n')
         # 数字在引脚左侧、从下至上（rotate 270），右侧距引脚 FN/2（锚点 x-FN）
         L.append(f'  <text x="{x - FN}" y="{BY1 + 55}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-                 f'font-family="DroidSans" transform="rotate(270 {x - FN} {BY1 + 55})">{13 + i}</text>\n')
+                 f'font-family="DroidSans" transform="rotate(270 {x - FN} {BY1 + 55})">{i + 1}</text>\n')
         ln = int(len(lab) * FN * 0.58)   # 文字高（rotate270+middle → 文字以锚点为中心，底边=锚点+ln/2）
         L.append(f'  <text x="{x}" y="{BY1 - CH - ln // 2}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
                  f'font-family="DroidSans" transform="rotate(270 {x} {BY1 - CH - ln // 2})">{esc(lab)}</text>\n')
-    # 右 25-36（下→上）：数字在引线上方；名在框内靠右
+    # 右 13-24（下→上）：数字在引线上方；名在框内靠右
     for i in range(12):
-        cn = 24 + i
+        cn = 12 + i
         y = BY1 - CORNER - P // 2 - i * P
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
         L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-                 f'font-family="DroidSans">{25 + i}</text>\n')
+                 f'font-family="DroidSans">{13 + i}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="end" '
                  f'font-family="DroidSans">{esc(PIN_NAMES[cn])}</text>\n')
-    # 上 37-48（右→左）：数字在引脚左侧（从下至上 rotate 270）；名在框内靠上
+    # 上 25-36（右→左）：数字在引脚左侧（从下至上 rotate 270）；名在框内靠上
     for i in range(12):
-        cn = 36 + i
+        cn = 24 + i
         x = BX1 - CORNER - P // 2 - i * P
         lab = PIN_NAMES[cn]
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{x}" y1="{BY0}" x2="{x}" y2="{BY0 - WIRE}" stroke="{BLK}" stroke-width="5"/>\n')
         L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY0 - WIRE}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{x - FN}" y="{BY0 - 50}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-                 f'font-family="DroidSans" transform="rotate(270 {x - FN} {BY0 - 50})">{37 + i}</text>\n')
+                 f'font-family="DroidSans" transform="rotate(270 {x - FN} {BY0 - 50})">{25 + i}</text>\n')
         ln = int(len(lab) * FN * 0.58)
         L.append(f'  <text x="{x}" y="{BY0 + CH + ln // 2}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
                  f'font-family="DroidSans" transform="rotate(270 {x} {BY0 + CH + ln // 2})">{esc(lab)}</text>\n')
-    # 49 EPAD —— 散热焊盘，作为顶排正常引脚，紧挨 pin48（最左顶脚）左侧，样式同顶列
-    ep_x = BX1 - CORNER - P // 2 - 12 * P
+    # 左 37-48（上→下）：数字在引线上方；名在框内居中于引脚、距左边框一个字符
+    for i in range(12):
+        cn = 36 + i
+        y = BY0 + CORNER + P // 2 + i * P
+        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
+                 f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
+                 f'font-family="DroidSans">{37 + i}</text>\n')
+        L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="start" '
+                 f'font-family="DroidSans">{esc(PIN_NAMES[cn])}</text>\n')
+    # 49 EPAD —— 左列 pin48 下方（左下角）第 13 个正常引脚，样式同左列
+    y = BY0 + CORNER + P // 2 + 12 * P
     L.append(f'  <line class="pin" id="connector48pin" connectorname="48" '
-             f'x1="{ep_x}" y1="{BY0}" x2="{ep_x}" y2="{BY0 - WIRE}" stroke="{BLK}" stroke-width="5"/>\n')
-    L.append(f'  <rect id="connector48terminal" x="{ep_x - 11}" y="{BY0 - WIRE}" width="22" height="22" fill="none"/>\n')
-    L.append(f'  <text x="{ep_x - FN}" y="{BY0 - 50}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-             f'font-family="DroidSans" transform="rotate(270 {ep_x - FN} {BY0 - 50})">49</text>\n')
-    epln = int(len("EPAD") * FN * 0.58)
-    L.append(f'  <text x="{ep_x}" y="{BY0 + CH + epln // 2}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
-             f'font-family="DroidSans" transform="rotate(270 {ep_x} {BY0 + CH + epln // 2})">EPAD</text>\n')
+             f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
+    L.append(f'  <rect id="connector48terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+    L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
+             f'font-family="DroidSans">49</text>\n')
+    L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="start" '
+             f'font-family="DroidSans">EPAD</text>\n')
     # 芯片名（框内居中）
     CHIP_X = (BX0 + BX1) // 2
     L.append(f'  <text x="{CHIP_X}" y="1035" font-size="79" fill="#000000" text-anchor="middle" '
@@ -344,11 +350,11 @@ def schematic_svg():
 
 def pcb_svg():
     """QFN48 (6x6, 0.4 pitch) PCB 焊盘 —— 参照嘉立创 QFN-48-L6.0-W6.0-P0.40-TL-EP4.2。
-    1 单位 = 1mm，中心 c=4.5，画布 9x9。
+    1 单位 = 1mm，中心 c=4.5。
       copper1 SMD：边脚 0.2(切向) x 1.0(径向) mm，中心半径 3.1（体 6.0 外缘 0.1/内缘 2.6）；
       中央 EPAD 4.2x4.2（connector48）。
-      pin1 左上、逆时针同 schematic：左 1-12(上→下)、下 13-24(左→右)、右 25-36(下→上)、上 37-48(右→左)。
-      silkscreen：6x6 体轮廓 + pin1 圆点（近左上角，避开焊盘）。"""
+      pin1 左下角、逆时针：下 1-12(左->右)、右 13-24(下->上)、上 25-36(右->左)、左 37-48(上->下)。
+      silkscreen：6x6 四角 L 短标 + 左下角 pin1 实心点（避开焊盘）。"""
     c = 4.5
     R = 3.1                       # 边脚中心半径（0.2x1.0 焊盘，外缘 3.6）
     PITCH = 0.4
@@ -356,31 +362,31 @@ def pcb_svg():
     PW_T, PW_R = 0.2, 1.0         # 切向 / 径向
     CP = "#F7BD13"
     pads, silk = [], []
-    # 左 1-12（上→下）：径向沿 x（外伸向左）
+    # 下 1-12（左->右，pin1 左下）：径向沿 y（外伸向下）
     for i in range(12):
-        y = cen[i]
-        pads.append(f'<rect id="connector{i}pad" x="{c - R - PW_R / 2:.3f}" y="{y - PW_T / 2:.3f}" '
-                    f'width="{PW_R:.3f}" height="{PW_T:.3f}" fill="{CP}" stroke="none" connectorname="{i}"/>')
-    # 下 13-24（左→右）：径向沿 y（外伸向下）
-    for j in range(12):
-        x = cen[j]
-        pads.append(f'<rect id="connector{12 + j}pad" x="{x - PW_T / 2:.3f}" y="{c + R - PW_R / 2:.3f}" '
-                    f'width="{PW_T:.3f}" height="{PW_R:.3f}" fill="{CP}" stroke="none" connectorname="{12 + j}"/>')
-    # 右 25-36（下→上）：径向沿 x（外伸向右）
+        x = cen[i]
+        pads.append(f'<rect id="connector{i}pad" x="{x - PW_T / 2:.3f}" y="{c + R - PW_R / 2:.3f}" '
+                    f'width="{PW_T:.3f}" height="{PW_R:.3f}" fill="{CP}" stroke="none" connectorname="{i}"/>')
+    # 右 13-24（下->上）：径向沿 x（外伸向右）
     for i in range(12):
         y = cen[11 - i]
-        pads.append(f'<rect id="connector{24 + i}pad" x="{c + R - PW_R / 2:.3f}" y="{y - PW_T / 2:.3f}" '
-                    f'width="{PW_R:.3f}" height="{PW_T:.3f}" fill="{CP}" stroke="none" connectorname="{24 + i}"/>')
-    # 上 37-48（右→左）：径向沿 y（外伸向上）
-    for j in range(12):
-        x = cen[11 - j]
-        pads.append(f'<rect id="connector{36 + j}pad" x="{x - PW_T / 2:.3f}" y="{c - R - PW_R / 2:.3f}" '
-                    f'width="{PW_T:.3f}" height="{PW_R:.3f}" fill="{CP}" stroke="none" connectorname="{36 + j}"/>')
+        pads.append(f'<rect id="connector{12 + i}pad" x="{c + R - PW_R / 2:.3f}" y="{y - PW_T / 2:.3f}" '
+                    f'width="{PW_R:.3f}" height="{PW_T:.3f}" fill="{CP}" stroke="none" connectorname="{12 + i}"/>')
+    # 上 25-36（右->左）：径向沿 y（外伸向上）
+    for i in range(12):
+        x = cen[11 - i]
+        pads.append(f'<rect id="connector{24 + i}pad" x="{x - PW_T / 2:.3f}" y="{c - R - PW_R / 2:.3f}" '
+                    f'width="{PW_T:.3f}" height="{PW_R:.3f}" fill="{CP}" stroke="none" connectorname="{24 + i}"/>')
+    # 左 37-48（上->下）：径向沿 x（外伸向左）
+    for i in range(12):
+        y = cen[i]
+        pads.append(f'<rect id="connector{36 + i}pad" x="{c - R - PW_R / 2:.3f}" y="{y - PW_T / 2:.3f}" '
+                    f'width="{PW_R:.3f}" height="{PW_T:.3f}" fill="{CP}" stroke="none" connectorname="{36 + i}"/>')
     # 中央散热焊盘 EPAD 4.2x4.2（connector48）
     pads.append(f'<rect id="connector48pad" x="{c - 2.1:.3f}" y="{c - 2.1:.3f}" width="4.200" height="4.200" '
                 f'fill="{CP}" stroke="none" connectorname="48"/>')
-    # 丝印：6x6 体画成四角 L 短标（每条只画靠角一段，与首/末脚切线留 0.15 间隙，绝不压焊盘）
-    #       + 左上角 pin1 实心点（代替角标，标记 1 脚）。
+    # 丝印：6x6 体画成四角 L 短标（与首/末脚切线留 0.15 间隙，绝不压焊盘）
+    #       + 左下角 pin1 实心点（标记 1 脚）。
     R_ = 3.0                          # 体半宽（丝印角标所在体边）
     T = 0.55                          # 角标沿边长度（端到首脚切线留 0.15）
     c0, c1 = c - R_, c + R_
@@ -395,8 +401,8 @@ def pcb_svg():
     silk_line(c0 + T, c1, c0, c1)          # 下边-左
     silk_line(c0, c1, c0, c1 - T)          # 左边-下
     silk_line(c0, c0 + T, c0, c0)          # 左边-上
-    # pin1 实心点（左上角体角，避开 pad1/pad48）
-    silk.append(f'<circle cx="{c0:.3f}" cy="{c0:.3f}" r="0.22" fill="#f0f0f0" stroke="none" class="other"/>')
+    # pin1 实心点（左下角体角，避开 pad1/pad48）
+    silk.append(f'<circle cx="{c0:.3f}" cy="{c1:.3f}" r="0.22" fill="#f0f0f0" stroke="none" class="other"/>')
     inner = "\n".join(pads) + '\n<g id="copper0"/>\n  </g>\n  <g id="silkscreen">\n' + "\n".join(silk)
     # 裁边：内容（焊盘外缘 3.6）bbox = c±3.6 = 0.9..8.1，四周留 0.3
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'

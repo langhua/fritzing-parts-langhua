@@ -50,7 +50,7 @@
 <rect x="5.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
 <rect x="0" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
 <rect x="6.100" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
-<circle cx="0.90" cy="0.90" r="0.25" fill="#c0c0c0" stroke="none"/>
+<circle cx="0.90" cy="5.30" r="0.25" fill="#c0c0c0" stroke="none"/>
 <text x="3.100" y="3.20" font-size="0.95" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">TXW8301</text>
 <text x="3.100" y="4.25" font-size="0.55" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">802.11ah</text>
  </g>
