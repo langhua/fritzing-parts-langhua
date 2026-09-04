@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CH340E MSOP-10 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="3.0mm" height="5.0mm" viewBox="-1.5 -2.5 3.0 5.0">
+  <g id="icon">
+    <rect x="-1.5" y="-1.5" width="3.0" height="3.0" fill="#303030" stroke="none"/>
+    <rect x="-1.110" y="-2.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="-1.110" y="1.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.610" y="-2.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.610" y="1.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.110" y="-2.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.110" y="1.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.390" y="-2.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.390" y="1.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.890" y="-2.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.890" y="1.50" width="0.22" height="1.00" fill="#c0c0c0" stroke="none"/>
+    <circle cx="-1.1" cy="1.12" r="0.22" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="0.15" font-size="0.45" fill="#ffffff" text-anchor="middle" font-family="DroidSans">CH340E</text>
+  </g>
+</svg>
