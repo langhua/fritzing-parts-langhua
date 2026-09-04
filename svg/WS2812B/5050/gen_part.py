@@ -51,7 +51,9 @@ PCB_PADS = {
     "connector1pin": (4.9, 3.2, 1.5, 1.0),   # VDD bottom-right
 }
 
-CORE_BB = r"C:\Users\shi.jinghai-honor\AppData\Local\Programs\Fritzing\fritzing-parts\svg\core\breadboard\ws2812b_breadboard.svg"
+# Fritzing 官方 core 的 ws2812b 面包板 svg（仓库内资产副本，见 svg/_assets/）
+CORE_BB = os.path.normpath(os.path.join(OUT_DIR, "..", "..", "_assets",
+                                        "ws2812b_core_breadboard.svg"))
 
 
 # LED artwork bounding box in the core SVG (body 14.172 x 14.174 at 3.714,14.36,

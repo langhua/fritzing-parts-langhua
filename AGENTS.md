@@ -62,9 +62,28 @@
 - 打包好的 `.fzpz` 输出到**仓库顶层 `fzpz/`**（脚本里 `OUT_DIR/../../fzpz`）。
 - `.fzpz`（zip）**内部平铺**：`part.<id>.fzp` + `svg.breadboard.<id>_breadboard.svg` 等，不放子目录。
 - 但 `.fzp` 的 `image=` 引用**必须用子目录路径**：`icon/`、`breadboard/`、`schematic/`、`pcb/`。
+- **外部素材归置规则**（2026-09-05 用户定）：仓库内各部件可**跨部件引用其它部件目录的 svg**
+  （如 `../TXW8301`、`../TypeC16Pin`、`../WS2812B/5050`、`../CH340E` 的 icon/breadboard，作为 1:1 图形素材），
+  但**不得**引用仓库外的文件（`D:\Downloads\…`、Fritzing 安装目录 `C:\…\Fritzing\…` 等）；
+  确需复用的**外部 svg/fzpz 素材**统一收进 **`svg/_assets/`**（仓库内、随部件一起提交），
+  供多个脚本相对引用（例：`ws2812b_core_breadboard.svg`、`jst_xh4a_breadboard.svg`）。
+  **外部素材必须随附其版权/许可文件**（2026-09-05 用户定）：在 `svg/_assets/` 放对应
+  `LICENSE-<asset>.txt`，注明来源仓库/作者/许可（例：ws2812b ← Fritzing core 官方 CC-BY-SA 3.0
+  `LICENSE-ws2812b_core_breadboard.txt`；JST XH4A ← orionrobots/fritzing-parts MIT
+  `LICENSE-jst_xh4a_breadboard.txt`），避免无授权传播第三方图形。
+- **小而单点的外部图形可内联进 gen_part.py 常量**（例：SparkFun SMD-1101NE 按钮 2.8KB，
+  2026-09-05 内联为 `_BTN_1101NE_INNER` 后删除原独立 svg），避免留 stray 文件。
 
 ## 5. 生成脚本硬性要求（踩过的坑，写 gen_part.py 时必须遵守）
 
+- **gen_part.py 不得依赖任何仓库外文件**（2026-09-05 用户定）：运行时 `open`/`ZipFile`
+  只允许访问 `OUT_DIR` 本目录、仓库内其它部件目录、或 `svg/_assets/`；
+  严禁硬编码本机绝对路径（`D:\Downloads\…`、`C:\…\Fritzing\…` 等）作读取源——
+  换机器/删文件即报错或静默退化（例：WS2812B 5050/2020 曾硬编码 Fritzing 安装目录 core svg，
+  缺文件时 `try/except` 吞掉错误、静默产出简化版面包板/icon，与已提交 svg 不一致）。
+  已内联/入库的资产：`svg/_assets/ws2812b_core_breadboard.svg`（Fritzing core）、
+  `svg/_assets/jst_xh4a_breadboard.svg`、TX-AH 的按钮 `_BTN_1101NE_INNER` 常量。
+  注：注释/文档字符串里写数据来源路径（如 `D:\Downloads\…pdf`）不算依赖，可保留。
 - SVG 几何常量用**整数**（`body_w/body_h/bx/by` 传 int，如 `25,25,50,50` 而非 `25.0`），
   否则 `{bx}` 输出 `25.0` 与已有源文件产生**字节级 diff**。算术如 `bx+body_w/2` 仍得浮点。
 - 每个视图 `<svg>` 头部**必须同时有 `width` 和 `height`**；breadboard/pcb 视图用 **mm 单位**

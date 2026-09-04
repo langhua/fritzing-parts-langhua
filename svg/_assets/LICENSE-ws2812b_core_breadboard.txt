@@ -1,0 +1,22 @@
+Creative Commons Attribution-ShareAlike 3.0 Unported
+====================================================
+
+The file svg/_assets/ws2812b_core_breadboard.svg was extracted verbatim from
+the official Fritzing core part library (fritzing/fritzing-parts),
+path: svg/core/breadboard/ws2812b_breadboard.svg
+  https://github.com/fritzing/fritzing-parts
+
+Fritzing core graphics are licensed under the Creative Commons
+Attribution-ShareAlike 3.0 Unported license.  The official notice (from the
+Fritzing parts repository LICENSE.txt) is:
+
+    All graphics and documentation of Fritzing are licensed under
+    Creative Commons Attribution-ShareALike 3.0 Unported.
+    See http://creativecommons.org/licenses/by-sa/3.0/ for the full description.
+
+    This means that you may publish circuits and diagrams that you create with
+    Fritzing and that use these graphics -- as long as you credit us, and
+    publish your works under the same license.
+    A credit can be as simple as "this image was created with Fritzing."
+
+Full license text: http://creativecommons.org/licenses/by-sa/3.0/legalcode
