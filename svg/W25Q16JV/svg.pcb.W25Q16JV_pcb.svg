@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- W25Q16JV SPI Flash -->
+<svg xmlns="http://www.w3.org/2000/svg" width="7.02mm" height="8.50mm" viewBox="-3.51 -4.25 7.02 8.50">
+  <g id="copper1">
+<rect id="connector0pad" x="-2.255" y="2.300" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="/CS"/>
+<rect id="connector1pad" x="-0.985" y="2.300" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="DO (IO1)"/>
+<rect id="connector2pad" x="0.285" y="2.300" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="/WP (IO2)"/>
+<rect id="connector3pad" x="1.555" y="2.300" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="GND"/>
+<rect id="connector7pad" x="-2.255" y="-4.100" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="VCC"/>
+<rect id="connector6pad" x="-0.985" y="-4.100" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="/HOLD (IO3)"/>
+<rect id="connector5pad" x="0.285" y="-4.100" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="CLK"/>
+<rect id="connector4pad" x="1.555" y="-4.100" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="DI (IO0)"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<line x1="-2.64" y1="-2.64" x2="-2.64" y2="2.64" stroke="#f0f0f0" stroke-width="0.15"/>
+<line x1="2.64" y1="-2.64" x2="2.64" y2="2.64" stroke="#f0f0f0" stroke-width="0.15"/>
+<circle cx="-2.955" cy="3.2" r="0.4" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>

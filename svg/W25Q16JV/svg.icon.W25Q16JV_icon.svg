@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- W25Q16JV SPI Flash -->
+<svg xmlns="http://www.w3.org/2000/svg" width="5.28mm" height="7.9mm" viewBox="-2.64 -3.95 5.28 7.9">
+  <g id="icon">
+    <rect x="-2.64" y="-2.64" width="5.28" height="5.28" fill="#303030" stroke="none"/>
+    <rect x="-2.115" y="-3.95" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="-2.115" y="2.64" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.845" y="-3.95" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.845" y="2.64" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.425" y="-3.95" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.425" y="2.64" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.695" y="-3.95" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.695" y="2.64" width="0.42" height="1.31" fill="#c0c0c0" stroke="none"/>
+    <circle cx="-1.96" cy="1.96" r="0.35" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="0.3" font-size="0.8" fill="#ffffff" text-anchor="middle" font-family="DroidSans">25Q16JVSIQ</text>
+  </g>
+</svg>
