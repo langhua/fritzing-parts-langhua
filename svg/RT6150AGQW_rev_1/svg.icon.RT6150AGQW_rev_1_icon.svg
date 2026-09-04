@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- RT6150AGQW rev.1 WDFN-10L 3x3 (Buck-Boost DC/DC) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="3.3mm" height="3.3mm" viewBox="-1.65 -1.65 3.3 3.3">
+  <g id="icon">
+    <rect x="-1.62" y="-1.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-1.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="-0.64" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-0.64" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="-0.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-0.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="0.36" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="0.36" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="0.86" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="0.86" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.5" y="-1.5" width="3.0" height="3.0" fill="#303030" stroke="none"/>
+    <circle cx="-1.0" cy="-1.0" r="0.13" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="-0.10" font-size="0.42" fill="#c0c0c0" text-anchor="middle" font-family="DroidSans">RT6150</text>
+    <text x="0" y="0.30" font-size="0.34" fill="#c0c0c0" text-anchor="middle" font-family="DroidSans">AGQW</text>
+  </g>
+</svg>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="17.78mm" height="17.78mm" viewBox="0 0 700 700">
+ <g id="breadboard">
+  <rect x="0" y="0" width="700" height="700" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="286.22" y="305.12" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="404.33" y="305.12" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="286.22" y="324.80" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="404.33" y="324.80" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="286.22" y="344.49" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="404.33" y="344.49" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="286.22" y="364.17" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="404.33" y="364.17" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="286.22" y="383.86" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="404.33" y="383.86" width="9.45" height="11.02" fill="#f7bf13" stroke="none"/>
+  <rect x="290.94" y="290.94" width="118.11" height="118.11" fill="#303030" stroke="none"/>
+  <circle cx="310.63" cy="310.63" r="5.12" fill="#c0c0c0" stroke="none"/>
+  <text x="350.00" y="346.06" font-size="16.54" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">RT6150</text>
+  <text x="350.00" y="361.81" font-size="13.39" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">AGQW</text>
+  <circle id="connector0pin" connectorname="VOUT" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <text x="162" y="100.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">1</text>
+  <circle id="connector1pin" connectorname="LX2" cx="100.0" cy="200.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="200.0" r="19.1" fill="#2b2b2b"/>
+  <text x="162" y="200.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">2</text>
+  <circle id="connector2pin" connectorname="GND" cx="100.0" cy="300.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="300.0" r="19.1" fill="#2b2b2b"/>
+  <text x="162" y="300.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">3</text>
+  <circle id="connector3pin" connectorname="LX1" cx="100.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <text x="162" y="400.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">4</text>
+  <circle id="connector4pin" connectorname="VIN" cx="100.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
+  <text x="162" y="500.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">5</text>
+  <circle id="connector9pin" connectorname="FB" cx="600.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <text x="538" y="100.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">10</text>
+  <circle id="connector8pin" connectorname="GND" cx="600.0" cy="200.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="200.0" r="19.1" fill="#2b2b2b"/>
+  <text x="538" y="200.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">9</text>
+  <circle id="connector7pin" connectorname="VINA" cx="600.0" cy="300.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="300.0" r="19.1" fill="#2b2b2b"/>
+  <text x="538" y="300.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">8</text>
+  <circle id="connector6pin" connectorname="PS" cx="600.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <text x="538" y="400.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">7</text>
+  <circle id="connector5pin" connectorname="EN" cx="600.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
+  <text x="538" y="500.0" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">6</text>
+  <circle id="connector10pin" connectorname="EP" cx="400.0" cy="600.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="600.0" r="19.1" fill="#2b2b2b"/>
+  <text x="400.0" y="530" font-size="42" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">EP</text>
+ </g>
+</svg>
