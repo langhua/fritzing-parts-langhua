@@ -6,7 +6,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（84 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（85 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -22,6 +22,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 | CH340X | USB 转串口芯片（msop-10） | `fzpz/CH340X.fzpz` |
 | DW01A / DW03 / DW06D | 单节锂电保护 IC（SOT23-5/6） | `fzpz/DW01A.fzpz`、`DW03.fzpz`、`DW06D.fzpz` |
 | EC190708 | 按键开关机控制器（SOT23-6） | `fzpz/EC190708.fzpz` |
+| ETA3425S2F | 1µA 静态电流 0.6A 同步降压 DC-DC（ETA3425，SOT23-5 型） | `fzpz/ETA3425S2F.fzpz` |
 | ESP-12F | ESP8266 模块（16 脚） | `fzpz/ESP-12F.fzpz` |
 | ESP32-S3-DevKitC-1 | ESP32-S3 开发板（63.5×28mm，44 脚） | `fzpz/ESP32-S3-DevKitC-1.fzpz` |
 | ESP32-S3-WROOM-1 | ESP32-S3 WiFi+BLE 模块（18×25.5mm，40 焊盘） | `fzpz/ESP32-S3-WROOM-1.fzpz` |

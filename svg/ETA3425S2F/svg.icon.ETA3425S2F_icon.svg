@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ETA3425S2F SOT23-5 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="3.40mm" height="3.20mm" viewBox="-1.70 -1.60 3.40 3.20">
+  <g id="icon">
+    <rect x="-1.150" y="0.80" width="0.400" height="0.600" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.200" y="0.80" width="0.400" height="0.600" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.750" y="0.80" width="0.400" height="0.600" fill="#c0c0c0" stroke="none"/>
+    <rect x="-1.150" y="-1.40" width="0.400" height="0.600" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.750" y="-1.40" width="0.400" height="0.600" fill="#c0c0c0" stroke="none"/>
+    <rect x="-1.5" y="-0.8" width="3.0" height="1.6" fill="#303030" stroke="none"/>
+    <circle cx="-1.13" cy="0.55" r="0.12" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="-0.24" font-size="0.34" fill="#ffffff" text-anchor="middle" font-family="DroidSans">ETA3425</text>
+    <text x="0" y="0.18" font-size="0.26" fill="#ffffff" text-anchor="middle" font-family="DroidSans">S2F</text>
+  </g>
+</svg>
