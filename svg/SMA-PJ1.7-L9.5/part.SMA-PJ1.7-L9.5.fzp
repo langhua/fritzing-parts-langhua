@@ -97,10 +97,10 @@
  </connectors>
  <buses>
   <bus id="GND">
-   <node connectorId="connector1"/>
-   <node connectorId="connector2"/>
-   <node connectorId="connector3"/>
-   <node connectorId="connector4"/>
+   <nodeMember connectorId="connector1"/>
+   <nodeMember connectorId="connector2"/>
+   <nodeMember connectorId="connector3"/>
+   <nodeMember connectorId="connector4"/>
   </bus>
  </buses>
 </module>

@@ -244,9 +244,10 @@ def gen_fzp():
             f'   <description>{esc(name)}</description>\n'
             f'   <views>\n' + bb + sch + f'    <pcbView>\n{pcb}    </pcbView>\n' + '   </views>\n'
             f'  </connector>')
-    # buses：4 个 GND 焊盘(connector1..4) 内部互联为同一地网络（物理一体，点击全亮），bus 命名 GND
+    # buses：4 个 GND 焊盘(connector1..4) 内部互联为同一地网络（物理一体，点击全亮）。
+    # Fritzing 规范子元素为 <nodeMember>（不是 <node>）
     buses = (' <buses>\n  <bus id="GND">\n'
-             + "".join(f'   <node connectorId="connector{i}"/>\n' for i in (1, 2, 3, 4))
+             + "".join(f'   <nodeMember connectorId="connector{i}"/>\n' for i in (1, 2, 3, 4))
              + '  </bus>\n </buses>\n')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
