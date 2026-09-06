@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.4mm" height="7.4mm" viewBox="-0.2 -0.2 7.4 7.4">
+<g id="icon">
+  <!-- KFC-22Z77-GT-PBTK 7.0 自锁按键 顶视图草稿 (mm) -->
+  <!-- 1) 黑底座 7.0x7.0 -->
+  <rect x="0" y="0" width="7.0" height="7.0" rx="0.35" fill="#232323" stroke="#0c0c0c" stroke-width="0.06"/>
+  <!-- 2) 白盖板（POM 白，嵌于底座内，四边留 0.45 黑边） -->
+  <rect x="0.45" y="0.45" width="6.10" height="6.10" rx="0.22" fill="#ededed" stroke="#bdbdbd" stroke-width="0.05"/>
+  <!-- 白盖内缘浅影（表现盖板厚度） -->
+  <rect x="0.62" y="0.62" width="5.76" height="5.76" rx="0.16" fill="none" stroke="#d0d0d0" stroke-width="0.04"/>
+  <!-- 3) 蓝柄（POM 蓝，3.8 居中）：白盖上开暗槽(分件线) + 蓝柄两级凸起 -->
+  <!-- 3a) 白盖中央暗井（蓝柄四周的缝隙=分件线，透出盖下阴影） -->
+  <rect x="1.42" y="1.42" width="4.16" height="4.16" rx="0.14" fill="#3a3a3a"/>
+  <!-- 3b) 蓝柄外阶 3.8 -->
+  <rect x="1.60" y="1.60" width="3.80" height="3.80" rx="0.10" fill="#2268cf" stroke="#143f86" stroke-width="0.06"/>
+  <!-- 3c) 按键杆顶面（用户 2026-09-06：3x2mm，中央槽宽 1mm）＝左右两片各 1x2mm + 中央 1mm 槽 -->
+  <rect x="2.00" y="2.50" width="3.00" height="2.00" rx="0.05" fill="#2f79e2" stroke="#174f9e" stroke-width="0.05"/>
+  <!-- 中央槽（x 3.0..4.0，宽 1mm） -->
+  <rect x="3.00" y="2.55" width="1.00" height="1.90" fill="#143f86"/>
+  <!-- 左右两片上缘高光 -->
+  <path d="M 2.08 2.58 L 2.92 2.58 M 4.08 2.58 L 4.92 2.58" stroke="#8cb9f6" stroke-width="0.06" fill="none"/>
+</g>
+</svg>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- KFC-22Z77-GT-PBTK 面包板草稿 v2：真机 = 两排 2mm 针距引脚 → 左右两侧各 3 脚。
+     引脚在本体 7x7 左右两侧、居中、每脚 0.6mm 宽 × 3mm 长，从本体向左右伸出（内部坐标 100px=2.54mm）。 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="14.0mm" height="8.0mm" viewBox="-276 -118 552 316">
+<g id="breadboard">
+  <!-- 左右各 3 根引脚（银灰金属脚）：宽 0.6mm=24px，长 3mm=118px；针距 2mm=79px，垂直居中于本体 -->
+  <!-- 中心 y=-39/40/119（本体中心 y=40，pitch 79） -->
+  <g fill="#d8dbdd" stroke="#9aa0a6" stroke-width="2">
+    <!-- 左 3 脚（圆头朝外）：矩形杆 -138..-244 + 半径12 半圆头至 -256 -->
+    <path id="connector1pin" connectorname="1" d="M -138 -51 L -244 -51 A 12 12 0 0 0 -244 -27 L -138 -27 Z"/>
+    <path id="connector2pin" connectorname="2" d="M -138 28  L -244 28  A 12 12 0 0 0 -244 52  L -138 52  Z"/>
+    <path id="connector3pin" connectorname="3" d="M -138 107 L -244 107 A 12 12 0 0 0 -244 131 L -138 131 Z"/>
+    <!-- 右 3 脚（圆头朝外）：矩形杆 138..244 + 半径12 半圆头至 256 -->
+    <path id="connector4pin" connectorname="4" d="M 138 -51 L 244 -51 A 12 12 0 0 1 244 -27 L 138 -27 Z"/>
+    <path id="connector5pin" connectorname="5" d="M 138 28  L 244 28  A 12 12 0 0 1 244 52  L 138 52  Z"/>
+    <path id="connector6pin" connectorname="6" d="M 138 107 L 244 107 A 12 12 0 0 1 244 131 L 138 131 Z"/>
+  </g>
+  <!-- 引脚（左右各 3，银灰金属脚，无焊盘） -->
+  <!-- 按钮本体（icon 顶视，中心 y=40，7mm=276px） -->
+  <rect x="-138" y="-98" width="276" height="276" rx="14" fill="#232323" stroke="#0c0c0c" stroke-width="2"/>
+  <rect x="-120" y="-80" width="240" height="240" rx="9" fill="#ededed" stroke="#bdbdbd" stroke-width="2"/>
+  <rect x="-82" y="-42" width="164" height="164" rx="6" fill="#3a3a3a"/>
+  <rect x="-75" y="-35" width="150" height="150" rx="4" fill="#2268cf" stroke="#143f86" stroke-width="2"/>
+  <rect x="-59" y="1" width="118" height="79" rx="2" fill="#2f79e2" stroke="#174f9e" stroke-width="2"/>
+  <rect x="-19.5" y="2" width="39" height="75" fill="#143f86"/>
+</g>
+</svg>

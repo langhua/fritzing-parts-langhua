@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- KFC-22Z77-GT-PBTK 原理图草稿 v2：DPDT 双刀开关符号（仿截图）。
+     左列端子(上→下)=1/3/6/4，右列=2/5；刀1 公共1 触点2/3，刀2 公共4 触点5/6；
+     现态：刀片 1↔2、4↔5 实连（触点端留小缝），3/6 备用触点开路；虚线=机械联动。 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="14.1mm" height="19.1mm" viewBox="0 0 40 54">
+<g id="schematic">
+  <!-- ===== 端子引线（连接线端）connectorNpin + 端点 terminal ===== -->
+  <!-- 左列外端 x=2，触点 x=13 -->
+  <!-- pin1 (y9) -->
+  <line id="connector1pin" connectorname="1" class="pin" x1="2" y1="9"  x2="13" y2="9"  stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector1terminal" x="2" y="9" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <!-- pin3 (y20) -->
+  <line id="connector3pin" connectorname="3" class="pin" x1="2" y1="20" x2="13" y2="20" stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector3terminal" x="2" y="20" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <!-- pin6 (y43) -->
+  <line id="connector6pin" connectorname="6" class="pin" x1="2" y1="43" x2="13" y2="43" stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector6terminal" x="2" y="43" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <!-- pin4 (y32) -->
+  <line id="connector4pin" connectorname="4" class="pin" x1="2" y1="32" x2="13" y2="32" stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector4terminal" x="2" y="32" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <!-- 右列外端 x=38，触点 x=27 -->
+  <!-- pin2 (y14.5) -->
+  <line id="connector2pin" connectorname="2" class="pin" x1="27" y1="14.5" x2="38" y2="14.5" stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector2terminal" x="38" y="14.5" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <!-- pin5 (y37.5) -->
+  <line id="connector5pin" connectorname="5" class="pin" x1="27" y1="37.5" x2="38" y2="37.5" stroke="#787878" stroke-linecap="round" stroke-width="0.75"/>
+  <rect id="connector5terminal" x="38" y="37.5" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+
+  <!-- ===== 触点（端子内端）= 空心圆圈 ===== -->
+  <g fill="none" stroke="#000000" stroke-width="0.4">
+    <circle cx="13" cy="9"   r="0.6"/>
+    <circle cx="13" cy="20"  r="0.6"/>
+    <circle cx="13" cy="43"  r="0.6"/>
+    <circle cx="13" cy="32"  r="0.6"/>
+    <circle cx="27" cy="14.5" r="0.6"/>
+    <circle cx="27" cy="37.5" r="0.6"/>
+  </g>
+
+  <!-- ===== 刀片（现态：1↔2、4↔5 实连；触点端留小缝） ===== -->
+  <g stroke="#000000" stroke-linecap="round" fill="none">
+    <!-- 刀1 -->
+    <line x1="13.8" y1="9.8"  x2="26.2" y2="14.2" stroke-width="0.9"/>
+    <!-- 刀2（4 在 y32 → 5 在 y37.5，缺省通） -->
+    <line x1="13.8" y1="32.9" x2="26.1" y2="37.2" stroke-width="0.9"/>
+  </g>
+  <!-- 虚线机械联动（两刀片之间，到刀2连线即止） -->
+  <line x1="21" y1="12.5" x2="21" y2="35.05" stroke="#000000" stroke-width="0.4" stroke-dasharray="1.6 1.2"/>
+
+  <!-- ===== 编号（灰，DroidSans） ===== -->
+  <text x="3.0" y="7.6"  font-size="2.5" fill="#8c8c8c" font-family="DroidSans">1</text>
+  <text x="3.0" y="18.6" font-size="2.5" fill="#8c8c8c" font-family="DroidSans">3</text>
+  <text x="3.0" y="30.6" font-size="2.5" fill="#8c8c8c" font-family="DroidSans">4</text>
+  <text x="3.0" y="41.6" font-size="2.5" fill="#8c8c8c" font-family="DroidSans">6</text>
+  <text x="36.4" y="13.1" font-size="2.5" fill="#8c8c8c" font-family="DroidSans">2</text>
+  <text x="36.4" y="36.1" font-size="2.5" fill="#8c8c8c" font-family="DroidSans">5</text>
+</g>
+</svg>
