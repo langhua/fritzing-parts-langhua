@@ -499,6 +499,8 @@ p, li { white-space: pre-wrap; }
   </connector>
  </connectors>
  <buses>
+  <bus id="SCLK"/>
+  <bus id="GND"/>
   <bus id="internal1">
    <nodeMember connectorId="connector6"/>
    <nodeMember connectorId="connector33"/>
