@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="15mm" height="17mm" viewBox="0 0 15 17">
+ <g id="icon">
+  <rect x="0" y="0" width="15.00" height="17.00" fill="#2B3D58" stroke="#1b2940" stroke-width="0.10"/>
+  <g fill="#E3B23C">
+   <path d="M 0.250 0.650 L 0 0.650 L 0 0.850 A 0.150 0.150 0 0 1 0 1.150 L 0 1.350 L 0.250 1.350 Z"/>
+   <path d="M 14.750 0.650 L 15.000 0.650 L 15.000 0.850 A 0.150 0.150 0 0 0 15.000 1.150 L 15.000 1.350 L 14.750 1.350 Z"/>
+   <path d="M 0.250 1.850 L 0 1.850 L 0 2.050 A 0.150 0.150 0 0 1 0 2.350 L 0 2.550 L 0.250 2.550 Z"/>
+   <path d="M 14.750 1.850 L 15.000 1.850 L 15.000 2.050 A 0.150 0.150 0 0 0 15.000 2.350 L 15.000 2.550 L 14.750 2.550 Z"/>
+   <path d="M 0.250 3.050 L 0 3.050 L 0 3.250 A 0.150 0.150 0 0 1 0 3.550 L 0 3.750 L 0.250 3.750 Z"/>
+   <path d="M 14.750 3.050 L 15.000 3.050 L 15.000 3.250 A 0.150 0.150 0 0 0 15.000 3.550 L 15.000 3.750 L 14.750 3.750 Z"/>
+   <path d="M 0.250 4.250 L 0 4.250 L 0 4.450 A 0.150 0.150 0 0 1 0 4.750 L 0 4.950 L 0.250 4.950 Z"/>
+   <path d="M 14.750 4.250 L 15.000 4.250 L 15.000 4.450 A 0.150 0.150 0 0 0 15.000 4.750 L 15.000 4.950 L 14.750 4.950 Z"/>
+   <path d="M 0.250 5.450 L 0 5.450 L 0 5.650 A 0.150 0.150 0 0 1 0 5.950 L 0 6.150 L 0.250 6.150 Z"/>
+   <path d="M 14.750 5.450 L 15.000 5.450 L 15.000 5.650 A 0.150 0.150 0 0 0 15.000 5.950 L 15.000 6.150 L 14.750 6.150 Z"/>
+   <path d="M 0.250 6.650 L 0 6.650 L 0 6.850 A 0.150 0.150 0 0 1 0 7.150 L 0 7.350 L 0.250 7.350 Z"/>
+   <path d="M 14.750 6.650 L 15.000 6.650 L 15.000 6.850 A 0.150 0.150 0 0 0 15.000 7.150 L 15.000 7.350 L 14.750 7.350 Z"/>
+   <path d="M 0.250 7.850 L 0 7.850 L 0 8.050 A 0.150 0.150 0 0 1 0 8.350 L 0 8.550 L 0.250 8.550 Z"/>
+   <path d="M 14.750 7.850 L 15.000 7.850 L 15.000 8.050 A 0.150 0.150 0 0 0 15.000 8.350 L 15.000 8.550 L 14.750 8.550 Z"/>
+   <path d="M 0.250 9.050 L 0 9.050 L 0 9.250 A 0.150 0.150 0 0 1 0 9.550 L 0 9.750 L 0.250 9.750 Z"/>
+   <path d="M 14.750 9.050 L 15.000 9.050 L 15.000 9.250 A 0.150 0.150 0 0 0 15.000 9.550 L 15.000 9.750 L 14.750 9.750 Z"/>
+   <path d="M 0.250 10.250 L 0 10.250 L 0 10.450 A 0.150 0.150 0 0 1 0 10.750 L 0 10.950 L 0.250 10.950 Z"/>
+   <path d="M 14.750 10.250 L 15.000 10.250 L 15.000 10.450 A 0.150 0.150 0 0 0 15.000 10.750 L 15.000 10.950 L 14.750 10.950 Z"/>
+   <path d="M 0.250 11.450 L 0 11.450 L 0 11.650 A 0.150 0.150 0 0 1 0 11.950 L 0 12.150 L 0.250 12.150 Z"/>
+   <path d="M 14.750 11.450 L 15.000 11.450 L 15.000 11.650 A 0.150 0.150 0 0 0 15.000 11.950 L 15.000 12.150 L 14.750 12.150 Z"/>
+   <path d="M 0.250 12.650 L 0 12.650 L 0 12.850 A 0.150 0.150 0 0 1 0 13.150 L 0 13.350 L 0.250 13.350 Z"/>
+   <path d="M 14.750 12.650 L 15.000 12.650 L 15.000 12.850 A 0.150 0.150 0 0 0 15.000 13.150 L 15.000 13.350 L 14.750 13.350 Z"/>
+   <path d="M 0.250 13.850 L 0 13.850 L 0 14.050 A 0.150 0.150 0 0 1 0 14.350 L 0 14.550 L 0.250 14.550 Z"/>
+   <path d="M 14.750 13.850 L 15.000 13.850 L 15.000 14.050 A 0.150 0.150 0 0 0 15.000 14.350 L 15.000 14.550 L 14.750 14.550 Z"/>
+   <path d="M 0.250 15.050 L 0 15.050 L 0 15.250 A 0.150 0.150 0 0 1 0 15.550 L 0 15.750 L 0.250 15.750 Z"/>
+   <path d="M 14.750 15.050 L 15.000 15.050 L 15.000 15.250 A 0.150 0.150 0 0 0 15.000 15.550 L 15.000 15.750 L 14.750 15.750 Z"/>
+   <path d="M 1.750 16.750 L 1.750 17.000 L 1.950 17.000 A 0.150 0.150 0 0 1 2.250 17.000 L 2.450 17.000 L 2.450 16.750 Z"/>
+   <path d="M 2.950 16.750 L 2.950 17.000 L 3.150 17.000 A 0.150 0.150 0 0 1 3.450 17.000 L 3.650 17.000 L 3.650 16.750 Z"/>
+   <path d="M 4.150 16.750 L 4.150 17.000 L 4.350 17.000 A 0.150 0.150 0 0 1 4.650 17.000 L 4.850 17.000 L 4.850 16.750 Z"/>
+   <path d="M 5.350 16.750 L 5.350 17.000 L 5.550 17.000 A 0.150 0.150 0 0 1 5.850 17.000 L 6.050 17.000 L 6.050 16.750 Z"/>
+   <path d="M 6.550 16.750 L 6.550 17.000 L 6.750 17.000 A 0.150 0.150 0 0 1 7.050 17.000 L 7.250 17.000 L 7.250 16.750 Z"/>
+   <path d="M 7.750 16.750 L 7.750 17.000 L 7.950 17.000 A 0.150 0.150 0 0 1 8.250 17.000 L 8.450 17.000 L 8.450 16.750 Z"/>
+   <path d="M 8.950 16.750 L 8.950 17.000 L 9.150 17.000 A 0.150 0.150 0 0 1 9.450 17.000 L 9.650 17.000 L 9.650 16.750 Z"/>
+   <path d="M 10.150 16.750 L 10.150 17.000 L 10.350 17.000 A 0.150 0.150 0 0 1 10.650 17.000 L 10.850 17.000 L 10.850 16.750 Z"/>
+   <path d="M 11.350 16.750 L 11.350 17.000 L 11.550 17.000 A 0.150 0.150 0 0 1 11.850 17.000 L 12.050 17.000 L 12.050 16.750 Z"/>
+   <path d="M 12.550 16.750 L 12.550 17.000 L 12.750 17.000 A 0.150 0.150 0 0 1 13.050 17.000 L 13.250 17.000 L 13.250 16.750 Z"/>
+  </g>
+  <rect x="1.2" y="4.7" width="2.6" height="1.8" rx="0.2" fill="#C9CCD1"/>
+  <rect x="2.0" y="4.7" width="1.3" height="1.8" fill="#8f959b"/>
+  <g transform="translate(10.50 3.70) rotate(-90)">
+    <rect x="-1.62" y="-1.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-1.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="-0.64" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-0.64" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="-0.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="-0.14" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="0.36" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="0.36" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.62" y="0.86" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="1.38" y="0.86" width="0.24" height="0.28" fill="#f7bf13" stroke="none"/>
+    <rect x="-1.5" y="-1.5" width="3.0" height="3.0" fill="#303030" stroke="none"/>
+    <circle cx="-1.0" cy="-1.0" r="0.13" fill="#c0c0c0" stroke="none"/>
+    
+    
+    <text x="0" y="0.33" font-size="0.5" fill="#F4F4F4" text-anchor="middle" font-family="Arial">HS8308E</text>
+  </g>
+  <g fill="#c7d0da">
+   <rect x="4.40" y="5.60" width="0.9" height="0.6"/>
+   <rect x="7.00" y="5.40" width="0.9" height="0.6"/>
+   <rect x="12.60" y="3.60" width="0.9" height="0.6"/>
+   <rect x="13.80" y="5.40" width="0.9" height="0.6"/>
+   <rect x="1.50" y="8.40" width="0.9" height="0.6"/>
+   <rect x="3.00" y="10.40" width="0.9" height="0.6"/>
+   <rect x="1.50" y="12.40" width="0.9" height="0.6"/>
+   <rect x="4.00" y="13.40" width="0.9" height="0.6"/>
+   <rect x="2.20" y="14.60" width="0.9" height="0.6"/>
+   <rect x="12.80" y="8.40" width="0.9" height="0.6"/>
+   <rect x="13.70" y="10.40" width="0.9" height="0.6"/>
+   <rect x="12.90" y="12.60" width="0.9" height="0.6"/>
+   <rect x="13.60" y="14.20" width="0.9" height="0.6"/>
+  </g>
+  <g transform="translate(5.80 8.40) rotate(90 3.1 3.1)">
+<rect x="0.100" y="0.100" width="6.00" height="6.00" rx="0.15" ry="0.15" fill="#303030" stroke="none"/>
+<rect x="0.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="0.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="0.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="1.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="1.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="1.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="1.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="1.600" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="1.600" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="1.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="1.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.000" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.000" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.400" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.400" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="2.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="2.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="2.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="2.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="3.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="3.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="3.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="3.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="3.600" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="3.600" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="3.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="3.600" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.000" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.000" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.000" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.400" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.400" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.400" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="4.800" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="4.800" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="4.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="4.800" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="5.200" y="0" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="5.200" y="6.100" width="0.20" height="0.100" fill="#f7bf13" stroke="none"/>
+<rect x="0" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<rect x="6.100" y="5.200" width="0.100" height="0.20" fill="#f7bf13" stroke="none"/>
+<circle cx="0.90" cy="5.30" r="0.25" fill="#c0c0c0" stroke="none"/>
+<text x="3.100" y="3.20" font-size="0.95" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">TXW8301</text>
+<text x="3.100" y="4.25" font-size="0.55" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none" stroke-width="0">802.11ah</text>
+   </g>
+  <g fill="#FFFFFF" font-family="Arial">
+   <text x="0.5" y="16.6" font-size="1.0">P9</text>
+   <text x="14.5" y="16.6" font-size="1.0" text-anchor="end">NR</text>
+  </g>
+ </g>
+</svg>
