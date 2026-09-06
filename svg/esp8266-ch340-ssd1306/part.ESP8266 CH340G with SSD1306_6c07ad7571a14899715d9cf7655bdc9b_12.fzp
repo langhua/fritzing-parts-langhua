@@ -506,6 +506,7 @@ p, li { white-space: pre-wrap; }
    <nodeMember connectorId="connector33"/>
    <nodeMember connectorId="connector16"/>
    <nodeMember connectorId="connector13"/>
+   <nodeMember connectorId="connector41"/>
   </bus>
   <bus id="internal2">
    <nodeMember connectorId="connector14"/>
