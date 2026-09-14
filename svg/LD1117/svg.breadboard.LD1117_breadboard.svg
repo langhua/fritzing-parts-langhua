@@ -2,12 +2,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="10.16mm" height="15.24mm" viewBox="0 0 400 600">
  <g id="breadboard">
   <rect x="0" y="0" width="400" height="600" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
-  <rect x="95.67" y="368.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
-  <rect x="186.22" y="368.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
-  <rect x="276.77" y="368.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
-  <rect x="129.13" y="156.30" width="141.73" height="74.80" fill="#c0c0c0" stroke="none"/>
-  <rect x="72.05" y="231.10" width="255.90" height="137.79" fill="#303030" stroke="none"/>
-  <text x="200.00" y="312.60" font-size="35.43" font-family="DroidSans" fill="#ffffff" text-anchor="middle" stroke="none">1117-3.3</text>
+  <rect x="95.67" y="298.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
+  <rect x="186.22" y="298.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
+  <rect x="276.77" y="298.90" width="27.56" height="74.80" fill="#c0c0c0" stroke="none"/>
+  <rect x="129.13" y="86.30" width="141.73" height="74.80" fill="#c0c0c0" stroke="none"/>
+  <rect x="72.05" y="161.10" width="255.90" height="137.79" fill="#303030" stroke="none"/>
+  <text x="200.00" y="242.60" font-size="35.43" font-family="DroidSans" fill="#ffffff" text-anchor="middle" stroke="none">1117-3.3</text>
   <circle id="connector0pin" connectorname="ADJ/GND" cx="100" cy="500" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="100" cy="500" r="19.1" fill="#2b2b2b"/>
   <text x="100" y="450" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100 450)">1</text>

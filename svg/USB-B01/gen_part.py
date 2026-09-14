@@ -23,9 +23,8 @@ SCALE **1:1**，UNIT mm；材料：胶芯 PBT / 端子磷铜 C5191 镀金 1u" / 
   自洽性核对：12.0+4.30 = 16.30 ✓；12.00+2×1.25 = 14.50 ✓；10.35±1.15 = 9.20~11.50 落在
               前块金属片(0~12.0)内 ✓；12.04/2 = 6.02 = 1.25（行内半距）+ 4.77 ✓；4.71 = 2.00+2.71 ✓
 
-仍标 [推定]、只影响 PCB 视图的：
-  [推定] 定位柱中心 = 16.30 − 1.15（柱完全露在外壳之后 → 外缘落在总深 16.30 上）
-  [推定] 信号脚两排的绝对深度由「定位柱 − 2.71 / − 4.71」反推（12.44 / 10.44）
+仍标 [推定] 的：本版已经**没有**了 —— 信号脚两排深度改为由「耳朵孔 ↔ 信号脚 2.71 /
+4.71」从耳朵孔倒推（7.64 / 5.64），两个大孔也按用户纠正画在耳朵上（±6.02 / 深 10.35）。
 
 进度：
   [x] 1. icon（顶视：前 12.0×12.0 + 后 4.30×12.0 两块金属片 + 两侧耳朵 1.25×2.30）
@@ -53,16 +52,24 @@ EAR_CD = 10.35                      # 侧耳中心距插口面（用户给）→
 TOTAL_D = PLATE1_D + PLATE2_D       # 16.30 [核对 ✓]
 TOTAL_W = PLATE1_W + 2 * EAR_OUT    # 14.50 [核对 ✓]
 
-# ---- 图纸/用户给的其余尺寸（顶视看不见，留给 pcb / breadboard 视图用）----------
+# ---- 图纸/用户给的其余尺寸（顶视看不见，pcb 视图用）-------------------------
 INNER_W = 5.60         # 插口内宽
-PIN_DX = 2.50          # 信号脚行内中心距
-PIN_DY = 2.00          # 信号脚行距
-POST_DX = 12.04        # 定位柱水平中心距（⇒ ±6.02）
-POST_D = 2.30          # 定位柱直径 Ø2.3
+PIN_DX = 2.50          # 信号脚：**宽度方向**中心距（⇒ ±1.25）
+PIN_DY = 2.00          # 信号脚：**深度方向**两排的间距
 PIN_D = 0.92           # 信号脚孔径 Ø0.92
-POST_CD = TOTAL_D - POST_D / 2.0         # [推定] 定位柱中心深度 = 15.15（外缘落在总深上）
-ROW_NEAR = POST_CD - 2.71                # [推定] 近排信号脚深度 = 12.44
-ROW_FAR = POST_CD - 4.71                 # [推定] 远排信号脚深度 = 10.44
+# 信号脚两排的深度：**在耳朵孔之后**（用户 2026-09-15 给的绝对值）——
+#   后排 = 10.35 + 4.71 = **15.06**；前排 = 15.06 − 2.00 = **13.06**（= 10.35 + 2.71 ✓）
+ROW_FAR = EAR_CD + 4.71                  # 后排（离插口面远）= 15.06
+ROW_NEAR = ROW_FAR - PIN_DY              # 前排 = 13.06
+# 焊盘画法照 Fritzing 官方 USB+SHIELD.fzpz（SparkFun usb-b-pth）：**圆环**
+# （fill=none + stroke，也是 Fritzing 自己 brd2svg 导出 THT 焊盘的写法）
+SIG_OUTER_D = 1.68     # 信号脚焊盘外径（官方那份 r=0.6477 + 描边 0.381 → Ø1.676；
+                       # 与数据表 4-Ø0.92 对得上）
+# 两个大孔（图纸 "2-Ø2.3"）—— **焊耳朵用的**，不是定位柱（用户 2026-09-15 纠正），
+# 就画在耳朵上；同样照官方那份的环画法（r=1.27 + 描边 0.254）。
+SHIELD_SPAN = 12.04    # 两孔水平中心距（⇒ ±6.02）
+SHIELD_HOLE_D = 2.30   # 孔 Ø2.3
+SHIELD_PAD_D = 2.80    # 焊盘环外径
 
 # 颜色（金属外壳 / 侧耳 / 深色孔）
 PLATE1 = "#c9c9c9"
@@ -227,16 +234,25 @@ PCB_SILK = "#f0f0f0"
 
 def gen_pcb_svg():
     """PCB 推荐孔位（mm，局部坐标：x 以外壳中心为 0，y=0 在插口面、向后递增）：
-      · 4 个信号脚 Ø0.92（= PIN1..4）：2×2；行内 2.50（±1.25）、行距 2.00（10.44 / 12.44）
-        焊盘环 Ø1.80、孔 Ø0.92；PIN1=VCC(右上) / PIN2=D-(左上) / PIN3=D+(左下) / PIN4=GND(右下)
-      · 2 个定位柱 Ø2.3（中心 ±6.02、深 15.15）—— **机械件、不接线**，只画孔（白）+ 灰环
-      · 丝印：外壳外框 12.00 宽（y 0..14.00，到定位柱前停）+ 底边在两根定位柱之间
-        （x ±4.87）+ 两侧耳朵（1.25×2.30）—— **丝印一律避开焊盘**（§5）
-    注意：[推定] 信号脚两排的绝对深度（10.44 / 12.44）与定位柱中心深（15.15）见文件头。"""
-    xs = (-1.25, 1.25)
-    rows = ((10.44, ("D-", "VCC")), (12.44, ("D+", "GND")))      # (深度, (左, 右))
-    pad_r, hole_r = 0.90, 0.46
-    post_r = POST_D / 2.0
+      · 4 个信号脚 Ø0.92（= PIN1..4）：2×2；**宽度方向对称 ±1.25（间距 2.50）**、
+        **深度方向 13.06 / 15.06（间距 2.00）** —— 都在**耳朵孔之后**，由用户 2026-09-15
+        给的绝对值定（10.35 + 4.71 / 10.35 + 2.71）；左右分配也由用户定：
+        **后排 VCC(-1.25) / D-(+1.25)**、**前排 D+(+1.25) / GND(-1.25)**；
+        焊盘 = **圆环 Ø0.92(孔) ~ Ø1.68(外)**（照 Fritzing 官方 USB+SHIELD 的 r=0.6477
+        + 描边 0.381，对应数据表的 4-Ø0.92）；
+      · 2 个**耳朵焊孔** Ø2.3（图纸 "2-Ø2.3"）：画在**耳朵上**（x=±6.02、深度 10.35），
+        环 Ø2.286(孔) ~ Ø2.794(外)（照官方那份 r=1.27 + 描边 0.254）。
+        用户 2026-09-15：“两个大圆圈应该在耳朵处，是焊耳朵用的”。
+        **本版不给它们 connector**（同 LD1117 散热片的取舍）—— 若要当屏蔽地接线，
+        应各自一个 connector 并用 <bus> 并到 GND（AGENTS §5）。
+      · 丝印：外壳外框 12.00 宽 × 16.30 深；左右侧边在**耳朵焊盘处断开**（每侧留 0.1
+        间隙），上下两整边 —— 丝印一律避开焊盘（§5）。"""
+    sig_r, sig_sw = (PIN_D + SIG_OUTER_D) / 4.0, (SIG_OUTER_D - PIN_D) / 2.0
+    sh_r, sh_sp = SHIELD_HOLE_D / 2.0, SHIELD_PAD_D / 2.0
+    shield_r, shield_sw = (sh_r + sh_sp) / 2.0, (sh_sp - sh_r)
+    # 左右分配（用户 2026-09-15 定）：后排 VCC 在 **左**、D- 在 **右**；前排 D+ 在 **右**、GND 在 **左**
+    pads = ((0, "VCC", -1.25, ROW_FAR), (1, "D-", 1.25, ROW_FAR),
+            (2, "D+", 1.25, ROW_NEAR), (3, "GND", -1.25, ROW_NEAR))
     SX, SY, M = TOTAL_W / 2.0, TOTAL_D, 0.15
     VX, VY, VW, VH = -SX - M, -M, 2 * (SX + M), SY + 2 * M
     s = ['<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n',
@@ -244,33 +260,25 @@ def gen_pcb_svg():
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
          'viewBox="%.2f %.2f %.2f %.2f">\n' % (VW, VH, VX, VY, VW, VH),
          ' <g id="copper1">\n']
-    cn = 0
-    for depth, (nl, nr) in rows:                     # 信号焊盘（可连线）
-        for i, (px, nm) in enumerate(((xs[0], nl), (xs[1], nr))):
-            s.append('  <circle id="connector%dpad" connectorname="%s" cx="%.2f" cy="%.2f" '
-                     'r="%.2f" fill="#F7BD13" stroke="none"/>\n' % (cn, nm, px, depth, pad_r))
-            s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s" stroke="none"/>\n'
-                     % (px, depth, hole_r, PCB_HOLE))
-            cn += 1
-    for sx in (-1, 1):                                # 定位柱（机械、无 connector id）
-        s.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s" stroke="#b0b0b0" '
-                 'stroke-width="0.10"/>\n' % (sx * POST_DX / 2.0, POST_CD, post_r, PCB_HOLE))
+    for cn, nm, px, py in pads:               # 信号焊盘（可连线）
+        s.append('  <circle id="connector%dpad" connectorname="%s" cx="%.2f" cy="%.2f" '
+                 'r="%.4f" fill="none" stroke="#F7BD13" stroke-width="%.3f"/>\n'
+                 % (cn, nm, px, py, sig_r, sig_sw))
+    for sx in (-1, 1):                        # 耳朵焊孔（焊耳朵用；本版不设 connector）
+        s.append('  <circle cx="%.2f" cy="%.2f" r="%.4f" fill="none" stroke="#F7BD13" '
+                 'stroke-width="%.3f"/>\n'
+                 % (sx * SHIELD_SPAN / 2.0, EAR_CD, shield_r, shield_sw))
+    y_lo, y_hi = EAR_CD - SHIELD_PAD_D / 2.0 - 0.1, EAR_CD + SHIELD_PAD_D / 2.0 + 0.1
     s.append('  <g id="silkscreen">\n')
     s.append('   <path d="M %.2f 0.00 L %.2f 0.00" fill="none" stroke="%s" stroke-width="0.12"/>\n'
              % (-PLATE1_W / 2.0, PLATE1_W / 2.0, PCB_SILK))
-    for sx in (-1, 1):                                # 侧边：到定位柱前停
-        s.append('   <path d="M %.2f 0.00 L %.2f %.2f" fill="none" stroke="%s" '
-                 'stroke-width="0.12"/>\n'
-                 % (sx * PLATE1_W / 2.0, sx * PLATE1_W / 2.0, POST_CD - post_r, PCB_SILK))
-    gap = POST_DX / 2.0 - post_r                      # 4.87
+    for sx in (-1, 1):
+        for y1, y2 in ((0.0, y_lo), (y_hi, TOTAL_D)):
+            s.append('   <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" '
+                     'stroke-width="0.12"/>\n'
+                     % (sx * PLATE1_W / 2.0, y1, sx * PLATE1_W / 2.0, y2, PCB_SILK))
     s.append('   <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" stroke-width="0.12"/>\n'
-             % (-gap, TOTAL_D, gap, TOTAL_D, PCB_SILK))
-    ear_y = EAR_CD - EAR_D / 2.0
-    for sx in (-1, 1):                                # 两侧耳朵丝印
-        s.append('   <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="none" '
-                 'stroke="%s" stroke-width="0.12"/>\n'
-                 % (sx * PLATE1_W / 2.0 if sx > 0 else -TOTAL_W / 2.0, ear_y, EAR_OUT, EAR_D,
-                    PCB_SILK))
+             % (-PLATE1_W / 2.0, TOTAL_D, PLATE1_W / 2.0, TOTAL_D, PCB_SILK))
     s.append('  </g>\n')
     s += [' </g>\n', '</svg>\n']
     return "".join(s)
