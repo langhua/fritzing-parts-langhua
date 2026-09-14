@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- LD1117 SOT-223 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="6.5mm" height="7.3mm" viewBox="0 0 6.5 7.3">
+  <g id="icon">
+  <rect x="0.60" y="5.40" width="0.70" height="1.90" fill="#c0c0c0" stroke="none"/>
+  <rect x="2.90" y="5.40" width="0.70" height="1.90" fill="#c0c0c0" stroke="none"/>
+  <rect x="5.20" y="5.40" width="0.70" height="1.90" fill="#c0c0c0" stroke="none"/>
+  <rect x="1.45" y="0.00" width="3.60" height="1.90" fill="#c0c0c0" stroke="none"/>
+  <rect x="0.00" y="1.90" width="6.50" height="3.50" fill="#303030" stroke="none"/>
+  <text x="3.25" y="3.97" font-size="0.90" font-family="DroidSans" fill="#ffffff" text-anchor="middle" stroke="none">1117-3.3</text>
+  </g>
+</svg>

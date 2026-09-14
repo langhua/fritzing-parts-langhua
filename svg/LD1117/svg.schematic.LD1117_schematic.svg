@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="0.970000in" height="0.670000in" viewBox="165 65 970 670">
+ <g id="schematic">
+  <rect class="interior rect" x="300" y="200" width="700" height="400" fill="#FFFFFF" stroke="#787878" stroke-width="5"/>
+  <line class="pin" id="connector2pin" connectorname="VIN" x1="300" y1="360" x2="170" y2="360" stroke="#000000" stroke-width="5"/>
+  <rect id="connector2terminal" x="170" y="349" width="22" height="22" fill="none"/>
+  <text x="235" y="336" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">3</text>
+  <text x="335" y="372" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">VIN</text>
+  <line class="pin" id="connector1pin" connectorname="VOUT" x1="1000" y1="360" x2="1130" y2="360" stroke="#000000" stroke-width="5"/>
+  <rect id="connector1terminal" x="1130" y="349" width="22" height="22" fill="none"/>
+  <text x="1065" y="336" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">2</text>
+  <text x="965" y="372" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">VOUT</text>
+  <line class="pin" id="connector0pin" connectorname="ADJ/GND" x1="650" y1="600" x2="650" y2="730" stroke="#000000" stroke-width="5"/>
+  <rect id="connector0terminal" x="639" y="730" width="22" height="22" fill="none"/>
+  <text x="623" y="665" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 623 665)">1</text>
+  <text x="650" y="548" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 650 548)">ADJ/GND</text>
+  <text x="650" y="330" font-size="79" fill="#000000" text-anchor="middle" font-family="DroidSans">LD1117</text>
+ </g>
+</svg>

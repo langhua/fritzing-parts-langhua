@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- LD1117 SOT-223 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="6.80mm" height="8.70mm" viewBox="-3.40 -4.35 6.80 8.70">
+ <g id="copper1">
+<rect id="connector0pad" x="-2.800" y="2.200" width="1.00" height="2.00" fill="#F7BD13" stroke="none" connectorname="ADJ/GND"/>
+<rect id="connector1pad" x="-0.500" y="2.200" width="1.00" height="2.00" fill="#F7BD13" stroke="none" connectorname="VOUT"/>
+<rect id="connector2pad" x="1.800" y="2.200" width="1.00" height="2.00" fill="#F7BD13" stroke="none" connectorname="VIN"/>
+<rect id="connector3pad" x="-1.900" y="-4.150" width="3.80" height="2.30" fill="#F7BD13" stroke="none" connectorname="VOUT"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<rect x="-3.250" y="-1.750" width="6.50" height="3.50" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+ </g>
+</svg>
