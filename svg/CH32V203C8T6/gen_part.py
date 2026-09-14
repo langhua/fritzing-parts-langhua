@@ -351,6 +351,11 @@ def _btn_art(cx, cy, scale=0.60):
     )
 
 
+# 板上小件丝印字号：与晶振频率丝印（8MHz）**一样大**（用户 2026-09-14 要求）——
+# 8MHz 的字号由 _crystal_art 按 3225 本体尺寸算出 = 31.8；这里直接取同值，两边一起看。
+SILK_FS_SMALL = 31.8
+
+
 def _sot23_5_art(cx, cy, silk="S2YZ"):
     """SOT23-5 芯片（视觉，不连线）：几何 1:1 复用 svg/ETA3425S2F 的 icon ——
     本体 3.0×1.6、银脚 0.4×0.6 伸出 0.6、e=0.95，下排 3 脚(pin1,2,3) + 上排 2 脚(pin5,4)。
@@ -374,13 +379,11 @@ def _sot23_5_art(cx, cy, silk="S2YZ"):
     # pin1 圆点（本体原左下角内侧 (-1.13,0.55) → 旋转后落在左上，与左侧 pin1 脚相邻）
     out.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#c0c0c0"/>\n'
                % (cx - 0.55 * S, cy - 1.13 * S, 0.12 * S))
-    # 丝印竖排：绕芯片中心顺时针 90° → 首字符在上；字宽按 0.62em、字高按 0.72em 估算
-    body_long, body_short = 3.0 * S, 1.6 * S        # 旋转后本体的长边(字延伸)/短边(字高)
-    fs = min(0.92 * body_long / (0.62 * max(len(silk), 1)), 0.9 * body_short / 0.72)
+    # 丝印竖排：绕芯片中心顺时针 90° → 首字符在上；字号与 8MHz 丝印同(SILK_FS_SMALL)
     out.append('  <text x="%.1f" y="%.1f" font-size="%.1f" fill="#ffffff" text-anchor="middle" '
                'dominant-baseline="central" font-family="DroidSans" '
                'transform="rotate(90 %.1f %.1f)">%s</text>\n'
-               % (cx, cy, fs, cx, cy, silk))
+               % (cx, cy, SILK_FS_SMALL, cx, cy, silk))
     return "".join(out)
 
 
