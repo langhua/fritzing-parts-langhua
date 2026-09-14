@@ -407,7 +407,8 @@
   <circle cx="1962" cy="594" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle cx="1962" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle cx="1962" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
-  <rect x="1612" y="547" width="400" height="294" fill="none" stroke="#f5f5f5" stroke-width="5"/>
+  <rect x="1612" y="547" width="400" height="197" fill="none" stroke="#f5f5f5" stroke-width="5"/>
+  <rect x="1612" y="744" width="400" height="98" fill="none" stroke="#f5f5f5" stroke-width="5"/>
   <line x1="1712" y1="547" x2="1712" y2="842" stroke="#f5f5f5" stroke-width="5"/>
   <line x1="1812" y1="547" x2="1812" y2="842" stroke="#f5f5f5" stroke-width="5"/>
   <line x1="1912" y1="547" x2="1912" y2="842" stroke="#f5f5f5" stroke-width="5"/>
@@ -432,7 +433,7 @@
   <circle cx="1862" cy="794" r="17" fill="#33507f"/>
   <rect x="1850" y="694" width="24" height="100" fill="#d9dde0"/>
   <text x="2043" y="644" font-size="31" fill="#f5f5f5" text-anchor="middle" transform="rotate(-90 2043 644)" font-family="DroidSans">J5</text>
-  <text x="2043" y="744" font-size="31" fill="#f5f5f5" text-anchor="middle" transform="rotate(-90 2043 744)" font-family="DroidSans">J4</text>
+  <text x="2043" y="794" font-size="31" fill="#f5f5f5" text-anchor="middle" transform="rotate(-90 2043 794)" font-family="DroidSans">J4</text>
   <circle cx="498" cy="380" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle cx="598" cy="380" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <rect x="448" y="330" width="200" height="100" fill="none" stroke="#f5f5f5" stroke-width="5"/>

@@ -987,15 +987,19 @@ def breadboard_svg():
     for cx in (JU_GN, JU_J4, JU_J5, JU_VC):
         for r in range(3):
             pin(cx, JU_Y0 + r * 2.54)
-    # JU 外框：4 列并排不留缝，两邻框边融合为一条分隔竖线（外框 1 个 + 内部 3 条竖分隔）
-    #   列占宽 = 列距 2.54 → 外框左缘 = GND列心-1.27、右缘 = VCC列心+1.27，总宽 4*2.54；
-    #   y = 首针上 1.2 .. 尾针下 1.2（同前高 7.48）
+    # JU 外框：按用户（2026-09-14）分**两块** —— J5 = 上面两排（2×4 = 8 焊盘）、
+    #   J4 = 下面一排（4 焊盘）；两块共边（分界线 = 第 2/3 排之间中线 JU_Y0+3.81 = 18.91）。
+    #   列占宽 = 列距 2.54 → 左缘 = GND列心-1.27、右缘 = VCC列心+1.27，总宽 4*2.54；
+    #   J5 顶 = 首针上 1.2；J4 底 = 尾针下 1.2（两块合起来仍是 7.48，与旧外框同）
     JU_FX0 = JU_GN - 1.27                     # 外框左缘 40.95
-    JU_FY0 = JU_Y0 - 1.2                      # 外框顶 13.9
+    JU_FY0 = JU_Y0 - 1.2                      # J5 框顶 13.9
     JU_FW = 4 * 2.54                          # 10.16
-    JU_FH = 7.48
-    L.append('  <rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s" stroke-width="5"/>\n'
-             % (u(JU_FX0), u(JU_FY0), u(JU_FW), u(JU_FH), SILK))
+    JU_FH = 7.48                              # 两块合起来的总高（旧单框高）
+    JU_SPY = u(JU_Y0 + 3.81)                  # J5/J4 分界线（共边）18.91
+    for _y0, _y1 in ((u(JU_FY0), JU_SPY), (JU_SPY, u(JU_FY0 + JU_FH))):
+        L.append('  <rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s" stroke-width="5"/>\n'
+                 % (u(JU_FX0), _y0, u(JU_FW), _y1 - _y0, SILK))
+    # 内部 3 条竖分隔（两根框边融合为一条分隔线）仍贯穿整块；端点与两框外缘对齐
     for divx in (JU_J4 - 1.27, JU_J5 - 1.27, JU_VC - 1.27):
         L.append('  <line x1="%d" y1="%d" x2="%d" y2="%d" stroke="%s" stroke-width="5"/>\n'
                  % (u(divx), u(JU_FY0), u(divx), u(JU_FY0 + JU_FH), SILK))
@@ -1015,10 +1019,11 @@ def breadboard_svg():
     # 竖直跨中(JU_Y0+2.54)/下(JU_Y0+5.08)两针，GOLD 色，复用标准 jumper_cap
     for cx in (JU_J4, JU_J5):
         jumper_cap(cx, JU_Y0 + 2.54, cx, JU_Y0 + 5.08, GOLD)
-    # J4/J5 编号竖排在 JU 大方框右侧：距框右缘 0.3mm；J5 中心对齐上两排(15.1/17.64)中心 16.37，
-    #   J4 中心对齐下两排(17.64/20.18)中心 18.91（框右缘=JU_VC+1.27=51.11；文字右缘→锚=框右+0.3+0.21+0.28）
+    # J4/J5 编号竖排在 JU 方框右侧：距框右缘 0.3mm；J5 中心对齐上两排(15.1/17.64)中心 16.37，
+    #   J4 中心对齐**下面那一排(20.18)**（2026-09-14 用户改：J4 = 下面一排 4 焊盘，故取该排中心）
+    #   （框右缘=JU_VC+1.27=51.11；文字右缘→锚=框右+0.3+0.21+0.28）
     txt(JU_VC + 1.27 + 0.79, JU_Y0 + 1.27, "J5", 0.8, SILK, anchor="middle", rot=-90)
-    txt(JU_VC + 1.27 + 0.79, JU_Y0 + 3.81, "J4", 0.8, SILK, anchor="middle", rot=-90)
+    txt(JU_VC + 1.27 + 0.79, JU_Y0 + 5.08, "J4", 0.8, SILK, anchor="middle", rot=-90)
 
     # ---- 板上其它跳线（装饰，不接线）：2/3 针水平排焊盘 + 跳线帽/标注 ----
     # 蓝色跳线帽
