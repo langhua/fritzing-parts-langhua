@@ -5,8 +5,9 @@
 视图模型（参照 svg/ESP32-S3-WROOM-1）：
   - 面包板 = nanoCH32V203 开发板（MUSE LAB，52×30mm）：
       顶部/底部各 20 针排针（40 个可连线连接器）、左侧双 USB-C + RST/BOOT 按键、
+      RST 正下方的 SOT23-5（实物 U1 = ME6211C33M5G LDO，顶标 S2YZ）、
       中央 CH32V203C8T6 (LQFP48)、右侧 8MHz + 32.768K 晶振、FPC-12P 排线座、
-      若干 LED/阻容。USB/FPC/按键/晶振为板级视觉外观。
+      若干 LED/阻容。USB/FPC/按键/晶振/SOT23-5 为板级视觉外观。
   - 原理图 = CH32V203C8T6 芯片符号（48 脚，数据手册表 3-1-1）。
   - icon   = LQFP48 封装（图 5-6）。
 
@@ -350,6 +351,39 @@ def _btn_art(cx, cy, scale=0.60):
     )
 
 
+def _sot23_5_art(cx, cy, silk="S2YZ"):
+    """SOT23-5 芯片（视觉，不连线）：几何 1:1 复用 svg/ETA3425S2F 的 icon ——
+    本体 3.0×1.6、银脚 0.4×0.6 伸出 0.6、e=0.95，下排 3 脚(pin1,2,3) + 上排 2 脚(pin5,4)。
+
+    方向（2026-09-14 用户指定）：**3 脚在左侧、2 脚在右侧** → 顺时针 90°（rotate(90) 把
+    下排转到左侧）；旋转**烘烤进绝对坐标**（不依赖 SVG rotate 变换，避免 Fritzing 解析
+    变换时本体/焊盘错位 —— 同 _crystal_art 的做法）。
+    映射：(x,y,w,h) --顺时针90°--> (-(y+h), x, h, w)。
+    丝印 `silk` 竖排在本体上、从上往下读（首字符在上）；字号按本体长边适配。"""
+    S = 39.37                      # 板内 100 单位 = 2.54mm
+    # (x, y, w, h, fill)：本体 + 5 脚（下排 1,2,3 左→右；上排 5,4 左→右）
+    parts = [(-1.5, -0.8, 3.0, 1.6, "#303030"),
+             (-1.15, 0.8, 0.4, 0.6, "#c0c0c0"), (-0.20, 0.8, 0.4, 0.6, "#c0c0c0"),
+             (0.75, 0.8, 0.4, 0.6, "#c0c0c0"),
+             (-1.15, -1.4, 0.4, 0.6, "#c0c0c0"), (0.75, -1.4, 0.4, 0.6, "#c0c0c0")]
+    out = []
+    for x, y, w, h, fill in parts:
+        nx, ny, nw, nh = -(y + h), x, h, w
+        out.append('  <rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>\n'
+                   % (cx + nx * S, cy + ny * S, nw * S, nh * S, fill))
+    # pin1 圆点（本体原左下角内侧 (-1.13,0.55) → 旋转后落在左上，与左侧 pin1 脚相邻）
+    out.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#c0c0c0"/>\n'
+               % (cx - 0.55 * S, cy - 1.13 * S, 0.12 * S))
+    # 丝印竖排：绕芯片中心顺时针 90° → 首字符在上；字宽按 0.62em、字高按 0.72em 估算
+    body_long, body_short = 3.0 * S, 1.6 * S        # 旋转后本体的长边(字延伸)/短边(字高)
+    fs = min(0.92 * body_long / (0.62 * max(len(silk), 1)), 0.9 * body_short / 0.72)
+    out.append('  <text x="%.1f" y="%.1f" font-size="%.1f" fill="#ffffff" text-anchor="middle" '
+               'dominant-baseline="central" font-family="DroidSans" '
+               'transform="rotate(90 %.1f %.1f)">%s</text>\n'
+               % (cx, cy, fs, cx, cy, silk))
+    return "".join(out)
+
+
 # 晶振部件 icon 复用（真实 3225/3215 图形，1mm = 39.37 板单位；半宽/半高由 icon 的
 # width/height(mm) 解析，内容居中于 (cx,cy)）
 _CRYSTAL_ART = {}
@@ -550,6 +584,11 @@ def gen_breadboard_svg():
              'font-family="DroidSans">RST</text>\n')
     L.append('  <text x="592" y="1003" font-size="34" fill="#aaaaaa" text-anchor="start" '
              'font-family="DroidSans">BOOT</text>\n')
+    # RST 按钮**正下方**的 SOT23-5（实物 = U1 ME6211C33M5G，顶标 S2YZ）
+    # （2026-09-14 用户指定）：3 脚在左、2 脚在右，丝印 S2YZ 竖排（S 在上）。
+    # 中心 x 与 RST 同 = 519；芯片顶边 = 按钮壳底(189+58*0.6=223.8) 下留 0.6mm 间隙，
+    # 半高 = 1.5mm(=59) → 中心 y = 223.8+23.6+59 = 306.4 ≈ 306
+    L.append(_sot23_5_art(519, 306))
     # 中央芯片 LQFP48
     L.append(_lqfp48_chip_art(1024, 590))
     # 晶振 ×2（右侧，真实 3225/3215 部件 icon 图形，竖放 = 顺时针 90°）
