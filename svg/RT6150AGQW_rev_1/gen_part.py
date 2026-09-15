@@ -36,6 +36,11 @@ PINS = [
 ]
 EP_NAME = "EP"      # connector10 = EP 散热焊盘（独立网络，使用时接 GND）
 
+# 同网总线（`.fzp` 的 <buses>）：**芯片上同网络的多只焊盘必须互联**，否则 Fritzing 里
+# 会变成两个不相干的网（AGENTS §5「元件内多焊盘同网络」条）。
+# 3 脚 GND = connector2、9 脚 GND = connector8 —— 手册里同是 GND，故并入同一条总线。
+BUSES = [("GND", (2, 8))]
+
 ICON_LABEL = "RT6150"
 SCHEM_LABEL = "RT6150AGQW"
 PACKAGE = "WDFN-10L 3x3"
@@ -310,6 +315,13 @@ def gen_fzp():
         f'    <pcbView>\n     <p layer="copper1" svgId="connector10pad"/>\n    </pcbView>\n'
         f'   </views>\n'
         f'  </connector>')
+    buses = [" <buses>\n"]
+    for bid, pins in BUSES:
+        buses.append(f'  <bus id="{bid}">\n')
+        for p in pins:
+            buses.append(f'   <nodeMember connectorId="connector{p}"/>\n')
+        buses.append('  </bus>\n')
+    buses.append(' </buses>\n')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
             f' <version>4</version>\n <date>2026-09-04</date>\n'
@@ -326,7 +338,9 @@ def gen_fzp():
             f'    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
-            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n</module>\n')
+            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n'
+            + "".join(buses) +
+            '</module>\n')
 
 
 # -------------------------------------------------------------------- 打包
