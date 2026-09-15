@@ -6,4 +6,9 @@
 __pycache__/
 *.pyc
 
+# 手工对齐用的中间文件（用户在 Inkscape 里拿实物照片当底改出来的版本）
+# —— 里面嵌着实物照片（第三方版权素材）且是草稿，不入库；
+#    要留的几何由 gen_part.py 里的数据表承接（见 svg/CH347F/gen_part.py 顶部说明）
+*_byHand.svg
+
 **/gerber*/

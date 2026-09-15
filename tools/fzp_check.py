@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+r"""
+fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对得上（"连接器是灵魂"）。
+
+用法（在仓库根跑）：
+    C:\Python313\python.exe tools\fzp_check.py svg\CH347F
+    C:\Python313\python.exe tools\fzp_check.py svg\CH347F --fzpz fzpz\CH347F.fzpz   # 连包一起查
+
+查什么（这些错都**不报错、只是静默不好用**，所以值得机器查）：
+  ① `.fzp` 能解析；四个视图的 `image=` 用的是**子目录路径**（icon/ breadboard/ schematic/ pcb/，
+     AGENTS §4），而实际文件是本目录的 `svg.<view>.<id>_<view>.svg`
+  ② 每个 connector：`<views>` 里至少有一条；每条 `svgId` / `terminalId`
+     **必须在对应视图 svg 里真的存在**（拼错一个字母 = 那个脚连不上/不显示）
+  ③ 反过来：svgs 里每个 `id="connector…"` 都得在 .fzp 里声明过（否则是没主的图形）
+  ④ 每个 svg 内部 **id 不能重复**（踩过：Inkscape Ctrl+D 复制排针 → 两个 `connector32pin`）
+  ⑤ `<buses>` 引用的 connector 必须存在，且**每个 connector 最多进一条总线**
+  ⑥ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
+
+判定：退出码 0 且输出里没有 `FAIL`。
+"""
+import glob
+import os
+import re
+import sys
+import xml.etree.ElementTree as ET
+import zipfile
+
+VIEWS = ("breadboard", "schematic", "pcb", "icon")
+
+
+def main(argv):
+    if not argv:
+        raise SystemExit(__doc__)
+    part_dir = os.path.abspath(argv[0])
+    part = os.path.basename(part_dir)
+    fails, notes = [], []
+    fzp_path = os.path.join(part_dir, "part.%s.fzp" % part)
+    if not os.path.isfile(fzp_path):
+        c = glob.glob(os.path.join(part_dir, "part.*.fzp"))
+        if not c:
+            raise SystemExit("没找到 .fzp：%s" % fzp_path)
+        fzp_path = c[0]
+    root = ET.parse(fzp_path).getroot()
+    print("文件: %s" % os.path.relpath(fzp_path, os.path.dirname(part_dir)))
+    print("moduleId=%s label=%s" % (root.get("moduleId"), (root.findtext("label") or "").strip()))
+
+    # ① 视图 → 实际 svg 文件
+    svg_of, files = {}, {}
+    for v in VIEWS:
+        got = glob.glob(os.path.join(part_dir, "svg.%s.%s_%s.svg" % (v, part, v))) \
+            or glob.glob(os.path.join(part_dir, "svg.%s.*.svg" % v))
+        files[v] = got[0] if got else None
+        if got and os.path.basename(got[0]) != "svg.%s.%s_%s.svg" % (v, part, v):
+            notes.append("注: %s 视图的文件名不是 svg.%s.%s_%s.svg，而是 %s"
+                         % (v, v, part, v, os.path.basename(got[0])))
+        img = root.find(".//%sView/layers" % v)
+        img = (img.get("image") if img is not None else None) or ""
+        if not img.startswith(v + "/"):
+            msg = "%sView 的 image=%r 不是子目录路径（应为 %s/…，AGENTS §4）" % (v, img, v)
+            # icon 视图复用面包板图是既有做法（FPC05 等）→ 只提示，不算 FAIL
+            (notes if v == "icon" else fails).append(("注: " if v == "icon" else "FAIL ") + msg)
+        if files[v] is None:
+            fails.append("FAIL 缺 %s 视图的 svg（svg.%s.%s_%s.svg）" % (v, v, part, v))
+    print("视图: %s" % ", ".join("%s=%s" % (v, os.path.basename(files[v]) if files[v] else "缺")
+                                for v in VIEWS))
+
+    # 各 svg 的 id 集合（顺便查重复 id = ④）
+    ids_of = {}
+    for v, p in files.items():
+        if not p:
+            continue
+        a = open(p, encoding="utf-8").read()
+        all_ids = re.findall(r'\bid="([^"]+)"', a)
+        dup = sorted({i for i in all_ids if all_ids.count(i) > 1})
+        if dup and v != "icon":
+            fails.append("FAIL %s 视图 svg 里有重复 id：%s" % (v, dup[:6]))
+        ids_of[v] = set(all_ids)
+
+    # ②③ connector ↔ svgId
+    declared, per_view_used = set(), {v: set() for v in VIEWS}
+    n_conn = 0
+    for c in root.iter("connector"):
+        cid = c.get("id")
+        if not cid:
+            fails.append("FAIL 有 <connector> 没有 id")
+            continue
+        n_conn += 1
+        declared.add(cid)
+        if not (c.get("name") or "").strip():
+            fails.append("FAIL %s 缺 name 属性" % cid)
+        vs = c.find("views")
+        if vs is None or not len(vs):
+            fails.append("FAIL %s 的 <views> 是空的（Fritzing 认不出这个脚）" % cid)
+            continue
+        for child in vs:
+            v = child.tag.replace("View", "")
+            if v not in VIEWS:
+                notes.append("注: %s 里有未知视图 <%s>" % (cid, child.tag))
+                continue
+            for p in child.iter("p"):
+                for attr in ("svgId", "terminalId"):
+                    sid = p.get(attr)
+                    if not sid:
+                        continue
+                    per_view_used[v].add(sid)
+                    if sid not in ids_of.get(v, set()):
+                        fails.append("FAIL %s 的 %s=%s 在 %s 视图 svg 里找不到"
+                                     % (cid, attr, sid, v))
+    print("connector: %d 个（声明了 %d 个 id）" % (n_conn, len(declared)))
+
+    # ③ 反向：svg 里的 connector…id 都要在 .fzp 里声明
+    #    （**icon 视图不查**：图标只是张图，Fritzing 不看它的 connector id）
+    for v, p in files.items():
+        if not p or v == "icon":
+            continue
+        for i in sorted(i for i in ids_of[v] if re.match(r"connector\d+(pin|pad|terminal)$", i)):
+            if i not in per_view_used[v]:
+                fails.append("FAIL %s 视图里的 id=%s 没有被 .fzp 引用（没主的图形）" % (v, i))
+
+    # ⑤ buses
+    in_bus = {}
+    for b in root.iter("bus"):
+        bid = b.get("id")
+        mem = [m.get("connectorId") for m in b.iter("nodeMember")]
+        for m in mem:
+            if m not in declared:
+                fails.append("FAIL 总线 %s 引用了不存在的 %s" % (bid, m))
+            elif m in in_bus:
+                fails.append("FAIL %s 同时在总线 %s 和 %s 里" % (m, in_bus[m], bid))
+            else:
+                in_bus[m] = bid
+    print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))
+                                for b in root.iter("bus")))
+
+    # ⑥ fzpz
+    if "--fzpz" in argv:
+        z = os.path.abspath(argv[argv.index("--fzpz") + 1])
+        if not os.path.isfile(z):
+            fails.append("FAIL 没有 %s" % z)
+        else:
+            with zipfile.ZipFile(z) as zf:
+                names = zf.namelist()
+            print("包内成员: %s" % ", ".join(names))
+            if any("/" in n or "\\" in n for n in names):
+                fails.append("FAIL 包里不该有子目录（要平铺，AGENTS §4）")
+            want = {"part.%s.fzp" % part} | {"svg.%s.%s_%s.svg" % (v, part, v) for v in VIEWS}
+            if set(names) != want:
+                fails.append("FAIL 包内成员与预期不符（多: %s；少: %s）"
+                             % (sorted(set(names) - want), sorted(want - set(names))))
+
+    print()
+    for n in notes:
+        print(n)
+    if fails:
+        print("\n".join(fails))
+        print("=== %d 项 FAIL ===" % len(fails))
+        return 1
+    print("=== 全部通过 ===")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    raise SystemExit(main(sys.argv[1:]))
