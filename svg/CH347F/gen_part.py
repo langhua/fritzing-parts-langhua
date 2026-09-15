@@ -226,12 +226,16 @@ def pad_map():
 
 
 # 同网总线（`.fzp` 的 <buses>）：(总线名, 芯片脚号, 板级网名)
-BUSES = [("GND", (20, 0), ("GND", "GND/KEY")),      # 20 = GND、0 = EPAD（板上同地）
+#   网名靠用户 2026-09-15 用万用表实测确认：
+#     · VREF ↔ VIO = 0Ω（直通）
+#     · 两个 GND/KEY 之间**互通**（同一条按键扫描线），但它们与 GND **不通** → 单独成一条总线
+BUSES = [("GND", (20, 0), ("GND",)),                 # 20 = GND、0 = EPAD（板上同地）
          ("VCC", (21,), ("3V3",)),                    # 板上 3V3 轨
-         ("VIO", (6,), ("VIO",)),
+         ("VIO", (6,), ("VIO", "VREF")),              # VREF 与 VIO 板上 0Ω 直通
          ("SCL", (11,), ("SCL",)),                    # pin11 = CTS1/SCL
          ("SDA", (12,), ("SDA",)),                    # pin12 = RTS1/SDA
-         ("SCS1", (7,), ("SCS1",))]                   # pin7 = DTR1/TNOW1/SCS1
+         ("SCS1", (7,), ("SCS1",)),                   # pin7 = DTR1/TNOW1/SCS1
+         ("KEY", (), ("GND/KEY",))]                   # 两个 GND/KEY 脚互联（不是地）
 
 
 def _usb_b01_icon(fx, fy, u=USB_U):

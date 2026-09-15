@@ -395,8 +395,6 @@
   <bus id="GND">
    <nodeMember connectorId="connector20"/>
    <nodeMember connectorId="connector0"/>
-   <nodeMember connectorId="connector39"/>
-   <nodeMember connectorId="connector40"/>
    <nodeMember connectorId="connector44"/>
    <nodeMember connectorId="connector45"/>
    <nodeMember connectorId="connector46"/>
@@ -418,6 +416,7 @@
    <nodeMember connectorId="connector6"/>
    <nodeMember connectorId="connector35"/>
    <nodeMember connectorId="connector36"/>
+   <nodeMember connectorId="connector41"/>
   </bus>
   <bus id="SCL">
    <nodeMember connectorId="connector11"/>
@@ -431,6 +430,10 @@
    <nodeMember connectorId="connector7"/>
    <nodeMember connectorId="connector29"/>
    <nodeMember connectorId="connector30"/>
+  </bus>
+  <bus id="KEY">
+   <nodeMember connectorId="connector39"/>
+   <nodeMember connectorId="connector40"/>
   </bus>
  </buses>
 </module>
