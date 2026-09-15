@@ -235,6 +235,7 @@ BUSES = [("GND", (20, 0), ("GND",)),                 # 20 = GND、0 = EPAD（板
          ("SCL", (11,), ("SCL",)),                    # pin11 = CTS1/SCL
          ("SDA", (12,), ("SDA",)),                    # pin12 = RTS1/SDA
          ("SCS1", (7,), ("SCS1",)),                   # pin7 = DTR1/TNOW1/SCS1
+         ("SCS0", (13,), ("SCS0",)),                  # pin13 = SCS0（P8 的 pin3 也是 SCS0，用户实测互通）
          ("KEY", (), ("GND/KEY",))]                   # 两个 GND/KEY 脚互联（不是地）
 
 

@@ -79,6 +79,7 @@ def main(argv):
 
     # ②③ connector ↔ svgId
     declared, per_view_used = set(), {v: set() for v in VIEWS}
+    svgid_to_cid = {}
     n_conn = 0
     for c in root.iter("connector"):
         cid = c.get("id")
@@ -104,6 +105,7 @@ def main(argv):
                     if not sid:
                         continue
                     per_view_used[v].add(sid)
+                    svgid_to_cid[(v, sid)] = cid
                     if sid not in ids_of.get(v, set()):
                         fails.append("FAIL %s 的 %s=%s 在 %s 视图 svg 里找不到"
                                      % (cid, attr, sid, v))
@@ -132,6 +134,27 @@ def main(argv):
                 in_bus[m] = bid
     print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))
                                 for b in root.iter("bus")))
+
+    # ⑦ 面包板里**同名焊盘必须在同一条总线里**
+    #    （踩过：SCS0 有两个焊盘 —— P4 那列一个、P8 的 pin3 一个 —— 只把第一个接上芯片脚、
+    #      另一个发了板级号，却忘了给 SCS0 建总线 ⇒ Fritzing 里它们成了两个不相干的网）
+    bb = files.get("breadboard")
+    if bb:
+        a = open(bb, encoding="utf-8").read()
+        groups = {}
+        for tag in re.findall(r"<(?:circle|rect|path)\b[^>]*>", a):
+            at = dict(re.findall(r'([\w:-]+)="([^"]*)"', tag))
+            cid, nm = at.get("id", ""), at.get("connectorname", "")
+            if re.fullmatch(r"connector\d+pin", cid) and nm:
+                groups.setdefault(nm, []).append(cid)
+        for nm, members in sorted(groups.items()):
+            if len(members) < 2 or nm.upper() in ("NC", "N/C", "DNP", "-"):
+                continue                      # NC/DNP 这类**本来就不该并**（未连接焊盘）
+            # nodeMember 里写的是 connectorId（不带 pin 后缀）→ 先用 svgId 反查
+            b = {in_bus.get(svgid_to_cid.get(("breadboard", m), "")) for m in members}
+            if len(b) != 1 or None in b:
+                fails.append("FAIL 面包板里 %d 个同名焊盘「%s」没在同一条总线里（各自属于 %s）"
+                             % (len(members), nm, sorted(str(x) for x in b)))
 
     # ⑥ fzpz
     if "--fzpz" in argv:

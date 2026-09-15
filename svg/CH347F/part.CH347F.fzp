@@ -431,6 +431,10 @@
    <nodeMember connectorId="connector29"/>
    <nodeMember connectorId="connector30"/>
   </bus>
+  <bus id="SCS0">
+   <nodeMember connectorId="connector13"/>
+   <nodeMember connectorId="connector34"/>
+  </bus>
   <bus id="KEY">
    <nodeMember connectorId="connector39"/>
    <nodeMember connectorId="connector40"/>
