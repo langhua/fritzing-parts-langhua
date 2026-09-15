@@ -91,6 +91,14 @@
   `LICENSE-jst_xh4a_breadboard.txt`），避免无授权传播第三方图形。
 - **小而单点的外部图形可内联进 gen_part.py 常量**（例：SparkFun SMD-1101NE 按钮 2.8KB，
   2026-09-05 内联为 `_BTN_1101NE_INNER` 后删除原独立 svg），避免留 stray 文件。
+- **手工对齐式面包板图（2026-09-15 起，CH347T/CH347F 用）**：面包板版式不再全靠脚本摆 ——
+  用户在 Inkscape 里拿**实物照片当底图**把排针/元件对到实际位置，存成
+  `svg/<部件>/svg.breadboard.<部件>_breadboard_byHand.svg`（草稿，`*_byHand.svg` 已 gitignore），
+  再由 `tools/byhand_export.py svg\<部件>` 导出 **`svg/<部件>/byHand_tables.py`（入库、纯数据）**，
+  `gen_part.py` 读这张表出图。**导出器只做"逐字照搬"**（不平移/不对齐/不修用户的图）：
+  单位跟文档的 width/height 走、`style=` 优先于同名属性、`SHAPES` 严格按文档次序（保叠放次序）、
+  字号规则见 `tools/README.md`；发现手工版里圆环与焊盘偏心这类问题**改手工版**（留 `.bak`），
+  不要改导出器去替用户对齐。
 
 ## 5. 生成脚本硬性要求（踩过的坑，写 gen_part.py 时必须遵守）
 

@@ -135,12 +135,14 @@ PCB_EDGE = "#001745"
 PIN_FILL = "#d0d0d0"
 PIN_EDGE = "#8a8a8a"
 
-from byHand_tables import (PAD_R, PAD_SW, PADS, ICONS, TEXTS,         # noqa: E402
-                           EXTRA_RECTS, EXTRA_CIRCLES, EXTRA_LINES)
+from byHand_tables import PAD_R, PAD_SW, SHAPES, ICONS, TEXTS      # noqa: E402
+
+# 焊盘：SHAPES 里的 ("pad", id, net, x, y)；下面 pad_map() 给它们发 connector 号
+PADS = [(i, s[1], s[2], s[3], s[4]) for i, s in enumerate(SHAPES) if s[0] == "pad"]
 
 
 def pad_map():
-    """[(原 id, 网名, x, y, connector 号)]：0..19 = 芯片脚 pin1..20，20+ = 面包板专用。
+    """→ {SHAPES 下标: connector 号}（另有 pad_rows() 给 .fzp 用的明细）
 
     分配顺序（可复现，与 CH347F / CH32V203C8T6 / SMA 同一套规矩）：
       ① 网名**与芯片脚主名一致**的焊盘优先拿该脚号（如 CTS1/GPIO6 拿 2、VCC 拿 14）；
@@ -149,34 +151,40 @@ def pad_map():
       ④ `BOARD_NETS` 里的网络一律板级号。
     每个焊盘**各自是一个 connector**（都能接线），同网再用 .fzp 的 <buses> 互联。
     """
+    return {sidx: cn for sidx, _cid, _nm, _x, _y, cn in pad_rows()}
+
+
+def pad_rows():
+    """→ [(SHAPES 下标, 原 id, 网名, x, y, connector 号)]（按 上→下、左→右 发号）"""
     pin_of = {}
     for n, nm in PIN_NAMES.items():
         pin_of[nm] = n - 1                    # 全名（如 "DSR0/GPIO2/SCS0/TMS"）
         for a in nm.split("/"):
             pin_of.setdefault(a, n - 1)       # 别名（如 "SCS0"、"TMS"）
-    rows = [[cid, nm, x, y, None] for cid, nm, x, y in sorted(PADS, key=lambda p: (p[3], p[2]))]
+    rows = [[i, cid, nm, x, y, None] for i, cid, nm, x, y
+            in sorted(PADS, key=lambda p: (p[4], p[3]))]
     used, rail = {}, [20]
     for row in rows:                                   # ① 主名优先
-        pin = None if row[1] in BOARD_NETS else pin_of.get(row[1])
-        if pin is None or pin in used or row[1] == "GND":
+        pin = None if row[2] in BOARD_NETS else pin_of.get(row[2])
+        if pin is None or pin in used or row[2] == "GND":
             continue
-        if row[1] == PIN_NAMES[pin + 1].split("/")[0]:
-            used[pin], row[4] = pin, pin
+        if row[2] == PIN_NAMES[pin + 1].split("/")[0]:
+            used[pin], row[5] = pin, pin
     for row in rows:                                   # ② 其余（地除外）
-        if row[4] is not None or row[1] == "GND":
+        if row[5] is not None or row[2] == "GND":
             continue
-        pin = None if row[1] in BOARD_NETS else pin_of.get(row[1])
+        pin = None if row[2] in BOARD_NETS else pin_of.get(row[2])
         if pin is not None and pin not in used:
-            used[pin], row[4] = pin, pin
+            used[pin], row[5] = pin, pin
         else:
-            row[4] = rail[0]
+            row[5] = rail[0]
             rail[0] += 1
-    for row in [r for r in rows if r[4] is None]:      # ③ 地
+    for row in [r for r in rows if r[5] is None]:      # ③ 地
         pin = 18 - 1                                   # 18 = GND
         if pin not in used:
-            used[pin], row[4] = pin, pin
+            used[pin], row[5] = pin, pin
         else:
-            row[4] = rail[0]
+            row[5] = rail[0]
             rail[0] += 1
     return [tuple(r) for r in rows]
 
@@ -184,7 +192,7 @@ def pad_map():
 def buses():
     """→ [(总线名, [connector 号…])]：同网必并一条总线（AGENTS §5「多焊盘同网络」条）。"""
     grp = {}
-    for _cid, net, _x, _y, cn in pad_map():
+    for _sidx, _cid, net, _x, _y, cn in pad_rows():
         grp.setdefault(net, []).append(cn)
     return [(net if net != "VCC" else "3V3", sorted(cns)) for net, cns in sorted(grp.items())]
 
@@ -257,7 +265,8 @@ def gen_breadboard_svg():
     """CH347T-EVT-R0-1v1 面包板视图（几何来自 byHand_tables.py；**零嵌套变换**）。
 
     板框在**这里**画（手工版那块 #002d68 的矩形被 byHand_export 的 SKIP_RECT_FILL 丢掉了，
-    免得直角框盖掉圆角）；USB 座等其它图形由 EXTRA_RECTS/CIRCLES 带过来。
+    免得直角框盖掉圆角）；其它图形由 `SHAPES` 按**手工版里的先后顺序**带过来 ——
+    叠放次序就是画法次序（踩过：把 rect 全画在 circle 前面，跳线的黄条会被圆圈埋掉）。
     """
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
@@ -267,37 +276,40 @@ def gen_breadboard_svg():
          '  <rect id="board" x="0" y="0" width="%.1f" height="%.1f" rx="%.2f" ry="%.2f" '
          'fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
          % (BOARD_W, BOARD_H, BOARD_RX, BOARD_RX, PCB_BLUE, PCB_EDGE, BOARD_SW)]
-    # 其它矩形（排针塑料座 / 两脚件 / 器件烘出来的形状）—— 表里已是**旋转后的外接框**
-    for x, y, w, h, fill, rot, stroke, sw in EXTRA_RECTS:
-        a = ' fill="%s"' % fill if fill and fill != "None" else ' fill="none"'
-        if stroke and stroke != "None":
-            a += ' stroke="%s"' % stroke
-            if sw and sw != "None":
-                a += ' stroke-width="%.3f"' % (float(sw) * S)
-        L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f"%s/>\n'
-                 % (x * S, y * S, w * S, h * S, a))
-    for x1, y1, x2, y2, stroke, sw in EXTRA_LINES:
-        w = (float(sw) if sw else 1.0)
-        L.append('  <line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
-                 'stroke-width="%.2f"/>\n' % (x1 * S, y1 * S, x2 * S, y2 * S, stroke, w * S))
+    cns = pad_map()
+    for i, s in enumerate(SHAPES):
+        kind = s[0]
+        if kind == "rect":
+            _k, x, y, w, h, fill, _rot, stroke, sw = s
+            a = ' fill="%s"' % fill if fill and fill != "None" else ' fill="none"'
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+                if sw and sw != "None":
+                    a += ' stroke-width="%.3f"' % (float(sw) * S)
+            L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f"%s/>\n'
+                     % (x * S, y * S, w * S, h * S, a))
+        elif kind == "circle":
+            _k, x, y, r, fill, stroke, sw = s
+            a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+                if sw and sw != "None":
+                    a += ' stroke-width="%.3f"' % (float(sw) * S)
+            L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f"%s/>\n' % (x * S, y * S, r * S, a))
+        elif kind == "pad":
+            _k, _cid, net, x, y = s
+            L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.2f" cy="%.2f" '
+                     'r="%.2f" fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
+                     % (cns[i], _esc(net), x * S, y * S, PAD_R * S, PIN_FILL, PIN_EDGE,
+                        PAD_SW * S))
+        elif kind == "line":
+            _k, x1, y1, x2, y2, stroke, sw = s
+            L.append('  <line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
+                     'stroke-width="%.2f"/>\n'
+                     % (x1 * S, y1 * S, x2 * S, y2 * S, stroke, (float(sw) if sw else 1.0) * S))
     # 板上器件（手工版里若做成"带缩放的组"，byhand_export 会认出来放进 ICONS）
     for part, x, y, rot in ICONS:
         L.append(_bake_icon(part, x, y, rot))
-    # 排针脚（id 由 pad_map() 定的**最终 connector 号** → 与 .fzp / 原理图同一套号）
-    for _cid, net, x, y, cn in pad_map():
-        L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.2f" cy="%.2f" '
-                 'r="%.2f" fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
-                 % (cn, _esc(net), x * S, y * S, PAD_R * S, PIN_FILL, PIN_EDGE, PAD_SW * S))
-    # ★ 叠放次序照**手工版**来：矩形（排针塑料座等）在下，焊盘居中，**circle 表在最上**
-    #   —— 手工版里那几圈"同心圆焊盘"是后来加的、盖在焊盘上；先画圆圈会把它们埋掉
-    #   （实测：顺序反了会让 P14/P2 那几颗针看着与手工版不一样）。
-    for x, y, r, fill, stroke, sw in EXTRA_CIRCLES:
-        a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
-        if stroke and stroke != "None":
-            a += ' stroke="%s"' % stroke
-            if sw and sw != "None":
-                a += ' stroke-width="%.3f"' % (float(sw) * S)
-        L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f"%s/>\n' % (x * S, y * S, r * S, a))
     # 丝印（只有带旋转的才带 transform）
     for txt, x, y, fs, anchor, rot, fill, fw in TEXTS:
         a = ' fill="%s"' % (fill if fill and fill != "None" else "#ffffff")

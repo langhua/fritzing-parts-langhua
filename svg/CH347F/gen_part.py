@@ -157,7 +157,10 @@ SILK_L = "#f5f5f5"
 USB_CX, USB_FACE_Y = 988 * S, BOARD_H    # P1 方口母座：中心 x / 插口面贴板下缘
 
 # 数据表由 tools/byhand_export.py 从"手工对齐版"自动生成（说明见 byHand_tables.py 顶部）
-from byHand_tables import (PADS, ICONS, TEXTS, EXTRA_RECTS, EXTRA_CIRCLES, EXTRA_LINES)
+from byHand_tables import PAD_R, PAD_SW, SHAPES, ICONS, TEXTS
+
+# 焊盘：SHAPES 里的 ("pad", id, net, x, y)；pad_map() 给它们发 connector 号
+PADS = [(i, s[1], s[2], s[3], s[4]) for i, s in enumerate(SHAPES) if s[0] == "pad"]
 
 # =============================================================================
 # 面包板焊盘 → connector 号（**面包板 svg 与 .fzp 的共同单源**）
@@ -175,52 +178,81 @@ for _n, _nm in PIN_NAMES.items():
     for _a in _nm.split("/"):
         _PIN_ALIAS.setdefault(_a, _n)
 _PIN_ALIAS["3V3"] = 21        # 板上的 3V3 轨就是芯片 VCC(21)
-# 例外：x=254.14 那列焊盘（JP1）在手工版里 connectorname 是旧的 —— 是 Ctrl+D 复制 P5 留下的
+# 例外：那列焊盘（JP1）在手工版里 connectorname 是旧的 —— 是 Ctrl+D 复制 P5 留下的
 # SDA/SCL/GND/VIO；板上丝印（x≈300，用户 2026-09-15 对齐时填的）是 GND/VIO/VIO/3V3
 # （VIO 选择跳线）。以**丝印**为准，按 y 升序写在这里。
-_PAD_NET_FIX = {254.14: ("GND", "VIO", "VIO", "3V3")}
+#
+# ⚠ 键是**列 x（内部单位）**，而 x 是浮点算出来的（随文档单位的比例漂 0.0x）——
+#   曾经写死 254.14、重导后算成 254.08 → **键匹配不上，修正静默失效**，
+#   那一列又变回手工版里过期的 SDA/SCL/GND/VIO（2026-09-15 踩过）。
+#   所以：① 按键的 **±_PAD_NET_FIX_TOL** 找"最近的那一列"；② 配不上就**报错**（不静默）。
+_PAD_NET_FIX = {254.1: ("GND", "VIO", "VIO", "3V3")}
+_PAD_NET_FIX_TOL = 2.0          # 内部单位（100 = 2.54mm）→ 2.0 ≈ 0.05mm
+
+
+def _fixed_nets(cols):
+    """→ {(x, y): 网名}：把 `_PAD_NET_FIX` 的修正落到**具体焊盘**上。
+
+    `cols` = {列 x: [(y, 网名), …]}。配不上必须**当场报错** —— 这条修正来自用户
+    用丝印/万用表核过的结论，静默失效比报错危险得多（页面上看不出、只有名字悄悄变旧）。
+    """
+    fixed = {}
+    for key, names in _PAD_NET_FIX.items():
+        hit = [c for c in cols if abs(c - key) <= _PAD_NET_FIX_TOL]
+        if len(hit) != 1:
+            raise SystemExit('_PAD_NET_FIX 键 %.2f 在表里对上了 %d 列（应恰好 1 列）：%s'
+                             % (key, len(hit), sorted(hit)))
+        col = sorted(cols[hit[0]])
+        if len(col) != len(names):
+            raise SystemExit('_PAD_NET_FIX 键 %.2f：列上有 %d 个焊盘，却给了 %d 个网名'
+                             % (key, len(col), len(names)))
+        for (y, _n), net in zip(col, names):
+            fixed[(hit[0], y)] = net
+    return fixed
 
 
 def pad_map():
-    """[(原 id, 网名, x, y, connector 号)]：0..28 = 芯片脚，29+ = 面包板专用。
+    """→ {SHAPES 下标: connector 号}（另有 pad_rows() 给 .fzp 用的明细）
 
     分配顺序（可复现，且与上面注释的规矩一致）：
       ① 网名**与芯片脚主名一致**的焊盘优先拿该脚号（如 CTS1 拿 11、SCS0 拿 13）；
       ② 其余焊盘按 上→下、左→右：能对上一个还没被占的芯片脚就拿脚号，否则发板级号；
       ③ 地的两个脚号（20 GND / 0 EPAD）发给最先遇到的两个 GND 焊盘，剩下的 GND 发板级号。
     """
+    return {sidx: cn for sidx, _cid, _nm, _x, _y, cn in pad_rows()}
+
+
+def pad_rows():
+    """→ [(SHAPES 下标, 原 id, 网名, x, y, connector 号)]（按 上→下、左→右 发号）"""
     cols = {}
-    for cid, nm, x, y in PADS:
-        cols.setdefault(x, []).append((y, cid, nm))
-    fixed = {}
-    for x, names in _PAD_NET_FIX.items():
-        for (y, _c, _n), net in zip(sorted(cols.get(x, [])), names):
-            fixed[(x, y)] = net
-    rows = [[cid, fixed.get((x, y), nm), x, y, None]
-            for cid, nm, x, y in sorted(PADS, key=lambda p: (p[3], p[2]))]
+    for _i, _cid, nm, x, y in PADS:
+        cols.setdefault(x, []).append((y, nm))
+    fixed = _fixed_nets(cols)
+    rows = [[i, cid, fixed.get((x, y), nm), x, y, None]
+            for i, cid, nm, x, y in sorted(PADS, key=lambda p: (p[4], p[3]))]
     used, rail = {}, [29]
     for row in rows:                                   # ① 主名优先
-        pin = _PIN_ALIAS.get(row[1])
-        if pin is None or row[1] == "GND" or pin in used:
+        pin = _PIN_ALIAS.get(row[2])
+        if pin is None or row[2] == "GND" or pin in used:
             continue
-        if row[1] == PIN_NAMES[pin].split("/")[0]:
-            used[pin], row[4] = pin, pin
+        if row[2] == PIN_NAMES[pin].split("/")[0]:
+            used[pin], row[5] = pin, pin
     for row in rows:                                   # ② 其余（地除外）
-        if row[4] is not None or row[1] == "GND":
+        if row[5] is not None or row[2] == "GND":
             continue
-        pin = _PIN_ALIAS.get(row[1])
+        pin = _PIN_ALIAS.get(row[2])
         if pin is not None and pin not in used:
-            used[pin], row[4] = pin, pin
+            used[pin], row[5] = pin, pin
         else:
-            row[4] = rail[0]
+            row[5] = rail[0]
             rail[0] += 1
-    for row in [r for r in rows if r[4] is None]:      # ③ 地
+    for row in [r for r in rows if r[5] is None]:      # ③ 地
         for pin in (20, 0):
             if pin not in used:
-                used[pin], row[4] = pin, pin
+                used[pin], row[5] = pin, pin
                 break
         else:
-            row[4] = rail[0]
+            row[5] = rail[0]
             rail[0] += 1
     return [tuple(r) for r in rows]
 
@@ -327,39 +359,49 @@ def gen_breadboard_svg():
          '  <rect x="0" y="0" width="%.1f" height="%.1f" rx="%.2f" ry="%.2f" fill="%s" '
          'stroke="%s" stroke-width="%.2f"/>\n'
          % (BOARD_W, BOARD_H, BOARD_RX, BOARD_RX, PCB_BLUE, PCB_EDGE, BOARD_SW)]
-    # 其它图形（两脚件 / 跳线 / LED1 / 丝印外框）——表里已是**旋转后的外接框**，不再加 rotate
-    for x, y, w, h, fill, rot, stroke, sw in EXTRA_RECTS:
-        a = ' fill="%s"' % fill if fill and fill != "None" else ' fill="none"'
-        if stroke and stroke != "None":
-            a += ' stroke="%s"' % stroke
-            if sw and sw != "None":
-                a += ' stroke-width="%.3f"' % (float(sw) * S)
-        L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f"%s/>\n'
-                 % (x * S, y * S, w * S, h * S, a))
-    for x, y, r, fill, stroke, sw in EXTRA_CIRCLES:
-        a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
-        if stroke and stroke != "None":
-            a += ' stroke="%s"' % stroke
-            if sw and sw != "None":
-                a += ' stroke-width="%.3f"' % (float(sw) * S)
-        L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f"%s/>\n' % (x * S, y * S, r * S, a))
-    for x1, y1, x2, y2, stroke, sw in EXTRA_LINES:
-        L.append('  <line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
-                 'stroke-width="%.2f"/>\n'
-                 % (x1 * S, y1 * S, x2 * S, y2 * S, stroke,
-                    (float(sw) if sw else 1) * S if (float(sw) if sw else 1) > 2
-                    else (float(sw) if sw else 1)))
+    # ★ 图元按**手工版里的先后顺序**画（叠放次序 = 画法次序）：
+    #   把 rect 全画在 circle 前面是错的 —— 跳线的黄条会被圆圈埋掉（2026-09-15 踩过）。
+    cns = pad_map()
+    # 网名也走 pad_rows()（含 `_PAD_NET_FIX` 的修正）—— svg 的 connectorname 与 .fzp 的
+    # connector name / <buses> 必须是**同一份**，否则表面上看不出来、接线时才错。
+    nets = {sidx: net for sidx, _cid, net, _x, _y, _cn in pad_rows()}
+    for i, sh in enumerate(SHAPES):
+        kind = sh[0]
+        if kind == "rect":
+            _k, x, y, w, h, fill, _rot, stroke, sw = sh
+            a = ' fill="%s"' % fill if fill and fill != "None" else ' fill="none"'
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+                if sw and sw != "None":
+                    a += ' stroke-width="%.3f"' % (float(sw) * S)
+            L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f"%s/>\n'
+                     % (x * S, y * S, w * S, h * S, a))
+        elif kind == "circle":
+            _k, x, y, r, fill, stroke, sw = sh
+            a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+                if sw and sw != "None":
+                    a += ' stroke-width="%.3f"' % (float(sw) * S)
+            L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f"%s/>\n' % (x * S, y * S, r * S, a))
+        elif kind == "pad":
+            # id 用 pad_map() 定的**最终 connector 号** → 与 .fzp / 原理图同一套号；
+            # 手工版里的 Inkscape id（connector32pin 那种）有重复且与芯片脚对不上，不能用
+            _k, _cid, net, x, y = sh
+            net = nets[i]
+            L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.2f" cy="%.2f" '
+                     'r="%.2f" fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
+                     % (cns[i], net, x * S, y * S, PAD_R * S, PIN_FILL, PIN_EDGE, PAD_SW * S))
+        elif kind == "line":
+            _k, x1, y1, x2, y2, stroke, sw = sh
+            L.append('  <line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
+                     'stroke-width="%.2f"/>\n'
+                     % (x1 * S, y1 * S, x2 * S, y2 * S, stroke, (float(sw) if sw else 1) * S))
     # 板上元件
     for part, x, y, rot in ICONS:
         L.append(_bake_icon(part, x, y, rot))
     # P1 = USB 方口母座（复用 USB-B01 元件的 icon，插口面贴板下缘）
     L.append(_usb_b01_icon(USB_CX, USB_FACE_Y))
-    # 排针脚（id 用 pad_map() 定的**最终 connector 号** → 与 .fzp / 原理图同一套号；
-    # 手工版里的 Inkscape id（connector32pin 那种）有重复且与芯片脚对不上，不能用）
-    for _cid, net, x, y, cn in pad_map():
-        L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.2f" cy="%.2f" r="%.2f" '
-                 'fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
-                 % (cn, net, x * S, y * S, 26 * S, PIN_FILL, PIN_EDGE, 5 * S))
     # 丝印（只有带旋转的才带 transform）
     for txt, x, y, fs, anchor, rot, fill, fw in TEXTS:
         a = ' fill="%s"' % (fill if fill and fill != "None" else SILK)
@@ -569,8 +611,7 @@ def gen_fzp():
       · 面包板专用号（29 起）→ **只有面包板视图**（板上额外的 3V3/VIO/地/KEY 轨、跳线中间脚…）。
       · 同网用 <buses> 互联（GND 含 EPAD、3V3 含 VCC、SCL/SDA/SCS1 与芯片复用脚同网）。
     """
-    pm = pad_map()
-    name_of = {cn: net for _, net, _, _, cn in pm}
+    name_of = {cn: net for _sidx, _cid, net, _x, _y, cn in pad_rows()}
     board = sorted(name_of)
     chip_on_board = {cn for cn in board if cn < 29}
     conns = []

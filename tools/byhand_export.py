@@ -65,6 +65,10 @@ FS_KEEP = {"CH347F-EVT-R0-1v0", "http://wch.cn"}
 # 大字规则（2026-09-15 加）：原字号 > FS_UNIFORM × 这个倍数 → 按手工版原样保留。
 #   换块板子时不用再去改 FS_KEEP 里的板名（CH347T 就是 CH347T-EVT-R0-1v1）。
 FS_KEEP_RATIO = 1.3
+# 逐部件覆盖：`None` = **不统一**，照手工版的字号直接搬。
+#   CH347T 的手工版字号本来就齐（丝印 31.5 / 排针名 35.4 / 板名 65），
+#   再拉平到 30 反而会变小（用户 2026-09-15：「文字字号小了，应该跟 byHand 里一致」）。
+FS_UNIFORM_BY_PART = {"CH347T": None}
 # 多行丝印的**行距倍率**：1.0 = 照手工版；用户 2026-09-15 定 **0.5**（两行靠得更紧）
 LINE_PITCH = 0.5
 
@@ -134,16 +138,20 @@ def ang(m):
 
 
 def styled(el, key, default=None):
-    """先读同名属性，再读 style="a:b;c:d"（Inkscape 常只写 style）。"""
-    v = el.get(key)
-    if v:
-        return v
+    """读元素的某个样式值：**先 `style="a:b;c:d"`，再读同名属性**。
+
+    ★ 优先序不能反（ 2026-09-15 踩到）：SVG/CSS 里 **`style` 的优先级高于表现属性**。
+    Inkscape 改颜色时常只改 `style`、把旧的 `fill="…"` 属性留在原地 ——
+    先读属性就会拿到旧颜色（实例：CH347T 的塑料座 `fill="#4d7fe0"` 但 `style` 是
+    `fill:#e6b53d`，那就是用户画的**跳线**，按老口径会被画成蓝色）。
+    """
     for kv in (el.get("style") or "").split(";"):
         if ":" in kv:
-            k, v2 = kv.split(":", 1)
+            k, v = kv.split(":", 1)
             if k.strip() == key:
-                return v2.strip()
-    return default
+                return v.strip()
+    v = el.get(key)
+    return v if v else default
 
 
 def num(sv, default=0.0):
@@ -183,7 +191,9 @@ def run(part_dir):
         raise SystemExit("没找到手工版：%s" % src)
     sizes = icon_sizes(repo_svg)
     skip_fill = SKIP_RECT_FILL_BY_PART.get(part, SKIP_RECT_FILL)
+    fs_uniform = FS_UNIFORM_BY_PART.get(part, FS_UNIFORM)
     pads, texts, rects, circles, lines, icons, unknown = [], [], [], [], [], [], []
+    shapes = []                              # ★ **按手工版里的先后顺序**记图元（叠放次序就是画法次序）
     pad_style = []
     used = set()
 
@@ -240,6 +250,8 @@ def run(part_dir):
             cid = el.get("id") or ""
             if "connector" in cid:
                 pads.append((cid, el.get("connectorname"), u(p[0]), u(p[1])))
+                shapes.append(("pad", re.sub(r"pin.*$", "pin", cid), el.get("connectorname"),
+                               u(p[0]), u(p[1])))
                 if not pad_style:                      # 焊盘样式也以手工版为准（单源）
                     sw0 = styled(el, "stroke-width")
                     pad_style.append(round(r, 2))
@@ -249,6 +261,9 @@ def run(part_dir):
                 circles.append((u(p[0]), u(p[1]), round(r, 2), styled(el, "fill"),
                                 styled(el, "stroke"),
                                 round(num(sw3) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw3 else None))
+                shapes.append(("circle", u(p[0]), u(p[1]), round(r, 2), styled(el, "fill"),
+                               styled(el, "stroke"),
+                               round(num(sw3) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw3 else None))
         elif tag == "rect":
             x, y = float(el.get("x", 0) or 0), float(el.get("y", 0) or 0)
             w, h = float(el.get("width", 0) or 0), float(el.get("height", 0) or 0)
@@ -260,6 +275,10 @@ def run(part_dir):
             rects.append((u(min(xs)), u(min(ys)), u(max(xs) - min(xs)), u(max(ys) - min(ys)),
                           styled(el, "fill"), ang(m2), styled(el, "stroke"),
                           round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
+            shapes.append(("rect", u(min(xs)), u(min(ys)), u(max(xs) - min(xs)),
+                           u(max(ys) - min(ys)), styled(el, "fill"), ang(m2),
+                           styled(el, "stroke"),
+                           round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
         elif tag == "text":
             fs = num(styled(el, "font-size")) * (sc[0] + sc[1]) / 2.0 * UF
             fw = "bold" if (styled(el, "font-weight") or "").lower() in \
@@ -275,10 +294,11 @@ def run(part_dir):
                     continue
                 p = ap(m2, lx, ly)
                 fs2 = fs
-                if not (txt in FS_KEEP or fs > FS_UNIFORM * FS_KEEP_RATIO):
-                    if abs(fs - FS_UNIFORM) > 0.5:
+                if fs_uniform is not None and not (txt in FS_KEEP
+                                                   or fs > fs_uniform * FS_KEEP_RATIO):
+                    if abs(fs - fs_uniform) > 0.5:
                         unknown.append((txt, round(fs, 1)))   # 手工版里的原字号，仅作提示
-                    fs2 = FS_UNIFORM
+                    fs2 = fs_uniform
                 texts.append((txt, u(p[0]), u(p[1]), round(fs2, 2), el.get("text-anchor"),
                               ang(m2), styled(el, "fill"), fw))
         elif tag == "line":
@@ -286,6 +306,8 @@ def run(part_dir):
             p1 = ap(m2, float(el.get("x2", 0)), float(el.get("y2", 0)))
             lines.append((u(p0[0]), u(p0[1]), u(p1[0]), u(p1[1]), styled(el, "stroke"),
                           round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
+            shapes.append(("line", u(p0[0]), u(p0[1]), u(p1[0]), u(p1[1]), styled(el, "stroke"),
+                           round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
         for c in el:
             walk(c, m2)
 
@@ -313,16 +335,21 @@ def run(part_dir):
     for t, x, y, fs, anchor, a, fill, fw in sorted(texts, key=lambda t: (t[2], t[1])):
         out.append('    ("%s", %s, %s, %s, "%s", %s, "%s", %s),'
                    % (t, x, y, fs, anchor, a, fill, "'bold'" if fw else "None"))
-    out += ["]", "", "# 其它矩形（两脚件/跳线/LED/丝印外框；已是旋转后外接框）：",
-            "# (x, y, w, h, fill, 旋转, stroke, stroke-width)", "EXTRA_RECTS = ["]
-    for r in sorted(rects, key=lambda r: (r[1], r[0])):
-        out.append('    (%s, %s, %s, %s, "%s", %s, "%s", "%s"),' % r)
-    out += ["]", "", "# 其它圆：(x, y, r, fill, stroke, stroke-width)", "EXTRA_CIRCLES = ["]
-    for c in sorted(circles, key=lambda c: (c[1], c[0])):
-        out.append('    (%s, %s, %s, "%s", "%s", %s),' % c)
-    out += ["]", "", "# 分隔线：(x1, y1, x2, y2, stroke, stroke-width)", "EXTRA_LINES = ["]
-    for l in lines:
-        out.append('    (%s, %s, %s, %s, "%s", %s),' % l)
+    out += ["]", "", "# ★ 图元（**按手工版里的先后顺序**，就是叠放次序）—— 类型：",
+            "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw)",
+            "#   (\"circle\", x, y, r, fill, stroke, sw)",
+            "#   (\"pad\",    id, net, x, y)      ← 焊盘：出图时要带 connectorNpin",
+            "#   (\"line\",   x1, y1, x2, y2, stroke, sw)",
+            "SHAPES = ["]
+    for s in shapes:
+        if s[0] in ("rect",):
+            out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s"),' % s[1:])
+        elif s[0] == "circle":
+            out.append('    ("circle", %s, %s, %s, "%s", "%s", %s),' % s[1:])
+        elif s[0] == "pad":
+            out.append('    ("pad", "%s", "%s", %s, %s),' % s[1:])
+        else:
+            out.append('    ("line", %s, %s, %s, %s, "%s", %s),' % s[1:])
     out += ["]", ""]
     dst = os.path.join(part_dir, "byHand_tables.py")
     open(dst, "w", encoding="utf-8").write("\n".join(out))
@@ -332,7 +359,7 @@ def run(part_dir):
     print("写出:", dst)
     if unknown:
         print("  · 手工版里非统一字号(%.1f)的丝印 %d 条 → 已统一：%s"
-              % (FS_UNIFORM, len(unknown), ", ".join("%s=%.1f" % t for t in unknown)))
+              % (fs_uniform, len(unknown), ", ".join("%s=%.1f" % t for t in unknown)))
 
 
 if __name__ == "__main__":

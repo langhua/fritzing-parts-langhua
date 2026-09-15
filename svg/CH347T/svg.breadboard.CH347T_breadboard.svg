@@ -2,145 +2,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="50.10mm" height="61.20mm" viewBox="0 0 142.0 173.5">
  <g id="breadboard">
   <rect id="board" x="0" y="0" width="142.0" height="173.5" rx="4.25" ry="4.25" fill="#002d68" stroke="#001745" stroke-width="0.99"/>
-  <rect x="123.48" y="7.99" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
-  <rect x="26.91" y="9.05" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="49.54" y="17.43" width="14.32" height="11.05" fill="#303030"/>
+  <rect x="61.50" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="61.50" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="57.90" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="57.90" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="54.30" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="54.30" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="50.70" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <rect x="50.70" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
+  <circle cx="62.08" cy="19.19" r="0.79" fill="#c0c0c0" stroke="none"/>
+  <rect x="72.88" y="26.25" width="14.97" height="14.97" fill="#303030"/>
+  <rect x="85.17" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="85.17" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="81.57" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="81.57" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="77.97" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="77.97" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="74.37" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <rect x="74.37" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
+  <circle cx="85.92" cy="28.18" r="0.99" fill="#c0c0c0" stroke="none"/>
+  <rect x="62.50" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="62.50" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="64.35" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="64.35" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="66.19" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="66.19" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="68.03" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="68.03" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="69.87" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="69.87" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="71.72" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="71.72" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="73.56" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="73.56" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="75.40" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="75.40" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="77.24" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="77.24" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="79.09" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="79.09" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
+  <rect x="61.94" y="88.16" width="18.43" height="12.47" fill="#303030"/>
+  <circle cx="64.12" cy="99.35" r="0.51" fill="#c0c0c0" stroke="none"/>
   <rect x="9.53" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
   <rect x="16.86" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
-  <rect x="17.33" y="9.25" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="26.91" y="9.90" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="19.78" y="12.48" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="26.91" y="12.73" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="84.68" y="14.12" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="50.70" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="54.30" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="57.90" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="61.50" y="14.46" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="84.68" y="14.97" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="49.54" y="17.43" width="14.32" height="11.05" fill="#303030"/>
-  <rect x="84.68" y="17.80" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="74.37" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="77.97" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="81.57" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="85.17" y="22.54" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="72.88" y="26.25" width="14.97" height="14.97" fill="#303030"/>
-  <rect x="50.70" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="54.30" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="57.90" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="61.50" y="28.49" width="1.19" height="2.98" fill="#c0c0c0"/>
-  <rect x="27.58" y="35.06" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="27.58" y="35.91" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="27.58" y="38.75" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="50.39" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="55.12" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="60.86" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="50.39" y="39.63" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="55.12" y="39.63" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="60.86" y="39.63" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="74.37" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="77.97" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="81.57" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="85.17" y="41.22" width="1.19" height="3.71" fill="#c0c0c0"/>
-  <rect x="50.39" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="55.12" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="60.86" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="90.76" y="44.18" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="90.76" y="45.04" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="90.76" y="47.87" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="123.48" y="7.99" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
   <rect x="10.20" y="53.37" width="7.09" height="72.17" fill="#4d7fe0" stroke="none"/>
+  <rect x="17.40" y="74.94" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
   <rect x="45.16" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="54.06" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="62.96" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="71.86" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="80.99" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="89.66" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="45.37" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="54.50" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="63.28" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="72.06" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="81.19" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="89.97" y="62.12" width="6.55" height="13.60" fill="#4d7fe0"/>
-  <rect x="47.82" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="56.94" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="65.73" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="74.51" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="83.63" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="92.42" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
-  <rect x="17.40" y="74.94" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
   <rect x="117.07" y="75.03" width="14.29" height="36.17" fill="#4d7fe0" stroke="none"/>
-  <rect x="84.51" y="84.39" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="89.24" y="84.39" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="84.51" y="85.24" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="89.24" y="85.24" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="62.50" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="64.35" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="66.19" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="68.03" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="69.87" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="71.72" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="73.56" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="75.40" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="77.24" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="79.09" y="85.32" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="84.51" y="88.07" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="89.24" y="88.07" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="61.94" y="88.16" width="18.43" height="12.47" fill="#303030"/>
   <rect x="101.05" y="89.46" width="7.09" height="21.66" fill="#4d7fe0" stroke="none" stroke-width="3.457"/>
-  <rect x="110.30" y="99.96" width="5.67" height="0.57" fill="#c8ccd0"/>
-  <rect x="62.50" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="64.35" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="66.19" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="68.03" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="69.87" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="71.72" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="73.56" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="75.40" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="77.24" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="79.09" y="100.63" width="0.71" height="2.83" fill="#f7bf13"/>
-  <rect x="79.69" y="107.18" width="3.12" height="3.40" fill="#f7bf13"/>
-  <rect x="85.93" y="107.18" width="3.12" height="3.40" fill="#f7bf13"/>
-  <rect x="79.83" y="107.46" width="9.07" height="7.09" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.227"/>
-  <rect x="91.94" y="108.88" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="51.42" y="109.11" width="2.23" height="4.53" fill="#dedede" stroke="#8f8f8f" stroke-width="0.216"/>
-  <rect x="51.42" y="109.11" width="2.23" height="0.94" fill="#b9bdc1"/>
-  <rect x="46.16" y="109.22" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="66.77" y="109.56" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="91.94" y="109.73" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="46.16" y="110.07" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
-  <rect x="66.77" y="110.41" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="52.07" y="110.70" width="0.94" height="1.37" fill="#e02424"/>
-  <rect x="79.69" y="111.43" width="3.12" height="3.40" fill="#f7bf13"/>
-  <rect x="85.93" y="111.43" width="3.12" height="3.40" fill="#f7bf13"/>
-  <rect x="91.94" y="112.57" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="51.42" y="112.71" width="2.23" height="0.94" fill="#b9bdc1"/>
-  <rect x="46.16" y="112.90" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="66.77" y="113.24" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="81.69" y="117.28" width="0.85" height="2.27" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="82.54" y="117.28" width="2.83" height="2.27" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="85.37" y="117.28" width="0.85" height="2.27" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="103.43" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="109.17" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="115.25" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="120.83" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="126.74" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="51.14" y="127.21" width="34.01" height="12.19" fill="#b5b5b5" stroke="#8f8f8f" stroke-width="0.281"/>
-  <rect x="103.43" y="127.81" width="2.27" height="2.83" fill="#ffffff" stroke="none" stroke-width="0.285"/>
-  <rect x="109.17" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="115.25" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="120.83" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="126.74" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
-  <rect x="103.43" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="109.17" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="115.25" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="120.83" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="126.74" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
-  <rect x="113.32" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
-  <rect x="119.84" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
-  <rect x="126.36" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
-  <rect x="51.14" y="139.40" width="34.01" height="34.01" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
-  <rect x="47.48" y="140.81" width="3.54" height="6.52" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
-  <rect x="85.03" y="140.81" width="3.54" height="6.52" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
-  <rect x="111.62" y="144.79" width="18.43" height="9.92" fill="#303030"/>
-  <rect x="115.73" y="154.71" width="10.20" height="5.39" fill="#c0c0c0"/>
   <circle id="connector13pin" connectorname="VCC" cx="127.02" cy="11.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector11pin" connectorname="RXD0/SDA" cx="13.07" cy="12.78" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector17pin" connectorname="GND" cx="20.41" cy="12.78" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
@@ -157,6 +73,7 @@
   <circle id="connector6pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="127.02" cy="47.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector7pin" connectorname="TXD0/MOSI/TDI" cx="127.02" cy="54.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector23pin" connectorname="VCC" cx="13.75" cy="57.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector43pin" connectorname="VCC" cx="20.95" cy="78.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector24pin" connectorname="RXD0/SDA" cx="48.70" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector25pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector26pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
@@ -164,6 +81,7 @@
   <circle id="connector28pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector29pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector62pin" connectorname="GND" cx="13.75" cy="64.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector63pin" connectorname="GND" cx="20.95" cy="85.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector30pin" connectorname="RXD0/SDA" cx="48.70" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector31pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector32pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
@@ -171,175 +89,257 @@
   <circle id="connector34pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector35pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector36pin" connectorname="RXD0/SDA" cx="13.75" cy="71.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector3pin" connectorname="RXD1" cx="20.95" cy="93.02" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector37pin" connectorname="RXD0/SDA" cx="48.70" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector38pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector39pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector40pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="75.40" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector41pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector42pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector43pin" connectorname="VCC" cx="20.95" cy="78.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector44pin" connectorname="TXD0/MOSI/TDI" cx="13.75" cy="78.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector45pin" connectorname="VCC" cx="120.61" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector46pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="127.81" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector63pin" connectorname="GND" cx="20.95" cy="85.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector47pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="13.75" cy="85.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector44pin" connectorname="TXD0/MOSI/TDI" cx="13.75" cy="78.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector2pin" connectorname="TXD1" cx="20.95" cy="100.22" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector64pin" connectorname="GND" cx="120.61" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector48pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="127.81" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector3pin" connectorname="RXD1" cx="20.95" cy="93.02" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector49pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="13.75" cy="93.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector47pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="13.75" cy="85.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector12pin" connectorname="RTS1/GPIO7" cx="20.95" cy="107.42" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector51pin" connectorname="GND/KEY" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector65pin" connectorname="GND" cx="120.61" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector50pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="127.81" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector51pin" connectorname="GND/KEY" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector2pin" connectorname="TXD1" cx="20.95" cy="100.22" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector52pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="13.75" cy="100.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector49pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="13.75" cy="93.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector1pin" connectorname="CTS1/GPIO6" cx="20.95" cy="114.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector54pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector57pin" connectorname="GND/KEY" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector66pin" connectorname="GND" cx="120.61" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector53pin" connectorname="TXD0/MOSI/TDI" cx="127.81" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector54pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector12pin" connectorname="RTS1/GPIO7" cx="20.95" cy="107.42" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector55pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector52pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="13.75" cy="100.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector9pin" connectorname="TNOW1/DTR1" cx="20.95" cy="121.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector67pin" connectorname="GND" cx="120.61" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector56pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="127.81" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector57pin" connectorname="GND/KEY" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector1pin" connectorname="CTS1/GPIO6" cx="20.95" cy="114.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector55pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector58pin" connectorname="RI0/GPIO3/SCL" cx="13.75" cy="114.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector9pin" connectorname="TNOW1/DTR1" cx="20.95" cy="121.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector14pin" connectorname="DCD0/GPIO4/ACT" cx="13.75" cy="121.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle cx="20.64" cy="12.48" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="20.64" cy="12.48" r="2.66" fill="#d9dde0"/>
-  <circle cx="20.64" cy="12.48" r="1.22" fill="#33507f"/>
-  <circle cx="62.08" cy="19.19" r="0.79" fill="#c0c0c0" stroke="none"/>
-  <circle cx="20.64" cy="19.68" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="20.64" cy="19.68" r="2.66" fill="#d9dde0"/>
-  <circle cx="20.64" cy="19.68" r="1.22" fill="#33507f"/>
-  <circle cx="85.92" cy="28.18" r="0.99" fill="#c0c0c0" stroke="none"/>
-  <circle cx="48.68" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="48.68" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="48.68" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="57.81" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="57.81" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="57.81" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="66.59" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="66.59" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="66.59" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="75.37" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="75.37" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="75.37" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="84.50" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="84.50" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="84.50" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="93.28" cy="65.36" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="93.28" cy="65.36" r="2.66" fill="#d9dde0"/>
-  <circle cx="93.28" cy="65.36" r="1.22" fill="#33507f"/>
-  <circle cx="48.68" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="48.68" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="48.68" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="57.81" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="57.81" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="57.81" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="66.59" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="66.59" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="66.59" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="75.37" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="75.37" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="75.37" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="84.50" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="84.50" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="84.50" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="93.28" cy="72.55" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
-  <circle cx="93.28" cy="72.55" r="2.66" fill="#d9dde0"/>
-  <circle cx="93.28" cy="72.55" r="1.22" fill="#33507f"/>
-  <circle cx="64.12" cy="99.35" r="0.51" fill="#c0c0c0" stroke="none"/>
-  <text x="26.27" y="4.63" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R2</text>
-  <text x="127.02" y="6.72" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P4</text>
-  <text x="13.07" y="7.65" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P3</text>
-  <text x="20.41" y="7.65" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P2</text>
-  <text x="83.53" y="10.54" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R5</text>
-  <text x="131.41" y="12.61" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">3V3</text>
-  <text x="9.31" y="14.06" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">SDA</text>
-  <text x="32.13" y="14.06" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">GND</text>
-  <text x="131.41" y="19.81" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">GND</text>
-  <text x="9.31" y="21.26" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">SCL</text>
-  <text x="24.63" y="21.26" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CFG0</text>
-  <text x="56.69" y="22.22" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,56.69,22.22)">24C02</text>
-  <text x="66.83" y="24.32" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U3</text>
-  <text x="131.41" y="27.01" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CS0</text>
-  <text x="9.31" y="28.46" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="24.63" y="28.46" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CFG1</text>
-  <text x="80.36" y="32.88" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,80.36,32.88)">25Q16JVSIQ</text>
-  <text x="131.41" y="34.21" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CS1</text>
-  <text x="9.31" y="35.66" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">3V3</text>
-  <text x="32.13" y="35.66" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">GND</text>
-  <text x="91.51" y="36.06" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U4</text>
-  <text x="131.41" y="41.41" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">SCK</text>
-  <text x="26.77" y="46.18" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R1</text>
-  <text x="95.02" y="47.53" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C10</text>
-  <text x="49.07" y="47.73" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R8</text>
-  <text x="54.14" y="47.73" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R7</text>
-  <text x="59.88" y="47.73" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C1</text>
-  <text x="131.41" y="48.61" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">MISO</text>
-  <text x="13.75" y="52.10" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P7</text>
-  <text x="131.41" y="55.81" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">MOSI</text>
-  <text x="9.35" y="57.99" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">3V3</text>
-  <text x="9.35" y="65.19" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="9.35" y="72.39" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">RXD</text>
-  <text x="124.21" y="73.41" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P5</text>
-  <text x="20.95" y="73.66" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P8</text>
-  <text x="48.53" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P14</text>
-  <text x="57.43" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P13</text>
-  <text x="66.33" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P12</text>
-  <text x="75.23" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P10</text>
-  <text x="84.36" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P11</text>
-  <text x="93.03" y="79.00" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P9</text>
-  <text x="25.34" y="79.56" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">3V3</text>
-  <text x="9.35" y="79.59" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TXD</text>
-  <text x="116.22" y="79.65" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">3V3</text>
-  <text x="139.00" y="79.65" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TMS</text>
-  <text x="25.34" y="86.76" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">GND</text>
-  <text x="9.35" y="86.79" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">RTS</text>
-  <text x="116.22" y="86.85" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="138.27" y="86.85" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TCK</text>
-  <text x="102.11" y="87.40" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">P6</text>
-  <text x="25.34" y="93.96" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">RXD1</text>
-  <text x="9.35" y="93.99" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">CTS</text>
-  <text x="116.22" y="94.05" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="139.10" y="94.05" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TDO</text>
-  <text x="99.93" y="94.13" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">3V3</text>
-  <text x="70.72" y="94.39" font-size="2.16" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" transform="rotate(-90.0,70.72,94.39)">CH347T</text>
-  <text x="72.91" y="94.39" font-size="2.16" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" transform="rotate(-90.0,72.91,94.39)">TSSOP20</text>
-  <text x="83.36" y="94.49" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C7</text>
-  <text x="88.60" y="94.53" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R4</text>
-  <text x="56.96" y="95.43" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U2</text>
-  <text x="100.34" y="100.57" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="25.34" y="101.16" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">TXD1</text>
-  <text x="9.35" y="101.19" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">DTR</text>
-  <text x="137.69" y="101.25" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TDI</text>
-  <text x="91.93" y="103.32" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">/KEY</text>
-  <text x="85.04" y="105.26" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">X1</text>
-  <text x="44.34" y="105.28" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R3</text>
-  <text x="54.23" y="105.32" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">LED1</text>
-  <text x="25.34" y="108.36" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">RTS1</text>
-  <text x="9.35" y="108.39" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">DSR</text>
-  <text x="116.22" y="108.45" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">GND</text>
-  <text x="140.01" y="108.45" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">TRST</text>
-  <text x="92.15" y="108.77" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">GND</text>
-  <text x="84.64" y="110.82" font-size="2.16" font-family="DroidSans" fill="#333333" text-anchor="middle" transform="rotate(180.0,84.64,110.82)">8MHz</text>
-  <text x="25.34" y="115.56" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CTS1</text>
-  <text x="9.35" y="115.59" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">RI</text>
-  <text x="92.31" y="118.82" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C5</text>
-  <text x="65.46" y="118.99" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C8</text>
-  <text x="108.76" y="121.24" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C1</text>
-  <text x="114.33" y="121.24" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C2</text>
-  <text x="119.91" y="121.24" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C3</text>
-  <text x="125.14" y="121.24" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C4</text>
-  <text x="102.83" y="121.28" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">F1</text>
-  <text x="88.26" y="122.70" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C6</text>
-  <text x="25.34" y="122.76" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">DTR1</text>
-  <text x="9.35" y="122.79" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="end" font-weight="bold">DCD</text>
-  <text x="120.83" y="148.84" font-size="2.16" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,120.83,148.84)">1117-3.3</text>
-  <text x="120.83" y="156.55" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U1</text>
-  <text x="133.86" y="156.66" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U1</text>
-  <text x="3.40" y="165.47" font-size="4.68" font-family="DroidSans" fill="#ffffff" text-anchor="start" font-weight="bold">CH347T-EVT-R0-1v1</text>
+  <rect x="126.36" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
+  <rect x="119.84" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
+  <rect x="113.32" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
+  <rect x="115.73" y="154.71" width="10.20" height="5.39" fill="#c0c0c0"/>
+  <rect x="111.62" y="144.79" width="18.43" height="9.92" fill="#303030"/>
+  <rect x="79.69" y="107.18" width="3.12" height="3.40" fill="#f7bf13"/>
+  <rect x="85.93" y="107.18" width="3.12" height="3.40" fill="#f7bf13"/>
+  <rect x="85.93" y="111.43" width="3.12" height="3.40" fill="#f7bf13"/>
+  <rect x="79.69" y="111.43" width="3.12" height="3.40" fill="#f7bf13"/>
+  <rect x="79.83" y="107.46" width="9.07" height="7.09" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.227"/>
+  <rect x="110.30" y="99.96" width="5.67" height="0.57" fill="#c8ccd0"/>
+  <rect x="47.48" y="140.81" width="3.54" height="6.52" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
+  <rect x="85.03" y="140.81" width="3.54" height="6.52" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
+  <rect x="51.14" y="139.40" width="34.01" height="34.01" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.281"/>
+  <rect x="51.14" y="127.21" width="34.01" height="12.19" fill="#b5b5b5" stroke="#8f8f8f" stroke-width="0.281"/>
+  <circle cx="20.41" cy="12.78" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="20.41" cy="19.98" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="17.33" y="9.25" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="20.41" cy="12.78" r="2.66" fill="#d9dde0"/>
+  <circle cx="20.41" cy="12.78" r="1.22" fill="#33507f"/>
+  <circle cx="20.41" cy="19.98" r="2.66" fill="#d9dde0"/>
+  <circle cx="20.41" cy="19.98" r="1.22" fill="#33507f"/>
+  <rect x="19.78" y="12.48" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="66.50" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="66.50" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="63.28" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="66.50" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="66.50" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="66.50" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="66.50" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="65.73" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="57.60" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="57.60" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="54.50" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="57.60" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="57.60" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="57.60" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="57.60" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="56.94" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="48.70" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="48.70" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="45.37" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="48.70" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="48.70" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="48.70" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="48.70" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="47.82" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="75.40" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="75.40" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="72.06" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="75.40" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="75.40" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="75.40" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="75.40" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="74.51" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="84.53" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="84.53" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="81.19" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="84.53" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="84.53" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="84.53" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="84.53" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="83.63" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <circle cx="93.20" cy="64.74" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <circle cx="93.20" cy="71.94" r="1.87" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.360"/>
+  <rect x="89.97" y="62.12" width="6.55" height="13.60" fill="#e6b53d"/>
+  <circle cx="93.20" cy="64.74" r="2.66" fill="#d9dde0"/>
+  <circle cx="93.20" cy="64.74" r="1.22" fill="#33507f"/>
+  <circle cx="93.20" cy="71.94" r="2.66" fill="#d9dde0"/>
+  <circle cx="93.20" cy="71.94" r="1.22" fill="#33507f"/>
+  <rect x="92.42" y="65.36" width="1.73" height="7.20" fill="#d9dde0"/>
+  <rect x="51.42" y="109.11" width="2.23" height="4.53" fill="#dedede" stroke="#8f8f8f" stroke-width="0.216"/>
+  <rect x="51.42" y="109.11" width="2.23" height="0.94" fill="#b9bdc1"/>
+  <rect x="51.42" y="112.71" width="2.23" height="0.94" fill="#b9bdc1"/>
+  <rect x="52.07" y="110.70" width="0.94" height="1.37" fill="#e02424"/>
+  <rect x="46.16" y="109.22" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="46.16" y="112.90" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="46.16" y="110.07" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="26.91" y="9.05" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="26.91" y="12.73" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="26.91" y="9.90" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="27.58" y="35.06" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="27.58" y="38.75" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="27.58" y="35.91" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="50.39" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="50.39" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="50.39" y="39.63" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="55.12" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="55.12" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="55.12" y="39.63" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="84.68" y="14.12" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="84.68" y="17.80" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="84.68" y="14.97" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="89.24" y="84.39" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="89.24" y="88.07" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="89.24" y="85.24" width="2.27" height="2.83" fill="#000000" stroke="none" stroke-width="0.285"/>
+  <rect x="126.74" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="126.74" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="126.74" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="103.43" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="103.43" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="103.43" y="127.81" width="2.27" height="2.83" fill="#ffffff" stroke="none" stroke-width="0.285"/>
+  <rect x="120.83" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="120.83" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="120.83" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="115.25" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="115.25" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="115.25" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="109.17" y="126.96" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="109.17" y="130.64" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="109.17" y="127.81" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="66.77" y="109.56" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="66.77" y="113.24" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="66.77" y="110.41" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="91.94" y="108.88" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="91.94" y="112.57" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="91.94" y="109.73" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="85.37" y="117.28" width="0.85" height="2.27" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="81.69" y="117.28" width="0.85" height="2.27" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="82.54" y="117.28" width="2.83" height="2.27" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="84.51" y="84.39" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="84.51" y="88.07" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="84.51" y="85.24" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="90.76" y="44.18" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="90.76" y="47.87" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="90.76" y="45.04" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <rect x="60.86" y="38.78" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="60.86" y="42.46" width="2.27" height="0.85" fill="#e3e2db" stroke="none" stroke-width="0.000"/>
+  <rect x="60.86" y="39.63" width="2.27" height="2.83" fill="#784421" stroke="none" stroke-width="0.285"/>
+  <text x="26.27" y="4.63" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R2</text>
+  <text x="127.02" y="6.72" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P4</text>
+  <text x="13.07" y="7.65" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P3</text>
+  <text x="20.41" y="7.65" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P2</text>
+  <text x="83.53" y="10.54" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R5</text>
+  <text x="131.41" y="12.61" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">3V3</text>
+  <text x="9.31" y="14.06" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">SDA</text>
+  <text x="32.13" y="14.06" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">GND</text>
+  <text x="131.41" y="19.81" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">GND</text>
+  <text x="9.31" y="21.26" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">SCL</text>
+  <text x="24.63" y="21.26" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CFG0</text>
+  <text x="56.69" y="22.22" font-size="2.04" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,56.69,22.22)">24C02</text>
+  <text x="66.83" y="24.32" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U3</text>
+  <text x="131.41" y="27.01" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CS0</text>
+  <text x="9.31" y="28.46" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="24.63" y="28.46" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CFG1</text>
+  <text x="80.36" y="32.88" font-size="2.27" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,80.36,32.88)">25Q16JVSIQ</text>
+  <text x="131.41" y="34.21" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CS1</text>
+  <text x="9.31" y="35.66" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">3V3</text>
+  <text x="32.13" y="35.66" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">GND</text>
+  <text x="91.51" y="36.06" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U4</text>
+  <text x="131.41" y="41.41" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">SCK</text>
+  <text x="26.77" y="46.18" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R1</text>
+  <text x="95.02" y="47.53" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C10</text>
+  <text x="49.07" y="47.73" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R8</text>
+  <text x="54.14" y="47.73" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R7</text>
+  <text x="59.88" y="47.73" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C1</text>
+  <text x="131.41" y="48.61" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">MISO</text>
+  <text x="13.75" y="52.10" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P7</text>
+  <text x="131.41" y="55.81" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">MOSI</text>
+  <text x="9.35" y="57.99" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">3V3</text>
+  <text x="9.35" y="65.19" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="9.35" y="72.39" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">RXD</text>
+  <text x="124.21" y="73.41" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P5</text>
+  <text x="20.95" y="73.66" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P8</text>
+  <text x="48.53" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P14</text>
+  <text x="57.43" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P13</text>
+  <text x="66.33" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P12</text>
+  <text x="75.23" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P10</text>
+  <text x="84.36" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P11</text>
+  <text x="93.03" y="79.00" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P9</text>
+  <text x="25.34" y="79.56" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">3V3</text>
+  <text x="9.35" y="79.59" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TXD</text>
+  <text x="116.22" y="79.65" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">3V3</text>
+  <text x="139.00" y="79.65" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TMS</text>
+  <text x="25.34" y="86.76" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">GND</text>
+  <text x="9.35" y="86.79" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">RTS</text>
+  <text x="116.22" y="86.85" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="138.27" y="86.85" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TCK</text>
+  <text x="102.11" y="87.40" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">P6</text>
+  <text x="25.34" y="93.96" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">RXD1</text>
+  <text x="9.35" y="93.99" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">CTS</text>
+  <text x="116.22" y="94.05" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="139.10" y="94.05" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TDO</text>
+  <text x="99.93" y="94.13" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">3V3</text>
+  <text x="70.72" y="94.39" font-size="1.76" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" transform="rotate(-90.0,70.72,94.39)">CH347T</text>
+  <text x="72.91" y="94.39" font-size="0.96" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" transform="rotate(-90.0,72.91,94.39)">TSSOP20</text>
+  <text x="83.36" y="94.49" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C7</text>
+  <text x="88.60" y="94.53" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R4</text>
+  <text x="56.96" y="95.43" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U2</text>
+  <text x="100.34" y="100.57" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="25.34" y="101.16" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">TXD1</text>
+  <text x="9.35" y="101.19" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">DTR</text>
+  <text x="137.69" y="101.25" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TDI</text>
+  <text x="91.93" y="103.32" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">/KEY</text>
+  <text x="85.04" y="105.26" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">X1</text>
+  <text x="44.34" y="105.28" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">R3</text>
+  <text x="54.23" y="105.32" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">LED1</text>
+  <text x="25.34" y="108.36" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">RTS1</text>
+  <text x="9.35" y="108.39" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">DSR</text>
+  <text x="116.22" y="108.45" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">GND</text>
+  <text x="140.01" y="108.45" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">TRST</text>
+  <text x="92.15" y="108.77" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">GND</text>
+  <text x="84.64" y="110.82" font-size="2.29" font-family="DroidSans" fill="#333333" text-anchor="middle" transform="rotate(180.0,84.64,110.82)">8MHz</text>
+  <text x="25.34" y="115.56" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CTS1</text>
+  <text x="9.35" y="115.59" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">RI</text>
+  <text x="92.31" y="118.82" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C5</text>
+  <text x="65.46" y="118.99" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C8</text>
+  <text x="108.76" y="121.24" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C1</text>
+  <text x="114.33" y="121.24" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C2</text>
+  <text x="119.91" y="121.24" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C3</text>
+  <text x="125.14" y="121.24" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C4</text>
+  <text x="102.83" y="121.28" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">F1</text>
+  <text x="88.26" y="122.70" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">C6</text>
+  <text x="25.34" y="122.76" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">DTR1</text>
+  <text x="9.35" y="122.79" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="end" font-weight="bold">DCD</text>
+  <text x="120.83" y="148.84" font-size="2.55" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180.0,120.83,148.84)">1117-3.3</text>
+  <text x="120.83" y="156.55" font-size="2.27" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U1</text>
+  <text x="133.86" y="156.66" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">U1</text>
+  <text x="3.40" y="165.47" font-size="4.68" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">CH347T-EVT-R0-1v1</text>
   <text x="4.91" y="170.24" font-size="4.68" font-family="DroidSans" fill="#c8ccd0" text-anchor="start" font-weight="bold">http://wch.cn</text>
-  <text x="47.89" y="172.66" font-size="2.16" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P1</text>
+  <text x="47.89" y="172.66" font-size="3.50" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">P1</text>
  </g>
 </svg>
