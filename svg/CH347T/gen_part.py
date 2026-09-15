@@ -33,11 +33,12 @@ gen_part.py — CH347T 高速 USB 转 SPI/I2C/JTAG/UART 芯片（WCH）Fritzing 
 进度（按 fritzing-parts-langhua AGENTS.md §2 芯片类工作流）：
   [x] 1. icon（TSSOP20 顶视图：黑体 4.4×6.5 + 两侧金脚 + pin1 圆点）
   [x] 2. breadboard（= CH347T-EVT-R0-1v1 整块评估板）
-  [ ] 3. schematic（矩形 20 脚符号）
-  [ ] 4. pcb（TSSOP20 4.4×6.5 P0.65）
-  [ ] 5. part.CH347T.fzp + 打包 fzpz
+  [x] 3. schematic（矩形 20 脚符号：左 1..10 / 右 20..11）
+  [x] 4. pcb（TSSOP20 4.4×6.5 P0.65，含脚总宽 6.4）
+  [x] 5. part.CH347T.fzp + 打包 fzpz
 """
 import os
+import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 PART_ID = "CH347T"
@@ -50,6 +51,7 @@ ICON_SVG = "svg.icon.%s_icon.svg" % PART_ID
 BB_SVG = "svg.breadboard.%s_breadboard.svg" % PART_ID
 SCHEM_SVG = "svg.schematic.%s_schematic.svg" % PART_ID
 PCB_SVG = "svg.pcb.%s_pcb.svg" % PART_ID
+FZP = "part.%s.fzp" % PART_ID
 
 # 颜色（与仓库其它芯片 icon 一致）
 BODY = "#303030"
@@ -80,6 +82,14 @@ PIN_NAMES = {
 # 没有单列；GND/KEY 是按键扫描线，不是地）→ 一律发板级号，且**不许按 "/" 拆开去猜**
 # （拆开 "GND/KEY" 会拆出 "GND" 而误并到地上 —— CH347F 上踩过的同类坑）。
 BOARD_NETS = {"CFG0", "CFG1", "GND/KEY"}
+
+# 同网总线（`.fzp` 的 <buses>）：(总线名, 芯片脚 connector 号, 板上网名)
+#   芯片脚号 = **引脚号 − 1**（connector0 = 引脚 1）。板上多路 GND/VCC 焊盘都归到
+#   各自的电源总线；GND/KEY（按键扫描线，**不是地**）没有对应芯片脚，只把板上 3 个焊盘并起来。
+#   ⚠ CFG0/CFG1 板上各只有 **1 个**焊盘 → 不成总线（一个成员的总线是噪音，别写）。
+BUSES = [("GND", (17,), ("GND",)),                 # 17 = 18 脚 GND
+         ("VCC", (13,), ("VCC",)),                 # 13 = 14 脚 VCC
+         ("KEY", (), ("GND/KEY",))]
 
 
 def _centers():
@@ -195,6 +205,28 @@ def buses():
     for _sidx, _cid, net, _x, _y, cn in pad_rows():
         grp.setdefault(net, []).append(cn)
     return [(net if net != "VCC" else "3V3", sorted(cns)) for net, cns in sorted(grp.items())]
+
+
+def buses():
+    """→ [(总线名, [connector 号…])]：同网必并一条总线（AGENTS §5「多焊盘同网络」条）。
+
+    成员 = ① 芯片脚（`BUSES` 里显式写，如 GND=17 / VCC=13）+ ② 板上同网名的**每个**焊盘
+    （各自独立 connector、都能接线）。同名的焊盘必然落进同一条总线 —— `fzp_check.py`
+    第 ⑥ 条会守住这件事（少并一条 = 点一个焊盘时别的同网焊盘不亮）。
+    """
+    grp = {}
+    for _sidx, _cid, net, _x, _y, cn in pad_rows():
+        grp.setdefault(net, set()).add(cn)
+    out = []
+    for bid, pins, nets in BUSES:
+        members = set(pins)
+        for net in nets:
+            members |= grp.pop(net, set())
+        out.append((bid, sorted(members)))
+    for net, cns in sorted(grp.items()):          # 表里剩下的同网焊盘（≥2 个）自动成一条
+        if len(cns) >= 2:
+            out.append((net, sorted(cns)))
+    return out
 
 
 def _esc(s):
@@ -325,12 +357,225 @@ def gen_breadboard_svg():
     return "".join(L)
 
 
+# =============================================================================
+# 原理图 —— 矩形符号（20 脚，左右各 10）
+#
+# 排布口径（单一源 = 手册第 3 页 TSSOP20 顶视图 + AGENTS §2「引脚号逆时针」）：
+#   左列（上→下）= 1..10；右列（上→下）= 20..11（也就是 11..20 **从下往上**）。
+#   这就是手册顶视图的物理排列，也正好是逆时针：1 左上 → 沿左列向下 → 10 左下 →
+#   11 右下 → 沿右列向上 → 20 右上。
+#   列数选择：**两排封装（SOP/TSSOP/MSOP）用左右两列**（CH340C 16 脚 / CH340E 10 脚同）；
+#   四排封装（QFN/LQFP）才用四边符号（CH347F / CH32V203C8T6）。
+#
+# 几何口径（AGENTS §5「矩形封装（方框）原理图符号规则」）：
+#   1. 左右引脚数字在引线**上方**（不与引线相交），整图同字号 FN=35（≈0.889mm，
+#      对齐 Fritzing 官方引脚数字 0.881944mm）；芯片名 79（2.0mm，醒目）。
+#   2. 引脚名在框内、与引脚水平中线对齐 —— 手动基线偏移 BASELINE_OFF（**不用**
+#      dominant-baseline：cairosvg/Fritzing 不支持，左右名会不居中）。
+#   3. 名 / 数字 / 引线**同色**（用户 2026-09-15 定：全黑）。
+#   4. 名与边框留一个字符 CH=FN；数字在引线外侧，与名互不重叠。
+#   5. 端点 = 22×22 **不可见** rect（靠引线末端吸附连线，不画夸张黑点）。
+#   6. 本符号**没有上下引脚** → 不需要 AGENTS 的「四角无引脚区」（那是防上下名与左右名
+#      在四角交叉用的）；上下只留 CH + P/2 边距。框宽按最长引脚名 + 芯片名算出来。
+#   物理尺寸用 in（1000 单位 = 1in，AGENTS §5）；viewBox 贴合内容（裁边）。
+# =============================================================================
+SCHEM_INTERIOR = "#787878"       # 框线：Fritzing 官方 IC 符号的浅灰（CH340C/CH347F 同）
+
+
+def gen_schematic_svg():
+    """矩形符号：左右各 10 脚（见上面口径）。"""
+    P, WIRE, CH, FN = 100, 130, 35, 35        # 脚距 2.54mm / 引线长 / 一字符间距 / 整图字号
+    CHIP_FS = 79                              # 芯片名字号（2.0mm）
+    BASELINE_OFF = round(FN * 0.35)           # 手动垂直居中
+    per = len(PIN_NAMES)                      # 20 脚 → 每列 10
+    per //= 2
+    PAD_V = CH + P // 2                       # 上下边距
+    # 框宽：左右各"一个字符 + 最长引脚名 + 留白"，中间还要放得下芯片名
+    name_w = max(len(n) for n in PIN_NAMES.values()) * int(FN * 0.58)
+    chip_w = len(PART_ID) * int(CHIP_FS * 0.58)
+    GAP = 40
+    BW = 2 * (CH + name_w + GAP) + chip_w
+    BH = (per - 1) * P + 2 * PAD_V
+    BX0, BY0 = 340, 200
+    BX1, BY1 = BX0 + BW, BY0 + BH
+    VBX, VBY = BX0 - WIRE - 5, BY0 - 5        # viewBox 贴合内容（裁边）
+    VBW, VBH = BW + 2 * WIRE + 10, BH + 10
+    L = ['<?xml version="1.0" encoding="utf-8"?>\n',
+         '<svg xmlns="http://www.w3.org/2000/svg" width="%.6fin" height="%.6fin" '
+         'viewBox="%d %d %d %d">\n' % (VBW / 1000.0, VBH / 1000.0, VBX, VBY, VBW, VBH),
+         ' <g id="schematic">\n',
+         '  <rect class="interior rect" x="%d" y="%d" width="%d" height="%d" '
+         'fill="#FFFFFF" stroke="%s" stroke-width="5"/>\n' % (BX0, BY0, BW, BH, SCHEM_INTERIOR)]
+
+    def wire(cn, x1, y1, x2, y2, tx, ty):
+        """一条引脚的**线 + 不可见端点**（端点落在引线末端，靠它吸附连线）。"""
+        L.append('  <line class="pin" id="connector%dpin" connectorname="%s" x1="%d" y1="%d" '
+                 'x2="%d" y2="%d" stroke="#000000" stroke-width="5"/>\n'
+                 % (cn, _esc(PIN_NAMES[cn + 1]), x1, y1, x2, y2))
+        L.append('  <rect class="terminal" id="connector%dterminal" x="%d" y="%d" width="22" '
+                 'height="22" fill="none" stroke="none"/>\n' % (cn, tx - 11, ty - 11))
+
+    for i in range(per):                      # 左列 1..10（上→下）
+        cn = i
+        y = BY0 + PAD_V + i * P
+        wire(cn, BX0, y, BX0 - WIRE, y, BX0 - WIRE, y)
+        L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
+                 'font-family="DroidSans">%d</text>\n' % (BX0 - WIRE // 2, y - 24, FN, cn + 1))
+        L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="start" '
+                 'font-family="DroidSans">%s</text>\n'
+                 % (BX0 + CH, y + BASELINE_OFF, FN, _esc(PIN_NAMES[cn + 1])))
+    for i in range(per):                      # 右列 20..11（上→下；= 11..20 从下往上）
+        cn = per * 2 - 1 - i
+        y = BY0 + PAD_V + i * P
+        wire(cn, BX1, y, BX1 + WIRE, y, BX1 + WIRE, y)
+        L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
+                 'font-family="DroidSans">%d</text>\n' % (BX1 + WIRE // 2, y - 24, FN, cn + 1))
+        L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="end" '
+                 'font-family="DroidSans">%s</text>\n'
+                 % (BX1 - CH, y + BASELINE_OFF, FN, _esc(PIN_NAMES[cn + 1])))
+    L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
+             'font-family="DroidSans">%s</text>\n'
+             % (BX0 + BW // 2, BY0 + BH // 2 + round(CHIP_FS * 0.35), CHIP_FS, PART_ID))
+    L += [' </g>\n', '</svg>\n']
+    return "".join(L)
+
+
+# =============================================================================
+# PCB —— TSSOP20（本体 4.4×6.5、节距 0.65、含脚总宽 6.4），1 单位 = 1mm
+#
+# 尺寸出处 = 手册（CH347DS1.PDF）第 12 页 7.2 TSSOP20 三视图：
+#   本体 4.4 × 6.5；节距 e=0.65（标称，无误差）；脚宽 0.25；**含脚总宽 6.4**
+#   → 脚伸出 (6.4 − 4.4)/2 = 1.0；总高 1.1（与焊盘无关）。
+# 焊盘（land）由封装尺寸推（手册没给推荐 land，与 CH347F 同一套推法）：
+#   沿边 0.4 × 跨边 1.5 —— 脚跟（体边 2.2）**内** 0.15、脚尖（6.4/2 = 3.2）**外** 0.35
+#   → 内缘 2.05、外缘 3.55、行中心 2.8。0.65 节距下相邻焊盘留 0.25 间隙（不打架）。
+# 排列与 icon / 手册顶视图一致：左列 1..10 上→下、右列 11..20 下→上（逆时针）。
+# 丝印：本体两条**横边**（y=±3.25，跨 4.4；脚在左右两侧，横线不压焊盘）+ pin1 实心圆点
+#   （1 脚焊盘外侧）。**不画左右两条竖边** —— 它们正好压在焊盘上（同 CH340E 的取舍）。
+# =============================================================================
+def gen_pcb_svg():
+    """TSSOP20 land（copper1 + silkscreen，viewBox 单位 = mm，贴合内容裁边）。"""
+    PITCH, PAD_W = 0.65, 0.4
+    BODY_W, BODY_L, TOT_W = 4.4, 6.5, 6.4     # 本体宽 / 本体长 / 含脚总宽（手册第 12 页）
+    IN_EDGE = BODY_W / 2 - 0.15               # 焊盘内缘 2.05（脚跟处体边内 0.15）
+    OUT_EDGE = TOT_W / 2 + 0.35               # 焊盘外缘 3.55（脚尖处体边外 0.35）
+    PAD_L = OUT_EDGE - IN_EDGE                # 1.5
+    ROW = (IN_EDGE + OUT_EDGE) / 2.0          # 行中心 2.8
+    per = len(PIN_NAMES) // 2                 # 每列 10
+    y0 = -(per - 1) * PITCH / 2.0             # -2.925
+    pads, silk = [], []
+
+    def pad(cn, x, y):
+        pads.append('<rect id="connector%dpad" connectorname="%s" x="%.3f" y="%.3f" '
+                    'width="%.3f" height="%.3f" fill="#F7BD13" stroke="none"/>'
+                    % (cn, _esc(PIN_NAMES[cn + 1]), x, y, PAD_L, PAD_W))
+
+    for i in range(per):                      # 左列 1..10（上→下）
+        pad(i, -ROW - PAD_L / 2, y0 + i * PITCH - PAD_W / 2)
+    for i in range(per):                      # 右列 20..11（上→下）
+        pad(per * 2 - 1 - i, ROW - PAD_L / 2, y0 + i * PITCH - PAD_W / 2)
+    for sy in (-1, 1):                        # 本体上下两条横边（不压焊盘）
+        silk.append('<line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" stroke="#f0f0f0" '
+                    'stroke-width="0.12"/>' % (-BODY_W / 2, sy * BODY_L / 2, BODY_W / 2,
+                                               sy * BODY_L / 2))
+    silk.append('<circle cx="%.3f" cy="%.3f" r="0.15" fill="#f0f0f0" stroke="none" '
+                'class="other"/>' % (-ROW - PAD_L / 2 - 0.3, y0))
+    # 裁边：内容 x −4.0(pin1 圆点左缘) .. 3.55(右焊盘外缘)、y ±3.25(丝印)，各留 0.15
+    M = 0.15
+    vb_x0, vb_x1 = -ROW - PAD_L / 2 - 0.3 - 0.15 - M, ROW + PAD_L / 2 + M
+    vb_y0, vb_y1 = -BODY_L / 2 - M, BODY_L / 2 + M
+    vw, vh = vb_x1 - vb_x0, vb_y1 - vb_y0
+    return ('<?xml version="1.0" encoding="utf-8"?>\n'
+            '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
+            'viewBox="%.2f %.2f %.2f %.2f">\n'
+            '  <g id="copper1">\n    ' % (vw, vh, vb_x0, vb_y0, vw, vh)
+            + '\n    '.join(pads)
+            + '\n  </g>\n  <g id="silkscreen">\n    '
+            + '\n    '.join(silk) + '\n  </g>\n</svg>\n')
+
+
+def gen_fzp():
+    """.fzp：芯片 20 脚（connector0..19 = 引脚 1..20）+ 面包板专用连接器（20 起）。
+
+    视图分配：
+      · 芯片脚 → 原理图（pin + terminal）+ PCB（pad）**都有**；面包板只给"评估板上真引到
+        排针"的那些（XI/XO/RST#/UD± 直接进晶体/复位/USB 座，板上没引出来）。
+      · 面包板专用号（20 起）→ **只有面包板视图**（板上额外的 CFG0/CFG1/多路 GND/VCC…）。
+      · 同网用 <buses> 互联（见 `buses()`）。
+    """
+    net_of = {cn: net for _sidx, _cid, net, _x, _y, cn in pad_rows()}
+    board = sorted(net_of)
+    chip_on_board = {cn for cn in board if cn < len(PIN_NAMES)}
+    conns = []
+    for cn in range(len(PIN_NAMES)):
+        nm = _esc(PIN_NAMES[cn + 1])
+        conns.append('  <connector id="connector%d" name="%s" type="male">\n'
+                     '   <description>%s</description>\n   <views>\n' % (cn, nm, nm))
+        if cn in chip_on_board:
+            conns.append('    <breadboardView><p layer="breadboard" svgId="connector%dpin"/>'
+                         '</breadboardView>\n' % cn)
+        conns.append('    <schematicView><p layer="schematic" svgId="connector%dpin" '
+                     'terminalId="connector%dterminal"/></schematicView>\n' % (cn, cn))
+        conns.append('    <pcbView><p layer="copper1" svgId="connector%dpad"/></pcbView>\n' % cn)
+        conns.append('   </views>\n  </connector>\n')
+    for cn in [c for c in board if c >= len(PIN_NAMES)]:
+        nm = _esc(net_of[cn])
+        conns.append('  <connector id="connector%d" name="%s" type="male">\n'
+                     '   <description>%s (board rail)</description>\n   <views>\n'
+                     '    <breadboardView><p layer="breadboard" svgId="connector%dpin"/>'
+                     '</breadboardView>\n   </views>\n  </connector>\n' % (cn, nm, nm, cn))
+    bus_xml = [" <buses>\n"]
+    for bid, cns in buses():
+        bus_xml.append('  <bus id="%s">\n' % _esc(bid))
+        for c in cns:
+            bus_xml.append('   <nodeMember connectorId="connector%d"/>\n' % c)
+        bus_xml.append('  </bus>\n')
+    bus_xml.append(' </buses>\n')
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<module fritzingVersion="1.0.3" moduleId="%s">\n'
+            ' <version>4</version>\n <date>2026-09-15</date>\n'
+            ' <label>%s</label>\n <author>Shi Jinghai</author>\n'
+            ' <title>%s</title>\n'
+            ' <tags><tag>CH347T</tag><tag>USB</tag><tag>SPI</tag><tag>I2C</tag>'
+            '<tag>JTAG</tag><tag>UART</tag><tag>WCH</tag></tags>\n'
+            ' <properties>\n'
+            '  <property name="package">%s</property>\n'
+            '  <property name="family">%s</property>\n'
+            '  <property name="chip">CH347T</property>\n'
+            '  <property name="pins">20</property>\n'
+            ' </properties>\n'
+            ' <views>\n'
+            '  <iconView><layers image="icon/%s_icon.svg"><layer layerId="icon"/></layers>'
+            '</iconView>\n'
+            '  <breadboardView fliphorizontal="true" flipvertical="true">'
+            '<layers image="breadboard/%s_breadboard.svg"><layer layerId="breadboard"/></layers>'
+            '</breadboardView>\n'
+            '  <schematicView fliphorizontal="true" flipvertical="true">'
+            '<layers image="schematic/%s_schematic.svg"><layer layerId="schematic"/></layers>'
+            '</schematicView>\n'
+            '  <pcbView><layers image="pcb/%s_pcb.svg"><layer layerId="copper1"/>'
+            '<layer layerId="silkscreen"/></layers></pcbView>\n'
+            ' </views>\n'
+            ' <connectors>\n%s</connectors>\n%s'
+            '</module>\n'
+            % (PART_ID, LABEL, TITLE, PACKAGE, FAMILY, PART_ID, PART_ID, PART_ID, PART_ID,
+               "".join(conns), "".join(bus_xml)))
+
+
 def main():
-    files = {ICON_SVG: icon_svg(), BB_SVG: gen_breadboard_svg()}
+    files = {ICON_SVG: icon_svg(), BB_SVG: gen_breadboard_svg(),
+             SCHEM_SVG: gen_schematic_svg(), PCB_SVG: gen_pcb_svg(), FZP: gen_fzp()}
     for name, content in files.items():
         with open(os.path.join(OUT_DIR, name), "w", encoding="utf-8") as f:
             f.write(content)
         print("wrote", name)
+    fzpz_dir = os.path.abspath(os.path.join(OUT_DIR, "..", "..", "fzpz"))
+    os.makedirs(fzpz_dir, exist_ok=True)
+    path = os.path.join(fzpz_dir, FZPZ)
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        for name in files:
+            z.write(os.path.join(OUT_DIR, name), arcname=name)   # 包里**平铺**，不放子目录
+    print("wrote", path)
 
 
 if __name__ == "__main__":
