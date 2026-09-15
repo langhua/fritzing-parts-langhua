@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="6.40mm" height="6.5mm" viewBox="0 0 6.40 6.5">
+  <g id="icon">
+    <rect x="0" y="0.200" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="0.200" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="0.850" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="0.850" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="1.500" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="1.500" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="2.150" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="2.150" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="2.800" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="2.800" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="3.450" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="3.450" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="4.100" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="4.100" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="4.750" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="4.750" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="5.400" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="5.400" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="6.050" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="5.40" y="6.050" width="1.00" height="0.25" fill="#f7bf13" stroke="none"/>
+    <rect x="1.00" y="0" width="4.40" height="6.5" fill="#303030" stroke="none"/>
+    <circle cx="1.45" cy="0.77" r="0.18" fill="#c0c0c0" stroke="none"/>
+    <text x="3.20" y="3.10" font-size="0.62" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none">CH347T</text>
+    <text x="3.20" y="3.87" font-size="0.34" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" stroke="none">TSSOP20</text>
+  </g>
+</svg>

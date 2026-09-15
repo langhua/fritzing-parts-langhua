@@ -20,6 +20,7 @@ trace_photo.py — **开发辅助（不参与打包、不参与 gen_part.py 运�
 import os
 import sys
 
+import numpy as np
 import pymupdf
 from PIL import Image
 
@@ -72,6 +73,42 @@ def main():
         return
     sx, sy = bw / W_MM, bh / H_MM
     print("比例 %.3f / %.3f px/mm（差 %.1f%%）" % (sx, sy, abs(sx - sy) / sx * 100))
+    # ★ 照片有 ~0.4° 倾斜：**先摆正再比**，否则板边缘处会差出 ~0.4mm，
+    #   看着像"我们的坐标偏了"（其实是照片歪的）。摆正角度按蓝框左右缘的漂移取平均。
+    tilt = []
+    px = im.load()
+    for x_edge in (minx, maxx):
+        ys = [y for y in range(miny, maxy + 1) if px[x_edge, y][2] > 60]
+        if len(ys) > 10:
+            tilt.append(0.0)
+    ang = 0.0
+    rows = None
+    for _ in (0,):
+        rows = [y for y in range(miny, maxy + 1, 4)
+                if any(px[x, y][2] > 60 and px[x, y][2] > px[x, y][0] + 25
+                       for x in range(minx, maxx + 1, 2))]
+    if rows:
+        lx = []
+        for y in rows:
+            for x in range(minx, maxx + 1):
+                r_, g_, b_ = px[x, y]
+                if b_ > 60 and b_ > r_ + 25 and b_ > g_ + 15:
+                    lx.append((y, x))
+                    break
+        if len(lx) > 10:
+            ang = -np.degrees(np.arctan2(lx[-1][1] - lx[0][1], lx[-1][0] - lx[0][0]))
+    if abs(ang) > 0.05:
+        print("摆正 %.3f°（照片本身是歪的）" % ang)
+        im = im.rotate(ang, resample=Image.BICUBIC, expand=True, fillcolor=(255, 255, 255))
+        px = im.load()
+        W, H = im.size
+        minx, miny, maxx, maxy = W, H, 0, 0
+        for y in range(0, H, 2):
+            for x in range(0, W, 2):
+                r_, g_, b_ = px[x, y]
+                if b_ > 60 and b_ > r_ + 25 and b_ > g_ + 15:
+                    minx = min(minx, x); maxx = max(maxx, x)
+                    miny = min(miny, y); maxy = max(maxy, y)
     board = im.crop((minx, miny, maxx + 1, maxy + 1)).resize(
         (W_PX, int(W_PX * H_MM / W_MM)), Image.LANCZOS)
     board.save(os.path.join(TMP, "board.png"))
