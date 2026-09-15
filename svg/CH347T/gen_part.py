@@ -110,28 +110,47 @@ _PAD_RENAME = [                                  # (列 x, 行 y, 板上丝印�
     (1764.2, 562.2, "SCK"), (1764.2, 662.2, "MISO"), (1764.2, 762.2, "MOSI"),
     (1775.2, 1093.2, "TMS"), (1775.2, 1193.2, "TCK"),                # P5 右列 = JTAG
     (1775.2, 1293.2, "TDO"), (1775.2, 1393.2, "TDI"), (1775.2, 1493.2, "TRST"),
-    (190.9, 992.5, "RXD0"), (190.9, 1092.5, "TXD0"),                 # P7 = UART0 头
-    (190.9, 1192.5, "RTS0/GP1"), (190.9, 1292.5, "CTS0/GP0"),
-    (190.9, 1392.5, "DTR0/GP5"), (190.9, 1492.5, "DSR0/GP2"),
-    (190.9, 1592.5, "RI0/GP3"), (190.9, 1692.5, "DCD0/GP4"),
-    # P6（3 脚）：手工版里被 Ctrl+D 复制成同名 GND/KEY ×3 → 按丝印/板级原理图写回
-    (1453.0, 1293.6, "VCC"), (1453.0, 1393.6, "GND/KEY"), (1453.0, 1493.9, "GND"),
+    # P7 = UART0 头：**板上丝印就是缩写**（手工版里的 <text> 写的是 RXD/TXD/RTS…）
+    (190.9, 992.5, "RXD"), (190.9, 1092.5, "TXD"),
+    (190.9, 1192.5, "RTS"), (190.9, 1292.5, "CTS"),
+    (190.9, 1392.5, "DTR"), (190.9, 1492.5, "DSR"),
+    (190.9, 1592.5, "RI"), (190.9, 1692.5, "DCD"),
+    # P8 = UART1 头（丝印同样带 1：RXD1/TXD1/RTS1…）
+    (290.9, 1292.0, "RXD1"), (290.9, 1392.0, "TXD1"), (290.9, 1492.0, "RTS1"),
+    (290.9, 1592.0, "CTS1"), (290.9, 1692.0, "DTR1"),
+    # P6（3 脚）：手工版里被 Ctrl+D 复制成同名 GND/KEY ×3 → 按**丝印**写回（丝印就是 3V3）
+    (1453.0, 1293.6, "3V3"), (1453.0, 1393.6, "GND/KEY"), (1453.0, 1493.9, "GND"),
     (1675.2, 1393.2, "GND/KEY"),          # P5 左列第 4 脚（= pin7，与 P6 中脚同一根线）
 ]
 
-# P9–P14 = **3 焊点焊接跳线**（"IO SWITCH" 区，手册第 4 页）：一排 3 个焊点接三条不同的线
-#   上脚(1) = UART0 侧那条线（名字照丝印）        → 与 P7 的同名脚共总线
-#   中脚(2) = **芯片脚本身**（名字 = 芯片脚的正式名）→ 与芯片脚共总线（面包板上就是它）
-#   下脚(3) = SPI/I2C 侧那条线（名字照丝印）      → 与 P4/P3 的同名脚共总线
-# 名字一律用**丝印上的叫法**（`RTS0/GP1` 而不是 `RTS0/GPIO1/MISO/TDO`）——
-# 这样"名字一致才共线"就能自动把该连的连上、不该连的留开。
-_JUMPERS = [                              # (列 x, 芯片脚号, 上脚名, 下脚名, 排针名)
-    (676.4, 12, "RXD0", "SDA", "P14"),
-    (800.0, 11, "RI0/GP3", "SCL", "P13"),
-    (923.6, 8, "TXD0", "MOSI", "P12"),
-    (1047.2, 7, "RTS0/GP1", "MISO", "P10"),
-    (1174.0, 6, "CTS0/GP0", "SCK", "P11"),
-    (1294.5, 5, "DSR0/GP2", "CS0", "P9"),
+# 板上 3V3 轨：手工版里 pad 元素的 connectorname 写的是 `VCC`（Ctrl+D 拄来的芯片脚名），
+# 但**丝印是 `3V3`** → 按规则以丝印为准改名；它仍然是芯片 14 脚那条线（`BUSES` 里显式并）。
+_RENAME_BY_NAME = {"VCC": "3V3"}
+
+# P9–P14 = **3 焊点焊接跳线**（"IO SWITCH" 区，手册第 4 页的四）—— 每个脚各接一条线：
+#   上脚 = UART0 侧那条线   → 与 P7 的同名脚共总线（丝印写法不同时用 `_LINE_TIES` 显式并）
+#   中脚 = **芯片脚本身**   → 名字用**丝印上的组合名**（如 `RTS0/MISO/TDO`），
+#                             connector 号 = 该芯片脚（显式指定，面包板上代表该脚的就是它）
+#   下脚 = SPI/I2C 侧那条线 → 与 P4/P3 的同名脚共总线
+# 三个名字都照**板上丝印/手册里那张表的写法**（用户 2026-09-16：以丝印名为准）。
+_JUMPERS = [                    # (列 x, 芯片脚号, 上脚名, 中脚名, 下脚名, 排针名)
+    (676.4, 12, "RXD0", "RXD0/SDA", "SDA", "P14"),
+    (800.0, 11, "RI0/GP3", "RI0/SCL", "SCL", "P13"),
+    (923.6, 8, "TXD0", "TXD0/MOSI/TDI", "MOSI", "P12"),
+    (1047.2, 7, "RTS0/GP1", "RTS0/MISO/TDO", "MISO", "P10"),
+    (1174.0, 6, "CTS0/GP0", "CTS0/SCK/TCK", "SCK", "P11"),
+    (1294.5, 5, "DSR0/GP2", "DSR0/CS0/TMS", "CS0", "P9"),
+]
+
+# **同一根线、但板上两处丝印写法不同**（P7 写你缩写、跳线区写全名）→ 得显式并成一条总线。
+# 名字写对就自动成线；这两处丝印实在对不上，只能点出来（列表本身也是给人校对的）。
+_LINE_TIES = [                  # (总线名, [(列 x, 行 y), …])
+    ("RXD0", [(190.9, 992.5), (676.4, 799.2)]),        # P7 的 RXD ↔ P14 上脚 RXD0
+    ("TXD0", [(190.9, 1092.5), (923.6, 799.2)]),       # P7 的 TXD ↔ P12 上脚 TXD0
+    ("RTS0/GP1", [(190.9, 1192.5), (1047.2, 799.2)]),  # P7 的 RTS ↔ P10 上脚 RTS0/GP1
+    ("CTS0/GP0", [(190.9, 1292.5), (1174.0, 799.2)]),  # P7 的 CTS ↔ P11 上脚 CTS0/GP0
+    ("DSR0/GP2", [(190.9, 1492.5), (1294.5, 799.2)]),  # P7 的 DSR ↔ P9 上脚 DSR0/GP2
+    ("RI0/GP3", [(190.9, 1592.5), (800.0, 799.2)]),     # P7 的 RI  ↔ P13 上脚 RI0/GP3
 ]
 _NET_TOL = 3.0                            # 内部单位（100 = 2.54mm）→ 3 ≈ 0.076mm
 
@@ -143,49 +162,68 @@ def jumper_zone():
 
 
 def is_config_pad(x, y):
-    """P9–P14 焊接跳线的焊盘（它们是**三条不同的线**，见 `_JUMPERS`）"""
+    """P9–P14 焊接跳线的焊盘（每个脚各接一条线，见 `_JUMPERS`）"""
     x0, y0, x1, y1 = jumper_zone()
     return x0 <= x <= x1 and y0 <= y <= y1
+
+
+def _one_pad(cols, kx, ky, why):
+    """按 (列 x, 行 y) 找**唯一**那个焊盘；配不上/找到多个就报错。"""
+    hit = [(x, y) for x, ys in cols.items() for (y, _n) in ys
+           if abs(x - kx) <= _NET_TOL and abs(y - ky) <= _NET_TOL]
+    if len(hit) != 1:
+        raise SystemExit("%s (%s, %s) 对上了 %d 个焊盘：%s" % (why, kx, ky, len(hit), hit))
+    return hit[0]
 
 
 def _row_names(cols):
     """→ {(x, y): 名字}：手工版里的原名字 + 用户核过的修正（`_PAD_RENAME` / `_JUMPERS`）。
 
-    `cols` = {列 x: [(y, 原名字), …]}。**配不上就报错** —— 这些名字来自用户核过的
-    板级原理图/丝印；静默失效会让总线悄悄连错（CH347F 上踩过：键是浮点算出来的 x）。
+    `cols` = {列 x: [(y, 原名字), …]}。名字一律取**板上丝印的写法**（用户 2026-09-16：
+    "手工修改的板，以丝印名为准" —— 丝印人眼可校对，藏在 svg 源码里的名字人看不见）。
+    **配不上就报错** —— 静默失效会让总线悄悄连错（CH347F 上踩过：键是浮点算出来的 x）。
     """
     fixed = {}
     for kx, ky, net in _PAD_RENAME:
-        hit = [(x, y) for x, ys in cols.items() for (y, _n) in ys
-               if abs(x - kx) <= _NET_TOL and abs(y - ky) <= _NET_TOL]
-        if len(hit) != 1:
-            raise SystemExit("_PAD_RENAME (%s, %s) 对上了 %d 个焊盘：%s"
-                             % (kx, ky, len(hit), hit))
-        fixed[hit[0]] = net
-    for kx, pin, up, dn, tag in _JUMPERS:
+        fixed[_one_pad(cols, kx, ky, "_PAD_RENAME")] = net
+    for kx, _pin, up, mid, dn, tag in _JUMPERS:
         col = [(y, x) for x, ys in cols.items() if abs(x - kx) <= _NET_TOL
                for (y, _n) in ys]
         if len(col) != 3:
             raise SystemExit("%s 那一列（x≈%.1f）有 %d 个焊盘（应 3 个）" % (tag, kx, len(col)))
         for k, (y, x) in enumerate(sorted(col)):
-            fixed[(x, y)] = [up, PIN_NAMES[pin], dn][k]
+            fixed[(x, y)] = [up, mid, dn][k]
     return fixed
+
+
+def jumper_pin_of(cols):
+    """→ {(x, y): 芯片脚 connector 号}：跳线的**中脚**就是那个芯片脚（上/下脚不是）。"""
+    out = {}
+    for kx, pin, _up, _mid, _dn, tag in _JUMPERS:
+        col = sorted((y, x) for x, ys in cols.items() if abs(x - kx) <= _NET_TOL
+                     for (y, _n) in ys)
+        if len(col) != 3:
+            raise SystemExit("%s 那一列（x≈%.1f）有 %d 个焊盘（应 3 个）" % (tag, kx, len(col)))
+        out[(col[1][1], col[1][0])] = pin - 1
+    return out
+
 
 # 同网总线（`.fzp` 的 <buses>）：(总线名, 芯片脚 connector 号, 板上网名)
 #   芯片脚号 = **引脚号 − 1**（connector0 = 引脚 1）。
-#   ⚠ 焊盘之间靠**名字完全一致**自动成线（用户 2026-09-16 定），所以这里只补两件事：
-#     ① 芯片脚本身（板上没有对应焊盘名的时候）；② **没有跳线、直连到芯片脚的那些线**
-#        （JTAG 头 P5 的 TMS/TCK/TDO/TDI/TRST、P4 的 CS1、P7 的 DTR0/GP5 / DCD0/GP4）——
-#        它们和芯片脚是同一条线，用名字对不上，就必须显式并。
+#   ⚠ 焊盘之间靠**名字完全一致**自动成线（用户 2026-09-16 定），这里只补三件事：
+#     ① 芯片脚本身（如 3V3 轨其实是 14 脚 VCC）；
+#     ② **没有跳线、直连到芯片脚的那些线**（JTAG 头 P5 的 TMS/TCK/TDO/TDI/TRST、
+#        P4 的 CS1、P7 的 DTR / DCD）；
+#     ③ 同一根线但两处丝印写法不同的（见 `_LINE_TIES`）。
 BUSES = [("GND", (17,), ("GND",)),                 # 17 = 18 脚 GND
-         ("VCC", (13,), ("VCC",)),                 # 13 = 14 脚 VCC
+         ("3V3", (13,), ("3V3",)),                 # 13 = 14 脚 VCC（板上丝印叫 3V3）
          ("KEY", (), ("GND/KEY",)),                # 按键/配置线（不是地）
          ("TCK", (5,), ("TCK",)),                  # 6 脚  ↔ P5 的 TCK（直连）
          ("TMS", (4,), ("TMS",)),                  # 5 脚  ↔ P5 的 TMS（直连）
          ("TDO", (6,), ("TDO",)),                  # 7 脚  ↔ P5 的 TDO（直连）
          ("TDI", (7,), ("TDI",)),                  # 8 脚  ↔ P5 的 TDI（直连）
-         ("TRST", (8,), ("TRST", "CS1", "DTR0/GP5")),   # 9 脚  ↔ TRST / CS1 / DTR0
-         ("DCD0/GP4", (14,), ("DCD0/GP4",))]       # 15 脚 ↔ P7 的 DCD0/GP4（直连）
+         ("TRST", (8,), ("TRST", "CS1", "DTR")),  # 9 脚  ↔ TRST / CS1 / DTR
+         ("DCD", (14,), ("DCD",))]                 # 15 脚 ↔ P7 的 DCD（直连）
 
 
 def _centers():
@@ -266,7 +304,7 @@ def pad_map():
 def pad_rows():
     """→ [(SHAPES 下标, 原 id, 网名, x, y, connector 号)]（按 上→下、左→右 发号）
 
-    网名 = 手工版里的原值 + 用户核过的修正（`_row_names()`：板上丝印/网名）。
+    网名 = 手工版里的原值 + 用户核过的修正（`_row_names()`：**以板上丝印为准**）。
     这里定下来的就是 `.fzp` 与面包板 svg **共同的那一份**（两边必须逐字一致）。
     """
     pin_of = {nm: n - 1 for n, nm in PIN_NAMES.items()}   # 只认全名（不做别名）
@@ -274,10 +312,17 @@ def pad_rows():
     for _i, _cid, nm, x, y in PADS:
         cols.setdefault(x, []).append((y, nm))
     fixed = _row_names(cols)
-    rows = [[i, cid, fixed.get((x, y), nm), x, y, None]
+    jump = jumper_pin_of(cols)               # 跳线的**中脚**就是那个芯片脚
+    rows = [[i, cid, fixed.get((x, y), _RENAME_BY_NAME.get(nm, nm)), x, y, None]
             for i, cid, nm, x, y in sorted(PADS, key=lambda p: (p[4], p[3]))]
     used, rail = {}, [20]
+    for row in rows:                                   # ⓪ 跳线中脚 = 芯片脚（显式）
+        cn = jump.get((row[3], row[4]))
+        if cn is not None:
+            used[cn], row[5] = cn, cn
     for row in rows:                                   # ① 主名优先
+        if row[5] is not None:
+            continue
         pin = None if row[2] in BOARD_NETS else pin_of.get(row[2])
         if pin is None or pin in used or row[2] == "GND":
             continue
@@ -319,6 +364,20 @@ def buses():
         for net in nets:
             members |= grp.pop(net, set())
         out.append((bid, sorted(members)))
+    by_pos = [(x, y, cn) for _s, _c, _n, x, y, cn in pad_rows()]
+
+    def cn_at(kx, ky):
+        hit = [cn for x, y, cn in by_pos
+               if abs(x - kx) <= _NET_TOL and abs(y - ky) <= _NET_TOL]
+        if len(hit) != 1:
+            raise SystemExit("_LINE_TIES (%s, %s) 对上了 %d 个焊盘" % (kx, ky, len(hit)))
+        return hit[0]
+
+    for bid, pts in _LINE_TIES:           # 同一条线、两处丝印写法不同 → 显式并
+        members = sorted(cn_at(kx, ky) for kx, ky in pts)
+        for cns in grp.values():
+            cns.difference_update(members)
+        out.append((bid, members))
     for net, cns in sorted(grp.items()):          # 表里剩下的同网焊盘（≥2 个）自动成一条
         if len(cns) >= 2:
             out.append((net, sorted(cns)))

@@ -57,69 +57,69 @@
   <rect x="89.66" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
   <rect x="117.07" y="75.03" width="14.29" height="36.17" fill="#4d7fe0" stroke="none"/>
   <rect x="101.05" y="89.46" width="7.09" height="21.66" fill="#4d7fe0" stroke="none" stroke-width="3.457"/>
-  <circle id="connector13pin" connectorname="VCC" cx="127.02" cy="11.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector20pin" connectorname="SDA" cx="13.07" cy="12.78" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector20pin" connectorname="3V3" cx="127.02" cy="11.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector21pin" connectorname="SDA" cx="13.07" cy="12.78" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector17pin" connectorname="GND" cx="20.41" cy="12.78" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector61pin" connectorname="GND" cx="127.02" cy="18.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector21pin" connectorname="SCL" cx="13.07" cy="19.98" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector22pin" connectorname="CFG0" cx="20.41" cy="19.98" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector23pin" connectorname="CS0" cx="127.02" cy="26.08" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector62pin" connectorname="GND" cx="13.07" cy="27.18" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector24pin" connectorname="CFG1" cx="20.41" cy="27.18" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector25pin" connectorname="CS1" cx="127.02" cy="33.28" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector26pin" connectorname="VCC" cx="13.07" cy="34.38" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector63pin" connectorname="GND" cx="20.41" cy="34.38" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector27pin" connectorname="SCK" cx="127.02" cy="40.48" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector28pin" connectorname="MISO" cx="127.02" cy="47.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector29pin" connectorname="MOSI" cx="127.02" cy="54.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector30pin" connectorname="VCC" cx="13.75" cy="57.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector44pin" connectorname="VCC" cx="20.95" cy="78.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector31pin" connectorname="RXD0" cx="48.70" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector32pin" connectorname="RI0/GP3" cx="57.60" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector33pin" connectorname="TXD0" cx="66.50" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector34pin" connectorname="RTS0/GP1" cx="75.40" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector35pin" connectorname="CTS0/GP0" cx="84.53" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector36pin" connectorname="DSR0/GP2" cx="93.20" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector64pin" connectorname="GND" cx="13.75" cy="64.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector65pin" connectorname="GND" cx="20.95" cy="85.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector65pin" connectorname="GND" cx="127.02" cy="18.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector22pin" connectorname="SCL" cx="13.07" cy="19.98" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector23pin" connectorname="CFG0" cx="20.41" cy="19.98" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector24pin" connectorname="CS0" cx="127.02" cy="26.08" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector66pin" connectorname="GND" cx="13.07" cy="27.18" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector25pin" connectorname="CFG1" cx="20.41" cy="27.18" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector26pin" connectorname="CS1" cx="127.02" cy="33.28" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector27pin" connectorname="3V3" cx="13.07" cy="34.38" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector67pin" connectorname="GND" cx="20.41" cy="34.38" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector28pin" connectorname="SCK" cx="127.02" cy="40.48" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector29pin" connectorname="MISO" cx="127.02" cy="47.68" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector30pin" connectorname="MOSI" cx="127.02" cy="54.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector31pin" connectorname="3V3" cx="13.75" cy="57.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector45pin" connectorname="3V3" cx="20.95" cy="78.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector32pin" connectorname="RXD0" cx="48.70" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector33pin" connectorname="RI0/GP3" cx="57.60" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector34pin" connectorname="TXD0" cx="66.50" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector35pin" connectorname="RTS0/GP1" cx="75.40" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector36pin" connectorname="CTS0/GP0" cx="84.53" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector37pin" connectorname="DSR0/GP2" cx="93.20" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector68pin" connectorname="GND" cx="13.75" cy="64.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector69pin" connectorname="GND" cx="20.95" cy="85.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector11pin" connectorname="RXD0/SDA" cx="48.70" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector10pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector10pin" connectorname="RI0/SCL" cx="57.60" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector7pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector6pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="75.40" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector5pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector4pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector37pin" connectorname="RXD0" cx="13.75" cy="71.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector6pin" connectorname="RTS0/MISO/TDO" cx="75.40" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector5pin" connectorname="CTS0/SCK/TCK" cx="84.53" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector4pin" connectorname="DSR0/CS0/TMS" cx="93.20" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector38pin" connectorname="RXD" cx="13.75" cy="71.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector3pin" connectorname="RXD1" cx="20.95" cy="93.02" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector38pin" connectorname="SDA" cx="48.70" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector39pin" connectorname="SCL" cx="57.60" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector40pin" connectorname="MOSI" cx="66.50" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector41pin" connectorname="MISO" cx="75.40" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector42pin" connectorname="SCK" cx="84.53" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector43pin" connectorname="CS0" cx="93.20" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector46pin" connectorname="VCC" cx="120.61" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector47pin" connectorname="TMS" cx="127.81" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector45pin" connectorname="TXD0" cx="13.75" cy="78.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector39pin" connectorname="SDA" cx="48.70" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector40pin" connectorname="SCL" cx="57.60" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector41pin" connectorname="MOSI" cx="66.50" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector42pin" connectorname="MISO" cx="75.40" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector43pin" connectorname="SCK" cx="84.53" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector44pin" connectorname="CS0" cx="93.20" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector47pin" connectorname="3V3" cx="120.61" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector48pin" connectorname="TMS" cx="127.81" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector46pin" connectorname="TXD" cx="13.75" cy="78.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector2pin" connectorname="TXD1" cx="20.95" cy="100.22" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector66pin" connectorname="GND" cx="120.61" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector49pin" connectorname="TCK" cx="127.81" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector48pin" connectorname="RTS0/GP1" cx="13.75" cy="85.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector12pin" connectorname="RTS1/GPIO7" cx="20.95" cy="107.42" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector52pin" connectorname="VCC" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector67pin" connectorname="GND" cx="120.61" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector51pin" connectorname="TDO" cx="127.81" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector50pin" connectorname="CTS0/GP0" cx="13.75" cy="93.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector1pin" connectorname="CTS1/GPIO6" cx="20.95" cy="114.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector56pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector69pin" connectorname="GND" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector54pin" connectorname="GND/KEY" cx="120.61" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector55pin" connectorname="TDI" cx="127.81" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector53pin" connectorname="DTR0/GP5" cx="13.75" cy="100.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector9pin" connectorname="TNOW1/DTR1" cx="20.95" cy="121.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector68pin" connectorname="GND" cx="120.61" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector58pin" connectorname="TRST" cx="127.81" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector57pin" connectorname="DSR0/GP2" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector59pin" connectorname="RI0/GP3" cx="13.75" cy="114.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector60pin" connectorname="DCD0/GP4" cx="13.75" cy="121.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector70pin" connectorname="GND" cx="120.61" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector50pin" connectorname="TCK" cx="127.81" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector49pin" connectorname="RTS" cx="13.75" cy="85.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector58pin" connectorname="RTS1" cx="20.95" cy="107.42" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector53pin" connectorname="3V3" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector71pin" connectorname="GND" cx="120.61" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector52pin" connectorname="TDO" cx="127.81" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector51pin" connectorname="CTS" cx="13.75" cy="93.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector61pin" connectorname="CTS1" cx="20.95" cy="114.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector57pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector73pin" connectorname="GND" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector55pin" connectorname="GND/KEY" cx="120.61" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector56pin" connectorname="TDI" cx="127.81" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector54pin" connectorname="DTR" cx="13.75" cy="100.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector63pin" connectorname="DTR1" cx="20.95" cy="121.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector72pin" connectorname="GND" cx="120.61" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector60pin" connectorname="TRST" cx="127.81" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector59pin" connectorname="DSR" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector62pin" connectorname="RI" cx="13.75" cy="114.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector64pin" connectorname="DCD" cx="13.75" cy="121.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <rect x="126.36" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
   <rect x="119.84" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
   <rect x="113.32" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
