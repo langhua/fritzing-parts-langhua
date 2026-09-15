@@ -22,7 +22,7 @@
 | `byhand_export.py <部件目录>` | 手工版 → `byHand_tables.py`：嵌套 transform 累乘展开、单位统一成**内部单位**（100 = 2.54mm，**跟着文档的 width/height 走**，见下）、**`style=` 优先于同名属性**（CSS 规则）、**`SHAPES` 按文档次序**（保叠放）、按尺寸自动认图标、丢掉照片与 Inkscape 壳、**隐藏图层整棵跳过**、多行文字按行拆、丝印统一字号（`FS_UNIFORM` / 大字规则 / 按部件关掉）、字重照搬、行距压紧（`LINE_PITCH`）、导出 `PAD_R`/`PAD_SW` |
 | `byhand_check.py <部件目录> [--png]` | 核对：元素计数（`text` 按**行**计）+ **加粗条数** + 每条文字的有效字号（能一眼看出整体缩放错）；`--png` 另出像素差与"左程序版 / 右手工版"对比图 |
 | `schem_check.py <部件目录> [--png] [--no-ccw]` | 核对**矩形符号原理图**（AGENTS §5）：① svg 头 width/height 齐不齐、viewBox 装不装得下 ② 每个脚 `connectorNpin`+`connectorNterminal` 齐不齐、端点是否落在引线末端 ③ 每脚一个编号（框外）+ 一个名（框内）、同字号 ④ **脚号逆时针连续**（沿 左→下→右→上 走一圈应是所有脚号的循环移位，且递增） |
-| `fzp_check.py <部件目录> [--fzpz 包]` | 核对 `.fzp` ↔ 四个视图 svg：① 视图 `image=` 用**子目录路径** ② 每条 `svgId`/`terminalId` 在对应 svg 里真存在 ③ svg 里的 connector id 都被 .fzp 声明 ④ **svg 内 id 不重复** ⑤ `<buses>` 引用存在且不重复入总线 ⑥ **面包板里同名（connectorname）的焊盘必须在同一条总线里**（NC/DNP 除外）⑦ `--fzpz` 包内**平铺**且成员齐全 |
+| `fzp_check.py <部件目录> [--fzpz 包]` | 核对 `.fzp` ↔ 四个视图 svg：① 视图 `image=` 用**子目录路径** ② 每条 `svgId`/`terminalId` 在对应 svg 里真存在 ③ svg 里的 connector id 都被 .fzp 声明 ④ **svg 内 id 不重复** ⑤ `<buses>` 引用存在且不重复入总线 ⑥ **裸露焊盘（EPAD/EP）不许进任何总线**（独立成网、布线时特意接 GND，AGENTS §5）⑦ 面包板里同名焊盘必须在同一条总线里（NC/DNP 除外）⑧ `--fzpz` 包内**平铺**且成员齐全 |
 | `svg_lines.py` | `tools/` 内部共用小工具：把 `<text>` 拆成**行**（Inkscape 多行 = 同个 `<text>` 里多个 `role="line"` 的 tspan）；导出与核对**共用这一份口径**，否则一个按行、一个按整段，核对表会冒假差异 |
 | `../svg/<部件>/trace_photo.py` | 把实物照片按卡尺比例叠到我们图上，用来判断"哪块偏了多少"（照片不进仓库） |
 

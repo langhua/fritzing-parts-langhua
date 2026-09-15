@@ -15,7 +15,10 @@ fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对�
   ③ 反过来：svgs 里每个 `id="connector…"` 都得在 .fzp 里声明过（否则是没主的图形）
   ④ 每个 svg 内部 **id 不能重复**（踩过：Inkscape Ctrl+D 复制排针 → 两个 `connector32pin`）
   ⑤ `<buses>` 引用的 connector 必须存在，且**每个 connector 最多进一条总线**
-  ⑥ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
+  ⑥ **裸露焊盘（`EPAD` / `EP`）不许进任何 `<bus>`**（用户 2026-09-15 定，AGENTS §5）：
+     它是独立网络，必须**布线时特意接到 GND** —— 并进总线＝看着连上其实没连
+  ⑦ **面包板里同名（connectorname）的焊盘必须在同一条总线里**（NC/DNP 除外）
+  ⑧ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
 
 判定：退出码 0 且输出里没有 `FAIL`。
 """
@@ -134,6 +137,17 @@ def main(argv):
                 in_bus[m] = bid
     print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))
                                 for b in root.iter("bus")))
+
+    # ⑥ 裸露焊盘（EPAD/EP）**不许进任何总线**
+    #    （用户 2026-09-15 定，AGENTS §5：它要布线时特意接到 GND，自动并进 GND 总线
+    #     会让人以为已经接好了；叫 GND 又不在 GND 总线里 = 看着连上其实没连）
+    #    判据 = connector 名匹配 EPAD / EP（大小写不敏感，允许 EPAD1/EP2 这种编号后缀）。
+    EPAD_NAME = re.compile(r"^(EPAD\d*|EP\d*)$", re.I)
+    for c in root.iter("connector"):
+        cid, nm = c.get("id"), (c.get("name") or "")
+        if cid in in_bus and EPAD_NAME.match(nm):
+            fails.append("FAIL 裸露焊盘 %s（name=%s）不该进总线 %s —— 它要独立成网、"
+                         "布线时特意接 GND（AGENTS §5）" % (cid, nm, in_bus[cid]))
 
     # ⑦ 面包板里**同名焊盘必须在同一条总线里**
     #    （踩过：SCS0 有两个焊盘 —— P4 那列一个、P8 的 pin3 一个 —— 只把第一个接上芯片脚、

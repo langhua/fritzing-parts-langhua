@@ -38,6 +38,7 @@ gen_part.py — CH347T 高速 USB 转 SPI/I2C/JTAG/UART 芯片（WCH）Fritzing 
   [x] 5. part.CH347T.fzp + 打包 fzpz
 """
 import os
+import re
 import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +83,81 @@ PIN_NAMES = {
 # 没有单列；GND/KEY 是按键扫描线，不是地）→ 一律发板级号，且**不许按 "/" 拆开去猜**
 # （拆开 "GND/KEY" 会拆出 "GND" 而误并到地上 —— CH347F 上踩过的同类坑）。
 BOARD_NETS = {"CFG0", "CFG1", "GND/KEY"}
+
+# =============================================================================
+# 两处**用户 2026-09-16 核过的**网名修正
+#
+# ① **P9–P14 = 3 焊盘焊接跳线**（实物照片里就是 3 个焊点、要自己桥接；板上丝印自左到右
+#    P14/P13/P12/P10/P11/P9）。它们**互不相连、也不与任何芯片脚同网** —— 用户定：
+#    每个焊盘各自一个 connector、**不进任何总线**；名字 = 板上丝印 + 脚号（上→下 1/2/3）。
+#    出处：手册第 4 页「P9-P14 功能脚配置区」表 + `CH347SCH.pdf` 第 2 页（IO SWITCH 区）。
+#    ⚠ 手工版里这 3 个焊盘的网名是 Ctrl+D 复制来的（与芯片脚重名）→ 必须在这里改名，
+#      否则 `.fzp` 里会出现"同名焊盘却不同总线"（`fzp_check.py` 第 ⑦ 条会红）。
+# ② **P6**（3 脚，板上丝印 `3V3` / `GND/KEY` / `GND`；板级原理图：3 脚经 VIO 跳线到 +3V3、
+#    2 脚与 **P5 的 pin7** 直连、1 脚接 GND）在手工版里也被复制成了同名 `GND/KEY` ×3
+#    → 按真实网名写回（含 P5 左列第 4 脚 = pin7，它与 P6 的 2 脚是同一根线，
+#      手工版里那根 `#c8ccd0` 短横线就是它）。
+# =============================================================================
+CONFIG_ZONE = (600.0, 750.0, 1350.0, 1050.0)     # P9–P14 那 18 个焊盘的范围（内部单位）
+_PAD_NET_FIX = [                                 # (列 x, 行 y, 真实网名)
+    (1453.0, 1293.6, "VCC"),                     # P6 上（3 脚）= 3V3
+    (1453.0, 1393.6, "GND/KEY"),                 # P6 中（2 脚）↔ P5 pin7
+    (1453.0, 1493.9, "GND"),                     # P6 下（1 脚）
+    (1675.2, 1393.2, "GND/KEY"),                 # P5 左列第 4 脚 = pin7
+]
+_NET_TOL = 3.0                                   # 内部单位（100 = 2.54mm）→ 3 ≈ 0.076mm
+
+
+def is_config_pad(x, y):
+    """P9–P14 的焊接跳线焊盘（独立成网，见上面 ①）"""
+    x0, y0, x1, y1 = CONFIG_ZONE
+    return x0 <= x <= x1 and y0 <= y <= y1
+
+
+def config_names():
+    """→ {SHAPES 下标: 名字}：P9–P14 的 18 个焊盘 = 板上丝印 + 脚号（同列按 y 上→下 1/2/3）。
+
+    丝印名**从 `TEXTS` 里取**（该列正下方那个 `P<n>` 文字）—— 不写死列序：
+    手工版里那 6 列的左右次序是 P14/P13/P12/P10/P11/P9，写死就会对错人。
+    ⚠ 光按 x 找会撞上别的 P<n>（实测把 USB 座那个 `P1` 也算上了）→ **y 也要在列附近**。
+    对不上（找不到/找到多个）**当场报错**，不静默放过。
+    """
+    labels = [(t.strip(), x, y) for t, x, y, *_r in TEXTS
+              if re.fullmatch(r"P\d+", t.strip())]
+    cols = {}
+    for i, s in enumerate(SHAPES):
+        if s[0] == "pad" and is_config_pad(s[3], s[4]):
+            cols.setdefault(round(s[3]), []).append((s[4], i))
+    out = {}
+    for cx, rows in sorted(cols.items()):
+        ymin, ymax = min(r[0] for r in rows), max(r[0] for r in rows)
+        hit = [t for t, lx, ly in labels
+               if abs(lx - cx) <= 30 and ymin - 50 <= ly <= ymax + 250]
+        if len(hit) != 1:
+            raise SystemExit("P9–P14 配置区第 x=%d 列对上了 %d 个 P<n> 丝印：%s"
+                             % (cx, len(hit), hit))
+        if len(rows) != 3:
+            raise SystemExit("P9–P14 配置区第 x=%d 列有 %d 个焊盘（应 3 个）" % (cx, len(rows)))
+        for k, (_y, idx) in enumerate(sorted(rows)):
+            out[idx] = "%s-%d" % (hit[0], k + 1)
+    return out
+
+
+def _fixed_nets(cols):
+    """→ {(x, y): 网名}：把 `_PAD_NET_FIX` 落到具体焊盘（见上面 ②）。
+
+    `cols` = {列 x: [(y, 网名), …]}。配不上**当场报错** —— 这些修正来自用户核过的
+    板级原理图/实物，静默失效比报错危险得多（CH347F 上踩过：键是浮点算出来的 x）。
+    """
+    fixed = {}
+    for kx, ky, net in _PAD_NET_FIX:
+        hit = [(x, y) for x, ys in cols.items() for (y, _n) in ys
+               if abs(x - kx) <= _NET_TOL and abs(y - ky) <= _NET_TOL]
+        if len(hit) != 1:
+            raise SystemExit("_PAD_NET_FIX (%s, %s) 对上了 %d 个焊盘：%s"
+                             % (kx, ky, len(hit), hit))
+        fixed[hit[0]] = net
+    return fixed
 
 # 同网总线（`.fzp` 的 <buses>）：(总线名, 芯片脚 connector 号, 板上网名)
 #   芯片脚号 = **引脚号 − 1**（connector0 = 引脚 1）。板上多路 GND/VCC 焊盘都归到
@@ -158,23 +234,35 @@ def pad_map():
       ① 网名**与芯片脚主名一致**的焊盘优先拿该脚号（如 CTS1/GPIO6 拿 2、VCC 拿 14）；
       ② 其余焊盘按 上→下、左→右：能对上一个还没被占的芯片脚就拿脚号，否则发板级号；
       ③ 地的脚号（18 GND）发给最先遇到的 GND 焊盘，剩下的 GND 发板级号；
-      ④ `BOARD_NETS` 里的网络一律板级号。
+      ④ `BOARD_NETS` 里的网络一律板级号；
+      ⑤ **P9–P14 配置区的焊接跳线焊盘一律板级号**（它们是独立网络，不是芯片脚）。
     每个焊盘**各自是一个 connector**（都能接线），同网再用 .fzp 的 <buses> 互联。
     """
     return {sidx: cn for sidx, _cid, _nm, _x, _y, cn in pad_rows()}
 
 
 def pad_rows():
-    """→ [(SHAPES 下标, 原 id, 网名, x, y, connector 号)]（按 上→下、左→右 发号）"""
+    """→ [(SHAPES 下标, 原 id, 网名, x, y, connector 号)]（按 上→下、左→右 发号）
+
+    网名 = 手工版里的原值 + 两处用户核过的修正（`config_names()` 与 `_fixed_nets()`）。
+    这里定下来的就是 `.fzp` 与面包板 svg **共同的那一份**（两边必须逐字一致）。
+    """
     pin_of = {}
     for n, nm in PIN_NAMES.items():
         pin_of[nm] = n - 1                    # 全名（如 "DSR0/GPIO2/SCS0/TMS"）
         for a in nm.split("/"):
             pin_of.setdefault(a, n - 1)       # 别名（如 "SCS0"、"TMS"）
-    rows = [[i, cid, nm, x, y, None] for i, cid, nm, x, y
-            in sorted(PADS, key=lambda p: (p[4], p[3]))]
+    cfg = config_names()
+    cols = {}
+    for _i, _cid, nm, x, y in PADS:
+        cols.setdefault(x, []).append((y, nm))
+    fixed = _fixed_nets(cols)
+    rows = [[i, cid, cfg.get(i, fixed.get((x, y), nm)), x, y, None]
+            for i, cid, nm, x, y in sorted(PADS, key=lambda p: (p[4], p[3]))]
     used, rail = {}, [20]
     for row in rows:                                   # ① 主名优先
+        if is_config_pad(row[3], row[4]):
+            continue
         pin = None if row[2] in BOARD_NETS else pin_of.get(row[2])
         if pin is None or pin in used or row[2] == "GND":
             continue
@@ -183,7 +271,8 @@ def pad_rows():
     for row in rows:                                   # ② 其余（地除外）
         if row[5] is not None or row[2] == "GND":
             continue
-        pin = None if row[2] in BOARD_NETS else pin_of.get(row[2])
+        pin = None if (row[2] in BOARD_NETS or is_config_pad(row[3], row[4])) \
+            else pin_of.get(row[2])
         if pin is not None and pin not in used:
             used[pin], row[5] = pin, pin
         else:
@@ -200,14 +289,6 @@ def pad_rows():
 
 
 def buses():
-    """→ [(总线名, [connector 号…])]：同网必并一条总线（AGENTS §5「多焊盘同网络」条）。"""
-    grp = {}
-    for _sidx, _cid, net, _x, _y, cn in pad_rows():
-        grp.setdefault(net, []).append(cn)
-    return [(net if net != "VCC" else "3V3", sorted(cns)) for net, cns in sorted(grp.items())]
-
-
-def buses():
     """→ [(总线名, [connector 号…])]：同网必并一条总线（AGENTS §5「多焊盘同网络」条）。
 
     成员 = ① 芯片脚（`BUSES` 里显式写，如 GND=17 / VCC=13）+ ② 板上同网名的**每个**焊盘
@@ -216,6 +297,8 @@ def buses():
     """
     grp = {}
     for _sidx, _cid, net, _x, _y, cn in pad_rows():
+        if is_config_pad(_x, _y):
+            continue          # P9–P14 焊接跳线：独立成网，谁也不并（用户 2026-09-16 定）
         grp.setdefault(net, set()).add(cn)
     out = []
     for bid, pins, nets in BUSES:
@@ -309,6 +392,9 @@ def gen_breadboard_svg():
          'fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
          % (BOARD_W, BOARD_H, BOARD_RX, BOARD_RX, PCB_BLUE, PCB_EDGE, BOARD_SW)]
     cns = pad_map()
+    # 网名也走 pad_rows()（含 P9–P14 配置点命名与 P6/P5 修正）—— svg 的 connectorname
+    # 与 .fzp 的 connector name / <buses> 必须是**同一份**，否则表面看不出来、接线时才错。
+    nets = {sidx: net for sidx, _cid, net, _x, _y, _cn in pad_rows()}
     for i, s in enumerate(SHAPES):
         kind = s[0]
         if kind == "rect":
@@ -330,6 +416,7 @@ def gen_breadboard_svg():
             L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f"%s/>\n' % (x * S, y * S, r * S, a))
         elif kind == "pad":
             _k, _cid, net, x, y = s
+            net = nets[i]
             L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.2f" cy="%.2f" '
                      'r="%.2f" fill="%s" stroke="%s" stroke-width="%.2f"/>\n'
                      % (cns[i], _esc(net), x * S, y * S, PAD_R * S, PIN_FILL, PIN_EDGE,

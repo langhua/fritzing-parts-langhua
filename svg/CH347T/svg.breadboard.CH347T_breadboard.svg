@@ -74,28 +74,28 @@
   <circle id="connector7pin" connectorname="TXD0/MOSI/TDI" cx="127.02" cy="54.88" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector23pin" connectorname="VCC" cx="13.75" cy="57.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector43pin" connectorname="VCC" cx="20.95" cy="78.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector24pin" connectorname="RXD0/SDA" cx="48.70" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector25pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector26pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector27pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="75.40" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector28pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector29pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector24pin" connectorname="P14-1" cx="48.70" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector25pin" connectorname="P13-1" cx="57.60" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector26pin" connectorname="P12-1" cx="66.50" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector27pin" connectorname="P10-1" cx="75.40" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector28pin" connectorname="P11-1" cx="84.53" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector29pin" connectorname="P9-1" cx="93.20" cy="57.54" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector62pin" connectorname="GND" cx="13.75" cy="64.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector63pin" connectorname="GND" cx="20.95" cy="85.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector30pin" connectorname="RXD0/SDA" cx="48.70" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector31pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector32pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector33pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="75.40" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector34pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector35pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector30pin" connectorname="P14-2" cx="48.70" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector31pin" connectorname="P13-2" cx="57.60" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector32pin" connectorname="P12-2" cx="66.50" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector33pin" connectorname="P10-2" cx="75.40" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector34pin" connectorname="P11-2" cx="84.53" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector35pin" connectorname="P9-2" cx="93.20" cy="64.74" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector36pin" connectorname="RXD0/SDA" cx="13.75" cy="71.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector3pin" connectorname="RXD1" cx="20.95" cy="93.02" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector37pin" connectorname="RXD0/SDA" cx="48.70" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector38pin" connectorname="RI0/GPIO3/SCL" cx="57.60" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector39pin" connectorname="TXD0/MOSI/TDI" cx="66.50" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector40pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="75.40" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector41pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="84.53" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector42pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="93.20" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector37pin" connectorname="P14-3" cx="48.70" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector38pin" connectorname="P13-3" cx="57.60" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector39pin" connectorname="P12-3" cx="66.50" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector40pin" connectorname="P10-3" cx="75.40" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector41pin" connectorname="P11-3" cx="84.53" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector42pin" connectorname="P9-3" cx="93.20" cy="71.94" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector45pin" connectorname="VCC" cx="120.61" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector46pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="127.81" cy="78.71" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector44pin" connectorname="TXD0/MOSI/TDI" cx="13.75" cy="78.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
@@ -104,20 +104,20 @@
   <circle id="connector48pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="127.81" cy="85.91" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector47pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="13.75" cy="85.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector12pin" connectorname="RTS1/GPIO7" cx="20.95" cy="107.42" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector51pin" connectorname="GND/KEY" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector51pin" connectorname="VCC" cx="104.60" cy="93.14" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector65pin" connectorname="GND" cx="120.61" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector50pin" connectorname="RTS0/GPIO1/MISO/TDO" cx="127.81" cy="93.11" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector49pin" connectorname="CTS0/GPIO0/SCK/TCK" cx="13.75" cy="93.06" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector1pin" connectorname="CTS1/GPIO6" cx="20.95" cy="114.62" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector54pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector57pin" connectorname="GND/KEY" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector66pin" connectorname="GND" cx="120.61" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector53pin" connectorname="TXD0/MOSI/TDI" cx="127.81" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector55pin" connectorname="GND/KEY" cx="104.60" cy="100.34" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector67pin" connectorname="GND" cx="104.73" cy="107.56" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector53pin" connectorname="GND/KEY" cx="120.61" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector54pin" connectorname="TXD0/MOSI/TDI" cx="127.81" cy="100.31" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector52pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="13.75" cy="100.26" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector9pin" connectorname="TNOW1/DTR1" cx="20.95" cy="121.82" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector67pin" connectorname="GND" cx="120.61" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector56pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="127.81" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
-  <circle id="connector55pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector66pin" connectorname="GND" cx="120.61" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector57pin" connectorname="TNOW0/DTR0/GPIO5/SCS1/TRST" cx="127.81" cy="107.51" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
+  <circle id="connector56pin" connectorname="DSR0/GPIO2/SCS0/TMS" cx="13.75" cy="107.46" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector58pin" connectorname="RI0/GPIO3/SCL" cx="13.75" cy="114.66" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <circle id="connector14pin" connectorname="DCD0/GPIO4/ACT" cx="13.75" cy="121.86" r="2.41" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.85"/>
   <rect x="126.36" y="139.40" width="1.98" height="5.39" fill="#c0c0c0"/>
