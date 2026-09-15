@@ -559,9 +559,14 @@ def icon_svg():
 def buses_xml():
     """Declare internally-connected (互通) power pins via <buses>: all GND pins
     and both 3V3 pins are the same net inside the part (matches the
-    ESP32-S3-WROOM-1-N16R8-dev-board part)."""
+    ESP32-S3-WROOM-1-N16R8-dev-board part).
+
+    ❗connector40 (the module's **centre exposed thermal pad**) is deliberately
+    NOT in the GND bus (user 2026-09-15): an exposed pad must be an independent
+    net so the user routes it to GND on purpose (same as RT6150's `EP`,
+    TX-AH's `EPAD1/2`, TXW8301's `EPAD`)."""
     buses = [
-        ("GND", ["connector0", "connector39", "connector40", "connector43"]),
+        ("GND", ["connector0", "connector39", "connector43"]),
         ("3V3", ["connector1", "connector41"]),
     ]
     L = [" <buses>\n"]
@@ -592,12 +597,13 @@ def fzp_xml():
             conns.append('    <pcbView><p layer="copper1" svgId="connector%dpin"/></pcbView>\n' % cn)
             conns.append('   </views>\n')
             conns.append('  </connector>\n')
-    # centre GND pad (SMD on copper1 only - no bottom copper; heat dissipation is
-    # handled by the user adding vias + a bottom ground fill while routing). It is
-    # mapped to the J2-21 GND header pin on the dev board, so it is type=male so
-    # its hole turns green on the breadboard.
-    conns.append('  <connector id="connector40" name="GND" type="male">\n')
-    conns.append('   <description>Ground (centre thermal pad)</description>\n')
+    # centre exposed thermal pad (SMD on copper1 only - no bottom copper; heat
+    # dissipation is handled by the user adding vias + a bottom ground fill while
+    # routing). **Independent net** (not in the GND bus, user 2026-09-15): the
+    # name is EPAD so it is obvious it must be routed to GND on purpose. It is
+    # type=male so its hole turns green on the breadboard.
+    conns.append('  <connector id="connector40" name="EPAD" type="male">\n')
+    conns.append('   <description>EPAD (centre exposed thermal pad, route to GND)</description>\n')
     conns.append('   <views>\n')
     conns.append('    <breadboardView><p layer="breadboard" svgId="connector40pin"/></breadboardView>\n')
     conns.append('    <schematicView><p layer="schematic" svgId="connector40pin" terminalId="connector40terminal"/></schematicView>\n')

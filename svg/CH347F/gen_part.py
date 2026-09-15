@@ -13,9 +13,11 @@ gen_part.py — CH347F 高速 USB 转 SPI/I2C/JTAG/UART 芯片（WCH）Fritzing 
       - 封装：**QFN28，塑体 4×4mm，引脚节距 0.4mm**；CH347T = TSSOP20 4.4×6.5mm / 0.65mm；
       - 第 3 页引脚排列图（本脚本的引脚几何/编号顺序来源，TOP VIEW）：
           底边 左→右 = 1..7；右边 下→上 = 8..14；顶边 右→左 = 15..21；左边 上→下 = 22..28；
-          **底板 EPAD = 0#（GND，可选但建议接）**；
+          **底板 EPAD = 0#（裸露焊盘，必须单独布线接到 GND）**；
       - 引脚名（表 4-1..4-6，多功能的按排列图上的写法）：
-          0 GND(EPAD) | 1 XI | 2 XO | 3 RST# | 4 TXD1 | 5 RXD1 | 6 VIO | 7 DTR1/TNOW1/SCS1
+          0 EPAD（= 手册的 0# 底板；手册也叫它 GND，但本元件**名字用 EPAD** ——
+            它独立成网、要布线时特意接到 GND，用户 2026-09-15 定；同 RT6150 的 EP）
+          1 XI | 2 XO | 3 RST# | 4 TXD1 | 5 RXD1 | 6 VIO | 7 DTR1/TNOW1/SCS1
           8 ACT/SRST | 9 TRST/GPIO3 | 10 DTR0/TNOW0/GPIO2 | 11 CTS1/SCL | 12 RTS1/SDA
           13 SCS0 | 14 SCK | 15 MISO | 16 MOSI | 17 CTS0/GPIO0 | 18 RTS0/GPIO1 | 19 TXD0
           20 GND | 21 VCC | 22 RXD0 | 23 TCK/SWDCLK/GPIO4 | 24 TDO/GPIO5 | 25 TDI/GPIO6
@@ -64,8 +66,11 @@ PAD_LEN = (TOT - BODY_SIZE) / 2.0        # 0.1
 
 # 引脚号（datasheet 第 3 页排列图，TOP VIEW；从底板左侧起逆时针）
 #   底边 左→右 = 1..7、右边 下→上 = 8..14、顶边 右→左 = 15..21、左边 上→下 = 22..28
+#   ⚠ 0# 是**底板裸露焊盘**：手册把它和 20 一起写成 GND（"可选但建议接"），但本元件里
+#     名字用 **EPAD**、且**不进 GND 总线** —— 它必须布线时特意接到 GND（用户 2026-09-15 定，
+#     同 RT6150 的 `EP`、TX-AH 的 `EPAD1/2`、TXW8301 的 `EPAD`）。
 PIN_NAMES = {
-    0: "GND", 1: "XI", 2: "XO", 3: "RST#", 4: "TXD1", 5: "RXD1", 6: "VIO",
+    0: "EPAD", 1: "XI", 2: "XO", 3: "RST#", 4: "TXD1", 5: "RXD1", 6: "VIO",
     7: "DTR1/TNOW1/SCS1", 8: "ACT/SRST", 9: "TRST/GPIO3", 10: "DTR0/TNOW0/GPIO2",
     11: "CTS1/SCL", 12: "RTS1/SDA", 13: "SCS0", 14: "SCK",
     15: "MISO", 16: "MOSI", 17: "CTS0/GPIO0", 18: "RTS0/GPIO1", 19: "TXD0",
@@ -217,7 +222,9 @@ def pad_map():
     分配顺序（可复现，且与上面注释的规矩一致）：
       ① 网名**与芯片脚主名一致**的焊盘优先拿该脚号（如 CTS1 拿 11、SCS0 拿 13）；
       ② 其余焊盘按 上→下、左→右：能对上一个还没被占的芯片脚就拿脚号，否则发板级号；
-      ③ 地的两个脚号（20 GND / 0 EPAD）发给最先遇到的两个 GND 焊盘，剩下的 GND 发板级号。
+      ③ 地的脚号（20 GND）发给最先遇到的 GND 焊盘，剩下的 GND 发板级号。
+       ❗**0#（底板 EPAD）不发给任何板级焊盘** —— 它是裸露焊盘，必须独立成网、
+       布线时特意接到 GND（用户 2026-09-15 定；同 RT6150 的 `EP`）。
     """
     return {sidx: cn for sidx, _cid, _nm, _x, _y, cn in pad_rows()}
 
@@ -246,11 +253,9 @@ def pad_rows():
         else:
             row[5] = rail[0]
             rail[0] += 1
-    for row in [r for r in rows if r[5] is None]:      # ③ 地
-        for pin in (20, 0):
-            if pin not in used:
-                used[pin], row[5] = pin, pin
-                break
+    for row in [r for r in rows if r[5] is None]:      # ③ 地（只发 20 GND）
+        if 20 not in used:
+            used[20], row[5] = 20, 20
         else:
             row[5] = rail[0]
             rail[0] += 1
@@ -261,7 +266,9 @@ def pad_rows():
 #   网名靠用户 2026-09-15 用万用表实测确认：
 #     · VREF ↔ VIO = 0Ω（直通）
 #     · 两个 GND/KEY 之间**互通**（同一条按键扫描线），但它们与 GND **不通** → 单独成一条总线
-BUSES = [("GND", (20, 0), ("GND",)),                 # 20 = GND、0 = EPAD（板上同地）
+#   ❗**0#（底板 EPAD）不进 GND 总线**（用户 2026-09-15 定）：裸露焊盘要布线时特意接到 GND，
+#     不自动成同网 —— 同 RT6150 的 `EP`、TX-AH 的 `EPAD1/2`、TXW8301 的 `EPAD`。
+BUSES = [("GND", (20,), ("GND",)),                  # 20 = GND（0# EPAD 不并进来）
          ("VCC", (21,), ("3V3",)),                    # 板上 3V3 轨
          ("VIO", (6,), ("VIO", "VREF")),              # VREF 与 VIO 板上 0Ω 直通
          ("SCL", (11,), ("SCL",)),                    # pin11 = CTS1/SCL

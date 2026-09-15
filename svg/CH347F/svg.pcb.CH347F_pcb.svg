@@ -29,7 +29,7 @@
     <rect id="connector26pad" connectorname="TMS/SWDIO/GPIO7" x="0.550" y="3.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
     <rect id="connector27pad" connectorname="UD-" x="0.550" y="3.700" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
     <rect id="connector28pad" connectorname="UD+" x="0.550" y="4.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
-    <rect id="connector0pad" connectorname="GND" x="1.650" y="1.650" width="2.700" height="2.700" fill="#F7BD13" stroke="none"/>
+    <rect id="connector0pad" connectorname="EPAD" x="1.650" y="1.650" width="2.700" height="2.700" fill="#F7BD13" stroke="none"/>
   </g>
   <g id="silkscreen">
     <line x1="1.000" y1="1.000" x2="1.650" y2="1.000" stroke="#f0f0f0" stroke-width="0.12"/>

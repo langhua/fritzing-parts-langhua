@@ -340,8 +340,8 @@
     <pcbView><p layer="copper1" svgId="connector39pin"/></pcbView>
    </views>
   </connector>
-  <connector id="connector40" name="GND" type="male">
-   <description>Ground (centre thermal pad)</description>
+  <connector id="connector40" name="EPAD" type="male">
+   <description>EPAD (centre exposed thermal pad, route to GND)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector40pin"/></breadboardView>
     <schematicView><p layer="schematic" svgId="connector40pin" terminalId="connector40terminal"/></schematicView>
@@ -371,7 +371,6 @@
   <bus id="GND">
    <nodeMember connectorId="connector0"/>
    <nodeMember connectorId="connector39"/>
-   <nodeMember connectorId="connector40"/>
    <nodeMember connectorId="connector43"/>
   </bus>
   <bus id="3V3">

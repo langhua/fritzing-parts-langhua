@@ -478,12 +478,15 @@ def gen_pcb_svg():
         silk.append('<line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" stroke="#f0f0f0" '
                     'stroke-width="0.12"/>' % (-BODY_W / 2, sy * BODY_L / 2, BODY_W / 2,
                                                sy * BODY_L / 2))
+    # pin1 标记：**实心圆点放在 1 脚焊盘的上边**（用户 2026-09-15 定；放左边会把 viewBox 撑宽）
+    dot_x, dot_y = -ROW, y0 - PAD_W / 2 - 0.3
     silk.append('<circle cx="%.3f" cy="%.3f" r="0.15" fill="#f0f0f0" stroke="none" '
-                'class="other"/>' % (-ROW - PAD_L / 2 - 0.3, y0))
-    # 裁边：内容 x −4.0(pin1 圆点左缘) .. 3.55(右焊盘外缘)、y ±3.25(丝印)，各留 0.15
+                'class="other"/>' % (dot_x, dot_y))
+    # 裁边：内容 = 焊盘（x ±3.55 / y ±3.125）、丝印上下横边（y ±3.25）、pin1 圆点（y 到 ‑3.575）
     M = 0.15
-    vb_x0, vb_x1 = -ROW - PAD_L / 2 - 0.3 - 0.15 - M, ROW + PAD_L / 2 + M
-    vb_y0, vb_y1 = -BODY_L / 2 - M, BODY_L / 2 + M
+    vb_x0, vb_x1 = -(ROW + PAD_L / 2) - M, ROW + PAD_L / 2 + M
+    vb_y0 = min(-BODY_L / 2, dot_y - 0.15) - M
+    vb_y1 = max(BODY_L / 2, dot_y + 0.15) + M
     vw, vh = vb_x1 - vb_x0, vb_y1 - vb_y0
     return ('<?xml version="1.0" encoding="utf-8"?>\n'
             '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '

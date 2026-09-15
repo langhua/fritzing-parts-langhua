@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="7.85mm" height="6.80mm" viewBox="-4.15 -3.40 7.85 6.80">
+<svg xmlns="http://www.w3.org/2000/svg" width="7.40mm" height="7.12mm" viewBox="-3.70 -3.73 7.40 7.12">
   <g id="copper1">
     <rect id="connector0pad" connectorname="RST#" x="-3.550" y="-3.125" width="1.500" height="0.400" fill="#F7BD13" stroke="none"/>
     <rect id="connector1pad" connectorname="CTS1/GPIO6" x="-3.550" y="-2.475" width="1.500" height="0.400" fill="#F7BD13" stroke="none"/>
@@ -25,6 +25,6 @@
   <g id="silkscreen">
     <line x1="-2.200" y1="-3.250" x2="2.200" y2="-3.250" stroke="#f0f0f0" stroke-width="0.12"/>
     <line x1="-2.200" y1="3.250" x2="2.200" y2="3.250" stroke="#f0f0f0" stroke-width="0.12"/>
-    <circle cx="-3.850" cy="-2.925" r="0.15" fill="#f0f0f0" stroke="none" class="other"/>
+    <circle cx="-2.800" cy="-3.425" r="0.15" fill="#f0f0f0" stroke="none" class="other"/>
   </g>
 </svg>
