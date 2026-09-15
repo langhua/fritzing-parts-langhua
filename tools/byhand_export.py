@@ -23,8 +23,15 @@ byhand_export.py — **开发辅助**：把"Inkscape 手工对齐版"的面包�
   · 照片 `<image>`、Inkscape 壳（sodipsi/defs/namedview）一律丢掉
   · **多行文字拆成多条记录**（Inkscape 把多行写成同个 `<text>` 里的多个 tspan，
     拼起来会把 `GND`+`/KEY` 变成一行）；口径见 tools/svg_lines.py
-  · FS_UNIFORM：**全板丝印统一成一个字号**（用户 2026-09-15 定）；FS_KEEP 里的除外
+  · FS_UNIFORM：**全板丝印统一成一个字号**（用户 2026-09-15 定）；FS_KEEP / 大字规则里的除外
   · LINE_PITCH：多行丝印的**行距倍率**（用户 2026-09-15 定 0.5，比手工版更紧凑）
+  · **单位跟着文档走**（2026-09-15 修，见 doc_units()）：手工版可能是
+      ○ viewBox 空间（CH347F）：内容放在一个有 scale=S 的组里，用户单位 = 内部单位；
+      ○ mm 空间（`make_trace_svg.py` 出的稿）：用户单位就是 mm。
+    两套差 2.83 倍，认错**不会报错**、只会整块板悄悄缩放 —— 所以判据取根 svg 的
+    width/height(mm) ÷ viewBox，而不是写死一个常数。
+  · **隐藏图层（style="display:none"）整棵跳过**：那种层是辅助用的（比如
+    `make_trace_svg.py` 的 mm 刻度层），不该进数据表。
 """
 import math
 import os
@@ -37,6 +44,9 @@ from svg_lines import text_lines
 NS = "{http://www.w3.org/2000/svg}"
 S = 0.072                     # 内部单位 → viewBox 单位（本仓库面包板图约定）
 INV = 1.0 / S
+MM_PER_U = 2.54 / 100.0       # 1 内部单位 = 0.0254mm（100 单位 = 2.54mm）
+UF = INV                      # 用户单位 → 内部单位；run() 里按文档 width/height 重算
+UF_NOTE = ""
 
 # 全板丝印**统一字号**（内部单位 = 手工版里 "SDA" 那一条的字号，用户 2026-09-15 定）。
 #   手工对齐时字号会随手变得有大有小（34/31.8/30/28…）→ 程序生成一律归到这一个数。
@@ -46,10 +56,43 @@ FS_UNIFORM = 30.0
 #   #c9c9c9 / #b5b5b5 = USB-B01 的金属片 → gen_part 的 _usb_b01_icon()
 #   #002d68           = 板框 → gen_part 的 BOARD_W/H + 圆角（板框带 rx，直角重复会盖掉圆角）
 SKIP_RECT_FILL = {"#c9c9c9", "#b5b5b5", "#002d68"}
+# 逐部件覆盖（用得上就加一条，并在此写清为什么）：
+#   CH347T 的 USB 座是**手工版里自己画的**（没有现成元件 icon 可复用）→
+#   不能把 #c9c9c9 丢掉，否则那三块矩形会凭空消失（踩过：整块 USB 不见了）。
+SKIP_RECT_FILL_BY_PART = {"CH347T": {"#002d68"}}
 # 例外：**左下角两行**（板名 / 网址），按手工版原样保留 —— 它们本来就该比丝印大
 FS_KEEP = {"CH347F-EVT-R0-1v0", "http://wch.cn"}
+# 大字规则（2026-09-15 加）：原字号 > FS_UNIFORM × 这个倍数 → 按手工版原样保留。
+#   换块板子时不用再去改 FS_KEEP 里的板名（CH347T 就是 CH347T-EVT-R0-1v1）。
+FS_KEEP_RATIO = 1.3
 # 多行丝印的**行距倍率**：1.0 = 照手工版；用户 2026-09-15 定 **0.5**（两行靠得更紧）
 LINE_PITCH = 0.5
+
+
+def doc_units(root):
+    """→ (用户单位 → 内部单位 的系数, 说明)。
+
+    两套约定的差别就在“1 个用户单位是多少 mm”：
+      · `width="50.19mm" viewBox="0 0 142.3 157.3"` → 0.3527 mm/单位（viewBox 空间）；
+      · `width="50.10mm" viewBox="0 0 50.10 61.20"` → 1.0 mm/单位（mm 空间）。
+    只写无单位数字（老式 `width="142.3"`，按 96dpi 解释）时**不敢猜**，退回老常数 INV。
+    """
+    w, h = root.get("width") or "", root.get("height") or ""
+    vb = (root.get("viewBox") or "").replace(",", " ").split()
+    try:
+        wmm = float(re.sub(r"[^0-9.\-]", "", w))
+        hmm = float(re.sub(r"[^0-9.\-]", "", h))
+        vw, vh = float(vb[2]), float(vb[3])
+    except (IndexError, ValueError):
+        return INV, "取不到带单位的 width/height → 退回老常数 INV(=1/S)，请自己核一眼"
+    if not (w.endswith("mm") and h.endswith("mm")) or vw <= 0 or vh <= 0:
+        return INV, "width/height 不是 mm → 退回老常数 INV(=1/S)，请自己核一眼"
+    fx, fy = (wmm / vw) / MM_PER_U, (hmm / vh) / MM_PER_U
+    if abs(fx - fy) / fx > 0.02:
+        return (fx + fy) / 2.0, "x/y 比例差 %.1f%%（照片或画布不是等比？已取平均值）" \
+            % (abs(fx - fy) / fx * 100)
+    return fx, "%.4f mm/用户单位（%s 空间）" % (wmm / vw, "mm" if abs(wmm / vw - 1) < 0.01
+                                            else "viewBox")
 
 
 def mul(m1, m2):
@@ -111,8 +154,8 @@ def num(sv, default=0.0):
 
 
 def u(v):
-    """外层单位 → 内部单位（100 = 2.54mm）"""
-    return round(v * INV, 2)
+    """外层单位 → 内部单位（100 = 2.54mm）—— 系数由 doc_units() 按文档算（见文件头）"""
+    return round(v * UF, 2)
 
 
 def icon_sizes(repo_svg_dir):
@@ -139,7 +182,9 @@ def run(part_dir):
     if not os.path.isfile(src):
         raise SystemExit("没找到手工版：%s" % src)
     sizes = icon_sizes(repo_svg)
+    skip_fill = SKIP_RECT_FILL_BY_PART.get(part, SKIP_RECT_FILL)
     pads, texts, rects, circles, lines, icons, unknown = [], [], [], [], [], [], []
+    pad_style = []
     used = set()
 
     def match_icon(w, h, ccx, ccy, tol=0.35):
@@ -155,6 +200,9 @@ def run(part_dir):
 
     def walk(el, m):
         tag = el.tag.replace(NS, "")
+        # 隐藏图层/元素整棵跳过（辅助层，例如刻度）
+        if (styled(el, "display") or "").strip() == "none":
+            return
         m2 = mul(m, parse_tf(el.get("transform"))) if el.get("transform") else m
         sc = scl(m2)
         if tag == "image":
@@ -186,28 +234,34 @@ def run(part_dir):
                         return
         if tag == "circle":
             p = ap(m2, float(el.get("cx", 0)), float(el.get("cy", 0)))
-            r = float(el.get("r", 0)) / INV
+            # 半径也要跟位置同一套换算（含元素自身的缩放）—— 原来漏了元素缩放，
+            # 手工版里当作"焊盘那么大"画的圆会缩成看不见的点
+            r = float(el.get("r", 0)) * (sc[0] + sc[1]) / 2.0 * UF
             cid = el.get("id") or ""
             if "connector" in cid:
                 pads.append((cid, el.get("connectorname"), u(p[0]), u(p[1])))
+                if not pad_style:                      # 焊盘样式也以手工版为准（单源）
+                    sw0 = styled(el, "stroke-width")
+                    pad_style.append(round(r, 2))
+                    pad_style.append(round(num(sw0) * (sc[0] + sc[1]) / 2.0 * UF, 2) if sw0 else 0.0)
             else:
                 sw3 = styled(el, "stroke-width")
                 circles.append((u(p[0]), u(p[1]), round(r, 2), styled(el, "fill"),
                                 styled(el, "stroke"),
-                                round(num(sw3) * (sc[0] + sc[1]) / 2.0 * INV, 3) if sw3 else None))
+                                round(num(sw3) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw3 else None))
         elif tag == "rect":
             x, y = float(el.get("x", 0) or 0), float(el.get("y", 0) or 0)
             w, h = float(el.get("width", 0) or 0), float(el.get("height", 0) or 0)
-            if (styled(el, "fill") or "") in SKIP_RECT_FILL:
-                return                       # 单源生成的那些矩形（见 SKIP_RECT_FILL）
+            if (styled(el, "fill") or "") in skip_fill:
+                return                       # 单源生成的那些矩形（见 SKIP_RECT_FILL*）
             ps = [ap(m2, x, y), ap(m2, x + w, y), ap(m2, x, y + h), ap(m2, x + w, y + h)]
             xs = [p[0] for p in ps]; ys = [p[1] for p in ps]
             sw = styled(el, "stroke-width")
             rects.append((u(min(xs)), u(min(ys)), u(max(xs) - min(xs)), u(max(ys) - min(ys)),
                           styled(el, "fill"), ang(m2), styled(el, "stroke"),
-                          round(num(sw) * (sc[0] + sc[1]) / 2.0 * INV, 3) if sw else None))
+                          round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
         elif tag == "text":
-            fs = num(styled(el, "font-size")) * (sc[0] + sc[1]) / 2.0 * INV
+            fs = num(styled(el, "font-size")) * (sc[0] + sc[1]) / 2.0 * UF
             fw = "bold" if (styled(el, "font-weight") or "").lower() in \
                  ("bold", "bolder", "600", "700", "800", "900") else None
             # 多行文字（Inkscape 写成多个 role="line" 的 tspan）→ **一行一条记录**，
@@ -221,7 +275,7 @@ def run(part_dir):
                     continue
                 p = ap(m2, lx, ly)
                 fs2 = fs
-                if txt not in FS_KEEP:
+                if not (txt in FS_KEEP or fs > FS_UNIFORM * FS_KEEP_RATIO):
                     if abs(fs - FS_UNIFORM) > 0.5:
                         unknown.append((txt, round(fs, 1)))   # 手工版里的原字号，仅作提示
                     fs2 = FS_UNIFORM
@@ -231,16 +285,23 @@ def run(part_dir):
             p0 = ap(m2, float(el.get("x1", 0)), float(el.get("y1", 0)))
             p1 = ap(m2, float(el.get("x2", 0)), float(el.get("y2", 0)))
             lines.append((u(p0[0]), u(p0[1]), u(p1[0]), u(p1[1]), styled(el, "stroke"),
-                          round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * INV, 3)))
+                          round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
         for c in el:
             walk(c, m2)
 
+    global UF, UF_NOTE
+    UF, UF_NOTE = doc_units(ET.parse(src).getroot())
+    print("单位：%s → 换算系数 %.4f（内部单位）" % (UF_NOTE, UF))
     walk(ET.parse(src).getroot(), (1, 0, 0, 1, 0, 0))
 
     out = ["# -*- coding: utf-8 -*-",
            "# 由 tools/byhand_export.py 自动生成 —— **请不要手改**，改完手工版重跑脚本即可。",
            "# 源：svg/%s/svg.breadboard.%s_breadboard_byHand.svg（照片底稿，不入库）" % (part, part),
            "# 单位：内部单位（100 单位 = 2.54mm）",
+           "",
+           "# 焊盘样式（半径 / 描边宽，内部单位）—— 也从手工版里读，免得两边各写一份",
+           "PAD_R = %s" % (pad_style[0] if pad_style else 26.0),
+           "PAD_SW = %s" % (pad_style[1] if len(pad_style) > 1 else 5.0),
            "", "# 排针焊盘：(图元 id, 丝印名, x, y)", "PADS = ["]
     for cid, nm, x, y in sorted(pads, key=lambda t: (t[2], t[3])):
         cid = re.sub(r"pin.*$", "pin", cid)

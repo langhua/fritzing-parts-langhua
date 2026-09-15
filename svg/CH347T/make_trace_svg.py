@@ -10,9 +10,9 @@ make_trace_svg.py — **开发辅助**：生成一个能直接拖进 Inkscape �
     · 底图（照片）    —— 正好铺满 50.1×61.2mm 的板面，做对照
     · 刻度（默认隐藏）—— 1mm 细线 + 5mm 粗线，量位置时在图层里点亮
 
-★ 这份 SVG 里的矢量是**用 mm 重出**的：出图前把 `bb_board.MM_U` 临时改成 1.0，
-  所以你在 Inkscape 状态栏/XML 编辑器里读到的 x、y、字号，**就是 `bb_board.py` 表里的那个数**，
-  不用乘/除任何换算 —— 你说"P5 那列往左挪 0.5mm"，我直接把表里的 x 减 0.5 就行。
+★ 这份 SVG 里的矢量是**用 mm 重出**的：出图前把 `gen_part.MM_U` 临时改成 1.0，
+  所以你在 Inkscape 状态栏/XML 编辑器里读到的 x、y、字号，**就是几何来源那个数**，
+  不用乘/除任何换算 —— 你说"P5 那列往左挪 0.5mm"，我改手工版就行。
 
 用法：
     C:\Python313\python.exe svg\CH347T\trace_photo.py        # 先生成标定用的板面照片
@@ -28,7 +28,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, OUT_DIR)
 
-import bb_board as B                                    # noqa: E402
+import gen_part as B                                    # noqa: E402
 from PIL import Image                                   # noqa: E402
 
 TMP = os.path.join(os.environ["TEMP"], "ch347ttrace")
@@ -51,7 +51,7 @@ def main():
     old_u = B.MM_U
     B.MM_U = 1.0
     try:
-        art = B.gen_breadboard_svg(OUT_DIR)
+        art = B.gen_breadboard_svg()
     finally:
         B.MM_U = old_u
     inner = re.search(r'<g id="breadboard">(.*?)\n </g>\n</svg>', art, re.S)
