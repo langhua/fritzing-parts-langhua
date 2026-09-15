@@ -315,16 +315,16 @@ def gen_breadboard_svg(out_dir=None):
              'stroke="none"/>\n'
              % (hm(ux - uw / 2 + 0.8), hm(uy - uh / 2 + 0.8),
                 hm(uw - 1.6), hm(uh - 1.6), hm(0.3)))
-    # 排针：先塑料座
+    # 排针：先塑料座（带 id，便于人工对照/回读；**不是** connector，fzp_check 只认 connectorNpin/pad/terminal）
     for h in HEADERS:
         rows = _pin_rows(h)
         if not rows:
             continue
         xs = [r[0] for r in rows]
         ys = [r[1] for r in rows]
-        L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
+        L.append('  <rect id="bbhdr_%s" x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
                  'stroke="none"/>\n'
-                 % (hm(min(xs) - HDR_HALF_W), hm(min(ys) - HDR_END),
+                 % (h["id"], hm(min(xs) - HDR_HALF_W), hm(min(ys) - HDR_END),
                     hm(max(xs) - min(xs) + 2 * HDR_HALF_W),
                     hm(max(ys) - min(ys) + 2 * HDR_END), HDR_BODY))
     # 排针脚（id 用 pad_map() 定的**最终 connector 号** → 与 .fzp / 原理图同一套号）

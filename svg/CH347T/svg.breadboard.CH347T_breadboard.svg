@@ -61,19 +61,19 @@
   <rect x="81.354" y="82.630" width="9.071" height="7.087" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.227"/>
   <rect x="110.13" y="137.34" width="20.13" height="27.50" rx="1.42" fill="#c9c9c9" stroke="#8f8f8f" stroke-width="0.43"/>
   <rect x="112.39" y="139.61" width="15.59" height="22.96" rx="0.85" fill="#5a5a5a" stroke="none"/>
-  <rect x="6.15" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
-  <rect x="16.53" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
-  <rect x="123.48" y="7.99" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
-  <rect x="8.70" y="51.87" width="7.09" height="72.17" fill="#4d7fe0" stroke="none"/>
-  <rect x="15.90" y="51.87" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
-  <rect x="45.16" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="54.06" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="62.96" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="71.86" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="80.99" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="89.66" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
-  <rect x="117.07" y="73.19" width="14.29" height="36.17" fill="#4d7fe0" stroke="none"/>
-  <rect x="101.05" y="86.46" width="7.09" height="14.57" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P3" x="6.15" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P2" x="16.53" y="9.10" width="7.09" height="28.97" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P4" x="123.48" y="7.99" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P7" x="8.70" y="51.87" width="7.09" height="72.17" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P8" x="15.90" y="51.87" width="7.09" height="50.57" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P14" x="45.16" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P13" x="54.06" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P12" x="62.96" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P10" x="71.86" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P11" x="80.99" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P9" x="89.66" y="53.86" width="7.09" height="21.77" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P5" x="117.07" y="73.19" width="14.29" height="36.17" fill="#4d7fe0" stroke="none"/>
+  <rect id="bbhdr_P6" x="101.05" y="86.46" width="7.09" height="14.57" fill="#4d7fe0" stroke="none"/>
   <circle id="connector13pin" connectorname="VCC" cx="127.020" cy="11.679" r="2.409" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.850"/>
   <circle id="connector11pin" connectorname="RXD0/SDA" cx="9.694" cy="12.784" r="2.409" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.850"/>
   <circle id="connector17pin" connectorname="GND" cx="20.069" cy="12.784" r="2.409" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.850"/>
