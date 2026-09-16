@@ -8,14 +8,16 @@ icon / schematic / pcb 三个视图**复用原版**（`../TX-AH-R900PNR/`）—�
 “其它 svg 文件可以复用的”。）原版 `svg/TX-AH-R900PNR/` 保持不动。
 
 相对原版 TX-AH-R900PNR_1 的差异（2026-09-16，用户要求“J4/J5 要能接线”）：
-  1. J4/J5 跳线区 **12 个焊盘全部可接线**（原版这些焊盘只有图形、没挂 connector）：
-     新增 connector57..68；其中 J4/J5 列第 2 排（CH340E 侧）被黄帽盖住 ⇒ id 挂在**帽内孔**上
-     （内孔是最上层元素，点帽心即可接线），下面那个焊盘圈就不重复挂同一个 id。
+  1. J4/J5 跳线区 **12 个焊盘全部可接线**（原版这些焊盘只有图形、没挂 connector）：新增 connector57..68，
+     id 直接挂在焊盘圆上（r=0.66）。
   2. 名字照**板上丝印**：第 1 排 = GND / A11 / A10 / VCC，第 3 排 = GND / A13 / A12 / VCC；
      第 2 排丝印上没有字 ⇒ 按真板 J5 第二排命名 CH340E_RX / CH340E_TX。
   3. A10/A11/A12/A13 ↔ 模组脚 IOA10/IOA11/IOA12/IOA13 用 `<buses>` **显式 tie**
      （丝印名 ≠ 模组脚名，光靠同名归并合不到一起）；
      ⚠ CH340E_RX / CH340E_TX **不并到任何网**（用户：中间隔着电阻，实际不是直通）。
+  4. **删掉 J4/J5 列上那两个黄帽**（用户 2026-09-16：“A12、A13 的那个跳线删除吧”）——
+     原版那帽把第 2/3 排画成“中-下连着”，而实际中间隔着电阻；删掉后 12 个焊盘都是普通焊盘圆，
+     接线更好点（不用去点帽心）。J7/J8 那两个蓝帽（装饰）不动。
 
 模块实物（泰芯 802.11ah TX-AH-Rx00P 系列模组技术规格书 V6.8，20260311 版）：
   - 封装尺寸 (17.00±0.40) x (15.00±0.25) x (2.40±0.20) mm
@@ -1041,22 +1043,18 @@ def breadboard_svg():
     # GND/VCC 新列不戴帽、上下都标 GND/VCC。J 编号(0.8)竖排在 VCC 右侧：J5(上)、J4(下)。
     # 坐标（JU_Y0/JU_J4/JU_J5/JU_GN/JU_VC）与 JU_MAP 都在**模块级**，与 _ju_bb_assign() 共用
     # 同一份 —— 别在这里再写一遍坐标（2026-09-16 改成单一源）。
-    # 12 个焊盘照原样画；挂了 connector 的（JU_MAP：第 1/3 排 + GND/VCC 列第 2 排）画成带 id 的圆，
-    # 其余（J4/J5 第 2 排：丝印无字、真值待确认）仍是纯图形焊盘。
+    # 12 个焊盘全部挂 connector（JU_MAP），id 直接写在焊盘圆上（r=0.66，好点中）
     _ju_hit = {(round(x, 2), round(y, 2)): (idx, lab) for idx, x, y, lab in _ju_bb_assign()}
-    _ju_capped = {(ci, r) for ci in (1, 2) for r in (1, 2)}    # 黄帽盖住的 (列号, 排号)
-    for ci, cx in enumerate(JU_COLS):
+    for cx in JU_COLS:
         for r in range(3):
             _y = JU_Y0 + r * 2.54
             _hit = _ju_hit.get((round(cx, 2), round(_y, 2)))
-            if _hit and (ci, r) not in _ju_capped:
+            if _hit:
                 _idx, _lab = _hit
                 L.append('  <circle id="connector%dpin" connectorname="%s" cx="%d" cy="%d" '
                          'r="%d" fill="%s" stroke="%s" stroke-width="5"/>\n'
                          % (_idx, _lab, u(cx), u(_y), u(0.66), PIN_M, PIN_E))
             else:
-                # ⚠ 黄帽盖住的那两排照旧画成**无 id 的纯焊盘**：它们的 connector 挂在帽内孔上
-                #   （见下面 jumper_cap 调用）；同一个 id 只能出现一次，别两边都挂。
                 pin(cx, _y)
     # JU 外框：按用户（2026-09-14）分**两块** —— J5 = 上面两排（2×4 = 8 焊盘）、
     #   J4 = 下面一排（4 焊盘）；两块共边（分界线 = 第 2/3 排之间中线 JU_Y0+3.81 = 18.91）。
@@ -1086,18 +1084,10 @@ def breadboard_svg():
     txt(JU_J5, JU_Y0 + 7.10, "A12", 0.8, SILK, anchor="middle")
     txt(JU_VC, JU_Y0 - 1.5, "VCC", 0.8, SILK, anchor="middle")
     txt(JU_VC, JU_Y0 + 7.10, "VCC", 0.8, SILK, anchor="middle")
-    # J4/J5 列默认中-下戴标准黄帽（2026-09-05 用户定：J4 实现为标准）——
-    # 竖直跨中(JU_Y0+2.54)/下(JU_Y0+5.08)两针，GOLD 色，复用标准 jumper_cap；
-    # 帽盖住的那两个焊盘若挂了 connector（JU_MAP → 第 3 排的 A13/A12），
-    # 把 id 挂到帽内孔上（内孔在最上层 ⇒ 点帽心就能接线）。
-    for _ci, cx in ((1, JU_J4), (2, JU_J5)):
-        _ids, _nms = [], []
-        for _r in (1, 2):                      # 帽跨第 2、3 排
-            _h = JU_MAP.get((_ci, _r))
-            _ids.append(_h[0] if _h else None)
-            _nms.append(_h[1] if _h else None)
-        jumper_cap(cx, JU_Y0 + 2.54, cx, JU_Y0 + 5.08, GOLD,
-                   ids=tuple(_ids), names=tuple(_nms))
+    # J4/J5 列上原来那两个黄帽**已删**（用户 2026-09-16：“A12、A13 的那个跳线删除吧”）：
+    # 原版那帽把第 2/3 排画成“中-下连着”，而实际中间隔着电阻（不是直通），看着会误导；
+    # 删掉后 12 个焊盘都是普通焊盘圆 —— connector 直接挂在焊盘上，接线不用点帽心。
+    # （帽子画法 jumper_cap() 保留：J7/J8 那两个蓝帽还在用。）
     # J4/J5 编号竖排在 JU 方框右侧：距框右缘 0.3mm；J5 中心对齐上两排(15.1/17.64)中心 16.37，
     #   J4 中心对齐**下面那一排(20.18)**（2026-09-14 用户改：J4 = 下面一排 4 焊盘，故取该排中心）
     #   （框右缘=JU_VC+1.27=51.11；文字右缘→锚=框右+0.3+0.21+0.28）

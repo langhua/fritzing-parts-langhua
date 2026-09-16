@@ -399,11 +399,11 @@
   <circle id="connector58pin" connectorname="GND" cx="1662" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector59pin" connectorname="GND" cx="1662" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector60pin" connectorname="A11" cx="1762" cy="594" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
-  <circle cx="1762" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
-  <circle cx="1762" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
+  <circle id="connector67pin" connectorname="CH340E_RX" cx="1762" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
+  <circle id="connector61pin" connectorname="A13" cx="1762" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector62pin" connectorname="A10" cx="1862" cy="594" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
-  <circle cx="1862" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
-  <circle cx="1862" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
+  <circle id="connector68pin" connectorname="CH340E_TX" cx="1862" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
+  <circle id="connector63pin" connectorname="A12" cx="1862" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector64pin" connectorname="VCC" cx="1962" cy="594" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector65pin" connectorname="VCC" cx="1962" cy="694" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
   <circle id="connector66pin" connectorname="VCC" cx="1962" cy="794" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
@@ -420,18 +420,6 @@
   <text x="1862" y="874" font-size="31" fill="#f5f5f5" text-anchor="middle" font-family="DroidSans">A12</text>
   <text x="1962" y="535" font-size="31" fill="#f5f5f5" text-anchor="middle" font-family="DroidSans">VCC</text>
   <text x="1962" y="874" font-size="31" fill="#f5f5f5" text-anchor="middle" font-family="DroidSans">VCC</text>
-  <rect x="1717" y="650" width="91" height="189" rx="12" fill="#e6b53d"/>
-  <circle cx="1762" cy="694" r="37" fill="#d9dde0"/>
-  <circle id="connector67pin" connectorname="CH340E_RX" cx="1762" cy="694" r="17" fill="#33507f"/>
-  <circle cx="1762" cy="794" r="37" fill="#d9dde0"/>
-  <circle id="connector61pin" connectorname="A13" cx="1762" cy="794" r="17" fill="#33507f"/>
-  <rect x="1750" y="694" width="24" height="100" fill="#d9dde0"/>
-  <rect x="1817" y="650" width="91" height="189" rx="12" fill="#e6b53d"/>
-  <circle cx="1862" cy="694" r="37" fill="#d9dde0"/>
-  <circle id="connector68pin" connectorname="CH340E_TX" cx="1862" cy="694" r="17" fill="#33507f"/>
-  <circle cx="1862" cy="794" r="37" fill="#d9dde0"/>
-  <circle id="connector63pin" connectorname="A12" cx="1862" cy="794" r="17" fill="#33507f"/>
-  <rect x="1850" y="694" width="24" height="100" fill="#d9dde0"/>
   <text x="2043" y="644" font-size="31" fill="#f5f5f5" text-anchor="middle" transform="rotate(-90 2043 644)" font-family="DroidSans">J5</text>
   <text x="2043" y="794" font-size="31" fill="#f5f5f5" text-anchor="middle" transform="rotate(-90 2043 794)" font-family="DroidSans">J4</text>
   <circle cx="498" cy="380" r="26" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="5"/>
