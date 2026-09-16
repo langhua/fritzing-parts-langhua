@@ -787,21 +787,5 @@
    <nodeMember connectorId="connector21"/>
    <nodeMember connectorId="connector38"/>
   </bus>
-  <bus id="IOA10">
-   <nodeMember connectorId="connector14"/>
-   <nodeMember connectorId="connector62"/>
-  </bus>
-  <bus id="IOA11">
-   <nodeMember connectorId="connector15"/>
-   <nodeMember connectorId="connector60"/>
-  </bus>
-  <bus id="IOA12">
-   <nodeMember connectorId="connector31"/>
-   <nodeMember connectorId="connector63"/>
-  </bus>
-  <bus id="IOA13">
-   <nodeMember connectorId="connector32"/>
-   <nodeMember connectorId="connector61"/>
-  </bus>
  </buses>
 </module>

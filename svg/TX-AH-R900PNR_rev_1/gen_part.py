@@ -12,9 +12,10 @@ icon / schematic / pcb 三个视图**复用原版**（`../TX-AH-R900PNR/`）—�
      id 直接挂在焊盘圆上（r=0.66）。
   2. 名字照**板上丝印**：第 1 排 = GND / A11 / A10 / VCC，第 3 排 = GND / A13 / A12 / VCC；
      第 2 排丝印上没有字 ⇒ 按真板 J5 第二排命名 CH340E_RX / CH340E_TX。
-  3. A10/A11/A12/A13 ↔ 模组脚 IOA10/IOA11/IOA12/IOA13 用 `<buses>` **显式 tie**
-     （丝印名 ≠ 模组脚名，光靠同名归并合不到一起）；
-     ⚠ CH340E_RX / CH340E_TX **不并到任何网**（用户：中间隔着电阻，实际不是直通）。
+  3. A10/A11/A12/A13 **各自独立成网**，**不**并到模组脚 IOA10/…/IOA13
+     —— 用户 2026-09-16 用万用表实测：这几个焊盘与模组脚**不通**（中间有串阻/未连），
+     不能当同一根线（AGENTS §5：名字对不上就必须显式 tie，而这里**实测就不该 tie**）；
+     CH340E_RX / CH340E_TX 同理，也不并到任何网。
   4. **删掉 J4/J5 列上那两个黄帽**（用户 2026-09-16：“A12、A13 的那个跳线删除吧”）——
      原版那帽把第 2/3 排画成“中-下连着”，而实际中间隔着电阻；删掉后 12 个焊盘都是普通焊盘圆，
      接线更好点（不用去点帽心）。J7/J8 那两个蓝帽（装饰）不动。
@@ -465,13 +466,12 @@ def pcb_svg():
             '  <g id="copper1">\n' + inner + '\n  </g>\n</svg>\n')
 
 
-def buses_xml(gnd_extra=(), vcc_conns=(), extra_buses=()):
+def buses_xml(gnd_extra=(), vcc_conns=()):
     """显式声明内部互通网：
     - GND：全部 GND 边脚(connector0/2/35) + 面包板专用 GND 针(gnd_extra，CON3 的 connector48) 同网；
     - 面包板专用 VCC 针（CON1 两排 + CON2）同一条 VCC 轨（vcc_conns 传入）；
-    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网；
-    - extra_buses：[(bus_id, (connectorId, …))]，给「丝印名 ≠ 模组脚名」的显式 tie 用
-      （J4/J5 的 A10/A11/A12/A13 ↔ 模组 IOA10/IOA11/IOA12/IOA13）。"""
+    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网。
+    （J4/J5 的 A10/A11/A12/A13 与 CH340E_RX/TX **故意不进总线** —— 实测与模组脚不通。）"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
     L = [" <buses>\n", '  <bus id="GND">\n']
     for cid in gnd:
@@ -487,11 +487,6 @@ def buses_xml(gnd_extra=(), vcc_conns=(), extra_buses=()):
     for cid in ("connector21", "connector38"):
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
-    for bid, members in extra_buses:
-        L.append(f'  <bus id="{bid}">\n')
-        for cid in members:
-            L.append(f'   <nodeMember connectorId="{cid}"/>\n')
-        L.append("  </bus>\n")
     L.append(" </buses>\n")
     return "".join(L)
 
@@ -590,10 +585,9 @@ JU_MAP = {
     (0, 1): (58, "GND"), (1, 1): (67, "CH340E_RX"), (2, 1): (68, "CH340E_TX"), (3, 1): (65, "VCC"),
     (0, 2): (59, "GND"), (1, 2): (61, "A13"), (2, 2): (63, "A12"), (3, 2): (66, "VCC"),
 }
-# 与模组边脚同网的**显式 tie**：丝印写 A10/A11/A12/A13，而模组脚名是 IOA10/IOA11/IOA12/IOA13
-# （名字对不上，光靠同名归并不行）—— 出处：AGENTS §5「同一根线在两处丝印写法不同时用显式 tie」。
-JU_TIES = (("IOA10", "connector14", 62), ("IOA11", "connector15", 60),
-           ("IOA12", "connector31", 63), ("IOA13", "connector32", 61))
+# ⚠ 2026-09-16 用户用万用表实测：A10/A11/A12/A13 这些焊盘与模组脚 IOA10…IOA13 **不通**
+#   （中间有串阻/未连接）⇒ **不做任何 tie**，它们各自就是独立网（不写进 <buses>）。
+#   （原版当初没有这几个 connector，所以也没这个问题）
 
 
 def _ju_bb_assign():
@@ -670,8 +664,7 @@ def gen_fzp():
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
             f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n'
             + buses_xml([f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "GND"],
-                        [f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"],
-                        [(bid, (cid, f"connector{bb}")) for bid, cid, bb in JU_TIES])
+                        [f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"])
             + '</module>\n')
 
 
