@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="1.0.3" moduleId="T-Halow-RJ45">
+ <version>1</version>
+ <date>2026-09-17</date>
+ <label>U</label>
+ <author>Shi Jinghai</author>
+ <title>T-Halow-RJ45 (Taixin HaLow 802.11ah to RJ45 bridge)</title>
+ <tags><tag>HaLow</tag><tag>802.11ah</tag><tag>Taixin</tag><tag>TX-AH</tag><tag>TXW8301</tag><tag>RJ45</tag><tag>Ethernet</tag><tag>WLAN</tag></tags>
+ <properties>
+  <property name="family">Taixin HaLow</property>
+  <property name="physical">55 x 30 mm PCB + RJ45 plug</property>
+  <property name="variants">v1.6 / v2.4 (same PCB, different firmware)</property>
+ </properties>
+ <views>
+  <iconView><layers image="icon/T-Halow-RJ45_icon.svg"><layer layerId="icon"/></layers></iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true"><layers image="breadboard/T-Halow-RJ45_breadboard.svg"><layer layerId="breadboard"/></layers></breadboardView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="MCLR" type="male">
+   <description>MCLR</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector0pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector1" name="IOA9" type="male">
+   <description>IOA9</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector1pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector2" name="IOA6" type="male">
+   <description>IOA6</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector2pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector3" name="IOA7" type="male">
+   <description>IOA7</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector3pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector4" name="IOA8" type="male">
+   <description>IOA8</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector4pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector5" name="IOB1" type="male">
+   <description>IOB1</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector5pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector6" name="TX" type="male">
+   <description>TX</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector6pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector7" name="RX" type="male">
+   <description>RX</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector7pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector8" name="3V3" type="male">
+   <description>3V3</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector8pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector9" name="GND" type="male">
+   <description>GND</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector9pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector10" name="1" type="male">
+   <description>RJ45 pin 1</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector10pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector11" name="2" type="male">
+   <description>RJ45 pin 2</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector11pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector12" name="3" type="male">
+   <description>RJ45 pin 3</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector12pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector13" name="4" type="male">
+   <description>RJ45 pin 4</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector13pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector14" name="5" type="male">
+   <description>RJ45 pin 5</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector14pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector15" name="6" type="male">
+   <description>RJ45 pin 6</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector15pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector16" name="7" type="male">
+   <description>RJ45 pin 7</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector16pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector17" name="8" type="male">
+   <description>RJ45 pin 8</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector17pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector18" name="ANT" type="male">
+   <description>antenna (SMA)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector18pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector19" name="VBUS" type="male">
+   <description>USB-C VBUS (charging input)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector19pin"/></breadboardView>
+   </views>
+  </connector>
+  <connector id="connector20" name="GND" type="male">
+   <description>USB-C GND</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector20pin"/></breadboardView>
+   </views>
+  </connector>
+ </connectors>
+ <buses>
+  <bus id="GND">
+   <nodeMember connectorId="connector9"/>
+   <nodeMember connectorId="connector20"/>
+  </bus>
+ </buses>
+</module>
