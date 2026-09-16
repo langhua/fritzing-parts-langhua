@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-TX-AH-R900PNR — 泰芯 TXW8301 (802.11ah) 贴片模组 Fritzing 元件生成脚本
+TX-AH-R900PNR_rev_1 — 泰芯 TXW8301 (802.11ah) 模组 + AH 开发板 V1.6 EVB（rev.1）
 ====================================================================
-进度（按 fritzing-parts-langhua AGENTS.md 芯片/模块固定工作流推进）：
-  [x] 1. icon svg（本文件目前只生成 icon，后续视图在此脚本基础上扩展）
-  [ ] 2. breadboard svg
-  [ ] 3. schematic svg
-  [ ] 4. pcb svg
-  [ ] 5. part.<id>.fzp + 打包 fzpz
+本目录只**新生成** 3 个文件：`gen_part.py`、`part.<id>.fzp`、`svg.breadboard.<id>_breadboard.svg`；
+icon / schematic / pcb 三个视图**复用原版**（`../TX-AH-R900PNR/`）—— 生成时按新名字**逐字节复制**。
+（先例 `svg/RT6150AGQW_rev_1/` 是一个 rev 目录，但那里的三个视图是另画的；这里用户 2026-09-16 明确
+“其它 svg 文件可以复用的”。）原版 `svg/TX-AH-R900PNR/` 保持不动。
+
+相对原版 TX-AH-R900PNR_1 的差异（2026-09-16，用户要求“J4/J5 要能接线”）：
+  1. J4/J5 跳线区 **12 个焊盘全部可接线**（原版这些焊盘只有图形、没挂 connector）：
+     新增 connector57..68；其中 J4/J5 列第 2 排（CH340E 侧）被黄帽盖住 ⇒ id 挂在**帽内孔**上
+     （内孔是最上层元素，点帽心即可接线），下面那个焊盘圈就不重复挂同一个 id。
+  2. 名字照**板上丝印**：第 1 排 = GND / A11 / A10 / VCC，第 3 排 = GND / A13 / A12 / VCC；
+     第 2 排丝印上没有字 ⇒ 按真板 J5 第二排命名 CH340E_RX / CH340E_TX。
+  3. A10/A11/A12/A13 ↔ 模组脚 IOA10/IOA11/IOA12/IOA13 用 `<buses>` **显式 tie**
+     （丝印名 ≠ 模组脚名，光靠同名归并合不到一起）；
+     ⚠ CH340E_RX / CH340E_TX **不并到任何网**（用户：中间隔着电阻，实际不是直通）。
 
 模块实物（泰芯 802.11ah TX-AH-Rx00P 系列模组技术规格书 V6.8，20260311 版）：
   - 封装尺寸 (17.00±0.40) x (15.00±0.25) x (2.40±0.20) mm
@@ -32,12 +40,17 @@ import re
 import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
-PART_ID = "TX-AH-R900PNR_1"
-TITLE = "TX-AH-R900PNR (Taixin 802.11ah Module)"
+PART_ID = "TX-AH-R900PNR_rev_1"
+TITLE = "TX-AH-R900PNR (Taixin 802.11ah Module) rev.1"
 LABEL = "U"
 PACKAGE = "TX-AH-R900PNR"
 FAMILY = "Taixin 802.11ah Module"
-FZPZ = "TX-AH-R900PNR.fzpz"
+FZPZ = "TX-AH-R900PNR_rev_1.fzpz"
+DATE = "2026-09-16"
+# 复用源：icon / schematic / pcb 三个视图从这个目录**逐字节复制**（只换文件名）
+SRC_DIR = os.path.normpath(os.path.join(OUT_DIR, "..", "TX-AH-R900PNR"))
+SRC_PART_ID = "TX-AH-R900PNR_1"
+REUSE_VIEWS = ("icon", "schematic", "pcb")
 
 ICON_SVG = "svg.icon.%s_icon.svg" % PART_ID
 BB_SVG = "svg.breadboard.%s_breadboard.svg" % PART_ID
@@ -450,11 +463,13 @@ def pcb_svg():
             '  <g id="copper1">\n' + inner + '\n  </g>\n</svg>\n')
 
 
-def buses_xml(gnd_extra=(), vcc_conns=()):
+def buses_xml(gnd_extra=(), vcc_conns=(), extra_buses=()):
     """显式声明内部互通网：
     - GND：全部 GND 边脚(connector0/2/35) + 面包板专用 GND 针(gnd_extra，CON3 的 connector48) 同网；
     - 面包板专用 VCC 针（CON1 两排 + CON2）同一条 VCC 轨（vcc_conns 传入）；
-    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网。"""
+    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网；
+    - extra_buses：[(bus_id, (connectorId, …))]，给「丝印名 ≠ 模组脚名」的显式 tie 用
+      （J4/J5 的 A10/A11/A12/A13 ↔ 模组 IOA10/IOA11/IOA12/IOA13）。"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
     L = [" <buses>\n", '  <bus id="GND">\n']
     for cid in gnd:
@@ -470,6 +485,11 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     for cid in ("connector21", "connector38"):
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
+    for bid, members in extra_buses:
+        L.append(f'  <bus id="{bid}">\n')
+        for cid in members:
+            L.append(f'   <nodeMember connectorId="{cid}"/>\n')
+        L.append("  </bus>\n")
     L.append(" </buses>\n")
     return "".join(L)
 
@@ -549,6 +569,38 @@ def _debug_bb_assign():
             (56, dl + 9.70, y, "VCC")]
 
 
+# ---- J4/J5（模组 UART 跳线区：4 列 × 3 排）breadboard 针映射 ----
+#   （2026-09-16 用户：“svg 里的 J4/J5 不能接线，改成都能接线”）
+# 位置（mm）：与 breadboard_svg() 共用下面这几个常量（单一源，别在两处各写一遍坐标）
+JU_Y0 = 15.1            # 第 1 排中心 y（第 2/3 排 = +2.54 / +5.08）
+JU_J4 = 44.76           # J4 列（上 = A11、下 = A13）
+JU_J5 = JU_J4 + 2.54    # J5 列（上 = A10、下 = A12）
+JU_GN = JU_J4 - 2.54    # GND 列（在 J4 左侧）
+JU_VC = JU_J5 + 2.54    # VCC 列（在 J5 右侧）
+JU_COLS = (JU_GN, JU_J4, JU_J5, JU_VC)      # 列序（左→右）= GND | J4 | J5 | VCC
+# (列, 排) -> (connector idx, 名字)。名字**照板上丝印**：
+#   第 1 排丝印 = GND / A11 / A10 / VCC（框上方那行）
+#   第 3 排丝印 = GND / A13 / A12 / VCC（框下方那行）
+#   第 2 排（黄帽盖住的那排）丝印上没有字 ⇒ 用户 2026-09-16 定：真板 J5 第二排（CH340E 侧），
+#   A11 列下 = CH340E_RX、A10 列下 = CH340E_TX（真板 J5 的 2×4 列配对：pin5/6、pin3/4）。
+JU_MAP = {
+    (0, 0): (57, "GND"), (1, 0): (60, "A11"), (2, 0): (62, "A10"), (3, 0): (64, "VCC"),
+    (0, 1): (58, "GND"), (1, 1): (67, "CH340E_RX"), (2, 1): (68, "CH340E_TX"), (3, 1): (65, "VCC"),
+    (0, 2): (59, "GND"), (1, 2): (61, "A13"), (2, 2): (63, "A12"), (3, 2): (66, "VCC"),
+}
+# 与模组边脚同网的**显式 tie**：丝印写 A10/A11/A12/A13，而模组脚名是 IOA10/IOA11/IOA12/IOA13
+# （名字对不上，光靠同名归并不行）—— 出处：AGENTS §5「同一根线在两处丝印写法不同时用显式 tie」。
+JU_TIES = (("IOA10", "connector14", 62), ("IOA11", "connector15", 60),
+           ("IOA12", "connector31", 63), ("IOA13", "connector32", 61))
+
+
+def _ju_bb_assign():
+    """返回 [(connector_idx, x_mm, y_mm, label)]：J4/J5 跳线区 12 个能接线的焊盘。
+    列 = GND | J4(A11/A13) | J5(A10/A12) | VCC；排 = 上/中/下（间距 2.54）。"""
+    return [(idx, JU_COLS[c], JU_Y0 + r * 2.54, lab)
+            for (c, r), (idx, lab) in sorted(JU_MAP.items(), key=lambda kv: kv[1][0])]
+
+
 def gen_fzp():
     """part.<id>.fzp：38 连接器（无面包板视图——面包板=AH 开发板，待做）。
     connector0..35 = 边脚 1..36（type=pad，贴片半孔/焊盘）；connector36=EPAD1(37)、
@@ -559,6 +611,7 @@ def gen_fzp():
     bbmap.update({i: lab for i, x, y, lab in _con2_bb_assign()})
     bbmap.update({i: lab for i, x, y, lab in _con3_bb_assign()})
     bbmap.update({i: lab for i, x, y, lab in _debug_bb_assign()})
+    bbmap.update({i: lab for i, x, y, lab in _ju_bb_assign()})      # J4/J5 跳线区
     def _bbv(i):
         if i not in bbmap:
             return ""
@@ -598,7 +651,7 @@ def gen_fzp():
             f'  </connector>')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
-            f' <version>4</version>\n <date>2026-09-03</date>\n'
+            f' <version>4</version>\n <date>{DATE}</date>\n'
             f' <label>{LABEL}</label>\n <author>Shi Jinghai</author>\n'
             f' <title>{TITLE}</title>\n <tags>\n  <tag>{PACKAGE}</tag>\n  <tag>802.11ah</tag>\n </tags>\n'
             f' <properties>\n  <property name="package">{PACKAGE}</property>\n'
@@ -615,7 +668,9 @@ def gen_fzp():
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
             f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n'
             + buses_xml([f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "GND"],
-                        [f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"]) + '</module>\n')
+                        [f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"],
+                        [(bid, (cid, f"connector{bb}")) for bid, cid, bb in JU_TIES])
+            + '</module>\n')
 
 
 # ---- 外部元件图形复用（DEBUG=JST XH 4A；UART=TypeC16Pin icon） ----
@@ -820,7 +875,9 @@ def breadboard_svg():
     #   ② 每针处画银盘 r0.95（帽两端金属接触）
     #   ③ 每针处画深蓝孔 r0.42（帽内孔）
     #   ④ 两针之间金属桥（垂直向厚 0.6、沿针向贯通两盘中心）
-    def jumper_cap(p1x, p1y, p2x, p2y, color):
+    def jumper_cap(p1x, p1y, p2x, p2y, color, ids=(None, None), names=(None, None)):
+        """ids/names：帽盖住的那两个焊盘若挂了 connector，把 id 写在**帽的内孔**上
+        （内孔是最上层元素 ⇒ 用户点帽心就能接线；画法本身不变）。"""
         vertical = (abs(p1x - p2x) < 0.001)
         cx, cy = (p1x + p2x) / 2.0, (p1y + p2y) / 2.0
         if vertical:
@@ -829,9 +886,12 @@ def breadboard_svg():
             w, h = 4.8, 2.3
         L.append('  <rect x="%d" y="%d" width="%d" height="%d" rx="%d" fill="%s"/>\n'
                  % (u(cx - w / 2), u(cy - h / 2), u(w), u(h), u(0.3), color))
-        for (px, py) in ((p1x, p1y), (p2x, p2y)):
+        for k, (px, py) in enumerate(((p1x, p1y), (p2x, p2y))):
             L.append('  <circle cx="%d" cy="%d" r="%d" fill="#d9dde0"/>\n' % (u(px), u(py), u(0.95)))
-            L.append('  <circle cx="%d" cy="%d" r="%d" fill="#33507f"/>\n' % (u(px), u(py), u(0.42)))
+            _cid = ids[k] if k < len(ids) else None
+            _attr = (' id="connector%dpin" connectorname="%s"' % (_cid, names[k])) if _cid else ""
+            L.append('  <circle%s cx="%d" cy="%d" r="%d" fill="#33507f"/>\n'
+                     % (_attr, u(px), u(py), u(0.42)))
         if vertical:
             L.append('  <rect x="%d" y="%d" width="%d" height="%d" fill="#d9dde0"/>\n'
                      % (u(cx - 0.3), u(min(p1y, p2y)), u(0.6), u(2.54)))
@@ -979,14 +1039,25 @@ def breadboard_svg():
     # ---- 4 个 3 针跳线并排（JU 区改造，J4/J5 为主）：GND | J4(A11/A13) | J5(A10/A12) | VCC ----
     # 每列竖向 3 焊盘、间距 2.54；J4/J5 默认中-下戴黄帽（A11/A13、A10/A12 连中间公共）；
     # GND/VCC 新列不戴帽、上下都标 GND/VCC。J 编号(0.8)竖排在 VCC 右侧：J5(上)、J4(下)。
-    JU_Y0 = 15.1                      # 各列上排中心 y
-    JU_J4 = 44.76                     # J4 列中心 x（=原左列 A11/A13）
-    JU_J5 = JU_J4 + 2.54              # J5 列中心 x（=原右列 A10/A12）
-    JU_GN = JU_J4 - 2.54              # GND 列中心 x（在 J4 左侧）
-    JU_VC = JU_J5 + 2.54              # VCC 列中心 x（在 J5 右侧）
-    for cx in (JU_GN, JU_J4, JU_J5, JU_VC):
+    # 坐标（JU_Y0/JU_J4/JU_J5/JU_GN/JU_VC）与 JU_MAP 都在**模块级**，与 _ju_bb_assign() 共用
+    # 同一份 —— 别在这里再写一遍坐标（2026-09-16 改成单一源）。
+    # 12 个焊盘照原样画；挂了 connector 的（JU_MAP：第 1/3 排 + GND/VCC 列第 2 排）画成带 id 的圆，
+    # 其余（J4/J5 第 2 排：丝印无字、真值待确认）仍是纯图形焊盘。
+    _ju_hit = {(round(x, 2), round(y, 2)): (idx, lab) for idx, x, y, lab in _ju_bb_assign()}
+    _ju_capped = {(ci, r) for ci in (1, 2) for r in (1, 2)}    # 黄帽盖住的 (列号, 排号)
+    for ci, cx in enumerate(JU_COLS):
         for r in range(3):
-            pin(cx, JU_Y0 + r * 2.54)
+            _y = JU_Y0 + r * 2.54
+            _hit = _ju_hit.get((round(cx, 2), round(_y, 2)))
+            if _hit and (ci, r) not in _ju_capped:
+                _idx, _lab = _hit
+                L.append('  <circle id="connector%dpin" connectorname="%s" cx="%d" cy="%d" '
+                         'r="%d" fill="%s" stroke="%s" stroke-width="5"/>\n'
+                         % (_idx, _lab, u(cx), u(_y), u(0.66), PIN_M, PIN_E))
+            else:
+                # ⚠ 黄帽盖住的那两排照旧画成**无 id 的纯焊盘**：它们的 connector 挂在帽内孔上
+                #   （见下面 jumper_cap 调用）；同一个 id 只能出现一次，别两边都挂。
+                pin(cx, _y)
     # JU 外框：按用户（2026-09-14）分**两块** —— J5 = 上面两排（2×4 = 8 焊盘）、
     #   J4 = 下面一排（4 焊盘）；两块共边（分界线 = 第 2/3 排之间中线 JU_Y0+3.81 = 18.91）。
     #   列占宽 = 列距 2.54 → 左缘 = GND列心-1.27、右缘 = VCC列心+1.27，总宽 4*2.54；
@@ -1016,9 +1087,17 @@ def breadboard_svg():
     txt(JU_VC, JU_Y0 - 1.5, "VCC", 0.8, SILK, anchor="middle")
     txt(JU_VC, JU_Y0 + 7.10, "VCC", 0.8, SILK, anchor="middle")
     # J4/J5 列默认中-下戴标准黄帽（2026-09-05 用户定：J4 实现为标准）——
-    # 竖直跨中(JU_Y0+2.54)/下(JU_Y0+5.08)两针，GOLD 色，复用标准 jumper_cap
-    for cx in (JU_J4, JU_J5):
-        jumper_cap(cx, JU_Y0 + 2.54, cx, JU_Y0 + 5.08, GOLD)
+    # 竖直跨中(JU_Y0+2.54)/下(JU_Y0+5.08)两针，GOLD 色，复用标准 jumper_cap；
+    # 帽盖住的那两个焊盘若挂了 connector（JU_MAP → 第 3 排的 A13/A12），
+    # 把 id 挂到帽内孔上（内孔在最上层 ⇒ 点帽心就能接线）。
+    for _ci, cx in ((1, JU_J4), (2, JU_J5)):
+        _ids, _nms = [], []
+        for _r in (1, 2):                      # 帽跨第 2、3 排
+            _h = JU_MAP.get((_ci, _r))
+            _ids.append(_h[0] if _h else None)
+            _nms.append(_h[1] if _h else None)
+        jumper_cap(cx, JU_Y0 + 2.54, cx, JU_Y0 + 5.08, GOLD,
+                   ids=tuple(_ids), names=tuple(_nms))
     # J4/J5 编号竖排在 JU 方框右侧：距框右缘 0.3mm；J5 中心对齐上两排(15.1/17.64)中心 16.37，
     #   J4 中心对齐**下面那一排(20.18)**（2026-09-14 用户改：J4 = 下面一排 4 焊盘，故取该排中心）
     #   （框右缘=JU_VC+1.27=51.11；文字右缘→锚=框右+0.3+0.21+0.28）
@@ -1222,12 +1301,28 @@ def breadboard_svg():
     return "".join(L)
 
 
+def reuse_view(view):
+    """icon / schematic / pcb 三个视图**1:1 复用原版**（`../TX-AH-R900PNR/`）：
+    逐字节复制、只换文件名 —— 用户 2026-09-16：“其它 svg 文件可以复用的”。"""
+    src = os.path.join(SRC_DIR, "svg.%s.%s_%s.svg" % (view, SRC_PART_ID, view))
+    dst = os.path.join(OUT_DIR, "svg.%s.%s_%s.svg" % (view, PART_ID, view))
+    with open(src, "rb") as f:
+        data = f.read()
+    with open(dst, "wb") as f:
+        f.write(data)
+    print("reused %s  <-  %s (%d B)" % (os.path.basename(dst), os.path.basename(src), len(data)))
+    return dst
+
+
 def main():
-    files = {BB_SVG: breadboard_svg(), ICON_SVG: icon_svg(), SCHEM_SVG: schematic_svg(), PCB_SVG: pcb_svg()}
-    for name, content in files.items():
-        with open(os.path.join(OUT_DIR, name), "w", encoding="utf-8") as f:
-            f.write(content)
-        print("wrote", name)
+    # 只**新生成**面包板视图 + fzp；icon/schematic/pcb 复用原版（见 reuse_view）。
+    # ⚠ 顺序要紧：面包板视图会**内嵌**本部件的 icon（`_module_icon_group()` 读 OUT_DIR/ICON_SVG），
+    #   所以必须**先**把 icon 复制过来，再生成面包板。
+    for view in REUSE_VIEWS:
+        reuse_view(view)
+    with open(os.path.join(OUT_DIR, BB_SVG), "w", encoding="utf-8") as f:
+        f.write(breadboard_svg())
+    print("wrote", BB_SVG)
 
     fzp_name = f"part.{PART_ID}.fzp"
     with open(os.path.join(OUT_DIR, fzp_name), "w", encoding="utf-8") as f:

@@ -41,6 +41,20 @@
 - 打包好的 `.fzpz` 输出到仓库顶层 `fzpz/` 目录（生成脚本里 `OUT_DIR/../../fzpz`），与其他部件一致。
 - `.fzpz` 是给 Fritzing 导入的最终交付物。
 
+### 2.3 同一元件的多版本：`<部件名>_rev_N/`（2026-09-16，TX-AH-R900PNR_rev_1）
+
+**「保留原版 + 另开一个 rev 目录」，不要就地改原版**（用户 2026-09-16 定）：
+
+- 目的是让 Fritzing 部件库里**两个版本并存**，旧的工程不受影响；`_rev_N` 目录是**独立部件**
+  （自己的 `moduleId`/`PART_ID`、自己的 `.fzpz`），不是原版的补丁。
+- **只新生成有差异的视图**，其余视图**复用原版**：在 rev 的 `gen_part.py` 里用 `SRC_DIR` 指向
+  `../<原版目录>/`，`reuse_view()` 把原版的 `svg.<view>.<原版id>_<view>.svg` **逐字节复制**
+  成 `svg.<view>.<rev id>_<view>.svg`（`.fzp` 的 `image=` 仍写子目录路径）。
+- ⚠ **顺序**：面包板视图会**内嵌**本部件的 icon（`_module_icon_group()` 读 `OUT_DIR/ICON_SVG`）
+  ⇒ `main()` 里必须**先复制 icon**，再生成面包板，否则 `FileNotFoundError`。
+- 标题带 `(rev.N)`；`<date>` 用版本日期。改完两版都要各跑一次
+  `tools/fzp_check.py svg/<目录>`（原版也要能过，证明"就地改过又还原"没留下痕迹）。
+
 ---
 
 ## 3. `.fzp` 文件关键写法

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module fritzingVersion="1.0.3" moduleId="TX-AH-R900PNR_1">
+<module fritzingVersion="1.0.3" moduleId="TX-AH-R900PNR_rev_1">
  <version>4</version>
- <date>2026-09-03</date>
+ <date>2026-09-16</date>
  <label>U</label>
  <author>Shi Jinghai</author>
- <title>TX-AH-R900PNR (Taixin 802.11ah Module)</title>
+ <title>TX-AH-R900PNR (Taixin 802.11ah Module) rev.1</title>
  <tags>
   <tag>TX-AH-R900PNR</tag>
   <tag>802.11ah</tag>
@@ -17,23 +17,23 @@
  </properties>
  <views>
   <breadboardView>
-   <layers image="breadboard/TX-AH-R900PNR_1_breadboard.svg">
+   <layers image="breadboard/TX-AH-R900PNR_rev_1_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/TX-AH-R900PNR_1_schematic.svg">
+   <layers image="schematic/TX-AH-R900PNR_rev_1_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/TX-AH-R900PNR_1_pcb.svg">
+   <layers image="pcb/TX-AH-R900PNR_rev_1_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
   </pcbView>
   <iconView>
-   <layers image="icon/TX-AH-R900PNR_1_icon.svg">
+   <layers image="icon/TX-AH-R900PNR_rev_1_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>
@@ -666,6 +666,102 @@
     </breadboardView>
    </views>
   </connector>
+  <connector id="connector57" name="GND" type="male">
+   <description>GND (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector57pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector58" name="GND" type="male">
+   <description>GND (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector58pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector59" name="GND" type="male">
+   <description>GND (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector59pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector60" name="A11" type="male">
+   <description>A11 (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector60pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector61" name="A13" type="male">
+   <description>A13 (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector61pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector62" name="A10" type="male">
+   <description>A10 (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector62pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector63" name="A12" type="male">
+   <description>A12 (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector63pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector64" name="VCC" type="male">
+   <description>VCC (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector64pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector65" name="VCC" type="male">
+   <description>VCC (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector65pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector66" name="VCC" type="male">
+   <description>VCC (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector66pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector67" name="CH340E_RX" type="male">
+   <description>CH340E_RX (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector67pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector68" name="CH340E_TX" type="male">
+   <description>CH340E_TX (breadboard pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector68pin"/>
+    </breadboardView>
+   </views>
+  </connector>
  </connectors>
  <buses>
   <bus id="GND">
@@ -674,16 +770,38 @@
    <nodeMember connectorId="connector35"/>
    <nodeMember connectorId="connector48"/>
    <nodeMember connectorId="connector55"/>
+   <nodeMember connectorId="connector57"/>
+   <nodeMember connectorId="connector58"/>
+   <nodeMember connectorId="connector59"/>
   </bus>
   <bus id="VCC">
    <nodeMember connectorId="connector41"/>
    <nodeMember connectorId="connector47"/>
    <nodeMember connectorId="connector39"/>
    <nodeMember connectorId="connector56"/>
+   <nodeMember connectorId="connector64"/>
+   <nodeMember connectorId="connector65"/>
+   <nodeMember connectorId="connector66"/>
   </bus>
   <bus id="IOB0">
    <nodeMember connectorId="connector21"/>
    <nodeMember connectorId="connector38"/>
+  </bus>
+  <bus id="IOA10">
+   <nodeMember connectorId="connector14"/>
+   <nodeMember connectorId="connector62"/>
+  </bus>
+  <bus id="IOA11">
+   <nodeMember connectorId="connector15"/>
+   <nodeMember connectorId="connector60"/>
+  </bus>
+  <bus id="IOA12">
+   <nodeMember connectorId="connector31"/>
+   <nodeMember connectorId="connector63"/>
+  </bus>
+  <bus id="IOA13">
+   <nodeMember connectorId="connector32"/>
+   <nodeMember connectorId="connector61"/>
   </bus>
  </buses>
 </module>
