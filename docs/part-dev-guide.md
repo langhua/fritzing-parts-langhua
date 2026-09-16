@@ -143,6 +143,19 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 
 > ⚠️ **坑**：引脚（leg/pin）不要画到板体外；如果部件是"板载元件"，引脚应在板体轮廓内。
 
+**开发板上的排针 / 跳线区要"能接线"（2026-09-16，TX-AH-R900PNR 的 J4/J5）**：
+
+- 光把焊盘画出来（`<circle>` 无 `id`）**接不了线** —— 每个要接线的焊盘都得是**独立 connector**：
+  `.fzp` 里加 `<connector … type="male">` + 只有 `breadboardView` 的 `<p layer="breadboard" svgId="connectorNpin"/>`，
+  SVG 里对应元素给同一个 `id`（并写 `connectorname`，便于 Inkscape 里核对）。
+- **被跳线帽盖住的焊盘**：帽体是**实心**圆角矩形，会挡住下面的焊盘圈（Fritzing 按光标下最上层元素找 connector）
+  ⇒ 把 connector 的 `id` 挂在**帽的内孔**那一圈上（内孔是最上层），这样**点帽心就能接线**，
+  下面的焊盘圈就**不要再挂同一个 id**（同一个 id 只能出现一次，两处都挂 = 重复 id）。
+- 与模组脚**同名不同写法**的丝印（J4/J5 的丝印 `A10/A11/A12/A13` vs 模组脚名 `IOA10/IOA11/…`）
+  靠 `<buses>` **显式 tie** 成一条总线（AGENTS §5：光靠同名归并合不上）。
+- 位置常量与「(列, 行) → (connector idx, 名字)」映射表放**模块级单一源**，
+  `gen_fzp()` 与 `breadboard_svg()` 共用 —— 别在两处各写一遍坐标（各自漂移看不出来）。
+
 **SOT-23 等贴片芯片**参考 Sparkfun `sparkfun-discretesemi_sot23_breadboard.svg`：
 
 - 芯片横跨面包板中央槽，三个连接器落在面包板网格上：脚1/脚2 同行相距 2.54mm，脚3 在脚2 正上方 3 排（7.62mm）。
