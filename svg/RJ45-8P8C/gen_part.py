@@ -64,6 +64,8 @@ POST_BACK = 5.08                   # 定位柱在引脚排后方（推测：0.2"
 BLADE_L, BLADE_W = 14.00, 0.45     # 弹片（长 × 宽）
 NOTCH_D = BLADE_W * 2              # 本体凹槽深 = 弹片宽（金属线宽）的 2 倍
 TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进量 = 凹槽深的 1.5 倍
+GOLD_SHIFT = 0.50                  # 镀金/银色分界左移量（用户 2026-09-17）
+SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的距离（交替用）
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
@@ -109,23 +111,27 @@ def gen_icon_svg():
          '  <g id="icon">\n',
          f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, TRIM_W)}" fill="#2b2b2b" stroke="none"/>\n']
     bx = -BODY_L / 2 + 1.2
-    # 上下本体的**凹槽**（用户 2026-09-17）：俯视时银色段那一段是敞开的槽 ——
-    # 槽宽 = 银色线长的 80%、槽深 = 线宽的 2 倍、**右侧槽壁与金属线右端平齐**。
-    nw, nd = BLADE_L / 2 * 0.80, NOTCH_D
-    nx = bx + BLADE_L - nw
+    ge = bx + BLADE_L / 2 - GOLD_SHIFT          # 镀金/银色分界（左移 GOLD_SHIFT）
+    # 银色右端：第 1/3/5/7 根到「距本体右缘 SILVER_FAR」、第 2/4/6/8 根到 SILVER_NEAR，交替
+    ends = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)
+    far = max(ends)
+    # 上下本体的**凹槽**：槽宽 = 银色线长（最长那根）的 80%、槽深 = 线宽的 2 倍、
+    # 右侧槽壁与**最长**那根金属线的右端平齐。
+    nw, nd = (far - ge) * 0.80, NOTCH_D
+    nx = far - nw
     for sy in (-1, 1):
         ye = sy * BODY_W / 2
         L.append(f'    <rect x="{nx:.2f}" y="{min(ye, ye - sy * nd):.2f}" width="{nw:.2f}" '
                  f'height="{nd:.2f}" fill="#141414" stroke="none"/>\n')
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
-        L.append(f'    <rect x="{bx:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{BLADE_L / 2:.2f}" '
+        xe = ends[i % 2]
+        L.append(f'    <rect x="{bx:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{ge - bx:.2f}" '
                  f'height="{BLADE_W:.2f}" fill="{gold}" stroke="none"/>\n')
-        L.append(f'    <rect x="{bx + BLADE_L / 2:.2f}" y="{yy - BLADE_W / 2:.3f}" '
-                 f'width="{BLADE_L / 2:.2f}" height="{BLADE_W:.2f}" fill="{silver}" '
-                 f'stroke="none"/>\n')
+        L.append(f'    <rect x="{ge:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{xe - ge:.2f}" '
+                 f'height="{BLADE_W:.2f}" fill="{silver}" stroke="none"/>\n')
     for sy in (-1, 1):                                                       # 尾部两个卡扣
-        L.append(f'    <rect x="{bx + BLADE_L + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
+        L.append(f'    <rect x="{far + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
                  f'height="2.60" rx="0.15" fill="#cfcfcf" stroke="none"/>\n')
     L.append('  </g>\n</svg>\n')
     return "".join(L)
