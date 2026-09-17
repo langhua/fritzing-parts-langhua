@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- SK-12D02VG3 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="12.10mm" height="5.40mm" viewBox="-4.80 -2.70 12.10 5.40">
+  <g id="icon">
+    <rect x="4.300" y="-0.800" width="2.50" height="1.60" rx="0.2" ry="0.2" fill="#e8e8e8" stroke="none"/>
+    <rect x="-4.300" y="-2.200" width="8.60" height="4.40" fill="#2b2b2b" stroke="none"/>
+    <circle cx="-3.550" cy="-1.450" r="0.30" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="-0.2" font-size="1.15" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">SK-12D02</text>
+    <text x="0" y="1.5" font-size="0.85" fill="#9a9a9a" text-anchor="middle" font-family="DroidSans">SPDT</text>
+  </g>
+</svg>

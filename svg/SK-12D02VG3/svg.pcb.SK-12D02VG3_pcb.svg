@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- SK-12D02VG3 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="12.0mm" height="12.0mm" viewBox="0 0 12.0 12.0">
+  <g id="copper1">
+<ellipse id="connector4pin" connectorname="5" cx="1.900" cy="6.000" rx="0.600" ry="1.000" fill="#F7BD13" stroke="none"/>
+<circle cx="1.900" cy="6.000" r="0.350" fill="#0b2b3a" stroke="none"/>
+<ellipse id="connector0pin" connectorname="1" cx="4.000" cy="6.000" rx="0.700" ry="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="4.000" cy="6.000" r="0.350" fill="#0b2b3a" stroke="none"/>
+<ellipse id="connector1pin" connectorname="2" cx="6.000" cy="6.000" rx="0.700" ry="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="6.000" cy="6.000" r="0.350" fill="#0b2b3a" stroke="none"/>
+<ellipse id="connector2pin" connectorname="3" cx="8.000" cy="6.000" rx="0.700" ry="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="8.000" cy="6.000" r="0.350" fill="#0b2b3a" stroke="none"/>
+<ellipse id="connector3pin" connectorname="4" cx="10.100" cy="6.000" rx="0.600" ry="1.000" fill="#F7BD13" stroke="none"/>
+<circle cx="10.100" cy="6.000" r="0.350" fill="#0b2b3a" stroke="none"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<line x1="1.700" y1="3.800" x2="10.300" y2="3.800" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="1.700" y1="8.200" x2="10.300" y2="8.200" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="1.700" y1="3.800" x2="1.700" y2="4.900" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="1.700" y1="8.200" x2="1.700" y2="7.100" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="10.300" y1="3.800" x2="10.300" y2="4.900" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="10.300" y1="8.200" x2="10.300" y2="7.100" stroke="#f0f0f0" stroke-width="0.1524"/>
+<circle cx="2.450" cy="4.550" r="0.30" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>
