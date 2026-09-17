@@ -82,8 +82,9 @@ SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的�
 BLADE_X0 = -BODY_L / 2 + 1.20                     # 弹片起点（插口端内侧）
 GOLD_END = BLADE_X0 + BLADE_L / 2 - GOLD_SHIFT    # 镀金/银色分界（x）
 SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交替的银色右端
+NOTCH_L_FROM_LEFT = 7.20           # 凹槽**左缘**距本体左边缘（用户 2026-09-18）
 NOTCH_W = (max(SILVER_END) - GOLD_END) * 0.80     # 凹槽宽 = 银色线长（最长那根）的 80%
-NOTCH_X = max(SILVER_END) - NOTCH_W               # 凹槽左缘（右缘与最长金属线右端平齐）
+NOTCH_X = -BODY_L / 2 + NOTCH_L_FROM_LEFT         # 凹槽左缘（x，相对元件中心）
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
