@@ -226,18 +226,19 @@ def gen_pcb_svg():
     下排 connector0-7（pin1-8）y=+3.0 左→右、上排 connector8-15（pin9-16）y=-3.0 左→右=16..9。
 
     数据来源与修正（2026-09-17）：
-      · 原值 `焊盘 0.7×2.2 / 行距 7.4mm(±3.7)` 来自立创EDA 导出的封装文件
-        `D:\\Downloads\\SOP-16_2026-09-01.svg`（实测该文件：两排焊盘 y 差 29.13 单位
-        × 0.254mm/单位 = **7.399mm**、pitch 1.27mm —— 参数确实是照它取的，不是拓错）。
-      · **但那个封装对 150mil SOP-16 偏大**：150mil 窄体的引脚端点跳距只有 **6.00mm**
-        （JEDEC MS-012 / IPC-7351 命名 SOIC127P600X175-16N：127=1.27mm、600=6.00mm、175=1.75mm），
-        即 row 应 ≈ 3.0；用 3.7 会让**焊盘中心跑到引脚末端之外 0.7mm**（焊盘一半悬空），
-        而且与本元件自己的 icon **自相矛盾**（icon 里引脚只伸到 ±3.0）。
-      · 故改为与 svg/CH340N（SOP-8，同一 150mil 族）一致的标称盘。
+      · 脚距 1.27mm、塑体宽 3.9mm（宽体另有 208mil）—— CH340 手册第 1 页「3、封装」表
+      · **焊盘几何以嘉立创/立创EDA 封装为准**（用户提供
+        `D:\\Downloads\\SOP-16-L10.0-W3.9-P1.27-LS6.0-BL_2026-09-17.svg`，1 单位=0.254mm）：
+        实测「焊盘 **0.560×1.745**（OVAL）、焊盘中心 **±2.872**（跳距 **5.744**）」、
+        脚距 1.270 —— 即立创把焊盘中心放在**引脚中点**附近（封装名里的 LS6.0 是芯片的
+        引脚端点跳距，**不等于**焊盘中心跳距）。
+      · 本体长：我们 icon 用 JEDEC 的 9.9mm，立创封装名写 L10.0（差 0.1mm，不影响对齐）。
+      · 历史：row 曾为 3.7（照拄立创另一份 SOP-16 svg —— 那是 7.4 跳距的另一个封装）
+        → 又按 IPC-7351 改成 3.0 → 现按嘉立创定稿为 **2.872**。
     Fritzing 层结构：copper1 > copper0（空）+ 焊盘；silkscreen。坐标 mm，viewBox 贴合（裁边）。"""
-    pw, pl = 0.6, 1.75       # 焊盘宽（x）× 长（y）—— IPC-7351 SOIC-16/150mil
-    pitch = 1.27             # 引脚间距
-    row = 3.0                # 上下排焊盘中心 y = ±3.0 → 跳距 6.00mm
+    pw, pl = 0.56, 1.745     # 焊盘宽（x）× 长（y）—— 嘉立创实测
+    pitch = 1.27             # 引脚间距（手册 + 嘉立创）
+    row = 2.872              # 上下排焊盘中心 y = ±2.872 → 跳距 5.744mm（嘉立创实测）
     per = len(PINS) // 2
     x0 = -(per - 1) * pitch / 2        # 最左焊盘中心 x = -4.445
     pads, silk = [], []
@@ -255,15 +256,15 @@ def gen_pcb_svg():
         pads.append(f'<rect id="connector{cn}pad" x="{x - pw / 2:.3f}" y="{-row - pl / 2:.3f}" '
                     f'width="{pw:.3f}" height="{pl:.3f}" fill="#F7BD13" stroke="none" '
                     f'connectorname="{esc(PINS[cn])}"/>')
-    # 丝印本体（9.9×3.9，中心 0,0；框边 y=±1.95 < 焊盘内缘 2.125 → 与焊盘零相交）
-    # + pin1 实心圆点（本体左下角内）
+    # 丝印本体（9.9×3.9 —— 本体实际尺寸；框边 y=±1.95 < 焊盘内缘 1.9995、
+    # x=±4.95 > 焊盘外缘 4.725 → 与焊盘零相交）；pin1 实心圆点在本体左下角内
     silk.append('<rect x="-4.95" y="-1.95" width="9.9" height="3.9" fill="none" '
                 'stroke="#f0f0f0" stroke-width="0.15"/>')
-    silk.append('<circle cx="-4.45" cy="1.5" r="0.25" fill="#f0f0f0" stroke="none"/>')
+    silk.append('<circle cx="-4.45" cy="1.35" r="0.25" fill="#f0f0f0" stroke="none"/>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
-    # viewBox 贴合（裁边）：内容 x±4.95（丝印）、y±3.875（焊盘），各留 0.15 边距
-    SX, SY, M = 4.95, 3.875, 0.15
+    # viewBox 贴合（裁边）：内容 x±4.95（丝印）、y±3.7445（焊盘），各留 0.15 边距
+    SX, SY, M = 4.95, 3.7445, 0.15
     return (SVG_HDR +
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{2 * (SX + M):.2f}mm" height="{2 * (SY + M):.2f}mm" '
             f'viewBox="{-(SX + M):.2f} {-(SY + M):.2f} {2 * (SX + M):.2f} {2 * (SY + M):.2f}">\n'

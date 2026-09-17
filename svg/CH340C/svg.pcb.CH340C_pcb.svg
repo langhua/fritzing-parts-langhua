@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created for TXW8301 Simulator -->
-<svg xmlns="http://www.w3.org/2000/svg" width="10.20mm" height="8.05mm" viewBox="-5.10 -4.03 10.20 8.05">
+<svg xmlns="http://www.w3.org/2000/svg" width="10.20mm" height="7.79mm" viewBox="-5.10 -3.89 10.20 7.79">
   <g id="copper1">
-<rect id="connector0pad" x="-4.745" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="GND"/>
-<rect id="connector1pad" x="-3.475" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="TXD"/>
-<rect id="connector2pad" x="-2.205" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="RXD"/>
-<rect id="connector3pad" x="-0.935" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="V3"/>
-<rect id="connector4pad" x="0.335" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="UD+"/>
-<rect id="connector5pad" x="1.605" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="UD-"/>
-<rect id="connector6pad" x="2.875" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="NC"/>
-<rect id="connector7pad" x="4.145" y="2.125" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="OUT#/DTR#"/>
-<rect id="connector15pad" x="-4.745" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="VCC"/>
-<rect id="connector14pad" x="-3.475" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="R232"/>
-<rect id="connector13pad" x="-2.205" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="RTS#"/>
-<rect id="connector12pad" x="-0.935" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="DTR#"/>
-<rect id="connector11pad" x="0.335" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="DCD#"/>
-<rect id="connector10pad" x="1.605" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="RI#"/>
-<rect id="connector9pad" x="2.875" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="DSR#"/>
-<rect id="connector8pad" x="4.145" y="-3.875" width="0.600" height="1.750" fill="#F7BD13" stroke="none" connectorname="CTS#"/>
+<rect id="connector0pad" x="-4.725" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="GND"/>
+<rect id="connector1pad" x="-3.455" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="TXD"/>
+<rect id="connector2pad" x="-2.185" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="RXD"/>
+<rect id="connector3pad" x="-0.915" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="V3"/>
+<rect id="connector4pad" x="0.355" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="UD+"/>
+<rect id="connector5pad" x="1.625" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="UD-"/>
+<rect id="connector6pad" x="2.895" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="NC"/>
+<rect id="connector7pad" x="4.165" y="1.999" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="OUT#/DTR#"/>
+<rect id="connector15pad" x="-4.725" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="VCC"/>
+<rect id="connector14pad" x="-3.455" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="R232"/>
+<rect id="connector13pad" x="-2.185" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="RTS#"/>
+<rect id="connector12pad" x="-0.915" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="DTR#"/>
+<rect id="connector11pad" x="0.355" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="DCD#"/>
+<rect id="connector10pad" x="1.625" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="RI#"/>
+<rect id="connector9pad" x="2.895" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="DSR#"/>
+<rect id="connector8pad" x="4.165" y="-3.744" width="0.560" height="1.745" fill="#F7BD13" stroke="none" connectorname="CTS#"/>
 <g id="copper0"/>
   </g>
   <g id="silkscreen">
 <rect x="-4.95" y="-1.95" width="9.9" height="3.9" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
-<circle cx="-4.45" cy="1.5" r="0.25" fill="#f0f0f0" stroke="none"/>
+<circle cx="-4.45" cy="1.35" r="0.25" fill="#f0f0f0" stroke="none"/>
   </g>
 </svg>
