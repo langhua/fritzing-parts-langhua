@@ -43,8 +43,8 @@
   </iconView>
  </views>
  <connectors>
-  <connector id="connector0" name="1" type="male">
-   <description>8P8C contact 1</description>
+  <connector id="connector0" name="M0+" type="male">
+   <description>pin 1 = 8P8C contact 1 (pair 0, +)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector0pin"/>
@@ -57,8 +57,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector1" name="2" type="male">
-   <description>8P8C contact 2</description>
+  <connector id="connector1" name="M0-" type="male">
+   <description>pin 2 = 8P8C contact 2 (pair 0, -)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector1pin"/>
@@ -71,8 +71,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector2" name="3" type="male">
-   <description>8P8C contact 3</description>
+  <connector id="connector2" name="M1+" type="male">
+   <description>pin 3 = 8P8C contact 3 (pair 1, +)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector2pin"/>
@@ -85,8 +85,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector3" name="4" type="male">
-   <description>8P8C contact 4</description>
+  <connector id="connector3" name="M1-" type="male">
+   <description>pin 4 = 8P8C contact 4 (pair 1, -)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector3pin"/>
@@ -99,8 +99,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector4" name="5" type="male">
-   <description>8P8C contact 5</description>
+  <connector id="connector4" name="M2+" type="male">
+   <description>pin 5 = 8P8C contact 5 (pair 2, +)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector4pin"/>
@@ -113,8 +113,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector5" name="6" type="male">
-   <description>8P8C contact 6</description>
+  <connector id="connector5" name="M2-" type="male">
+   <description>pin 6 = 8P8C contact 6 (pair 2, -)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector5pin"/>
@@ -127,8 +127,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector6" name="7" type="male">
-   <description>8P8C contact 7</description>
+  <connector id="connector6" name="M3+" type="male">
+   <description>pin 7 = 8P8C contact 7 (pair 3, +)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector6pin"/>
@@ -141,8 +141,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector7" name="8" type="male">
-   <description>8P8C contact 8</description>
+  <connector id="connector7" name="M3-" type="male">
+   <description>pin 8 = 8P8C contact 8 (pair 3, -)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector7pin"/>

@@ -38,13 +38,18 @@ PART_ID = "RJ45-8P8C"
 FZPZ = "RJ45-8P8C.fzpz"
 
 N_PINS = 8
-CONN = [(i, str(i + 1), "8P8C contact %d" % (i + 1)) for i in range(N_PINS)]
+# (connector id, 连接器名 = 原理图上的显示名, 脚号, 说明)
+# 名字取 MDI 命名（M0+..M3-），用户 2026-09-17 定；脚号仍按 8P8C 的 1..8 写在 description。
+CONN = [(0, "M0+", "1", "8P8C contact 1 (pair 0, +)"),
+        (1, "M0-", "2", "8P8C contact 2 (pair 0, -)"),
+        (2, "M1+", "3", "8P8C contact 3 (pair 1, +)"),
+        (3, "M1-", "4", "8P8C contact 4 (pair 1, -)"),
+        (4, "M2+", "5", "8P8C contact 5 (pair 2, +)"),
+        (5, "M2-", "6", "8P8C contact 6 (pair 2, -)"),
+        (6, "M3+", "7", "8P8C contact 7 (pair 3, +)"),
+        (7, "M3-", "8", "8P8C contact 8 (pair 3, -)")]
 
 ICON_LABEL = "RJ45"
-# 原理图框内的脚名（照用户 2026-09-17 给的截图；只是**显示名**，
-# connector name 仍是 1..8，不影响连线）
-SCH_NAME = {"1": "M0+", "2": "M0-", "3": "M1+", "4": "M1-",
-            "5": "M2+", "6": "M2-", "7": "M3+", "8": "M3-"}
 TITLE = "RJ45 8P8C PCB Socket (DIP, unshielded)"
 LABEL = "J"
 PACKAGE = "DIP-8P8C (11.63 x 27.00 mm)"
@@ -196,9 +201,9 @@ def gen_breadboard_svg():
                  f'cy="{y_pin}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
         L.append(f'  <circle cx="{x}" cy="{y_pin}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
         ty = y_pin + 81
-        L.append(f'  <text x="{x}" y="{ty}" font-size="60" fill="#ffffff" text-anchor="middle" '
+        L.append(f'  <text x="{x}" y="{ty}" font-size="42" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x} {ty})">{i + 1}</text>\n')
+                 f'transform="rotate(-90 {x} {ty})">{esc(CONN[i][1])}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
@@ -233,11 +238,11 @@ def gen_schematic_svg():
         y = gy0 + 40 + i * 40
         L.append(f'  <line x1="{gx0}" y1="{y}" x2="{gx0 - 80}" y2="{y}" '
                  f'stroke="#000000" stroke-width="5"/>\n')
-    # 8 个脚全在右侧：从上到下 = pin8 .. pin1
-    for k, ci in enumerate(range(7, -1, -1)):
+    # 8 个脚全在右侧：从上到下 = pin1 .. pin8（用户 2026-09-17：1 脚应该在上面）
+    for k, ci in enumerate(range(N_PINS)):
         y = BY0 + P + k * P
-        num = CONN[ci][1]
-        L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(num)}" '
+        num, name = CONN[ci][2], CONN[ci][1]
+        L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(name)}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="#000000" '
                  f'stroke-width="5"/>\n')
         L.append(f'  <rect class="terminal" id="connector{ci}terminal" x="{BX1 + WIRE - 11}" '
@@ -245,7 +250,7 @@ def gen_schematic_svg():
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
                  f'text-anchor="middle" font-family="DroidSans">{esc(num)}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + 12}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="end" font-family="DroidSans">{esc(SCH_NAME.get(num, num))}</text>\n')
+                 f'text-anchor="end" font-family="DroidSans">{esc(name)}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
@@ -296,10 +301,10 @@ def gen_pcb_svg():
 # ----------------------------------------------------------------------- .fzp
 def gen_fzp():
     conns = []
-    for cn, num, desc in CONN:
+    for cn, name, num, desc in CONN:
         conns.append(
-            f'  <connector id="connector{cn}" name="{esc(num)}" type="male">\n'
-            f'   <description>{esc(desc)}</description>\n'
+            f'  <connector id="connector{cn}" name="{esc(name)}" type="male">\n'
+            f'   <description>pin {num} = {esc(desc)}</description>\n'
             f'   <views>\n'
             f'    <breadboardView>\n     <p layer="breadboard" svgId="connector{cn}pin"/>\n    </breadboardView>\n'
             f'    <schematicView>\n     <p layer="schematic" svgId="connector{cn}pin" terminalId="connector{cn}terminal"/>\n    </schematicView>\n'
