@@ -61,8 +61,11 @@ def esc(s):
 
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
-    """贴片 DIP 开关俯视图：黑本体 + 白色拨柄（**左缘对齐本体中线**，用户 2026-09-17 定）
-    + 丝印 ON/1（**水平居中**）+ 两端焊盘。"""
+    """贴片 DIP 开关俯视图：黑本体 + 白色拨柄 + 丝印 ON/1（**水平居中**）+ 两端焊盘。
+
+    拨柄（用户 2026-09-17）：拨动方向是**上下** ⇒ 拨柄在**上**，「**底线**」齐本体中线
+    （整体落在中线上方）；滑槽框表示行程范围，保持居中。
+    """
     hw, hh = BODY_W / 2.0, BODY_H / 2.0
     x0, x1 = -(BODY_W / 2 + 0.2), (BODY_W / 2 + 0.2)
     y0, y1 = -(PAD_DY + PAD_H / 2 + 0.2), (PAD_DY + PAD_H / 2 + 0.2)
@@ -75,10 +78,10 @@ def gen_icon_svg():
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="#c0c0c0" stroke="none"/>\n')
     L.append(f'    <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.3f}" height="{BODY_H:.2f}" '
              f'fill="#2b2b2b" stroke="none"/>\n')
-    L.append(f'    <rect x="0" y="{-SLOT_H / 2:.3f}" width="{SLOT_W:.2f}" '
+    L.append(f'    <rect x="{-SLOT_W / 2:.3f}" y="{-SLOT_H / 2:.3f}" width="{SLOT_W:.2f}" '
              f'height="{SLOT_H:.2f}" fill="none" stroke="#7a7a7a" stroke-width="0.10"/>\n')
-    L.append(f'    <rect x="0" y="{-KNOB_H / 2:.3f}" width="{KNOB_W:.2f}" '
-             f'height="{KNOB_H:.2f}" fill="#e8e8e8" stroke="none"/>\n')      # 拨柄（左缘齐本体中线）
+    L.append(f'    <rect x="{-KNOB_W / 2:.3f}" y="{-KNOB_H:.3f}" width="{KNOB_W:.2f}" '
+             f'height="{KNOB_H:.2f}" fill="#e8e8e8" stroke="none"/>\n')      # 拨柄：在上、底线齐中线
     L.append(f'    <text x="0" y="{-hh + 1.05:.2f}" font-size="0.85" '
              f'fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">ON</text>\n')
     L.append(f'    <text x="0" y="{hh - 0.35:.2f}" font-size="0.85" '
@@ -117,10 +120,10 @@ def gen_breadboard_svg():
                  f'stroke="none"/>\n')
     L.append(f'  <rect x="{cx - BODY_W / 2 * U:.1f}" y="{cy - BODY_H / 2 * U:.1f}" '
              f'width="{BODY_W * U:.1f}" height="{BODY_H * U:.1f}" fill="#2b2b2b" stroke="none"/>\n')
-    L.append(f'  <rect x="{cx:.1f}" y="{cy - SLOT_H / 2 * U:.1f}" '
+    L.append(f'  <rect x="{cx - SLOT_W / 2 * U:.1f}" y="{cy - SLOT_H / 2 * U:.1f}" '
              f'width="{SLOT_W * U:.1f}" height="{SLOT_H * U:.1f}" fill="none" stroke="#7a7a7a" '
              f'stroke-width="4"/>\n')
-    L.append(f'  <rect x="{cx:.1f}" y="{cy - KNOB_H / 2 * U:.1f}" '
+    L.append(f'  <rect x="{cx - KNOB_W / 2 * U:.1f}" y="{cy - KNOB_H * U:.1f}" '
              f'width="{KNOB_W * U:.1f}" height="{KNOB_H * U:.1f}" fill="#e8e8e8" stroke="none"/>\n')
     for cn, y, label in ((0, y_pins[1], "1"), (1, y_pins[0], "2")):
         L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
