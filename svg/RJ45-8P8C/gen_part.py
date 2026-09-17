@@ -73,11 +73,9 @@ POST_BACK = 5.08                   # 定位柱在引脚排后方（推测：0.2"
 # ---- icon 里的弹片 / 凹槽 / 斜角（用户 2026-09-17 定）--------------------------
 BLADE_L, BLADE_W = 14.00, 0.45     # 弹片（长 × 宽）
 NOTCH_D = BLADE_W * 2              # 本体凹槽深 = 弹片宽（金属线宽）的 2 倍
-WIN_W, WIN_H = 2.20, 4.60          # 尾部两个圆角矩形「窗口」（宽 × 高，用户 2026-09-17 实测）
-WIN_FROM_RIGHT = 4.60             # 窗口右边距壳体右边缘
 TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进量 = 凹槽深的 1.5 倍
 GOLD_LEN = 5.00                    # 镀金段长（用户 2026-09-18；原为「弹片长/2 − 0.5」）
-SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的距离（交替用）
+SILVER_FAR, SILVER_NEAR = 7.00, 8.50    # 银色右端距本体**右边缘**（奇/偶数脚交替；用户 2026-09-18）
 
 BLADE_X0 = -BODY_L / 2 + 1.20                     # 弹片起点（插口端内侧）
 GOLD_LEN = 5.00                                   # 镀金段长度（用户 2026-09-18）
@@ -168,10 +166,6 @@ def gen_icon_svg():
         L.append(f'    <path d="M {ge:.3f} {yy - r:.3f} L {xe - r:.3f} {yy - r:.3f} '
                  f'A {r:.3f} {r:.3f} 0 0 1 {xe - r:.3f} {yy + r:.3f} '
                  f'L {ge:.3f} {yy + r:.3f} Z" fill="{silver}" stroke="none"/>\n')
-    for sy in (-1, 1):                                                       # 尾部两个窗口
-        L.append(f'    <rect x="{BODY_L / 2 - WIN_FROM_RIGHT - WIN_W:.2f}" y="{sy * 2.6 - WIN_H / 2:.2f}" '
-                 f'width="{WIN_W:.2f}" height="{WIN_H:.2f}" rx="0.30" fill="#141414" '
-                 f'stroke="none"/>\n')
     L.append('  </g>\n</svg>\n')
     return "".join(L)
 
