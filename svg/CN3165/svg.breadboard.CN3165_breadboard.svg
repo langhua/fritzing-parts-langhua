@@ -13,27 +13,27 @@
   <rect x="240.94" y="240.94" width="118.11" height="118.11" fill="#303030" stroke="none"/>
   <circle cx="254.72" cy="345.28" r="6.30" fill="#c0c0c0" stroke="none"/>
   <text x="300.00" y="314.96" font-size="28.35" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">CN3165</text>
-  <circle id="connector7pin" connectorname="FB" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle id="connector8pin" connectorname="EPAD" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
-  <text x="100.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 176)">8</text>
-  <circle id="connector6pin" connectorname="CHRG" cx="200.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <text x="100.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 176)">9</text>
+  <circle id="connector7pin" connectorname="FB" cx="200.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="200.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
-  <text x="200.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 176)">7</text>
-  <circle id="connector5pin" connectorname="DONE" cx="300.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <text x="200.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 176)">8</text>
+  <circle id="connector6pin" connectorname="CHRG" cx="300.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="300.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
-  <text x="300.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 176)">6</text>
-  <circle id="connector4pin" connectorname="BAT" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <text x="300.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 176)">7</text>
+  <circle id="connector5pin" connectorname="DONE" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="400.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
-  <text x="400.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 176)">5</text>
-  <circle id="connector0pin" connectorname="TEMP" cx="100.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
-  <circle cx="100.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
-  <text x="100.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 424)">1</text>
-  <circle id="connector1pin" connectorname="ISET" cx="200.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <text x="400.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 176)">6</text>
+  <circle id="connector4pin" connectorname="BAT" cx="500.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="500.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <text x="500.0" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 500.0 176)">5</text>
+  <circle id="connector0pin" connectorname="TEMP" cx="200.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="200.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
-  <text x="200.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 424)">2</text>
-  <circle id="connector8pin" connectorname="EPAD" cx="300.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <text x="200.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 424)">1</text>
+  <circle id="connector1pin" connectorname="ISET" cx="300.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="300.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
-  <text x="300.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 424)">9</text>
+  <text x="300.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 424)">2</text>
   <circle id="connector2pin" connectorname="GND" cx="400.0" cy="500.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="400.0" cy="500.0" r="19.1" fill="#2b2b2b"/>
   <text x="400.0" y="424" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 424)">3</text>

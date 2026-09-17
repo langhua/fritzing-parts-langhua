@@ -181,20 +181,18 @@ def _embed_icon(art, cx, cy, s=1.0, icx=0.0, icy=0.0):
 
 
 def gen_breadboard_svg():
-    """面包板 = 绿色 DFN-8 转接板（AGENTS §3b）：上排 4 个 + 下排 5 个 2.54mm 排针，
-    9 脚（EPAD）**插在下排正中间**（= 板中线 x=300），芯片居中。
+    """面包板 = 绿色 DFN-8 转接板（AGENTS §3b）：上排 5 个 + 下排 4 个 2.54mm 排针，芯片居中。
 
-    板为什么是 600 宽（15.24mm）：用户 2026-09-17 要求“9 脚居中”，而焊盘必须落在
-    2.54mm 网格上 → **板中线本身得落在网格上**（板宽要为 2 格 = 5.08mm 的整数倍）。
-    板宽 500 时中线在 x=250（半格），EPAD 无论放 200 还是 300 都只能“偏半格”，
-    而且会撞上芯片（DFN-8 图标 4mm 高）或引脚数字 —— 所以取 600，把 EPAD 摆在下排中间。
-    排针：上排 pin5..8 在 x=100/200/300/400、下排（左→右）= pin1/2/**9(EPAD)**/3/4
-    在 x=100..500，两排 y=100/500。
+    排布（用户 2026-09-17 定）：**下排 1/2/3/4**（x=200..500）、**上排 9/8/7/6/5**
+    （x=100..500，9 = EPAD），两排 y=100/500 —— **4 与 5 右对齐**（末位同列）。
+    板 600 × 600（15.24mm 见方）：上排 5 个排针要占满 x=100..500，两侧各留 100 边距。
+    （历史上先是“EPAD 居中于板中线”的版式，同一天用户改用这个——更贴近实际接线：
+     EPAD 从板右上角引出，与下排末位对齐，看图时一眼能对上排针顺序。）
     """
     U = 39.37
-    x_top = [100 + i * 100 for i in range(4)]           # 上排 4 个
-    x_bot = [100 + i * 100 for i in range(5)]           # 下排 5 个（中间那个是 EPAD）
-    bot_seq = [BOT[0], BOT[1], EPAD_CN, BOT[2], BOT[3]]  # TEMP/ISET/EPAD/GND/VIN
+    top_seq = [EPAD_CN] + TOP                           # 9(EPAD),8(FB),7(CHRG),6(DONE),5(BAT)
+    x_top = [100 + i * 100 for i in range(5)]           # 100..500
+    x_bot = [200 + i * 100 for i in range(4)]           # 200..500 —— 与上排的 5 同列
     y_top, y_bot = 100, 500
     cx, cy = 300, 300
     pad_r = 1.0 * U
@@ -227,10 +225,10 @@ def gen_breadboard_svg():
                  f'dominant-baseline="central" font-family="DroidSans" '
                  f'transform="rotate(-90 {x:.1f} {y})">{cn + 1}</text>\n')
 
-    for cn, x in zip(TOP, x_top):
+    for cn, x in zip(top_seq, x_top):
         pad(cn, x, y_top)
         num(cn, x, 176)
-    for cn, x in zip(bot_seq, x_bot):
+    for cn, x in zip(BOT, x_bot):
         pad(cn, x, y_bot)
         num(cn, x, 424)
     s.append(' </g>\n</svg>\n')
