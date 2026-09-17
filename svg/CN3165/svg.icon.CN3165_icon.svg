@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CN3165 DFN-8 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="4.0mm" height="4.0mm" viewBox="-2.00 -2.00 4.0 4.0">
+  <g id="icon">
+    <rect x="-0.875" y="-2.00" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.875" y="1.50" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.375" y="-2.00" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.375" y="1.50" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.125" y="-2.00" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.125" y="1.50" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.625" y="-2.00" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.625" y="1.50" width="0.25" height="0.50" fill="#c0c0c0" stroke="none"/>
+    <rect x="-1.50" y="-1.50" width="3.0" height="3.0" fill="#303030" stroke="none"/>
+    <circle cx="-1.15" cy="1.15" r="0.16" fill="#c0c0c0" stroke="none"/>
+    <text x="0" y="0.38" font-size="0.72" fill="#ffffff" text-anchor="middle" font-family="DroidSans">CN3165</text>
+  </g>
+</svg>

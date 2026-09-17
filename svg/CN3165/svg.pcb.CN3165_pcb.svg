@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CN3165 DFN-8 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="4.50mm" height="4.50mm" viewBox="-2.25 -2.25 4.50 4.50">
+  <g id="copper1">
+<rect id="connector0pad" x="-0.890" y="1.300" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="TEMP"/>
+<rect id="connector1pad" x="-0.390" y="1.300" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="ISET"/>
+<rect id="connector2pad" x="0.110" y="1.300" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="GND"/>
+<rect id="connector3pad" x="0.610" y="1.300" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="VIN"/>
+<rect id="connector7pad" x="-0.890" y="-2.100" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="FB"/>
+<rect id="connector6pad" x="-0.390" y="-2.100" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="CHRG"/>
+<rect id="connector5pad" x="0.110" y="-2.100" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="DONE"/>
+<rect id="connector4pad" x="0.610" y="-2.100" width="0.280" height="0.800" fill="#F7BD13" stroke="none" connectorname="BAT"/>
+<rect id="connector8pad" x="-1.250" y="-0.900" width="2.500" height="1.800" fill="#F7BD13" stroke="none" connectorname="EPAD"/>
+  </g>
+  <g id="silkscreen">
+<line x1="-1.500" y1="-1.050" x2="-1.500" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.050" y1="-1.500" x2="-1.500" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="1.050" x2="-1.500" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.050" y1="1.500" x2="-1.500" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="-1.050" x2="1.500" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.050" y1="-1.500" x2="1.500" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="1.050" x2="1.500" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.050" y1="1.500" x2="1.500" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<circle cx="-1.15" cy="1.15" r="0.16" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>
