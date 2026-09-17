@@ -92,11 +92,14 @@ def gen_breadboard_svg():
     """面包板 = 绿色 SOT-23-5 转接板（AGENTS §3b）：芯片本体横放居中（引脚朝上下），
     下排 3 个 + 上排 2 个 2.54mm 排针孔，内嵌 SY8089 icon 1:1。
 
-    坐标系：100 单位 = 2.54mm（内部单位）。板 600×600；
-    下排 3 针 EN/GND/SW 在 y=500，上排 2 针 FB/VIN 在 y=100，x 均落 100 整数倍网格。
+    坐标系：100 单位 = 2.54mm（内部单位）。板 **400×500**（10.16×12.70mm）——
+    宽度取能放下下排 3 个排针的最小值（100/200/300 + 两侧各 100 边距）；
+    高度按排针行距 300 单位（7.62mm，> 芯片 1.6mm + 2mm）加上下边距。
+    （原为 600×600 = 15.24mm 见方，用户 2026-09-17 反馈太宽，已收窄。）
+    下排 3 针 EN/GND/SW 在 y=400，上排 2 针 FB/VIN 在 y=100，x 均落 100 整数倍网格。
     """
     U = 39.37
-    bw, bh = 600, 600
+    bw, bh = 400, 500
     pad_r = 1.0 * U
     hole_r = 0.485 * U
     L = []
@@ -105,13 +108,13 @@ def gen_breadboard_svg():
              f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n')
     L.append(' <g id="breadboard">\n')
     L.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
-    L.append('  <g transform="translate(300 300) scale(%.3f)">\n' % U)
+    L.append('  <g transform="translate(200 250) scale(%.3f)">\n' % U)
     L.append(_icon_inner())
     L.append('  </g>\n')
-    # 排针孔：下排 3（EN/GND/SW = cn0/1/2），上排 2（FB/VIN = cn4/3），左→右 x=100/300/500
-    bot_x = [100, 300, 500]
-    top_x = [100, 500]
-    y_bot, y_top = 500, 100
+    # 排针孔：下排 3（EN/GND/SW = cn0/1/2），上排 2（FB/VIN = cn4/3），x=100/200/300 与 100/300
+    bot_x = [100, 200, 300]
+    top_x = [100, 300]
+    y_bot, y_top = 400, 100
 
     def pad(cn, x, y):
         L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
@@ -125,9 +128,9 @@ def gen_breadboard_svg():
         pad(cn, x, y_top)
     # 数字标注：竖排（逆时针 90°）、居中于焊盘（与已验证的 CH340E 转接板一致）
     for cn, x in zip(BOT, bot_x):
-        L.append(f'  <text x="{x:.1f}" y="424" font-size="60" fill="#ffffff" text-anchor="middle" '
+        L.append(f'  <text x="{x:.1f}" y="324" font-size="60" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x:.1f} 424)">{cn + 1}</text>\n')
+                 f'transform="rotate(-90 {x:.1f} 324)">{cn + 1}</text>\n')
     for cn, x in zip(TOP, top_x):
         L.append(f'  <text x="{x:.1f}" y="176" font-size="60" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans" '

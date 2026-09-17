@@ -181,15 +181,22 @@ def _embed_icon(art, cx, cy, s=1.0, icx=0.0, icy=0.0):
 
 
 def gen_breadboard_svg():
-    """面包板 = 绿色 DFN-8 转接板（AGENTS §3b）+ 8 个 2.54mm 排针（上下各 4）+ 居中芯片；
-    9 脚（EPAD）在芯片下方的绿板上单独给一个焊盘。
-    坐标 100 单位 = 2.54mm；板 500×600（放下 4 个排针的最小宽 + 行距 400 ≥ 芯片 3.8mm+2mm）。
-    下排 y=500（pin1-4 左→右）、上排 y=100（pin8-5 左→右）。"""
+    """面包板 = 绿色 DFN-8 转接板（AGENTS §3b）：上排 4 个 + 下排 5 个 2.54mm 排针，
+    9 脚（EPAD）**插在下排正中间**（= 板中线 x=300），芯片居中。
+
+    板为什么是 600 宽（15.24mm）：用户 2026-09-17 要求“9 脚居中”，而焊盘必须落在
+    2.54mm 网格上 → **板中线本身得落在网格上**（板宽要为 2 格 = 5.08mm 的整数倍）。
+    板宽 500 时中线在 x=250（半格），EPAD 无论放 200 还是 300 都只能“偏半格”，
+    而且会撞上芯片（DFN-8 图标 4mm 高）或引脚数字 —— 所以取 600，把 EPAD 摆在下排中间。
+    排针：上排 pin5..8 在 x=100/200/300/400、下排（左→右）= pin1/2/**9(EPAD)**/3/4
+    在 x=100..500，两排 y=100/500。
+    """
     U = 39.37
-    per = 4
-    x_pins = [100 + i * 100 for i in range(per)]
+    x_top = [100 + i * 100 for i in range(4)]           # 上排 4 个
+    x_bot = [100 + i * 100 for i in range(5)]           # 下排 5 个（中间那个是 EPAD）
+    bot_seq = [BOT[0], BOT[1], EPAD_CN, BOT[2], BOT[3]]  # TEMP/ISET/EPAD/GND/VIN
     y_top, y_bot = 100, 500
-    cx, cy = 250, 300
+    cx, cy = 300, 300
     pad_r = 1.0 * U
     hole_r = 0.485 * U
     icon = gen_icon_svg()
@@ -200,7 +207,7 @@ def gen_breadboard_svg():
     if _vm:
         vx, vy, vw, vh = map(float, _vm.groups())
         icx, icy = vx + vw / 2, vy + vh / 2
-    bw, bh = 500, 600
+    bw, bh = 600, 600
     s = []
     s.append('<?xml version="1.0" encoding="utf-8"?>\n')
     s.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" height="{bh / 100 * 2.54:.2f}mm" '
@@ -208,29 +215,24 @@ def gen_breadboard_svg():
     s.append(' <g id="breadboard">\n')
     s.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     s.append(_embed_icon(art, cx, cy, s=U, icx=icx, icy=icy))
-    for i in range(per):
-        x = x_pins[i]
-        for yy, cn in ((y_bot, BOT[i]), (y_top, TOP[i])):
-            s.append(f'  <circle id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
-                     f'cx="{x:.1f}" cy="{yy:.1f}" r="{pad_r:.1f}" '
-                     f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
-            s.append(f'  <circle cx="{x:.1f}" cy="{yy:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 9 脚（散热片）单独焊盘：放在芯片左下、与排针同网格（x=100, y=400）
-    s.append(f'  <circle id="connector{EPAD_CN}pin" connectorname="EPAD" '
-             f'cx="100.0" cy="400.0" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
-    s.append(f'  <circle cx="100.0" cy="400.0" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 引脚数字（逆时针 90°；下排 424 / 上排 176，与已验证的 CH340E/CH340N 一致）
-    for i in range(per):
-        x = x_pins[i]
-        s.append(f'  <text x="{x:.1f}" y="176" font-size="60" fill="#ffffff" text-anchor="middle" '
+
+    def pad(cn, x, y):
+        s.append(f'  <circle id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
+                 f'cx="{x:.1f}" cy="{y:.1f}" r="{pad_r:.1f}" '
+                 f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
+        s.append(f'  <circle cx="{x:.1f}" cy="{y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
+
+    def num(cn, x, y):
+        s.append(f'  <text x="{x:.1f}" y="{y}" font-size="60" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x:.1f} 176)">{TOP[i] + 1}</text>\n')
-        s.append(f'  <text x="{x:.1f}" y="424" font-size="60" fill="#ffffff" text-anchor="middle" '
-                 f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x:.1f} 424)">{BOT[i] + 1}</text>\n')
-    s.append(f'  <text x="100.0" y="320" font-size="60" fill="#ffffff" text-anchor="middle" '
-             f'dominant-baseline="central" font-family="DroidSans" '
-             f'transform="rotate(-90 100.0 320)">9</text>\n')
+                 f'transform="rotate(-90 {x:.1f} {y})">{cn + 1}</text>\n')
+
+    for cn, x in zip(TOP, x_top):
+        pad(cn, x, y_top)
+        num(cn, x, 176)
+    for cn, x in zip(bot_seq, x_bot):
+        pad(cn, x, y_bot)
+        num(cn, x, 424)
     s.append(' </g>\n</svg>\n')
     return "".join(s)
 
