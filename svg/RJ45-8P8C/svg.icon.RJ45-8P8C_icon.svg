@@ -2,7 +2,9 @@
 <!-- RJ45-8P8C -->
 <svg xmlns="http://www.w3.org/2000/svg" width="27.60mm" height="12.23mm" viewBox="-13.80 -6.12 27.60 12.23">
   <g id="icon">
-    <path d="M -12.3 -5.8 L 13.5 -5.8 L 13.5 5.8 L -12.3 5.8 L -13.5 3.7 L -13.5 -3.7 Z" fill="#2b2b2b" stroke="none"/>
+    <path d="M -12.3 -5.8 L 13.5 -5.8 L 13.5 5.8 L -12.3 5.8 L -13.5 5.1 L -13.5 -5.1 Z" fill="#2b2b2b" stroke="none"/>
+    <rect x="-3.90" y="-5.82" width="5.60" height="0.90" fill="#141414" stroke="none"/>
+    <rect x="-3.90" y="4.92" width="5.60" height="0.90" fill="#141414" stroke="none"/>
     <rect x="-12.30" y="-3.795" width="7.00" height="0.45" rx="0.10" fill="#d8b45a" stroke="none"/>
     <rect x="-5.30" y="-3.795" width="7.00" height="0.45" rx="0.10" fill="#b9bdc2" stroke="none"/>
     <rect x="-12.30" y="-2.775" width="7.00" height="0.45" rx="0.10" fill="#d8b45a" stroke="none"/>

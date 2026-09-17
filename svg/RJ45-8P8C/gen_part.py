@@ -68,15 +68,15 @@ def esc(s):
 
 
 def body_path(cx, cy, u, w, ln, skew=None):
-    """俯视本体轮廓：左端（插口端）两个角按 **60°** 斜切，右端（尾部）直角。
+    """俯视本体轮廓：左端（插口端）两个角按 **30°** 斜切，右端（尾部）直角。
 
-    60° 的取法（用户 2026-09-17：「斜边更长、与实物一致」）：进深方向（x）收
-    `skew`，宽度方向（y）收 `skew × tan60°`，斜边于是比 45° 长得多。
+    30° 的取法（用户 2026-09-17 更正）：进深方向（x）收 `skew`，宽度方向（y）收
+    `skew × tan30°` —— 即斜边与本体长边成 30°，斜边沿进深方向爬得长。
     """
     x0, x1 = cx - ln / 2 * u, cx + ln / 2 * u
     y0, y1 = cy - w / 2 * u, cy + w / 2 * u
     c = (skew or 0) * u                      # 进深方向的收进量
-    d = c * math.tan(math.radians(60))       # 宽度方向的收进量
+    d = c * math.tan(math.radians(30))       # 宽度方向的收进量
     return (f"M {x0 + c:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} L {x1:.1f} {y1:.1f} "
             f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
 
@@ -85,7 +85,8 @@ def body_path(cx, cy, u, w, ln, skew=None):
 def gen_icon_svg():
     """**俯视外观**（照产品图里「一眼能认出是 RJ45」的那一面 = 图纸 C2-3）：
 
-    · 本体：插口端两个角 **60° 斜切**（斜边更长，与实物一致）；
+    · 本体：插口端两个角 **30° 斜切**；俯视时在**上/下边缘、银色段对应的位置**有
+      **凹槽**（槽宽 = 银色线长的 80%、槽深 = 线宽的 2 倍、右侧槽壁与金属线平齐）；
     · **8 根沿进深方向的弹片**（间距 1.02 / 跨度 7.14，PIN1 在下、PIN8 在上）：
       **靠插口那一半镀金**（反复插拔处）、**靠尾部那一半是普通银色金属**
       —— 用户 2026-09-17：「水晶头不是全部镀金」；
@@ -105,6 +106,14 @@ def gen_icon_svg():
          '  <g id="icon">\n',
          f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, sk)}" fill="#2b2b2b" stroke="none"/>\n']
     bx = -BODY_L / 2 + 1.2
+    # 上下本体的**凹槽**（用户 2026-09-17）：俯视时银色段那一段是敞开的槽 ——
+    # 槽宽 = 银色线长的 80%、槽深 = 线宽的 2 倍、**右侧槽壁与金属线右端平齐**。
+    nw, nd = blade_l / 2 * 0.80, blade_w * 2
+    nx = bx + blade_l - nw
+    for sy in (-1, 1):
+        ye = sy * BODY_W / 2
+        L.append(f'    <rect x="{nx:.2f}" y="{min(ye, ye - sy * nd):.2f}" width="{nw:.2f}" '
+                 f'height="{nd:.2f}" fill="#141414" stroke="none"/>\n')
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
         L.append(f'    <rect x="{bx:.2f}" y="{yy - blade_w / 2:.3f}" width="{blade_l / 2:.2f}" '
