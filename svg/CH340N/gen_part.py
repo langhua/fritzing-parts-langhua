@@ -245,14 +245,15 @@ def gen_pcb_svg():
         pads.append(f'<rect id="connector{cn}pad" x="{x - pw / 2:.3f}" y="{-row - pl / 2:.3f}" '
                     f'width="{pw:.3f}" height="{pl:.3f}" fill="#F7BD13" stroke="none" '
                     f'connectorname="{esc(PINS[cn])}"/>')
-    # 丝印本体（4.9×3.9，中心 0,0；框边 y±1.95 < 焊盘内缘 2.125 → 与焊盘零相交）+ pin1 圆点（本体左下角内）
-    silk.append('<rect x="-2.45" y="-1.95" width="4.9" height="3.9" fill="none" '
+    # 丝印本体（5.152×3.043，中心 0,0 —— 尺寸照嘉立创封装：它特意收窄以避开焊盘）
+    # + pin1 实心圆点（丝印框内左下角）
+    silk.append('<rect x="-2.576" y="-1.5215" width="5.152" height="3.043" fill="none" '
                 'stroke="#f0f0f0" stroke-width="0.15"/>')
-    silk.append('<circle cx="-2.05" cy="1.55" r="0.25" fill="#f0f0f0" stroke="none"/>')
+    silk.append('<circle cx="-2.0" cy="1.15" r="0.25" fill="#f0f0f0" stroke="none"/>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
-    # viewBox 贴合（裁边）：内容 x±2.45（丝印）、y±3.875（焊盘），各留 0.15
-    SX, SY, M = 2.45, 3.875, 0.15
+    # viewBox 贴合（裁边）：内容 x±2.576（丝印）、y±3.6145（焊盘），各留 0.15
+    SX, SY, M = 2.576, 3.6145, 0.15
     return (SVG_HDR +
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{2 * (SX + M):.2f}mm" height="{2 * (SY + M):.2f}mm" '
             f'viewBox="{-(SX + M):.2f} {-(SY + M):.2f} {2 * (SX + M):.2f} {2 * (SY + M):.2f}">\n'
