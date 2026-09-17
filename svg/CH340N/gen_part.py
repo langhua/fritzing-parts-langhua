@@ -207,12 +207,23 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------------ pcb
 def gen_pcb_svg():
-    """PCB 视图（SOP-8 真实封装）：焊盘 RECT 0.7×2.2mm、间距 1.27mm、行中心 y=±3.7
-    （与同族 CH340C 相同：150mil 宽族的引脚跨距）。下排 connector0-3（pin1-4）y=+3.7 左→右、
-    上排 connector7-4（pin8-5）y=-3.7 左→右。丝印本体 5.4×4.5mm + pin1 圆点。"""
-    pw, pl = 0.7, 2.2        # 焊盘宽（x）× 长（y）
-    pitch = 1.27             # 引脚间距
-    row = 3.7                # 上下排焊盘中心 y = ±3.7
+    """PCB 视图（SOP-8 / SOIC-8 **150mil** 标准盘：IPC-7351 命名 SOIC127P600X175-8N）：
+    脚距 1.27mm、**焊盘中心跳距 6.00mm**（row=±3.0）、焊盘 0.60(宽,x)×1.75(长,y)mm；
+    本体 3.9(宽,y)×4.9(长,x)，丝印框 4.9×3.9（框边 y±1.95 / x±2.45）——
+    与焊盘（y 2.125..3.875、x ±(1.905±0.3)）零相交。
+    下排 connector0-3（pin1-4）y=+3.0 左→右、上排 connector7-4（pin8-5）y=-3.0 左→右。
+
+    数据来源（2026-09-17 修正）：
+      · 脚距 1.27mm 与塑体宽 3.9mm —— CH340 手册第 1 页「3、封装」表（CH340N = SOP-8）
+      · WCH 官方 PCB 工程里给 CH340N 用的封装名就是 `SOP8`
+        （D:\\Downloads\\CH340PCB.ZIP → SERIAL/TTL/CH340N4T-R0/…SchDoc 的 ModelName）
+      · 跳距 6.00 / 焊盘 1.75：IPC-7351 的标准 SOIC-8 land pattern 名义值
+        （封装名 SOIC127P600X175-8N 里就写着 127=1.27mm、600=6.00mm 跳距、175=1.75mm 盘长）
+      ⚠ 之前这里照抄了 svg/CH340C（SOP-16）的 row=3.7 / 焊盘 2.2——**无依据**，已修正。
+    """
+    pw, pl = 0.6, 1.75       # 焊盘宽（x）× 长（y）—— IPC-7351 SOIC-8
+    pitch = 1.27             # 引脚间距（手册）
+    row = 3.0                # 上下排焊盘中心 y = ±3.0 → 跳距 6.00mm
     per = len(PINS) // 2
     x0 = -(per - 1) * pitch / 2        # 最左焊盘中心 x = -1.905
     pads, silk = [], []
@@ -228,14 +239,14 @@ def gen_pcb_svg():
         pads.append(f'<rect id="connector{cn}pad" x="{x - pw / 2:.3f}" y="{-row - pl / 2:.3f}" '
                     f'width="{pw:.3f}" height="{pl:.3f}" fill="#F7BD13" stroke="none" '
                     f'connectorname="{esc(PINS[cn])}"/>')
-    # 丝印本体（5.4×4.5，中心 0,0；y±2.25 < 焊盘内缘 2.6 → 与焊盘零相交）+ pin1 圆点
-    silk.append('<rect x="-2.7" y="-2.25" width="5.4" height="4.5" fill="none" '
+    # 丝印本体（4.9×3.9，中心 0,0；框边 y±1.95 < 焊盘内缘 2.125 → 与焊盘零相交）+ pin1 圆点（本体左下角内）
+    silk.append('<rect x="-2.45" y="-1.95" width="4.9" height="3.9" fill="none" '
                 'stroke="#f0f0f0" stroke-width="0.15"/>')
-    silk.append('<circle cx="-1.905" cy="1.9" r="0.25" fill="#f0f0f0" stroke="none"/>')
+    silk.append('<circle cx="-2.05" cy="1.55" r="0.25" fill="#f0f0f0" stroke="none"/>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
-    # viewBox 贴合（裁边）：内容 x±2.7（丝印）、y±4.8（焊盘），各留 0.15
-    SX, SY, M = 2.7, 4.8, 0.15
+    # viewBox 贴合（裁边）：内容 x±2.45（丝印）、y±3.875（焊盘），各留 0.15
+    SX, SY, M = 2.45, 3.875, 0.15
     return (SVG_HDR +
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{2 * (SX + M):.2f}mm" height="{2 * (SY + M):.2f}mm" '
             f'viewBox="{-(SX + M):.2f} {-(SY + M):.2f} {2 * (SX + M):.2f} {2 * (SY + M):.2f}">\n'
