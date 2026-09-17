@@ -65,17 +65,18 @@ def esc(s):
 
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
-    """拨动开关俯视图：深灰本体 8.6 × 4.4 + **右端伸出的白色拨柄** + pin1 圆点 + 丝印名。"""
+    """俯视图：深灰本体 8.6 × 4.4 + **下边缘伸出的白色拨柄**（用户 2026-09-17 定）
+    + pin1 圆点 + 丝印名。"""
     hw, hh = BODY_W / 2.0, BODY_H / 2.0
-    W = BODY_W + ACT_L + 1.0
-    H = BODY_H + 1.0
+    W = BODY_W + 1.0
+    H = BODY_H + ACT_L + 1.0
     x0, y0 = -(hw + 0.5), -(hh + 0.5)
     L = [SVG_HDR,
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.2f}mm" height="{H:.2f}mm" '
          f'viewBox="{x0:.2f} {y0:.2f} {W:.2f} {H:.2f}">\n',
          '  <g id="icon">\n']
-    L.append(f'    <rect x="{hw:.3f}" y="{-ACT_W / 2:.3f}" width="{ACT_L:.2f}" height="{ACT_W:.2f}" '
-             f'rx="0.2" ry="0.2" fill="#e8e8e8" stroke="none"/>\n')             # 拨柄
+    L.append(f'    <rect x="{-ACT_W / 2:.3f}" y="{hh:.3f}" width="{ACT_W:.2f}" '
+             f'height="{ACT_L:.2f}" rx="0.2" ry="0.2" fill="#e8e8e8" stroke="none"/>\n')
     L.append(f'    <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
              f'fill="#2b2b2b" stroke="none"/>\n')                              # 本体
     L.append(f'    <circle cx="{-hw + 0.75:.3f}" cy="{-hh + 0.75:.3f}" r="0.30" fill="#c0c0c0" '
@@ -107,9 +108,9 @@ def gen_breadboard_svg():
          ' <g id="breadboard">\n',
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
-    # 元件（1:1）：拨柄朝右
-    L.append(f'  <rect x="{cx + BODY_W / 2 * U:.1f}" y="{cy - ACT_W / 2 * U:.1f}" '
-             f'width="{ACT_L * U:.1f}" height="{ACT_W * U:.1f}" rx="8" ry="8" fill="#e8e8e8" '
+    # 元件（1:1）：拨柄朝下
+    L.append(f'  <rect x="{cx - ACT_W / 2 * U:.1f}" y="{cy + BODY_H / 2 * U:.1f}" '
+             f'width="{ACT_W * U:.1f}" height="{ACT_L * U:.1f}" rx="8" ry="8" fill="#e8e8e8" '
              f'stroke="none"/>\n')
     L.append(f'  <rect x="{cx - BODY_W / 2 * U:.1f}" y="{cy - BODY_H / 2 * U:.1f}" '
              f'width="{BODY_W * U:.1f}" height="{BODY_H * U:.1f}" fill="#2b2b2b" stroke="none"/>\n')
@@ -129,18 +130,26 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------ schematic
 def gen_schematic_svg():
-    """矩形框符号（AGENTS §5）：左列 pin1/2/3 上→下、右列 pin4/5 上→下，框内写型号。
+    """原理图（照用户 2026-09-17 给的截图，不用 AGENTS §5 的左右两列矩形框版式）：
 
-    脚名与脚号相同（见文件头），所以只标脚号、不重复写名字；引脚线/数字/框线同色黑、
-    整图同字号 35；四角留 CORNER=100 的空白。物理尺寸 width/height(in)，1000 单位 = 1in。
+    · 矩形框，框内**三个空心圆** = pin1/2/3 的框内端点；
+    · 三个圆各向下引线，**穿出框底** ⇒ 底部三脚，框下从左到右 = **3、2、1**；
+    · 框内一条横线 = 滑动件：**左半虚线、右半实线**（分界在中间那脚）；
+    · 左/右各一个水平脚：左 = **5**、右 = **4**，与圆圈同一高度；
+    · 框内只标脚名 5（左下）/ 4（右下）—— 与截图一致。
+
+    引脚线/数字/框线同色黑、整图同字号 35；引脚数字在引线左侧（上下脚）/上方（左右脚）。
     """
     P, WIRE, CH, FN = 100, 130, 35, 35
-    CORNER = 100
-    BX0, BY0 = 340, 200
-    BW, BH = 720, 3 * P + 2 * CORNER          # 500
+    BX0, BY0 = 300, 200
+    BW, BH = 400, 200
     BX1, BY1 = BX0 + BW, BY0 + BH
-    VBX, VBY = BX0 - WIRE - 5, BY0 - WIRE - 5
-    VBW, VBH = BW + 2 * WIRE + 10, BH + 2 * WIRE + 10
+    Y_SIDE = BY0 + 80                         # 左右脚与圆圈同一高度
+    R_CIRC = 20
+    Y_BAR = Y_SIDE + R_CIRC + 15              # 滑动件的横线（在圆圈下方）
+    X_MID = BX0 + BW // 2
+    VBX, VBY = BX0 - WIRE - 20, BY0 - 20
+    VBW, VBH = BW + 2 * WIRE + 40, BH + WIRE + 40
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{VBW / 1000:.6f}in" '
          f'height="{VBH / 1000:.6f}in" viewBox="{VBX} {VBY} {VBW} {VBH}">\n',
@@ -148,24 +157,40 @@ def gen_schematic_svg():
          f'  <rect class="interior rect" x="{BX0}" y="{BY0}" width="{BW}" height="{BH}" '
          f'fill="#FFFFFF" stroke="#787878" stroke-width="5"/>\n']
 
-    def wire(cn, x1, y1, x2, y2, tx, ty):
-        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
-                 f'x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#000000" stroke-width="5"/>\n')
-        L.append(f'  <rect class="terminal" id="connector{cn}terminal" x="{tx - 11}" y="{ty - 11}" '
+    def terminal(cn, x, y):
+        L.append(f'  <rect class="terminal" id="connector{cn}terminal" x="{x - 11}" y="{y - 11}" '
                  f'width="22" height="22" fill="none" stroke="none"/>\n')
 
-    for i, cn in enumerate((0, 1, 2)):        # 左列
-        y = BY0 + CORNER + P // 2 + i * P
-        wire(cn, BX0, y, BX0 - WIRE, y, BX0 - WIRE, y)
-        L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="middle" font-family="DroidSans">{cn + 1}</text>\n')
-    for i, cn in enumerate((3, 4)):           # 右列
-        y = BY0 + CORNER + P // 2 + i * P
-        wire(cn, BX1, y, BX1 + WIRE, y, BX1 + WIRE, y)
-        L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="middle" font-family="DroidSans">{cn + 1}</text>\n')
-    L.append(f'  <text x="{BX0 + BW // 2}" y="{BY0 + BH // 2 + 20}" font-size="50" fill="#000000" '
-             f'text-anchor="middle" font-family="DroidSans">{esc(SCHEM_LABEL)}</text>\n')
+    # 底部三个脚：框下从左到右 = 3、2、1（与截图一致）
+    for i, cn in enumerate((2, 1, 0)):
+        x = BX0 + 100 + i * P
+        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
+                 f'x1="{x}" y1="{Y_SIDE + R_CIRC}" x2="{x}" y2="{BY1 + WIRE}" stroke="#000000" '
+                 f'stroke-width="5"/>\n')
+        terminal(cn, x, BY1 + WIRE)
+        L.append(f'  <text x="{x - FN}" y="{BY1 + 52}" font-size="{FN}" fill="#000000" '
+                 f'font-family="DroidSans">{cn + 1}</text>\n')
+        L.append(f'  <circle cx="{x}" cy="{Y_SIDE}" r="{R_CIRC}" fill="none" stroke="#000000" '
+                 f'stroke-width="4"/>\n')
+    # 左右两个脚：左 = 5、右 = 4
+    for cn, sx in ((4, -1), (3, 1)):
+        xe = BX0 if sx < 0 else BX1
+        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
+                 f'x1="{xe}" y1="{Y_SIDE}" x2="{xe + sx * WIRE}" y2="{Y_SIDE}" stroke="#000000" '
+                 f'stroke-width="5"/>\n')
+        terminal(cn, xe + sx * WIRE, Y_SIDE)
+        L.append(f'  <text x="{xe + sx * WIRE // 2}" y="{Y_SIDE - 12}" font-size="{FN}" '
+                 f'fill="#000000" text-anchor="middle" font-family="DroidSans">{cn + 1}</text>\n')
+    # 滑动件：左半虚线、右半实线
+    L.append(f'  <line x1="{BX0 + 100}" y1="{Y_BAR}" x2="{X_MID}" y2="{Y_BAR}" stroke="#000000" '
+             f'stroke-width="5" stroke-dasharray="14 10"/>\n')
+    L.append(f'  <line x1="{X_MID}" y1="{Y_BAR}" x2="{BX0 + 300}" y2="{Y_BAR}" stroke="#000000" '
+             f'stroke-width="5"/>\n')
+    # 框内脚名（照截图：只在左下写 5、右下写 4）
+    L.append(f'  <text x="{BX0 + CH}" y="{BY1 - CH}" font-size="{FN}" fill="#000000" '
+             f'font-family="DroidSans">5</text>\n')
+    L.append(f'  <text x="{BX1 - CH}" y="{BY1 - CH}" font-size="{FN}" fill="#000000" '
+             f'text-anchor="end" font-family="DroidSans">4</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
