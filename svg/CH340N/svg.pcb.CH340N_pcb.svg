@@ -14,6 +14,6 @@
   </g>
   <g id="silkscreen">
 <rect x="-2.7" y="-2.25" width="5.4" height="4.5" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
-<circle cx="-1.905" cy="1.9" r="0.25" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+<circle cx="-1.905" cy="1.9" r="0.25" fill="#f0f0f0" stroke="none"/>
   </g>
 </svg>

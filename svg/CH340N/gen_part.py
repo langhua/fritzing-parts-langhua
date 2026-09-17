@@ -231,7 +231,7 @@ def gen_pcb_svg():
     # 丝印本体（5.4×4.5，中心 0,0；y±2.25 < 焊盘内缘 2.6 → 与焊盘零相交）+ pin1 圆点
     silk.append('<rect x="-2.7" y="-2.25" width="5.4" height="4.5" fill="none" '
                 'stroke="#f0f0f0" stroke-width="0.15"/>')
-    silk.append('<circle cx="-1.905" cy="1.9" r="0.25" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>')
+    silk.append('<circle cx="-1.905" cy="1.9" r="0.25" fill="#f0f0f0" stroke="none"/>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
     # viewBox 贴合（裁边）：内容 x±2.7（丝印）、y±4.8（焊盘），各留 0.15
