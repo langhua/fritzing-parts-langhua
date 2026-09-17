@@ -19,5 +19,7 @@
     <path d="M -7.300 2.325 L 6.275 2.325 A 0.225 0.225 0 0 1 6.275 2.775 L -7.300 2.775 Z" fill="#b9bdc2" stroke="none"/>
     <path d="M -7.300 3.345 L -12.075 3.345 A 0.225 0.225 0 0 0 -12.075 3.795 L -7.300 3.795 Z" fill="#d8b45a" stroke="none"/>
     <path d="M -7.300 3.345 L 4.775 3.345 A 0.225 0.225 0 0 1 4.775 3.795 L -7.300 3.795 Z" fill="#b9bdc2" stroke="none"/>
+    <rect x="6.70" y="-4.90" width="2.20" height="4.60" rx="0.30" fill="#141414" stroke="none"/>
+    <rect x="6.70" y="0.30" width="2.20" height="4.60" rx="0.30" fill="#141414" stroke="none"/>
   </g>
 </svg>
