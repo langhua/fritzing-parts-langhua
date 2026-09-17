@@ -28,6 +28,7 @@ gen_part.py — 生成 Fritzing 自定义元件 RJ45-8P8C (Coorle 8P8C 直插式
 
 用法：python gen_part.py
 """
+import math
 import os
 import zipfile
 
@@ -67,25 +68,35 @@ def esc(s):
 
 
 def body_path(cx, cy, u, w, ln, skew=None):
-    """俯视本体轮廓：左端（插口端）带 45° 斜角，右端（尾部）直角。返回 path 的 d。"""
+    """俯视本体轮廓：左端（插口端）两个角按 **60°** 斜切，右端（尾部）直角。
+
+    60° 的取法（用户 2026-09-17：「斜边更长、与实物一致」）：进深方向（x）收
+    `skew`，宽度方向（y）收 `skew × tan60°`，斜边于是比 45° 长得多。
+    """
     x0, x1 = cx - ln / 2 * u, cx + ln / 2 * u
     y0, y1 = cy - w / 2 * u, cy + w / 2 * u
-    c = (skew or 0) * u                      # 斜角在进深方向的收进量
+    c = (skew or 0) * u                      # 进深方向的收进量
+    d = c * math.tan(math.radians(60))       # 宽度方向的收进量
     return (f"M {x0 + c:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} L {x1:.1f} {y1:.1f} "
-            f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - c:.1f} L {x0:.1f} {y0 + c:.1f} Z")
+            f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
 
 
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
-    """**俯视外观**（用户 2026-09-17 定）：照产品图里「一眼能认出是 RJ45」的那一面 ——
-    本体（插口端带斜角）+ **8 根沿进深方向排布的金属弹片**（间距 1.02 / 跨度 7.14，
-    PIN1 在下、PIN8 在上，与图纸 C2-3 的标注同向）+ 尾部两个卡扣。
+    """**俯视外观**（照产品图里「一眼能认出是 RJ45」的那一面 = 图纸 C2-3）：
 
-    原来画的是另一端（带 8 个插板引脚的底面 + 两个定位柱），辨识度差，已换掉。
+    · 本体：插口端两个角 **60° 斜切**（斜边更长，与实物一致）；
+    · **8 根沿进深方向的弹片**（间距 1.02 / 跨度 7.14，PIN1 在下、PIN8 在上）：
+      **靠插口那一半镀金**（反复插拔处）、**靠尾部那一半是普通银色金属**
+      —— 用户 2026-09-17：「水晶头不是全部镀金」；
+    · 尾部两个卡扣；
+    · **不写元件名** —— 用户 2026-09-17：「要力争画出来别人一看就是 RJ45，
+      而不是写个名字」。
     """
     u = 1.0
     sk = 1.2
     blade_l, blade_w = 14.0, 0.45
+    gold, silver = "#d8b45a", "#b9bdc2"
     x0, x1 = -(BODY_L / 2 + 0.3), (BODY_L / 2 + 0.3)
     y0, y1 = -(BODY_W / 2 + 0.3), (BODY_W / 2 + 0.3)
     L = [SVG_HDR,
@@ -96,13 +107,14 @@ def gen_icon_svg():
     bx = -BODY_L / 2 + 1.2
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
-        L.append(f'    <rect x="{bx:.2f}" y="{yy - blade_w / 2:.3f}" width="{blade_l:.2f}" '
-                 f'height="{blade_w:.2f}" rx="0.10" fill="#d8b45a" stroke="none"/>\n')
+        L.append(f'    <rect x="{bx:.2f}" y="{yy - blade_w / 2:.3f}" width="{blade_l / 2:.2f}" '
+                 f'height="{blade_w:.2f}" rx="0.10" fill="{gold}" stroke="none"/>\n')
+        L.append(f'    <rect x="{bx + blade_l / 2:.2f}" y="{yy - blade_w / 2:.3f}" '
+                 f'width="{blade_l / 2:.2f}" height="{blade_w:.2f}" rx="0.10" fill="{silver}" '
+                 f'stroke="none"/>\n')
     for sy in (-1, 1):                                                       # 尾部两个卡扣
         L.append(f'    <rect x="{bx + blade_l + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
                  f'height="2.60" rx="0.15" fill="#cfcfcf" stroke="none"/>\n')
-    L.append(f'    <text x="{-BODY_L / 2 + 2.0:.2f}" y="{-BODY_W / 2 + 1.60:.2f}" font-size="2.0" '
-             f'fill="#9a9a9a" font-family="DroidSans">{esc(ICON_LABEL)}</text>\n')
     L.append('  </g>\n</svg>\n')
     return "".join(L)
 

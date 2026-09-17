@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="33.02mm" height="22.86mm" viewBox="0 0 1300 900">
  <g id="breadboard">
   <rect x="0" y="0" width="1300" height="900" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
-  <path d="M 165.7 321.1 L 1181.5 321.1 L 1181.5 778.9 L 165.7 778.9 L 118.5 731.7 L 118.5 368.3 Z" fill="#2b2b2b" stroke="none"/>
+  <path d="M 165.7 321.1 L 1181.5 321.1 L 1181.5 778.9 L 165.7 778.9 L 118.5 697.1 L 118.5 402.9 Z" fill="#2b2b2b" stroke="none"/>
   <rect x="130.3" y="420.1" width="47.2" height="259.8" fill="#101010" stroke="none"/>
   <rect x="165.7" y="441.7" width="354.3" height="216.5" fill="#8a8a8a" stroke="none"/>
   <rect x="799.6" y="402.4" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
