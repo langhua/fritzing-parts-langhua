@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- H1102NLT -->
+<svg xmlns="http://www.w3.org/2000/svg" width="9.51mm" height="13.70mm" viewBox="-4.75 -6.85 9.51 13.70">
+  <g id="icon">
+    <rect x="-4.755" y="-4.825" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="-4.825" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="-3.555" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="-3.555" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="-2.285" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="-2.285" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="-1.015" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="-1.015" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="0.255" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="0.255" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="1.525" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="1.525" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="2.795" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="2.795" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-4.755" y="4.065" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="3.555" y="4.065" width="1.2" height="0.760" fill="#c0c0c0" stroke="none"/>
+    <rect x="-3.555" y="-6.350" width="7.11" height="12.70" fill="#2b2b2b" stroke="none"/>
+    <circle cx="-2.286" cy="-4.445" r="0.635" fill="none" stroke="#c0c0c0" stroke-width="0.2"/>
+    <text x="0" y="0.5" font-size="1.3" fill="#ffffff" text-anchor="middle" font-family="DroidSans">H1102NLT</text>
+  </g>
+</svg>
