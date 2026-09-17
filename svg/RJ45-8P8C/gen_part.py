@@ -257,11 +257,14 @@ def gen_pcb_svg():
     · **两列中心距 1.50**、**同列相邻两脚中心距 2.04**；
     · 丝印方框 **11.80（左右边线）× 12.20（上下边线）**，左侧第一列中心距左边线 **1.50**；
     · 脚序：左列 pin1..4（上→下）、右列 pin5..8（上→下）—— 双列插座的常见排法。
+    · 两列**上下错位**（用户 2026-09-17）：左列最上那个距顶边 2.27、右列最下那个距底边 2.27。
+    · 丝印上**不写**元件名、**不画** pin1 点（用户 2026-09-17）。
     """
     PAD_D, HOLE_D = 1.60, 1.00
     COL_P, ROW_P = 1.50, 2.04
     BOX_W, BOX_H = 11.80, 12.20
     COL0 = 1.50
+    EDGE_GAP = 2.27                            # 左列最上距顶边 / 右列最下距底边
     M = 1.5                                      # 画布留边
     W, H = BOX_W + 2 * M, BOX_H + 2 * M
     x0, y0 = -W / 2, -H / 2
@@ -270,7 +273,11 @@ def gen_pcb_svg():
     for i in range(N_PINS):
         col, row = divmod(i, 4)
         x = bx + COL0 + col * COL_P
-        y = by + BOX_H / 2 + (row - 1.5) * ROW_P
+        # 两列**上下错位**：左列最上距顶边 EDGE_GAP，右列最下距底边同值
+        if col == 0:
+            y = by + EDGE_GAP + row * ROW_P
+        else:
+            y = by + BOX_H - EDGE_GAP - (3 - row) * ROW_P
         pads.append(f'<circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" '
                     f'cx="{x:.3f}" cy="{y:.3f}" r="{PAD_D / 2:.3f}" fill="#F7BD13" '
                     f'stroke="none"/>')
@@ -278,10 +285,6 @@ def gen_pcb_svg():
                     f'fill="#0b2b3a" stroke="none"/>')
     silk.append(f'<rect x="{bx:.3f}" y="{by:.3f}" width="{BOX_W:.2f}" height="{BOX_H:.2f}" '
                 f'fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<circle cx="{bx + 0.8:.3f}" cy="{by + 0.8:.3f}" '
-                f'r="0.45" fill="#f0f0f0" stroke="none"/>')          # pin1 标记（框内左上角）
-    silk.append(f'<text x="{bx + COL0 + 1.9:.2f}" y="{by + BOX_H - 0.8:.2f}" font-size="1.4" '
-                f'fill="#f0f0f0" font-family="DroidSans">{esc(ICON_LABEL)}</text>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
     return (SVG_HDR +
