@@ -2,17 +2,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="33.02mm" height="22.86mm" viewBox="0 0 1300 900">
  <g id="breadboard">
   <rect x="0" y="0" width="1300" height="900" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
-  <path d="M 210.6 321.1 L 501.2 321.1 L 501.2 356.5 L 819.3 356.5 L 819.3 321.1 L 1181.5 321.1 L 1181.5 778.9 L 819.3 778.9 L 819.3 743.5 L 501.2 743.5 L 501.2 778.9 L 210.6 778.9 L 118.5 725.8 L 118.5 374.2 Z" fill="#2b2b2b" stroke="none"/>
-  <rect x="799.6" y="402.4" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="442.5" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="482.7" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="522.8" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="563.0" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="603.1" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="643.3" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <rect x="799.6" y="683.5" width="63.0" height="14.2" fill="#c8c8c8" stroke="none"/>
-  <circle cx="1019.3" cy="375.0" r="29.5" fill="#e8e8e8" stroke="none"/>
-  <circle cx="1019.3" cy="725.0" r="29.5" fill="#e8e8e8" stroke="none"/>
+  <g transform="translate(650 550) scale(39.37)"><g id="icon">
+    <path d="M -11.2 -5.8 L -3.8 -5.8 L -3.8 -4.9 L 4.3 -4.9 L 4.3 -5.8 L 13.5 -5.8 L 13.5 5.8 L 4.3 5.8 L 4.3 4.9 L -3.8 4.9 L -3.8 5.8 L -11.2 5.8 L -13.5 4.5 L -13.5 -4.5 Z" fill="#2b2b2b" stroke="none"/>
+    <path d="M -5.800 -3.795 L -12.075 -3.795 A 0.225 0.225 0 0 0 -12.075 -3.345 L -5.800 -3.345 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 -3.795 L 4.075 -3.795 A 0.225 0.225 0 0 1 4.075 -3.345 L -5.800 -3.345 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 -2.775 L -12.075 -2.775 A 0.225 0.225 0 0 0 -12.075 -2.325 L -5.800 -2.325 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 -2.775 L 2.575 -2.775 A 0.225 0.225 0 0 1 2.575 -2.325 L -5.800 -2.325 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 -1.755 L -12.075 -1.755 A 0.225 0.225 0 0 0 -12.075 -1.305 L -5.800 -1.305 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 -1.755 L 4.075 -1.755 A 0.225 0.225 0 0 1 4.075 -1.305 L -5.800 -1.305 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 -0.735 L -12.075 -0.735 A 0.225 0.225 0 0 0 -12.075 -0.285 L -5.800 -0.285 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 -0.735 L 2.575 -0.735 A 0.225 0.225 0 0 1 2.575 -0.285 L -5.800 -0.285 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 0.285 L -12.075 0.285 A 0.225 0.225 0 0 0 -12.075 0.735 L -5.800 0.735 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 0.285 L 4.075 0.285 A 0.225 0.225 0 0 1 4.075 0.735 L -5.800 0.735 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 1.305 L -12.075 1.305 A 0.225 0.225 0 0 0 -12.075 1.755 L -5.800 1.755 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 1.305 L 2.575 1.305 A 0.225 0.225 0 0 1 2.575 1.755 L -5.800 1.755 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 2.325 L -12.075 2.325 A 0.225 0.225 0 0 0 -12.075 2.775 L -5.800 2.775 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 2.325 L 4.075 2.325 A 0.225 0.225 0 0 1 4.075 2.775 L -5.800 2.775 Z" fill="#b9bdc2" stroke="none"/>
+    <path d="M -5.800 3.345 L -12.075 3.345 A 0.225 0.225 0 0 0 -12.075 3.795 L -5.800 3.795 Z" fill="#d8b45a" stroke="none"/>
+    <path d="M -5.800 3.345 L 2.575 3.345 A 0.225 0.225 0 0 1 2.575 3.795 L -5.800 3.795 Z" fill="#b9bdc2" stroke="none"/>
+    <rect x="6.70" y="-4.90" width="2.20" height="4.60" rx="0.30" fill="#141414" stroke="none"/>
+    <rect x="6.70" y="0.30" width="2.20" height="4.60" rx="0.30" fill="#141414" stroke="none"/>
+  </g></g>
   <circle id="connector0pin" connectorname="1" cx="300" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="300" cy="100" r="19.1" fill="#2b2b2b"/>
   <text x="300" y="181" font-size="60" fill="#ffffff" text-anchor="middle" font-family="DroidSans">1</text>

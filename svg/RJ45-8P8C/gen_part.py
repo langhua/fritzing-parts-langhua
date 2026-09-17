@@ -30,6 +30,7 @@ gen_part.py — 生成 Fritzing 自定义元件 RJ45-8P8C (Coorle 8P8C 直插式
 """
 import math
 import os
+import re
 import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -80,6 +81,16 @@ SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8
 
 def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+_ICON_RE = re.compile(r'(<g\s+id="icon"[^>]*>.*?</g>)\s*</svg>', re.S)
+
+
+def icon_group():
+    """取出 icon 的 `<g id="icon">…</g>`，供面包板 1:1 复用（AGENTS §3b：
+    面包板上的元件要与 icon 同形，不然两个视图各画一套、迟早漂移）。"""
+    m = _ICON_RE.search(gen_icon_svg())
+    return m.group(1) if m else ""
 
 
 def body_path(cx, cy, u, w, ln, skew_w=None, notch=None):
@@ -173,19 +184,9 @@ def gen_breadboard_svg():
          ' <g id="breadboard">\n',
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
-    # 元件 1:1（横放俯视）
-    L.append(f'  <path d="{body_path(cx, cy, U, BODY_W, BODY_L, TRIM_W, (NOTCH_X, NOTCH_W, NOTCH_D))}" '
-             f'fill="#2b2b2b" stroke="none"/>\n')
-    px = cx + (BODY_L / 2 - DIP_FROM_TAIL) * U
-    for i in range(N_PINS):
-        yy = cy - SPAN / 2 * U + i * PITCH * U
-        L.append(f'  <rect x="{px - 0.5 * U:.1f}" y="{yy - 0.18 * U:.1f}" width="{1.6 * U:.1f}" '
-                 f'height="{0.36 * U:.1f}" fill="#c8c8c8" stroke="none"/>\n')
-    for sy in (-1, 1):
-        L.append(f'  <circle cx="{px + POST_BACK * U:.1f}" '
-                 f'cy="{cy + sy * POST_PITCH / 2 * U:.1f}" r="{POST_D / 2 * U:.1f}" '
-                 f'fill="#e8e8e8" stroke="none"/>\n')
-    # 8 个排针 + 数字（数字放排针上方 = 远离元件一侧）
+    # 元件 1:1：直接复用 icon 的 <g id="icon">（icon 的单位是 mm，故 scale=U）
+    L.append(f'  <g transform="translate({cx} {cy}) scale({U})">{icon_group()}</g>\n')
+    # 8 个排针 + 数字（数字放排针内侧 = 朝板心，AGENTS §3b）
     for i, x in enumerate(xs):
         L.append(f'  <circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" cx="{x}" '
                  f'cy="{y_pin}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
