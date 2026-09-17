@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- RJ45-8P8C -->
+<svg xmlns="http://www.w3.org/2000/svg" width="14.7mm" height="15.2mm" viewBox="-7.3 -7.6 14.7 15.2">
+  <g id="copper1">
+<circle id="connector0pin" connectorname="M0+" cx="-4.340" cy="-3.570" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-4.340" cy="-3.570" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector1pin" connectorname="M0-" cx="-2.840" cy="-2.550" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-2.840" cy="-2.550" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector2pin" connectorname="M1+" cx="-4.340" cy="-1.530" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-4.340" cy="-1.530" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector3pin" connectorname="M1-" cx="-2.840" cy="-0.510" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-2.840" cy="-0.510" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector4pin" connectorname="M2+" cx="-4.340" cy="0.510" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-4.340" cy="0.510" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector5pin" connectorname="M2-" cx="-2.840" cy="1.530" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-2.840" cy="1.530" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector6pin" connectorname="M3+" cx="-4.340" cy="2.550" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-4.340" cy="2.550" r="0.350" fill="#0b2b3a" stroke="none"/>
+<circle id="connector7pin" connectorname="M3-" cx="-2.840" cy="3.570" r="0.600" fill="#F7BD13" stroke="none"/>
+<circle cx="-2.840" cy="3.570" r="0.350" fill="#0b2b3a" stroke="none"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<rect x="-5.840" y="-6.100" width="11.68" height="12.20" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
+  </g>
+</svg>
