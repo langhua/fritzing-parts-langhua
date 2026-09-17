@@ -18,10 +18,11 @@ gen_part.py — 生成 Fritzing 自定义元件 H1102NLT (Pulse 10/100Base-T 单
      实测 16 个 RECT 焊盘 **0.760(y) × 1.660(x)**、两列 x=±4.318（**焊盘中心跨距 8.636**）、
      每列 8 个、脚距 1.270 —— 与手册推荐值互证（差 0.1mm），**按立创取值**（AGENTS 取证顺序）。
   3) **嘉立创/立创EDA 原理图符号**（用户 2026-09-17 提供 `D:\\Downloads\\H1102NLT_2026-09-17.svg`）：
-     已收进 `svg/_assets/h1102nlt_sch_symbol.svg`（仓库内，运行时不碰仓库外文件）。
-     本脚本**直接内联它的几何**（绕组符号：TX/RX 两组 + 铁芯 + 12 个引脚），按 Fritzing
-     原理图网格缩放（立创 20 单位 = 100mil → Fritzing 100 单位），并把立创的深红 #880000
-     换成仓库统一的黑，字体 Verdana → DroidSans。
+     只用来**核对引脚功能与脚号**（绕组符号本身不采用）。
+     ★ 原理图按**仓库 Fritzing 规范**画，照 AGENTS.md §5「矩形封装（方框）原理图符号规则」：
+     两排封装用左右两列（左列 pin1..8 上→下、右列 pin16..9 上→下），脚名在框内、
+     脚号在引线上方，名 / 数字 / 引线同色黑，整图同字号。
+     （2026-09-17 用户指示：原理图与 PCB 都按仓库规范，不照搬立创画法。）
 
 引脚（16 脚封装；手册第 2 页接线图 + 立创符号都只画 12 个用到的脚，
 **4/5/12/13 为 NC、不引出**）：
@@ -40,26 +41,29 @@ OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 PART_ID = "H1102NLT"
 FZPZ = "H1102NLT.fzpz"
 
-SRA_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "_assets", "h1102nlt_sch_symbol.svg"))
-
-# (connector_id, 脚号, 功能名, 立创符号 c_origin, pcb 列, pcb 焊盘 y)
+# (connector_id, 脚号, 功能名)。封装 16 个焊盘，但 4/5/12/13 = NC，不建 connector。
 SRA_PINS = [
-    (0,  "1",  "TD+",    (-50, -70), "L", -4.445),
-    (1,  "2",  "TD_CT",  (-50, -50), "L", -3.175),
-    (2,  "3",  "TD-",    (-50, -30), "L", -1.905),
-    (3,  "6",  "RD+",    (-50,  30), "L",  1.905),
-    (4,  "7",  "RD_CT",  (-50,  50), "L",  3.175),
-    (5,  "8",  "RD-",    (-50,  70), "L",  4.445),
-    (6,  "9",  "RX-",    ( 60,  70), "R", -4.445),
-    (7,  "10", "RX_CT",  ( 60,  50), "R", -3.175),
-    (8,  "11", "RX+",    ( 60,  30), "R", -1.905),
-    (9,  "14", "TX-",    ( 60, -30), "R",  1.905),
-    (10, "15", "TX_CT",  ( 60, -50), "R",  3.175),
-    (11, "16", "TX+",    ( 60, -70), "R",  4.445),
+    (0,  "1",  "TD+"),
+    (1,  "2",  "TD_CT"),
+    (2,  "3",  "TD-"),
+    (3,  "6",  "RD+"),
+    (4,  "7",  "RD_CT"),
+    (5,  "8",  "RD-"),
+    (6,  "9",  "RX-"),
+    (7,  "10", "RX_CT"),
+    (8,  "11", "RX+"),
+    (9,  "14", "TX-"),
+    (10, "15", "TX_CT"),
+    (11, "16", "TX+"),
 ]
-NC_PINS = ["4", "5", "12", "13"]          # 封装上有焊盘、符号里不画、不引出
+# 16 个脚位（含 NC）的物理顺序，原理图/面包板/PCB 三处都用它，不另写一份
+LEFT_ORDER = ["1", "2", "3", "4", "5", "6", "7", "8"]              # 上→下
+RIGHT_ORDER = ["16", "15", "14", "13", "12", "11", "10", "9"]    # 上→下
+ID_OF = {num: cid for cid, num, _ in SRA_PINS}
+NAME_OF = {num: name for _, num, name in SRA_PINS}
 
 ICON_LABEL = "H1102NLT"
+SCHEM_LABEL = "H1102NLT"
 TITLE = "H1102NLT 10/100Base-T Isolation Transformer"
 LABEL = "T"
 PACKAGE = "16-Pin SOIC"
@@ -69,7 +73,6 @@ FAMILY = "Pulse Magnetics"
 BODY_W, BODY_H = 7.11, 12.70       # 本体（宽 x × 长 y）
 PAD_X, PAD_L, PAD_W = 4.318, 1.660, 0.760   # 焊盘中心 x / 长(x) / 宽(y)
 PAD_Y0, PAD_PITCH = -4.445, 1.27
-SCALE_SCH = 5                      # 立创 20 单位 = 100mil → Fritzing 100 单位（0.1in）
 
 SVG_HDR = ('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
            '<!-- H1102NLT -->\n')
@@ -79,62 +82,65 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-# ------------------------------------------------------------------ 素材读取
-def read_jlc_symbol():
-    """从 svg/_assets/h1102nlt_sch_symbol.svg 抠出立创符号的根组 <g c_origin="5,0" …>…</g>"""
-    with open(SRA_ASSET, encoding="utf-8") as fh:
-        s = fh.read()
-    m = re.search(r'<g c_origin="5,0"', s)
-    if not m:
-        raise ValueError("找不到立创符号的根组（%s）" % SRA_ASSET)
-    start, i, depth = m.start(), m.start(), 0
-    while True:
-        nopen, nclose = s.find("<g", i), s.find("</g>", i)
-        if nclose < 0:
-            raise ValueError("立创符号的 <g> 不平衡")
-        if 0 <= nopen < nclose:
-            depth += 1
-            i = nopen + 2
-        else:
-            depth -= 1
-            i = nclose + 4
-            if depth == 0:
-                return s[start:i]
-
-
 # ------------------------------------------------------------------ schematic
 def gen_schematic_svg():
-    """原理图 = **1:1 内联立创EDA 的绕组符号**（svg/_assets 里的那份），只做三件事：
-       ① 深红 #880000 → 仓库统一的黑；② Verdana → DroidSans、字号换算成 Fritzing 单位
-       （立创 7pt 在 Fritzing 里 ≈ 97 单位，缩放 5 倍后仍要 97 → 写 19.4）；
-       ③ 给 12 个引脚组挂上 id="connectorNpin" class="pin" + 外端 0.0001 的 terminal。"""
-    g = read_jlc_symbol()
-    g = g.replace("#880000", "#000000")
-    g = g.replace('font-family="Verdana"', 'font-family="DroidSans"')
-    g = g.replace('font-size="7pt"', 'font-size="19.4"')
-    for cid, num, name, (sx, sy), _, _ in SRA_PINS:
-        pat = re.compile(r'<g ([^>]*c_origin="%d,%d"[^>]*)>' % (sx, sy))
-
-        def rep(m, cid=cid, sx=sx, sy=sy):
-            # 先去掉立创自己的 id="ggeNN"（否则与我们的 id 重复，SVG 非法）。
-            # 注意要求 id= 前面有空白，否则会把 c_partid="part_pin" 里的 id= 也删掉。
-            attrs = re.sub(r'\s+id="[^"]*"', '', m.group(1))
-            return ('<g %s id="connector%dpin" class="pin">'
-                    '<rect id="connector%dterminal" x="%d" y="%d" width="0.0001" height="0.0001" '
-                    'fill="none" stroke="none"/>' % (attrs, cid, cid, sx, sy))
-
-        g, n = pat.subn(rep, g, count=1)
-        if n != 1:
-            raise ValueError("引脚 %s（c_origin=%d,%d）没挂上 connector id" % (num, sx, sy))
-    # 缩放后的内容范围：立创 viewBox 是 -61.8..71.8 × -90.4..90
-    x0, y0 = -61.8 * SCALE_SCH - 20, -90.4 * SCALE_SCH - 20
-    w, h = (71.8 - -61.8) * SCALE_SCH + 40, (90 - -90.4) * SCALE_SCH + 40
-    return ('<?xml version="1.0" encoding="utf-8"?>\n'
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / 1000:.6f}in" height="{h / 1000:.6f}in" '
-            f'viewBox="{x0:.0f} {y0:.0f} {w:.0f} {h:.0f}">\n'
-            ' <g id="schematic">\n'
-            f'  <g transform="scale({SCALE_SCH})">\n{g}\n  </g>\n'
-            ' </g>\n</svg>\n')
+    """矩形封装原理图符号（AGENTS.md §5）：**两排封装用左右两列**——
+    左列 pin1..8 上→下、右列 pin16..9 上→下（即从下往上数），与手册顶视图一致且逆时针。
+    4/5/12/13 = NC：**占位留空**（不画引线/脚名/脚号），这样一眼就能看出这几个脚不存在。
+    数字在引线上方（写在中点）、脚名在框内（左名居左、右名居右，距边框一个字符）；
+    名 / 数字 / 引线同色黑、整图同字号 FN；四角留 CORNER=(最长名+1)×int(FN×0.58) 的空白。
+    物理尺寸 width/height(in)，1000 单位 = 1in；viewBox 贴合内容（裁边）。"""
+    P = 100                       # 引脚间距（2.54mm）
+    WIRE = 130                    # 引脚线长
+    CH = 35                       # 一个字符间距（= 字号）
+    FN = 35                       # 整图统一字号
+    BASELINE_OFF = round(FN * 0.35)
+    max_len = max(len(n) for _, _, n in SRA_PINS)   # 5（TD_CT / RD_CT / RX_CT / TX_CT）
+    CORNER = (max_len + 1) * int(FN * 0.58)         # 6×20 = 120
+    per = len(LEFT_ORDER)                           # 8
+    BX0, BY0 = 340, 200
+    BW = 720
+    BH = per * P + 2 * CORNER                       # 800 + 240 = 1040
+    BX1, BY1 = BX0 + BW, BY0 + BH
+    VBX, VBY = BX0 - WIRE - 5, BY0 - 5
+    VBW, VBH = BW + 2 * WIRE + 10, BH + 10
+    L = []
+    L.append('<?xml version="1.0" encoding="utf-8"?>\n')
+    L.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{VBW / 1000:.6f}in" height="{VBH / 1000:.6f}in" '
+             f'viewBox="{VBX} {VBY} {VBW} {VBH}">\n')
+    L.append(' <g id="schematic">\n')
+    L.append(f'  <rect class="interior rect" x="{BX0}" y="{BY0}" width="{BW}" height="{BH}" '
+             f'fill="#FFFFFF" stroke="#787878" stroke-width="5"/>\n')
+    for i, num in enumerate(LEFT_ORDER):          # 左列 1..8，NC 留空
+        y = BY0 + CORNER + P // 2 + i * P
+        if num not in ID_OF:
+            continue
+        cn, name = ID_OF[num], NAME_OF[num]
+        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(name)}" '
+                 f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="#000000" stroke-width="5"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" text-anchor="middle" '
+                 f'font-family="DroidSans">{num}</text>\n')
+        L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="#000000" text-anchor="start" '
+                 f'font-family="DroidSans">{esc(name)}</text>\n')
+    for i, num in enumerate(RIGHT_ORDER):         # 右列 16..9，NC 留空
+        y = BY0 + CORNER + P // 2 + i * P
+        if num not in ID_OF:
+            continue
+        cn, name = ID_OF[num], NAME_OF[num]
+        L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(name)}" '
+                 f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="#000000" stroke-width="5"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" text-anchor="middle" '
+                 f'font-family="DroidSans">{num}</text>\n')
+        L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="#000000" text-anchor="end" '
+                 f'font-family="DroidSans">{esc(name)}</text>\n')
+    CHIP_FS = 79
+    CHIP_Y = BY0 + BH // 2 + round(CHIP_FS * 0.35)
+    L.append(f'  <text x="{BX0 + BW // 2}" y="{CHIP_Y}" font-size="{CHIP_FS}" fill="#000000" text-anchor="middle" '
+             f'font-family="DroidSans">{esc(SCHEM_LABEL)}</text>\n')
+    L.append(' </g>\n</svg>\n')
+    return "".join(L)
 
 
 # ---------------------------------------------------------------- breadboard
@@ -198,9 +204,8 @@ def gen_breadboard_svg():
          f'  <rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" fill="#00aa44" '
          f'stroke="#00772f" stroke-width="5"/>\n',
          _embed_icon(art, cx, cy, s=U, icx=icx, icy=icy)]
-    id_of = {num: cid for cid, num, _, _, _, _ in SRA_PINS}
-    bottom = ["1", "2", "3", "4", "5", "6", "7", "8"]
-    top = ["16", "15", "14", "13", "12", "11", "10", "9"]
+    id_of = ID_OF
+    bottom, top = LEFT_ORDER, RIGHT_ORDER      # 下排 pin1..8 左→右、上排 pin16..9 左→右
     for num, x, y in ([(n, xs[i], y_bot) for i, n in enumerate(bottom)] +
                       [(n, xs[i], y_top) for i, n in enumerate(top)]):
         cid = id_of.get(num)
@@ -219,35 +224,34 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------------ pcb
 def gen_pcb_svg():
-    """PCB 视图：16 个 RECT 焊盘（**按嘉立创封装**）—— 焊盘 **1.660(x) × 0.760(y)**、
+    """PCB 视图：16 个 RECT 焊盘（**数据按嘉立创封装**）—— 焊盘 **1.660(x) × 0.760(y)**、
     两列 x=±4.318（焊盘中心跨距 **8.636mm**）、每列 8 个、脚距 **1.270**、y=-4.445..4.445。
-    丝印照立创：两条横线（本体宽 7.11）+ 四条竖线（长 1.25）+ pin1 圆圈（左上）。
-    左列 pin1..8 上→下、右列 pin9..16 下→上（与实物丝印一致）。"""
+    上排顺序与实物一致：左列 pin1..8 上→下、右列 pin16..9 上→下（pin1 左上、逆时针）。
+    丝印按**仓库 Fritzing 规范**（照 svg/CH340N / svg/CH340C）：**完整矩形框**（本体 7.11×12.70）
+    + **pin1 实心圆点**（位置/半径取自嘉立创封装：(-2.286,-4.445) r=0.635）。
+    注：立创原图把框的竖线导成 4 段短线（为了避开焊盘），我们画成完整框——
+    框线与焊盘内缘只交叠 0.067mm，与实物丝印被焊盘盖住一点的情形一致。"""
     pads, silk = [], []
-    for i in range(8):                                  # 左列 1..8
-        num = str(i + 1)
+    for i in range(8):                                  # 左列 pin1..8 上→下
+        num = LEFT_ORDER[i]
         y = PAD_Y0 + i * PAD_PITCH
-        cid = {n: c for c, n, _, _, _, _ in SRA_PINS}.get(num)
+        cid = ID_OF.get(num)
         attrs = f' id="connector{cid}pad" connectorname="{esc(num)}"' if cid is not None else ""
         pads.append(f'<rect{attrs} x="{-PAD_X - PAD_L / 2:.3f}" y="{y - PAD_W / 2:.3f}" '
                     f'width="{PAD_L:.3f}" height="{PAD_W:.3f}" fill="#F7BD13" stroke="none"/>')
-    for i in range(8):                                  # 右列 9..16（下→上）
-        num = str(9 + i)
+    for i in range(8):                                  # 右列 pin16..9 上→下
+        num = RIGHT_ORDER[i]
         y = PAD_Y0 + i * PAD_PITCH
-        cid = {n: c for c, n, _, _, _, _ in SRA_PINS}.get(num)
+        cid = ID_OF.get(num)
         attrs = f' id="connector{cid}pad" connectorname="{esc(num)}"' if cid is not None else ""
         pads.append(f'<rect{attrs} x="{PAD_X - PAD_L / 2:.3f}" y="{y - PAD_W / 2:.3f}" '
                     f'width="{PAD_L:.3f}" height="{PAD_W:.3f}" fill="#F7BD13" stroke="none"/>')
     hw, hh = BODY_W / 2, BODY_H / 2                     # 3.555 × 6.35
-    seg = 1.25
-    silk.append(f'<line x1="{-hw}" y1="{-hh}" x2="{hw}" y2="{-hh}" stroke="#f0f0f0" stroke-width="0.12"/>')
-    silk.append(f'<line x1="{-hw}" y1="{hh}" x2="{hw}" y2="{hh}" stroke="#f0f0f0" stroke-width="0.12"/>')
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            silk.append(f'<line x1="{sx * hw}" y1="{sy * hh}" x2="{sx * hw}" y2="{sy * (hh - seg)}" '
-                        f'stroke="#f0f0f0" stroke-width="0.12"/>')
-    silk.append('<circle cx="-2.286" cy="-4.445" r="0.635" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>')
-    inner = ("\n".join(pads) + "\n  </g>\n  <g id=\"silkscreen\">\n" + "\n".join(silk))
+    silk.append(f'<rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
+                f'fill="none" stroke="#f0f0f0" stroke-width="0.15"/>')
+    silk.append('<circle cx="-2.286" cy="-4.445" r="0.635" fill="#f0f0f0" stroke="none"/>')
+    inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
+             + "\n".join(silk))
     M = 0.15
     vx0, vx1 = -(PAD_X + PAD_L / 2) - M, (PAD_X + PAD_L / 2) + M
     vy0, vy1 = -hh - M, hh + M
@@ -285,7 +289,7 @@ def gen_icon_svg():
 # ----------------------------------------------------------------------- .fzp
 def gen_fzp():
     conns = []
-    for cid, num, name, _, _, _ in SRA_PINS:
+    for cid, num, name in SRA_PINS:
         conns.append(
             f'  <connector id="connector{cid}" name="{esc(name)}" type="male">\n'
             f'   <description>pin {num} = {esc(name)}</description>\n'

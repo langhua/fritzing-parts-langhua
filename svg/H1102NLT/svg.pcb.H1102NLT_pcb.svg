@@ -10,22 +10,18 @@
 <rect id="connector3pad" connectorname="6" x="-5.148" y="1.525" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
 <rect id="connector4pad" connectorname="7" x="-5.148" y="2.795" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
 <rect id="connector5pad" connectorname="8" x="-5.148" y="4.065" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector6pad" connectorname="9" x="3.488" y="-4.825" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector7pad" connectorname="10" x="3.488" y="-3.555" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector8pad" connectorname="11" x="3.488" y="-2.285" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector11pad" connectorname="16" x="3.488" y="-4.825" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector10pad" connectorname="15" x="3.488" y="-3.555" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector9pad" connectorname="14" x="3.488" y="-2.285" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
 <rect x="3.488" y="-1.015" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
 <rect x="3.488" y="0.255" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector9pad" connectorname="14" x="3.488" y="1.525" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector10pad" connectorname="15" x="3.488" y="2.795" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
-<rect id="connector11pad" connectorname="16" x="3.488" y="4.065" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector8pad" connectorname="11" x="3.488" y="1.525" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector7pad" connectorname="10" x="3.488" y="2.795" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<rect id="connector6pad" connectorname="9" x="3.488" y="4.065" width="1.660" height="0.760" fill="#F7BD13" stroke="none"/>
+<g id="copper0"/>
   </g>
   <g id="silkscreen">
-<line x1="-3.555" y1="-6.35" x2="3.555" y2="-6.35" stroke="#f0f0f0" stroke-width="0.12"/>
-<line x1="-3.555" y1="6.35" x2="3.555" y2="6.35" stroke="#f0f0f0" stroke-width="0.12"/>
-<line x1="-3.555" y1="-6.35" x2="-3.555" y2="-5.1" stroke="#f0f0f0" stroke-width="0.12"/>
-<line x1="-3.555" y1="6.35" x2="-3.555" y2="5.1" stroke="#f0f0f0" stroke-width="0.12"/>
-<line x1="3.555" y1="-6.35" x2="3.555" y2="-5.1" stroke="#f0f0f0" stroke-width="0.12"/>
-<line x1="3.555" y1="6.35" x2="3.555" y2="5.1" stroke="#f0f0f0" stroke-width="0.12"/>
-<circle cx="-2.286" cy="-4.445" r="0.635" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+<rect x="-3.555" y="-6.350" width="7.11" height="12.70" fill="none" stroke="#f0f0f0" stroke-width="0.15"/>
+<circle cx="-2.286" cy="-4.445" r="0.635" fill="#f0f0f0" stroke="none"/>
   </g>
 </svg>
