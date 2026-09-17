@@ -3,8 +3,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="27.60mm" height="12.23mm" viewBox="-13.80 -6.12 27.60 12.23">
   <g id="icon">
     <path d="M -11.2 -5.8 L 13.5 -5.8 L 13.5 5.8 L -11.2 5.8 L -13.5 4.5 L -13.5 -4.5 Z" fill="#2b2b2b" stroke="none"/>
-    <rect x="-3.78" y="-5.82" width="8.08" height="0.90" fill="#141414" stroke="none"/>
-    <rect x="-3.78" y="4.92" width="8.08" height="0.90" fill="#141414" stroke="none"/>
+    <rect x="4.30" y="-5.82" width="4.60" height="2.20" fill="#141414" stroke="none"/>
+    <rect x="4.30" y="3.62" width="4.60" height="2.20" fill="#141414" stroke="none"/>
     <rect x="-12.30" y="-3.795" width="6.50" height="0.45" fill="#d8b45a" stroke="none"/>
     <rect x="-5.80" y="-3.795" width="10.10" height="0.45" fill="#b9bdc2" stroke="none"/>
     <rect x="-12.30" y="-2.775" width="6.50" height="0.45" fill="#d8b45a" stroke="none"/>
