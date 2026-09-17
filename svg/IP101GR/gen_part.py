@@ -146,15 +146,17 @@ def gen_breadboard_svg():
     商品规格（用户给的参数）：**40.64 × 20.25mm**、孔距 2.54mm、孔径 **1.0mm**、板厚 1.6mm；
     正面引脚间距 0.65mm、反面 0.8mm（本视图画正面那一套）。
     孔位（与实物同序、逆时针）：上排 16 个 = pin32..17 左→右、下排 16 个 = pin1..16 左→右。
-    中间是 QFN32 的 32 条指状焊盘 + 中央散热盘。
-    ★ 实物中央散热盘上没有引线孔，这里**给它单加一个孔**（散热盘右侧）：AGENTS §5 要求
-      裸露焊盘能独立成网接线，不给孔的话 EPAD 在面包板上根本没法接。
+    中间是 QFN32 的 32 条指状焊盘（**整体转 45°**）+ 中央散热盘，两者之间**留缝**。
+
+    ★ EPAD 不给孔（用户 2026-09-17 定）：实物中央散热盘上没有引线孔 —— 芯片的 EP 与某个
+      接地引脚是**另一面飞线**连通的。所以这里只保留 EPAD 这个 connector（指向中央散热盘，
+      要接线时自己从它拉线），不再画引线孔；指状线与中央盘也不相连（同一条道理）。
 
     坐标 100 单位 = 2.54mm：板 1600×800 单位（40.64×**20.32**mm —— 高取 20.32 是为了让两排孔
     的行距 15.24mm = 6×2.54 落在网格上，与商品标的 20.25 差 0.07mm）。
     孔心 x=100..1600、y=100/700，全部落 100 整数倍；左右边距 1.27mm、上下边距 2.54mm
     （与实物一致：左右紧、上下松）。板厚 1.6mm 是厚度方向，顶视看不出来。
-    数字按实物是**正排**（不旋转）：上排标在孔上方、下排标在孔下方。
+    数字**逆时针转 90°**、放在孔的**内侧**（朝板心），与实物一致。
     """
     U = 39.37
     bw, bh = 1600, 800                   # 40.64 × 20.32mm
@@ -171,11 +173,14 @@ def gen_breadboard_svg():
          ' <g id="breadboard">\n',
          f'  <rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" rx="25" ry="25" '
          f'fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n']
-    # ---- 中间：中央散热盘 + 四边各 8 条指状焊盘（照实物那圈“星形”）----
-    r_in, r_out, fw, half = 79, 177, 12, 100      # 内端 2.0mm / 外端 4.5mm / 指宽 / 每边半跨
-    L.append('  <g fill="#d4af37">\n')
-    L.append(f'   <rect x="{CX - r_in}" y="{CY - r_in}" width="{2 * r_in}" '
-             f'height="{2 * r_in}" rx="12" ry="12"/>\n')
+    # ---- 中间：中央散热盘 + 四边各 8 条指状焊盘（**整体转 45°**，与实物那个斜星形一致）----
+    #   ① 指状内端与中央盘**留缝**（约 1.0mm）：实物上两者是分开的 —— EP 与接地脚靠
+    #      **另一面飞线**连通，不靠这里的图形相连（用户 2026-09-17 定的焊接方式）。
+    #   ② 整个阵列转 45°；中央盘跟着转就是实物那个菱形。
+    r_in, r_out, fw, half, ep_r = 100, 177, 12, 100, 59
+    L.append(f'  <g fill="#d4af37" transform="rotate(45 {CX} {CY})">\n')
+    L.append(f'   <rect x="{CX - ep_r}" y="{CY - ep_r}" width="{2 * ep_r}" '
+             f'height="{2 * ep_r}" rx="8" ry="8"/>\n')
     for i in range(8):
         off = round(-half + (i + 0.5) * (2 * half / 8.0))
         L.append(f'   <rect x="{CX + off - fw // 2}" y="{CY - r_out}" width="{fw}" '
@@ -188,23 +193,25 @@ def gen_breadboard_svg():
                  f'height="{fw}"/>\n')                                            # 右
     L.append('  </g>\n')
 
-    def hole(cn, x, y, label, dy):
+    def hole(cn, x, y, label, ty):
         L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(PIN_NAMES[cn])}" '
                  f'cx="{x}" cy="{y}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" '
                  f'stroke-width="4"/>\n')
         L.append(f'  <circle cx="{x}" cy="{y}" r="{hole_r:.1f}" fill="#0b2c18"/>\n')
-        L.append(f'  <text x="{x}" y="{y + dy}" font-size="56" fill="#ffffff" '
-                 f'text-anchor="middle" font-family="DroidSans">{label}</text>\n')
+        L.append(f'  <text x="{x}" y="{ty}" font-size="56" fill="#ffffff" '
+                 f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
+                 f'transform="rotate(-90 {x} {ty})">{label}</text>\n')
 
     for num, x in zip(top_seq, xs):
-        hole(num, x, y_top, str(num), -46)          # 上排：标号在孔上方
+        hole(num, x, y_top, str(num), y_top + 76)   # 上排：数字在孔**内侧**（朝板心），逆时针 90°
     for num, x in zip(bot_seq, xs):
-        hole(num, x, y_bot, str(num), 66)           # 下排：标号在孔下方
-    hole(0, 1100, CY, "EP", -46)                     # EPAD 的引线孔（实物上没有，见 docstring）
-    # ---- 丝印（照实物：QFP32 / QFN32 在板左，0.65MM 在板右）----
+        hole(num, x, y_bot, str(num), y_bot - 76)   # 下排：同样在内侧
+    # EPAD 不再单独给孔（见 docstring）：connector 仍保留，指向中央散热盘，要接线时自己拉线。
+    L.append(f'  <g id="connector0pin" connectorname="{esc(PIN_NAMES[0])}">'
+             f'<circle cx="{CX}" cy="{CY}" r="10" fill="none" stroke="none"/></g>\n')
+    # ---- 丝印（照实物：QFN32 在板左，0.65MM 在板右；没有 QFP32 / EP 字样）----
     L.append('  <g fill="#ffffff" font-family="DroidSans" font-size="62" text-anchor="middle">\n')
-    L.append('   <text x="400" y="330">QFP32</text>\n')
-    L.append('   <text x="400" y="480">QFN32</text>\n')
+    L.append('   <text x="400" y="400">QFN32</text>\n')
     L.append('   <text x="1230" y="480">0.65MM</text>\n')
     L.append('  </g>\n')
     L.append(' </g>\n</svg>\n')
