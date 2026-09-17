@@ -39,11 +39,22 @@ PART_ID = "T-Halow-RJ45"
 
 # 跨部件 1:1 复用的图形素材（AGENTS §4：允许引用仓库内其它部件目录的 svg，
 # 但绝不引用仓库外文件；文件缺失就报错，不静默退化）
-SMA_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "SMA-PJ1.7-L9.5",
-                                         "svg.icon.SMA-PJ1.7-L9.5_icon.svg"))
+SMA3_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "SMA-PJ1.7-L9.5",
+                                          "sma_icon_3pin_clean.svg"))
+MOD_ASSET = os.path.abspath(os.path.join(
+    OUT_DIR, "..", "TX-AH-R900PNR", "svg.icon.TX-AH-R900PNR_1_icon.svg"))
 TYC_ASSET = os.path.abspath(os.path.join(
     OUT_DIR, "..", "TypeC16Pin",
     "svg.icon.TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1_icon.svg"))
+# 板上贴片器件（本轮新入库的元件，直接用它们自己的 icon 还原实物外观）
+IP101_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "IP101GR",
+                                           "svg.icon.IP101GR_icon.svg"))
+H1102_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "H1102NLT",
+                                           "svg.icon.H1102NLT_icon.svg"))
+SY8089_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "SY8089",
+                                            "svg.icon.SY8089_icon.svg"))
+CN3165_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "CN3165",
+                                            "svg.icon.CN3165_icon.svg"))
 
 # ---------------------------------------------------------------- 几何常量 (mm)
 BW, BH = 30, 55          # 主板（实测）
@@ -67,8 +78,8 @@ RJ45_X0, RJ45_X1 = 66.0, 72.0   # 金手指 y 区间
 RJ45_PITCH, RJ45_W = 1.5, 0.9   # 8 条金手指的间距 / 宽度
 
 SMA_CX = BW / 2.0               # 天线座中心（照片里基本居中）
-SMA_ASSET_W, SMA_ASSET_H = 13.5, 6.503   # 素材 svg/SMA-PJ1.7-L9.5 的 icon 物理尺寸（mm）
-SMA_PIN_END_Y = 4.5             # 素材引脚末端落在板内的 y；柱端 = 4.5 - 13.5 = -9.0mm（照片量 10.9）
+SMA_3PIN_W, SMA_3PIN_PIN = 6.6, 4.0   # 三脚素材：引脚沿本地 y 铺 6.6mm、引脚长（本地 x）4.0mm
+SMA_PIN_END_Y = 4.5             # 三个引脚的板内末端 y（螺纹筒 = 4.5 - 13.6 = -9.1mm，照片量 9.5）
 
 TYPEC_Y0 = 19.8                 # USB-C 座：素材旋转 90° 后占 x 23.4..31.0（插口朝板右边缘）/ y 19.8..28.7
 TYPEC_X1 = 31.0
@@ -83,6 +94,16 @@ LED_NAMES = ["RSSI3", "RSSI2", "RSSI1", "CONN"]
 
 MOD_X0, MOD_X1 = 6.2, 23.4      # U3 TX-AH-RX00P 模组（含半孔焊盘区）
 MOD_Y0, MOD_Y1 = 14.4, 30.0
+
+# 板上贴片器件中心（mm）—— 这几个只是**还原实物外观**，不做 connector
+#   依据：IP101GR / H1102NLT 的位置按实物照片量（6.70 px/mm）；
+#   SY8089 / CN3165 是 SOT-23-5 / DFN-8 小封装，照片里分不出，位置按原理图的
+#   功能分区（DCDC 与 Battery Charger 两块都布置在板中部靠右）**起稿**，
+#   待用户在 Inkscape 里对着实物校正（AGENTS §4 的“我先起稿、用户校”模式）。
+IP101_CTR = (8.6, 45.7)         # U7 IP101GR PHY（QFN32）
+H1102_CTR = (16.3, 61.4)        # T1 H1102NLT 网络变压器（在 RJ45 舌头板上）
+SY8089_CTR = (17.0, 32.0)       # U2 SY8089 DCDC（避开左侧竖排板号丝印）
+CN3165_CTR = (20.5, 33.0)       # U1 CN3165 充电器
 
 JMP_X = 2.9                     # STA / NO / AP 三针跳线（在板左下）
 JMP_YS = [41.5, 47.3, 50.3]
@@ -100,7 +121,7 @@ LABEL = "#f2f2f2"
 FONT = "DroidSans"
 
 # 画布（mm）：上方留给 SMA 柱，下方到水晶头前端
-VB_X0, VB_Y0 = -1.0, SMA_PIN_END_Y - SMA_ASSET_W - 1.0
+VB_X0, VB_Y0 = -1.0, SMA_PIN_END_Y - 13.6 - 1.0
 VB_X1, VB_Y1 = BW + 4.0, CAP_Y1 + 1.0
 
 
@@ -198,13 +219,88 @@ def board_body():
     return L
 
 
+def reid(g, prefix):
+    """给内联片段里的 id 及其 url(#…) 引用加前缀 —— 避免与宿主 svg 的 id 冲突。
+    （TX-AH 的 icon 里嵌了 RT6150 / TXW8301 的图形，自带 <defs> 渐变，必须重命名。）"""
+    for i in sorted(set(re.findall(r'id="([^"]+)"', g)), key=len, reverse=True):
+        g = g.replace('id="%s"' % i, 'id="%s%s"' % (prefix, i))
+        g = g.replace("url(#%s)" % i, "url(#%s%s)" % (prefix, i))
+    return g
+
+
+def viewbox_center(path):
+    """素材 svg 的 viewBox 中心（mm）—— 用于把图形中心对齐到板上坐标。"""
+    s = open(path, encoding="utf-8").read()
+    m = re.search(r'viewBox="([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+)"', s)
+    if not m:
+        raise ValueError("no viewBox in %s" % path)
+    x, y, w, h = (float(v) for v in m.groups())
+    return x + w / 2.0, y + h / 2.0
+
+
+def art_centered(path, cx, cy, rot=0, prefix=None):
+    """1:1 复用另一个部件 icon 的 <g id="icon">，把**图形中心**对齐到板上 (cx, cy) 再旋转。
+    单位：素材 viewBox 单位 = mm，宿主用 pt ⇒ scale(SC)。"""
+    g = dedupe_defs(read_group(path, "icon"))
+    if prefix:
+        g = reid(g, prefix)
+    ox, oy = viewbox_center(path)
+    return ('<g transform="translate(%s %s) rotate(%d) scale(%s) translate(%s %s)">\n%s\n</g>'
+            % (u(cx), u(cy), rot, SC, -ox, -oy, g))
+
+
 def sma_art():
-    """天线座（RF1）：1:1 复用 svg/SMA-PJ1.7-L9.5 的 icon 图形（素材是侧视、柱朝右），
-    旋转 -90° 使螺纹柱朝板外（上），与实物照片的姿态一致。"""
-    g = dedupe_defs(read_group(SMA_ASSET, "icon"))
-    tx = u(SMA_CX - SMA_ASSET_H / 2.0)
+    """天线座（RF1）：1:1 复用 svg/SMA-PJ1.7-L9.5 的**干净三脚**图形
+    `sma_icon_3pin_clean.svg`（与 TX-AH-R900PNR 板上同一个画法，用户 2026-09-17 定）。
+    素材 13.6×6.6mm：本地 x 0..4 = 三个金引脚（本地 y 0..6.6 铺开）、x 4..13.6 = 螺纹筒。
+    rotate(-90) 后：引脚沿板 x 铺开（居中于 SMA_CX）、螺纹筒朝板上方伸出 9.1mm。"""
+    s = open(SMA3_ASSET, encoding="utf-8").read()
+    inner = re.sub(r'^.*?<svg[^>]*>\n?', '', s, flags=re.S)
+    inner = re.sub(r'</svg>\s*$', '', inner, flags=re.S)
+    inner = reid(inner, "thrj_sma_")
     return ['<g transform="translate(%s %s) rotate(-90) scale(%s)">\n%s\n</g>'
-            % (tx, u(SMA_PIN_END_Y), SC, g)]
+            % (u(SMA_CX - SMA_3PIN_W / 2.0), u(SMA_PIN_END_Y), SC, inner)]
+
+
+def txah_art():
+    """U3 TX-AH-RX00P（= LILYGO T-HALOW 模组）。
+
+    ★ 用户 2026-09-17 定：图案用 `svg/TX-AH-R900PNR` 的 icon（15×17mm），
+      TH-RJ45 板上用的是**带金属壳**的那个版本 —— 仓库里两个 TX-AH 目录
+      （`TX-AH-R900PNR` / `TX-AH-R900PNR_rev_1`）的 icon 都是**裸模组**
+      （只有四周半孔焊盘 + 板载器件），所以按实物照片**在 icon 之上再覆一层
+      金属屏蔽罩 + 白色标签**：罩把板载器件盖住（与实物所见一致），
+      四周半孔焊盘带仍露在罩外。这与 icon 的几何不冲突，只是补上实物的那层壳。
+    """
+    cx = (MOD_X0 + MOD_X1) / 2.0
+    cy = (MOD_Y0 + MOD_Y1) / 2.0
+    MW_, MH_ = MOD_X1 - MOD_X0, MOD_Y1 - MOD_Y0          # 17.2 × 15.6
+    L = [art_centered(MOD_ASSET, cx, cy, rot=90, prefix="thrj_mod_")]
+    # 金属屏蔽罩：模组四周各留 1.2mm 的焊盘带（照片上露出的深色边约这么宽）
+    sx0, sy0 = cx - MW_ / 2 + 1.2, cy - MH_ / 2 + 1.2
+    sw, sh = MW_ - 2.4, MH_ - 2.4
+    L.append(rect(sx0, sy0, sw, sh, "#d5d8db", "#9aa0a6", 0.12, rx=0.35))
+    # 白色标签（贴在罩中央；照片上标签占罩面大部分）
+    lx0, ly0 = sx0 + 1.1, sy0 + 1.1
+    lw, lh = sw - 2.2, sh - 2.2
+    L.append(rect(lx0, ly0, lw, lh, "#f4f4f2", "#cfcfcc", 0.1, rx=0.15))
+    tx = lx0 + 0.6
+    L.append(txt(tx, ly0 + 1.9, "FCC  CE", 1.4, fill="#2b2b2b"))
+    L.append(txt(tx, ly0 + 4.2, "FCC ID: 2AXPI-R900", 0.9, fill="#333333"))
+    L.append(txt(tx, ly0 + 6.4, "MODEL: T-HALOW", 0.9, fill="#333333"))
+    L.append(txt(tx, ly0 + 8.6, "902MHz~928MHz", 0.9, fill="#333333"))
+    return L
+
+
+def chips_art():
+    """板上贴片器件：IP101GR / H1102NLT / SY8089 / CN3165 —— 各自 1:1 复用本元件 icon。
+    这些只是**还原实物外观**（工业风，不加装饰），不是可连线 connector。"""
+    return [
+        art_centered(IP101_ASSET, IP101_CTR[0], IP101_CTR[1], rot=0, prefix="thrj_u7_"),
+        art_centered(H1102_ASSET, H1102_CTR[0], H1102_CTR[1], rot=90, prefix="thrj_t1_"),
+        art_centered(SY8089_ASSET, SY8089_CTR[0], SY8089_CTR[1], rot=0, prefix="thrj_u2_"),
+        art_centered(CN3165_ASSET, CN3165_CTR[0], CN3165_CTR[1], rot=0, prefix="thrj_u1_"),
+    ]
 
 
 def typec_art():
@@ -227,15 +323,8 @@ def top_features():
         L.append(rect(LED_X, y, LED_W, LED_H, "#fdf3c8", "#c9b96a", 0.15, rx=0.2))
         L.append(txt(LED_X - 0.6, y + LED_H - 0.1, name, 1.05, anchor="end"))
 
-    # U3 模组（白标签 + 半孔焊盘一圈）
-    L.append(rect(MOD_X0, MOD_Y0, MOD_X1 - MOD_X0, MOD_Y1 - MOD_Y0, "#3d4a63", "#2a3346", 0.2, rx=0.4))
-    L.append(rect(MOD_X0 + 1.5, MOD_Y0 + 1.4, MOD_X1 - MOD_X0 - 3.0, MOD_Y1 - MOD_Y0 - 2.8,
-                  LABEL, "#c8c8c8", 0.2, rx=0.2))
-    L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 4.4, "FCC  CE", 0.95, fill="#3a3a3a"))
-    L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 7.6, "FCC ID: 2AXPI-R900", 0.8, fill="#5a5a5a"))
-    L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 10.8, "MODEL: T-HALOW", 0.8, fill="#5a5a5a"))
-    L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 13.8, "902MHz~928MHz", 0.8, fill="#5a5a5a"))
-    L.append(txt(24.2, 16.4, "LILYGO", 1.0, rotate=-90, fill="#8f8f93"))
+    # U3 模组（1:1 复用 TX-AH-R900PNR 的 icon）
+    L += txah_art()
 
     # STA / NO / AP 跳线（三针）
     for name, y in zip(("STA", "NO", "AP"), JMP_YS):
@@ -286,6 +375,7 @@ def build_breadboard():
          f'  <g id="breadboard">']
     L += board_body()
     L += sma_art()
+    L += chips_art()
     L += top_features()
     L += typec_art()
     L += pad_art()
@@ -311,9 +401,10 @@ def build_icon():
     L += [
         circ(KEY_L[0], KEY_L[1], KEY_R, SILVER, "#6f6f74", 0.2),
         circ(KEY_R_POS[0], KEY_R_POS[1], KEY_R, SILVER, "#6f6f74", 0.2),
-        rect(MOD_X0, MOD_Y0, MOD_X1 - MOD_X0, MOD_Y1 - MOD_Y0, "#3d4a63", "#2a3346", 0.2, rx=0.4),
-        rect(MOD_X0 + 1.5, MOD_Y0 + 1.4, MOD_X1 - MOD_X0 - 3.0, MOD_Y1 - MOD_Y0 - 2.8,
-             LABEL, "#c8c8c8", 0.2, rx=0.2),
+    ]
+    L += txah_art()
+    L += chips_art()
+    L += [
         txt(10.6, 42.0, "T-Halow RJ45", 1.6, rotate=-90),
     ]
     L += typec_art()
