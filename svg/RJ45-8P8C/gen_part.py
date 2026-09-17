@@ -77,9 +77,15 @@ def body_path(cx, cy, u, w, ln, skew=None):
 
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
-    """俯视外观：本体（插口端斜角）+ 插口开口 + 8 个触点 + 2 个定位柱。"""
+    """**俯视外观**（用户 2026-09-17 定）：照产品图里「一眼能认出是 RJ45」的那一面 ——
+    本体（插口端带斜角）+ **8 根沿进深方向排布的金属弹片**（间距 1.02 / 跨度 7.14，
+    PIN1 在下、PIN8 在上，与图纸 C2-3 的标注同向）+ 尾部两个卡扣。
+
+    原来画的是另一端（带 8 个插板引脚的底面 + 两个定位柱），辨识度差，已换掉。
+    """
     u = 1.0
     sk = 1.2
+    blade_l, blade_w = 14.0, 0.45
     x0, x1 = -(BODY_L / 2 + 0.3), (BODY_L / 2 + 0.3)
     y0, y1 = -(BODY_W / 2 + 0.3), (BODY_W / 2 + 0.3)
     L = [SVG_HDR,
@@ -87,22 +93,14 @@ def gen_icon_svg():
          f'viewBox="{x0:.2f} {y0:.2f} {x1 - x0:.2f} {y1 - y0:.2f}">\n',
          '  <g id="icon">\n',
          f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, sk)}" fill="#2b2b2b" stroke="none"/>\n']
-    # 插口开口（左端，深色内凹）
-    ix = -BODY_L / 2 + sk
-    L.append(f'    <rect x="{ix - 0.9:.2f}" y="{-FRONT_H / 2:.2f}" width="1.20" '
-             f'height="{FRONT_H:.2f}" fill="#101010" stroke="none"/>\n')
-    L.append(f'    <rect x="{ix:.2f}" y="{-FRONT_H / 2 + 0.55:.2f}" width="9.00" '
-             f'height="{FRONT_H - 1.10:.2f}" fill="#8a8a8a" stroke="none"/>\n')
-    # 8 个触点（一排竖条）
-    px = BODY_L / 2 - DIP_FROM_TAIL
-    for i in range(N_PINS):
-        yy = -(SPAN / 2) + i * PITCH
-        L.append(f'    <rect x="{px - 0.5:.2f}" y="{yy - 0.18:.2f}" width="1.60" height="0.36" '
-                 f'fill="#c8c8c8" stroke="none"/>\n')
-    # 2 个定位柱
-    for sy in (-1, 1):
-        L.append(f'    <circle cx="{px + POST_BACK:.2f}" cy="{sy * POST_PITCH / 2:.2f}" '
-                 f'r="{POST_D / 2:.2f}" fill="#e8e8e8" stroke="none"/>\n')
+    bx = -BODY_L / 2 + 1.2
+    for i in range(N_PINS):                                                  # 8 根弹片
+        yy = -SPAN / 2 + i * PITCH
+        L.append(f'    <rect x="{bx:.2f}" y="{yy - blade_w / 2:.3f}" width="{blade_l:.2f}" '
+                 f'height="{blade_w:.2f}" rx="0.10" fill="#d8b45a" stroke="none"/>\n')
+    for sy in (-1, 1):                                                       # 尾部两个卡扣
+        L.append(f'    <rect x="{bx + blade_l + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
+                 f'height="2.60" rx="0.15" fill="#cfcfcf" stroke="none"/>\n')
     L.append(f'    <text x="{-BODY_L / 2 + 2.0:.2f}" y="{-BODY_W / 2 + 1.60:.2f}" font-size="2.0" '
              f'fill="#9a9a9a" font-family="DroidSans">{esc(ICON_LABEL)}</text>\n')
     L.append('  </g>\n</svg>\n')
