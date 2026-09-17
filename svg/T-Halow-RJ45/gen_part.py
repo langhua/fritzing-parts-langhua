@@ -26,8 +26,10 @@
   跳线 = STA / NO / AP；板号 = T-Halow RJ45 V1.0
 """
 
+import math
 import os
 import re
+import sys
 import zipfile
 
 SC = 2.8346456692913385  # pt per mm —— 与 CH347F / TX-AH-R900PNR_rev_1 / ESP32-S3-DevKitC-1 一致
@@ -36,6 +38,18 @@ OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 FZPZ_DIR = os.path.abspath(os.path.join(OUT_DIR, "..", "..", "fzpz"))
 
 PART_ID = "T-Halow-RJ45"
+
+# ---- 面包板视图的几何来源 = **用户手工对齐版导出的数据表**（工作流见 tools/README.md）----
+#   改位置 = 在 Inkscape 里改手工版 → `python tools/byhand_export.py svg\T-Halow-RJ45`
+#   → 重跑本脚本。**不要在这里改数字**（AGENTS §4）。
+sys.path.insert(0, OUT_DIR)
+# ⚠ 表里的 PAD_* 要**改名导入**：本文件下面还有一个 PAD_R = 0.9（mm，icon 视图用），
+#   同名的话会把表的那个盖掉（踩过：焊盘半径被算成 0.0648，图上看不见焊盘）。
+from byHand_tables import (DEFS, ICONS, TEXTS, SHAPES,                     # noqa: E402
+                           PAD_R as BB_PAD_R, PAD_SW as BB_PAD_SW,
+                           PAD_FILL as BB_PAD_FILL, PAD_EDGE as BB_PAD_EDGE)
+
+_TU_MM = 0.0254          # 数据表内部单位（100 单位 = 2.54mm）→ mm
 
 # 跨部件 1:1 复用的图形素材（AGENTS §4：允许引用仓库内其它部件目录的 svg，
 # 但绝不引用仓库外文件；文件缺失就报错，不静默退化）
@@ -73,6 +87,8 @@ PAD_DY = 2.54             # 实测间距
 PAD_R = 0.9
 
 PADS = ["MCLR", "IOA9", "IOA6", "IOA7", "IOA8", "IOB1", "TX", "RX", "3V3", "GND"]
+# ↑ **照板上丝印**（AGENTS §4：名字以丝印为准），上→下 = connector0..9；
+#   位置本身不在这里，在手工对齐版里（见 byHand_tables.py）。
 
 RJ45_X0, RJ45_X1 = 66.0, 72.0   # 金手指 y 区间
 RJ45_PITCH, RJ45_W = 1.5, 0.9   # 8 条金手指的间距 / 宽度
@@ -129,6 +145,97 @@ def u(v):
     """mm -> svg 内部单位（pt）"""
     s = f"{v * SC:.4f}".rstrip("0").rstrip(".")
     return s if s not in ("", "-") else "0"
+
+
+def t2(v):
+    """数据表单位（100 单位 = 2.54mm）→ mm（再交给 u() 换成 pt）"""
+    return v * _TU_MM
+
+
+def _f(v, default=0.0):
+    """表里的数值字段：可能是数值，也可能是 "None"（那个样式没写）"""
+    return default if v in (None, "None") else float(v)
+
+
+def _bake_icon(part_id, cx, cy, rot=0):
+    """把 `../<part_id>/svg.icon.<part_id>_icon.svg` 的 `<g id="icon">` 按 1:1 **烘成绝对坐标**
+    （cx/cy = 表里的图标中心，mm；绕中心转 rot 度）。
+
+    为什么要烘：AGENTS §5 —— 嵌套 transform 在 Inkscape / Fritzing / VS Code 预览下解释
+    不一致（会出现"芯片缩到看不见"）；烘成绝对值就与库内其它元件一致。
+    rect/circle 全部烘成绝对坐标；只有**文字**保留 rotate()（Fritzing 官方也这么写）。
+    """
+    path = os.path.join(OUT_DIR, "..", part_id, "svg.icon.%s_icon.svg" % part_id)
+    with open(path, encoding="utf-8") as fh:
+        art = fh.read()
+    vb = re.search(r'viewBox="([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+)"', art)
+    body = re.search(r'<g\s+id="icon">(.*)</g>', art, re.S)
+    if not vb or not body:
+        raise RuntimeError('图标几何读不到（%s）：需要 viewBox + <g id="icon">' % path)
+    x0, y0, w, h = (float(v) for v in vb.groups())
+    ccx, ccy = x0 + w / 2.0, y0 + h / 2.0            # 图标几何中心（mm）
+    a = math.radians(rot)
+    ca, sa = round(math.cos(a)), round(math.sin(a))
+
+    def m(px, py):
+        dx, dy = px - ccx, py - ccy
+        return u(cx + dx * ca - dy * sa), u(cy + dx * sa + dy * ca)
+
+    out = []
+    for rm in re.finditer(r'<rect\s+([^>]*?)/>', body.group(1)):
+        at = dict(re.findall(r'([\w-]+)="([^"]*)"', rm.group(1)))
+        rx, ry = float(at["x"]), float(at["y"])
+        rw, rh = float(at["width"]), float(at["height"])
+        ps = [m(rx, ry), m(rx + rw, ry), m(rx, ry + rh), m(rx + rw, ry + rh)]
+        xs = [float(p[0]) for p in ps]
+        ys = [float(p[1]) for p in ps]
+        a2 = ' fill="%s"' % at.get("fill", "none")
+        if at.get("stroke") and at["stroke"] != "none":
+            a2 += ' stroke="%s" stroke-width="%s"' % (at["stroke"], u(float(at.get("stroke-width", 0))))
+        out.append('<rect x="%.4f" y="%.4f" width="%.4f" height="%.4f"%s/>'
+                   % (min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys), a2))
+    for cm in re.finditer(r'<circle\s+([^>]*?)/>', body.group(1)):
+        at = dict(re.findall(r'([\w-]+)="([^"]*)"', cm.group(1)))
+        p = m(float(at["cx"]), float(at["cy"]))
+        out.append('<circle cx="%s" cy="%s" r="%s" fill="%s" stroke="none"/>'
+                   % (p[0], p[1], u(float(at["r"])), at.get("fill", "none")))
+    for tm in re.finditer(r'<text\s+([^>]*?)>(.*?)</text>', body.group(1), re.S):
+        at = dict(re.findall(r'([\w-]+)="([^"]*)"', tm.group(1)))
+        p = m(float(at.get("x", 0)), float(at.get("y", 0)))
+        t = ('<text x="%s" y="%s" font-size="%s" font-family="%s" fill="%s"'
+             % (p[0], p[1], u(float(at.get("font-size", 1))), FONT, at.get("fill", "#c0c0c0")))
+        if at.get("text-anchor"):
+            t += ' text-anchor="%s"' % at["text-anchor"]
+        out.append(t + '>%s</text>' % tm.group(2).strip())
+    other = set(re.findall(r'<(\w+)', body.group(1))) - {"rect", "circle", "text"}
+    if other:
+        raise RuntimeError("%s 的 icon 里有本函数不支持的图元：%s" % (part_id, sorted(other)))
+    return "".join(out)
+
+
+def pad_map():
+    """→ {SHAPES 下标: connector 号}（手工版里的焊盘 id 里的号就是 connector 号，这里只校验）
+
+    ⚠ 焊盘个数必须与 PADS（板上丝印名单）**条数一致、号连续**：
+      手工版改了焊盘数却没改 PADS 时，直接报错，不静默画错。
+    """
+    m = {}
+    for i, s in enumerate(SHAPES):
+        if s[0] != "pad":
+            continue
+        g = re.match(r"connector(\d+)pin", s[1])
+        if not g:
+            raise RuntimeError("焊盘 id 不是 connectorNpin：%r" % (s[1],))
+        m[i] = int(g.group(1))
+    if sorted(m.values()) != list(range(len(PADS))):
+        raise RuntimeError("焊盘的 connector 号与 PADS（%d 个）对不上：%s"
+                           % (len(PADS), sorted(m.values())))
+    return m
+
+
+def pad_net(cn):
+    """connector 号 → 网名（**照板上丝印**；单源：.fzp 与 svg 的 connectorname 都用它）"""
+    return PADS[cn]
 
 
 def read_group(path, gid):
@@ -338,56 +445,96 @@ def top_features():
     return L
 
 
-def pad_art(pads_in_group=False):
-    L = []
-    for i, name in enumerate(PADS):
-        y = PAD_Y0 + i * PAD_DY
-        sid = f"connector{i}pin"
-        if name == "GND":
-            L.append(f'<g id="{sid}">' + rect(PAD_X - PAD_R, y - PAD_R, 2 * PAD_R, 2 * PAD_R,
-                                              LABEL, "#a9a9ad", 0.15)
-                     + rect(PAD_X - PAD_R + 0.35, y - PAD_R + 0.35, 2 * PAD_R - 0.7, 2 * PAD_R - 0.7,
-                            "#3a3a3a", None, 0, sid=None) + '</g>')
-        else:
-            L.append(f'<g id="{sid}">' + circ(PAD_X, y, PAD_R, LABEL, "#a9a9ad", 0.15)
-                     + circ(PAD_X, y, PAD_R * 0.42, "#3a3a3a", None, 0) + '</g>')
-        L.append(txt(PAD_X + PAD_R + 0.6, y + 0.45, name, 1.15))
-    return L
+# ============================================================== 面包板（手工对齐版）
+# 画布 = 手工版文档的 viewBox（该文档 1 用户单位 = 1pt，故直接照抄）
+BB_X0, BB_Y0 = -2.8346, -28.6299
+BB_W, BB_H = 99.2126, 276.9449
+BB_MM_W, BB_MM_H = 35.0, 97.7
 
 
-def rj45_art():
-    L = []
-    n = 8
-    x0 = SMA_CX - (n - 1) * RJ45_PITCH / 2.0
-    for i in range(n):
-        xc = x0 + i * RJ45_PITCH
-        L.append(f'<g id="connector{10 + i}pin">'
-                 + rect(xc - RJ45_W / 2.0, RJ45_X0 + 0.1, RJ45_W, RJ45_X1 - RJ45_X0 - 0.2,
-                        GOLD, GOLD_EDGE, 0.1, rx=0.15)
-                 + '</g>')
-    return L
+def _pad_svg(cn, x, y, square):
+    """一个焊盘（表单位 x/y）—— id 必须是 connectorNpin（Fritzing 靠它认连接点），
+    connectorname = 板上丝印名（与 .fzp 同一份）。"""
+    net = pad_net(cn)
+    if square:                                            # GND 那种方形焊盘
+        return ('<rect id="connector%dpin" connectorname="%s" x="%s" y="%s" width="%s" '
+                'height="%s" fill="%s" stroke="%s" stroke-width="%s"/>'
+                % (cn, net, u(t2(x - BB_PAD_R)), u(t2(y - BB_PAD_R)), u(t2(2 * BB_PAD_R)),
+                   u(t2(2 * BB_PAD_R)), BB_PAD_FILL, BB_PAD_EDGE, u(t2(BB_PAD_SW))))
+    return ('<circle id="connector%dpin" connectorname="%s" cx="%s" cy="%s" r="%s" '
+            'fill="%s" stroke="%s" stroke-width="%s"/>'
+            % (cn, net, u(t2(x)), u(t2(y)), u(t2(BB_PAD_R)), BB_PAD_FILL, BB_PAD_EDGE,
+               u(t2(BB_PAD_SW))))
 
 
 def build_breadboard():
-    w = VB_X1 - VB_X0
-    h = VB_Y1 - VB_Y0
-    L = [svg_head(w, h, VB_X0, VB_Y0),
-         f'  <g id="breadboard">']
-    L += board_body()
-    L += sma_art()
-    L += chips_art()
-    L += top_features()
-    L += typec_art()
-    L += pad_art()
-    L += rj45_art()
-    # SMA 天线连接器（座子正下方的板内一点）
-    L.append(f'<g id="connector18pin">'
-             + circ(SMA_CX, 1.2, 1.0, "none", "none", 0)
-             + '</g>')
-    # Type-C：VBUS / GND（座子内部两点）
-    L.append(f'<g id="connector19pin"><circle cx="{u(27.0)}" cy="{u(21.5)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
-    L.append(f'<g id="connector20pin"><circle cx="{u(27.0)}" cy="{u(27.0)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
-    L.append(f'  </g>\n</svg>\n')
+    r"""面包板 = **用户手工对齐版**的几何（全部来自 byHand_tables.py）+ 10 个焊盘连接器。
+
+    本视图**不再由本脚本现画**（用户 2026-09-18 在 Inkscape 里对着实物重画了一版）：
+    改位置/颜色 = 改手工版 → `python tools/byhand_export.py svg\T-Halow-RJ45` → 重跑本脚本。
+    """
+    L = ['<?xml version="1.0" encoding="utf-8"?>',
+         '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
+         'width="%gmm" height="%gmm" viewBox="%g %g %g %g">'
+         % (BB_MM_W, BB_MM_H, BB_X0, BB_Y0, BB_W, BB_H),
+         ' <g id="breadboard">']
+    if DEFS:                       # 渐变（SMA 螺纹筒的金色）—— 不带就会变黑
+        L.append('  <defs>')
+        L += ['   %s' % d for d in DEFS]
+        L.append('  </defs>')
+    cns = pad_map()
+    for i, sh in enumerate(SHAPES):        # ★ 按手工版文档次序画（叠放次序）
+        kind = sh[0]
+        if kind == "rect":
+            _k, x, y, w, h, fill, _rot, stroke, sw = sh
+            a = ' fill="%s"' % fill if fill and fill != "None" else ''
+            if stroke and stroke != "None":
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, u(t2(_f(sw))))
+            L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>'
+                     % (u(t2(x)), u(t2(y)), u(t2(w)), u(t2(h)), a))
+        elif kind == "circle":
+            _k, x, y, r, fill, stroke, sw = sh
+            a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
+            if stroke and stroke != "None":
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, u(t2(_f(sw))))
+            L.append('  <circle cx="%s" cy="%s" r="%s"%s/>'
+                     % (u(t2(x)), u(t2(y)), u(t2(r)), a))
+        elif kind == "pad":
+            _k, _cid, _net, x, y = sh[:5]
+            L.append('  ' + _pad_svg(cns[i], x, y, len(sh) > 5 and sh[5] == "square"))
+        elif kind == "line":
+            _k, x1, y1, x2, y2, stroke, sw = sh
+            L.append('  <line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" '
+                     'stroke-width="%s"/>'
+                     % (u(t2(x1)), u(t2(y1)), u(t2(x2)), u(t2(y2)), stroke,
+                        u(t2(_f(sw)))))
+        else:                                  # path（d + 自带 matrix，照搬）
+            _k, d, mtx, fill, stroke, sw = sh
+            a = ''
+            if fill and fill != "None":
+                a += ' fill="%s"' % fill
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+            if sw and sw != "None":
+                # ⚠ path 的 stroke-width 是**局部单位**（随它自带的 matrix 一起缩放）
+                #   ⇒ 原值写回，不走 u()/t2()
+                a += ' stroke-width="%s"' % sw
+            if mtx:
+                a += ' transform="%s"' % mtx
+            L.append('  <path d="%s"%s/>' % (d, a))
+    for part, x, y, rot in ICONS:
+        L.append('  ' + _bake_icon(part, t2(x), t2(y), rot))
+    for txt_, x, y, fs, anchor, rot, fill, fw in TEXTS:
+        a = ' fill="%s"' % (fill if fill and fill != "None" else SILK)
+        if anchor and anchor != "None":
+            a += ' text-anchor="%s"' % anchor
+        if fw:
+            a += ' font-weight="%s"' % fw
+        if rot:
+            a += ' transform="rotate(%g %s %s)"' % (rot, u(t2(x)), u(t2(y)))
+        L.append('  <text x="%s" y="%s" font-size="%s" font-family="%s"%s>%s</text>'
+                 % (u(t2(x)), u(t2(y)), u(t2(fs)), FONT, a, txt_))
+    L += [' </g>', '</svg>', '']
     return "\n".join(L)
 
 
@@ -415,13 +562,11 @@ def build_icon():
     return "\n".join(L)
 
 
-CONNECTORS = (
-    [(i, PADS[i], PADS[i]) for i in range(len(PADS))]
-    + [(10 + i, str(i + 1), f"RJ45 pin {i + 1}") for i in range(8)]
-    + [(18, "ANT", "antenna (SMA)"),
-       (19, "VBUS", "USB-C VBUS (charging input)"),
-       (20, "GND", "USB-C GND")]
-)
+# 连接器 = **只有手工版里画出来的那 10 个焊盘**（用户 2026-09-18 定：
+#   RJ45 触点 / 天线 / USB-C 不单独立脚 —— 水晶头触点在**插头另一面**，这个视角本来就看
+#   不见；要接线就用这 10 个焊盘）。名字 = 板上丝印（AGENTS §4），与面包板同一份。
+CONNECTORS = [(i, PADS[i], "board pad %d (%s)" % (i + 1, PADS[i]))
+              for i in range(len(PADS))]
 
 
 def build_fzp():
@@ -453,12 +598,7 @@ def build_fzp():
         L.append('   </views>')
         L.append('  </connector>')
     L.append(' </connectors>')
-    L.append(' <buses>')
-    L.append('  <bus id="GND">')
-    L.append('   <nodeMember connectorId="connector9"/>')
-    L.append('   <nodeMember connectorId="connector20"/>')
-    L.append('  </bus>')
-    L.append(' </buses>')
+    # 无 <buses>：板上只剩**一个** GND 焊盘（USB-C 的 GND 不单独立脚）—— 没有要互联的同网脚
     L.append('</module>')
     return "\n".join(L) + "\n"
 

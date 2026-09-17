@@ -68,9 +68,19 @@ FS_KEEP_RATIO = 1.3
 # 逐部件覆盖：`None` = **不统一**，照手工版的字号直接搬。
 #   CH347T 的手工版字号本来就齐（丝印 31.5 / 排针名 35.4 / 板名 65），
 #   再拉平到 30 反而会变小（用户 2026-09-15：「文字字号小了，应该跟 byHand 里一致」）。
-FS_UNIFORM_BY_PART = {"CH347T": None}
+#   T-Halow-RJ45 同理：整块板是用户 2026-09-18 重画的，字号是**刻意**的（焊盘名比丝印大），
+#   拉平会让 10 个焊盘名从 3.26 缩到 2.16 —— 与他的图不一致。
+FS_UNIFORM_BY_PART = {"CH347T": None, "T-Halow-RJ45": None}
+# 逐部件关闭「按尺寸自动认图标」：
+#   T-Halow-RJ45 的图是用户**整块手画**的，里面那些芯片也是手画的（与仓库里同名 icon
+#   只是尺寸碰巧相近）—— 一做替换就会把手画的本体/焊盘/丝印丢掉。2026-09-18 实测：
+#   IP101GR 被换成仓库 icon 后**灰本体+金焊盘全没了**；手画的 CH340N 被认成 AT24C02，
+#   丝印 CH340N 也一起丢了。默认 True（CH347F/CH347T 靠它复用仓库 icon）。
+ICON_MATCH_BY_PART = {"T-Halow-RJ45": False}
 # 多行丝印的**行距倍率**：1.0 = 照手工版；用户 2026-09-15 定 **0.5**（两行靠得更紧）
 LINE_PITCH = 0.5
+
+XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
 
 
 def doc_units(root):
@@ -166,6 +176,50 @@ def u(v):
     return round(v * UF, 2)
 
 
+def matrix_str(m):
+    """累乘矩阵 → SVG 的 `matrix(a,b,c,d,e,f)` 串；单位阵返回 ""（不写 transform）。"""
+    if all(abs(a - b) < 1e-9 for a, b in zip(m, (1, 0, 0, 1, 0, 0))):
+        return ""
+    return "matrix(%s)" % ",".join("%.6g" % v for v in m)
+
+
+def gradient_defs(root, refs):
+    """把被引用到的渐变整理成**干净的 SVG 文本**（丢掉 inkscape/sodipodi 命名空间）。
+
+    为什么需要（2026-09-18，T-Halow-RJ45 的 SMA 螺纹筒）：手工版里金色渐进是用
+    `fill="url(#linearGradient10019)"` 引 `<defs>` 里的渐变 —— 只搬形状不搬渐变，
+    那几块会**变黑**（fill 取不到 = 回退黑）。
+    `xlink:href` 引到的那个（`#thrj_sma_gold`，带 stop 色标）也要一并带上，
+    所以这里会**递归追一层**。
+    """
+    want = set(refs)
+    for _ in range(4):                                   # 追 href 链（实测只一层）
+        more = set()
+        for el in root.iter():
+            if (el.get("id") or "") in want:
+                h = el.get(XLINK_HREF)
+                if h and h.startswith("#"):
+                    more.add(h[1:])
+        want |= more
+    keep = ("x1", "y1", "x2", "y2", "cx", "cy", "r", "fx", "fy",
+            "gradientUnits", "gradientTransform", "spreadMethod")
+    out = []
+    for el in root.iter():
+        i = el.get("id") or ""
+        tag = el.tag.replace(NS, "")
+        if i not in want or tag not in ("linearGradient", "radialGradient"):
+            continue
+        a = "".join(' %s="%s"' % (k, el.get(k)) for k in keep if el.get(k))
+        if el.get(XLINK_HREF):
+            a += ' xlink:href="%s"' % el.get(XLINK_HREF)
+        kids = "".join('<stop offset="%s" stop-color="%s"%s/>' % (
+            s.get("offset"), s.get("stop-color"),
+            ' stop-opacity="%s"' % s.get("stop-opacity") if s.get("stop-opacity") else "")
+            for s in el if s.tag == NS + "stop")
+        out.append('<%s id="%s"%s>%s</%s>' % (tag, i, a, kids, tag))
+    return out
+
+
 def icon_sizes(repo_svg_dir):
     """同级部件目录里的 icon：{部件名: (宽mm, 高mm, 中心x_mm, 中心y_mm)} —— 用来按尺寸认图标。"""
     out = {}
@@ -182,6 +236,43 @@ def icon_sizes(repo_svg_dir):
     return out
 
 
+PIN_G_RE = re.compile(r"^connector\d+pin$")
+
+
+def splice_pad_groups(root):
+    """把「焊盘画成一个组」的手工版摊平：`<g id="connectorNpin">` 里的子元素
+    按原次序直接挂到父节点，**id 挪到第一个子元素上**，组上的 transform 累加到每个子元素。
+
+    为什么需要（2026-09-18 用户做 T-Halow-RJ45 手工版时）：
+      · CH347F / CH347T 的手工版是**裸 `<circle id="connectorNpin">`**；
+      · T-Halow-RJ45 的手工版是**从程序版改出来的**，焊盘沿用了程序版的写法 ——
+        `<g id="connectorNpin">` + 外环圆 + 内孔圆（GND 那个还是**方形**的）。
+    摊平之后两种写法落到同一段代码上（圆/矩形分支认焊盘），不必再给「组内第一个元素」
+    单独写一套。**这不是「替用户对齐」**，只是把一种等价写法归一。
+    """
+    for parent in list(root.iter()):
+        kids = list(parent)
+        if not any(k.tag == NS + "g" and PIN_G_RE.match(k.get("id") or "") for k in kids):
+            continue
+        new_kids = []
+        for el in kids:
+            if el.tag == NS + "g" and PIN_G_RE.match(el.get("id") or "") and len(el):
+                gtf = el.get("transform")
+                for j, c in enumerate(list(el)):
+                    if gtf:
+                        ctf = c.get("transform")
+                        c.set("transform", ("%s %s" % (ctf, gtf)).strip() if ctf else gtf)
+                    if j == 0:
+                        c.set("id", el.get("id"))
+                        for k, v in el.attrib.items():
+                            if k not in ("id", "transform"):
+                                c.set(k, v)
+                    new_kids.append(c)
+            else:
+                new_kids.append(el)
+        parent[:] = new_kids
+
+
 def run(part_dir):
     repo_svg = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(part_dir)), ""))
     part_dir = os.path.abspath(part_dir)
@@ -192,9 +283,12 @@ def run(part_dir):
     sizes = icon_sizes(repo_svg)
     skip_fill = SKIP_RECT_FILL_BY_PART.get(part, SKIP_RECT_FILL)
     fs_uniform = FS_UNIFORM_BY_PART.get(part, FS_UNIFORM)
+    allow_icons = ICON_MATCH_BY_PART.get(part, True)
     pads, texts, rects, circles, lines, icons, unknown = [], [], [], [], [], [], []
+    paths = []                               # path 也照搬（d + 累乘 matrix）
     shapes = []                              # ★ **按手工版里的先后顺序**记图元（叠放次序就是画法次序）
     pad_style = []
+    pad_col = []                             # 焊盘的 fill / stroke（也从手工版读）
     used = set()
 
     def match_icon(w, h, ccx, ccy, tol=0.35):
@@ -218,7 +312,7 @@ def run(part_dir):
         if tag == "image":
             return
         # 组件图标：一个组里装着 rect/circle/text 且缩放明显不是 0.072
-        if tag == "g" and abs(sc[0] - sc[1]) < 1e-6 and sc[0] > 0.3 and len(el):
+        if tag == "g" and allow_icons and abs(sc[0] - sc[1]) < 1e-6 and sc[0] > 0.3 and len(el):
             tags = {c.tag.replace(NS, "") for c in el.iter() if c is not el}
             if tags and tags <= {"rect", "circle", "text"}:
                 xs, ys = [], []
@@ -256,6 +350,8 @@ def run(part_dir):
                     sw0 = styled(el, "stroke-width")
                     pad_style.append(round(r, 2))
                     pad_style.append(round(num(sw0) * (sc[0] + sc[1]) / 2.0 * UF, 2) if sw0 else 0.0)
+                    pad_col.append(styled(el, "fill"))
+                    pad_col.append(styled(el, "stroke"))
             else:
                 sw3 = styled(el, "stroke-width")
                 circles.append((u(p[0]), u(p[1]), round(r, 2), styled(el, "fill"),
@@ -269,9 +365,42 @@ def run(part_dir):
             w, h = float(el.get("width", 0) or 0), float(el.get("height", 0) or 0)
             if (styled(el, "fill") or "") in skip_fill:
                 return                       # 单源生成的那些矩形（见 SKIP_RECT_FILL*）
+            if PIN_G_RE.match(el.get("id") or ""):
+                # ★ **方形焊盘**（手工版里画成 rect，如 GND 那种）：
+                #   表里出 ("pad", id, net, x, y, "square")，生成器照方形画。
+                #   ⚠ 判据必须是 `connectorNpin`：手工版里还混着大批 `connector0pad-5`
+                #     这类**Ctrl+D 抄来的垃圾 id**（模块焊盘），一并当焊盘就会把
+                #     156 个矩形画成 156 个隐形焊盘、图上全没了（2026-09-18 踩过）。
+                cid = el.get("id")
+                sca = (sc[0] + sc[1]) / 2.0
+                pc = ap(m2, x + w / 2.0, y + h / 2.0)
+                r2 = max(w, h) * sca * UF / 2.0
+                pads.append((cid, el.get("connectorname"), u(pc[0]), u(pc[1])))
+                shapes.append(("pad", re.sub(r"pin.*$", "pin", cid), el.get("connectorname"),
+                               u(pc[0]), u(pc[1]), "square"))
+                if not pad_style:
+                    sw0 = styled(el, "stroke-width")
+                    pad_style.append(round(r2, 2))
+                    pad_style.append(round(num(sw0) * sca * UF, 2) if sw0 else 0.0)
+                    pad_col.append(styled(el, "fill"))
+                    pad_col.append(styled(el, "stroke"))
+                return
             ps = [ap(m2, x, y), ap(m2, x + w, y), ap(m2, x, y + h), ap(m2, x + w, y + h)]
             xs = [p[0] for p in ps]; ys = [p[1] for p in ps]
             sw = styled(el, "stroke-width")
+            rd = ang(m2) % 90.0
+            if 0.5 < rd < 89.5:
+                # ★ **任意角度**的矩形（手工版里少见，T-Halow-RJ45 有 3 个 -139.7°）：
+                #   按 bbox 搬会把它**放大**成外框 ⇒ 改成 4 点 path（绝对坐标，不带 matrix），
+                #   几何精确；描边宽也一并换算成绝对值（path 不带 matrix，不再被缩放）。
+                #   90° 整数倍继续走 bbox：旋转矩形与它的 bbox 重合，不需要变换。
+                sca4 = (sc[0] + sc[1]) / 2.0
+                d4 = "M %s L %s L %s L %s Z" % tuple(
+                    "%.4f %.4f" % (p[0], p[1]) for p in (ps[0], ps[1], ps[3], ps[2]))
+                shapes.append(("path", d4, "", styled(el, "fill"), styled(el, "stroke"),
+                               round(num(sw) * sca4 * UF, 3) if sw else None))
+                paths.append((d4, "", styled(el, "fill"), styled(el, "stroke"), None))
+                return
             rects.append((u(min(xs)), u(min(ys)), u(max(xs) - min(xs)), u(max(ys) - min(ys)),
                           styled(el, "fill"), ang(m2), styled(el, "stroke"),
                           round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
@@ -308,23 +437,54 @@ def run(part_dir):
                           round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
             shapes.append(("line", u(p0[0]), u(p0[1]), u(p1[0]), u(p1[1]), styled(el, "stroke"),
                            round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
+        elif tag == "path":
+            # ★ path 照搬（2026-09-18 加，T-Halow-RJ45）：`d` 里可能有弧（A），
+            #   fill 又可能是渐变（url(#…)）—— 硬去"烘坐标"要处理 ×scale/×rotate 下的 rx/ry，
+            #   很容易错。所以**原样搬 d + 一个显式的累乘 matrix**（等价、不必解释 path 语法）。
+            #   ⚠ path 的 stroke-width 是**局部单位**（元素自带 matrix，渲染时会一起被缩放）——
+            #     与 rect/circle 那套"内部单位"口径不同，生成器要**原值写回**。
+            d = (el.get("d") or "").strip()
+            if not d:
+                return
+            fill, stroke = styled(el, "fill"), styled(el, "stroke")
+            sw = styled(el, "stroke-width")
+            mtx = matrix_str(m2)
+            paths.append((d, mtx, fill, stroke, sw))
+            shapes.append(("path", d, mtx, fill, stroke, sw))
         for c in el:
             walk(c, m2)
 
     global UF, UF_NOTE
-    UF, UF_NOTE = doc_units(ET.parse(src).getroot())
+    doc = ET.parse(src)
+    UF, UF_NOTE = doc_units(doc.getroot())
     print("单位：%s → 换算系数 %.4f（内部单位）" % (UF_NOTE, UF))
-    walk(ET.parse(src).getroot(), (1, 0, 0, 1, 0, 0))
+    root = doc.getroot()
+    splice_pad_groups(root)          # 「焊盘画成一个组」的手工版先摊平
+    walk(root, (1, 0, 0, 1, 0, 0))
+
+    globals_refs = set()
+    for s in shapes:
+        for v in s:
+            if isinstance(v, str):
+                globals_refs |= set(re.findall(r"url\(#([^)]+)\)", v))
+    defs = gradient_defs(root, globals_refs)
 
     out = ["# -*- coding: utf-8 -*-",
            "# 由 tools/byhand_export.py 自动生成 —— **请不要手改**，改完手工版重跑脚本即可。",
            "# 源：svg/%s/svg.breadboard.%s_breadboard_byHand.svg（照片底稿，不入库）" % (part, part),
            "# 单位：内部单位（100 单位 = 2.54mm）",
            "",
-           "# 焊盘样式（半径 / 描边宽，内部单位）—— 也从手工版里读，免得两边各写一份",
+           "# 焊盘样式（半径 / 描边宽 / 填充 / 描边色，内部单位）—— 也从手工版里读，免得两边各写一份",
            "PAD_R = %s" % (pad_style[0] if pad_style else 26.0),
            "PAD_SW = %s" % (pad_style[1] if len(pad_style) > 1 else 5.0),
-           "", "# 排针焊盘：(图元 id, 丝印名, x, y)", "PADS = ["]
+           "PAD_FILL = %s" % repr(pad_col[0] if pad_col else "#f2f2f2"),
+           "PAD_EDGE = %s" % repr(pad_col[1] if len(pad_col) > 1 else "#a9a9ad"),
+           "", "# 被形状引用的渐变定义（原样给出；生成器写进 <defs>，否则渐变填充会变黑）",
+           "DEFS = ["]
+    for d in defs:
+        out.append('    %s,' % repr(d))
+    out += ["]", "",
+            "# 排针焊盘：(图元 id, 丝印名, x, y)", "PADS = ["]
     for cid, nm, x, y in sorted(pads, key=lambda t: (t[2], t[3])):
         cid = re.sub(r"pin.*$", "pin", cid)
         out.append('    ("%s", "%s", %s, %s),' % (cid, nm, x, y))
@@ -338,8 +498,10 @@ def run(part_dir):
     out += ["]", "", "# ★ 图元（**按手工版里的先后顺序**，就是叠放次序）—— 类型：",
             "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw)",
             "#   (\"circle\", x, y, r, fill, stroke, sw)",
-            "#   (\"pad\",    id, net, x, y)      ← 焊盘：出图时要带 connectorNpin",
+            "#   (\"pad\",    id, net, x, y[, \"square\"])  ← 焊盘：出图时要带 connectorNpin",
             "#   (\"line\",   x1, y1, x2, y2, stroke, sw)",
+            "#   (\"path\",   d, transform, fill, stroke, stroke-width)",
+            "#        ⚠ path 的 stroke-width 与 d 都是**局部单位**（元素自带 matrix）",
             "SHAPES = ["]
     for s in shapes:
         if s[0] in ("rect",):
@@ -347,15 +509,22 @@ def run(part_dir):
         elif s[0] == "circle":
             out.append('    ("circle", %s, %s, %s, "%s", "%s", %s),' % s[1:])
         elif s[0] == "pad":
-            out.append('    ("pad", "%s", "%s", %s, %s),' % s[1:])
+            if len(s) > 5:
+                out.append('    ("pad", "%s", "%s", %s, %s, "%s"),' % s[1:])
+            else:
+                out.append('    ("pad", "%s", "%s", %s, %s),' % s[1:])
+        elif s[0] == "path":
+            out.append('    ("path", %s, "%s", "%s", "%s", "%s"),'
+                       % (repr(s[1]), s[2], s[3] if s[3] else "None",
+                          s[4] if s[4] else "None", s[5] if s[5] else "None"))
         else:
             out.append('    ("line", %s, %s, %s, %s, "%s", %s),' % s[1:])
     out += ["]", ""]
     dst = os.path.join(part_dir, "byHand_tables.py")
     open(dst, "w", encoding="utf-8").write("\n".join(out))
-    print("焊盘 %d / 图标 %d %s / 丝印 %d / 矩形 %d / 圆 %d / 线 %d"
+    print("焊盘 %d / 图标 %d %s / 丝印 %d / 矩形 %d / 圆 %d / 线 %d / path %d / 渐变 %d"
           % (len(pads), len(icons), [i[0] for i in icons], len(texts), len(rects),
-             len(circles), len(lines)))
+             len(circles), len(lines), len(paths), len(defs)))
     print("写出:", dst)
     if unknown:
         print("  · 手工版里非统一字号(%.1f)的丝印 %d 条 → 已统一：%s"

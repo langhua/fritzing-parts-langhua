@@ -17,136 +17,64 @@
  </views>
  <connectors>
   <connector id="connector0" name="MCLR" type="male">
-   <description>MCLR</description>
+   <description>board pad 1 (MCLR)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector0pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector1" name="IOA9" type="male">
-   <description>IOA9</description>
+   <description>board pad 2 (IOA9)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector1pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector2" name="IOA6" type="male">
-   <description>IOA6</description>
+   <description>board pad 3 (IOA6)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector2pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector3" name="IOA7" type="male">
-   <description>IOA7</description>
+   <description>board pad 4 (IOA7)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector3pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector4" name="IOA8" type="male">
-   <description>IOA8</description>
+   <description>board pad 5 (IOA8)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector4pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector5" name="IOB1" type="male">
-   <description>IOB1</description>
+   <description>board pad 6 (IOB1)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector5pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector6" name="TX" type="male">
-   <description>TX</description>
+   <description>board pad 7 (TX)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector6pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector7" name="RX" type="male">
-   <description>RX</description>
+   <description>board pad 8 (RX)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector7pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector8" name="3V3" type="male">
-   <description>3V3</description>
+   <description>board pad 9 (3V3)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector8pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector9" name="GND" type="male">
-   <description>GND</description>
+   <description>board pad 10 (GND)</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector9pin"/></breadboardView>
    </views>
   </connector>
-  <connector id="connector10" name="1" type="male">
-   <description>RJ45 pin 1</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector10pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector11" name="2" type="male">
-   <description>RJ45 pin 2</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector11pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector12" name="3" type="male">
-   <description>RJ45 pin 3</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector12pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector13" name="4" type="male">
-   <description>RJ45 pin 4</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector13pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector14" name="5" type="male">
-   <description>RJ45 pin 5</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector14pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector15" name="6" type="male">
-   <description>RJ45 pin 6</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector15pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector16" name="7" type="male">
-   <description>RJ45 pin 7</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector16pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector17" name="8" type="male">
-   <description>RJ45 pin 8</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector17pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector18" name="ANT" type="male">
-   <description>antenna (SMA)</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector18pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector19" name="VBUS" type="male">
-   <description>USB-C VBUS (charging input)</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector19pin"/></breadboardView>
-   </views>
-  </connector>
-  <connector id="connector20" name="GND" type="male">
-   <description>USB-C GND</description>
-   <views>
-    <breadboardView><p layer="breadboard" svgId="connector20pin"/></breadboardView>
-   </views>
-  </connector>
  </connectors>
- <buses>
-  <bus id="GND">
-   <nodeMember connectorId="connector9"/>
-   <nodeMember connectorId="connector20"/>
-  </bus>
- </buses>
 </module>
