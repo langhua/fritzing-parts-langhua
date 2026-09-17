@@ -256,28 +256,26 @@ def gen_pcb_svg():
     · 8 个**通孔圆焊盘**排成 **2 列 × 4 行**：外径 **1.60**、孔径 **1.00**；
     · **两列中心距 1.50**、**同列相邻两脚中心距 2.04**；
     · 丝印方框 **11.80（左右边线）× 12.20（上下边线）**，左侧第一列中心距左边线 **1.50**；
-    · 脚序：左列 pin1..4（上→下）、右列 pin5..8（上→下）—— 双列插座的常见排法。
-    · 两列**上下错位**（用户 2026-09-17）：左列最上那个距顶边 2.27、右列最下那个距底边 2.27。
+    · **左右蛇形排列、总体居中、等距分布**（用户 2026-09-17）：相邻两脚一左一右交替，
+      纵向步距 = 行距 / 2（1.02）⇒ 同侧相邻两脚刚好是 2.04；纵向、横向都居中
+      （两列对称于框中心）。
+    · 脚序：i=0..7 直接沿蛇形走（pin1 左、pin2 右、pin3 左 …）。
     · 丝印上**不写**元件名、**不画** pin1 点（用户 2026-09-17）。
     """
     PAD_D, HOLE_D = 1.60, 1.00
     COL_P, ROW_P = 1.50, 2.04
     BOX_W, BOX_H = 11.80, 12.20
-    COL0 = 1.50
-    EDGE_GAP = 2.27                            # 左列最上距顶边 / 右列最下距底边
     M = 1.5                                      # 画布留边
     W, H = BOX_W + 2 * M, BOX_H + 2 * M
     x0, y0 = -W / 2, -H / 2
     bx, by = x0 + M, y0 + M
+    step = ROW_P / 2                             # 蛇形纵向步距
+    y_top = by + (BOX_H - (N_PINS - 1) * step) / 2   # 纵向：总体居中
+    x_mid = bx + BOX_W / 2                           # 横向：两列对称于框中心
     pads, silk = [], []
     for i in range(N_PINS):
-        col, row = divmod(i, 4)
-        x = bx + COL0 + col * COL_P
-        # 两列**上下错位**：左列最上距顶边 EDGE_GAP，右列最下距底边同值
-        if col == 0:
-            y = by + EDGE_GAP + row * ROW_P
-        else:
-            y = by + BOX_H - EDGE_GAP - (3 - row) * ROW_P
+        x = x_mid + ((i % 2) - 0.5) * COL_P
+        y = y_top + i * step
         pads.append(f'<circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" '
                     f'cx="{x:.3f}" cy="{y:.3f}" r="{PAD_D / 2:.3f}" fill="#F7BD13" '
                     f'stroke="none"/>')

@@ -2,22 +2,22 @@
 <!-- RJ45-8P8C -->
 <svg xmlns="http://www.w3.org/2000/svg" width="14.8mm" height="15.2mm" viewBox="-7.4 -7.6 14.8 15.2">
   <g id="copper1">
-<circle id="connector0pin" connectorname="1" cx="-4.400" cy="-3.830" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-4.400" cy="-3.830" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector1pin" connectorname="2" cx="-4.400" cy="-1.790" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-4.400" cy="-1.790" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector2pin" connectorname="3" cx="-4.400" cy="0.250" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-4.400" cy="0.250" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector3pin" connectorname="4" cx="-4.400" cy="2.290" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-4.400" cy="2.290" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector4pin" connectorname="5" cx="-2.900" cy="-2.290" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-2.900" cy="-2.290" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector5pin" connectorname="6" cx="-2.900" cy="-0.250" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-2.900" cy="-0.250" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector6pin" connectorname="7" cx="-2.900" cy="1.790" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-2.900" cy="1.790" r="0.500" fill="#0b2b3a" stroke="none"/>
-<circle id="connector7pin" connectorname="8" cx="-2.900" cy="3.830" r="0.800" fill="#F7BD13" stroke="none"/>
-<circle cx="-2.900" cy="3.830" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector0pin" connectorname="1" cx="-0.750" cy="-3.570" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="-0.750" cy="-3.570" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector1pin" connectorname="2" cx="0.750" cy="-2.550" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="0.750" cy="-2.550" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector2pin" connectorname="3" cx="-0.750" cy="-1.530" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="-0.750" cy="-1.530" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector3pin" connectorname="4" cx="0.750" cy="-0.510" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="0.750" cy="-0.510" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector4pin" connectorname="5" cx="-0.750" cy="0.510" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="-0.750" cy="0.510" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector5pin" connectorname="6" cx="0.750" cy="1.530" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="0.750" cy="1.530" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector6pin" connectorname="7" cx="-0.750" cy="2.550" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="-0.750" cy="2.550" r="0.500" fill="#0b2b3a" stroke="none"/>
+<circle id="connector7pin" connectorname="8" cx="0.750" cy="3.570" r="0.800" fill="#F7BD13" stroke="none"/>
+<circle cx="0.750" cy="3.570" r="0.500" fill="#0b2b3a" stroke="none"/>
 <g id="copper0"/>
   </g>
   <g id="silkscreen">
