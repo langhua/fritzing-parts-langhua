@@ -54,7 +54,7 @@ SIG_PAD_W, SIG_PAD_H = 1.40, 1.20          # 信号脚焊盘（pin1/2/3）
 MP_PAD_W, MP_PAD_H = 1.20, 2.00            # 固定脚焊盘（pin4/5）
 DRILL = 0.70                               # 孔径
 SILK_ARM = 1.10                            # 丝印短竖线长（让开焊盘）
-ACT_W, ACT_L = 1.60, 2.50                  # 拨柄（宽 × 伸出长度）
+ACT_W, ACT_L = 2.00, 2.50                  # 拨柄（宽 × 伸出长度）；宽 2 与行程 2 TRAVEL 同为图纸标注
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- SK-12D02VG3 -->\n'
 
@@ -63,26 +63,33 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def knob_path(cx, cy, u, body_h, kw, kl, kx_off, r=0.25):
-    """拨柄轮廓（用户 2026-09-17 定）：从本体下边缘向下伸出，
-    **与本体相接的那一侧是直角**（拨柄是插进本体的），只把**外端两个角**倒圆。
-    cx/cy = 元件中心，kx_off = 拨柄中心相对元件中心的水平偏移。"""
+def knob_path(cx, cy, u, body_h, kw, kl, kx_off, notch_w=1.00, notch_d=0.60):
+    """拨柄轮廓（用户 2026-09-17 按图纸定）：
+
+    · **左边缘对齐本体中线**（图纸：拨柄左边线 = 本体中心线）⇒ 调用时 kx_off 取 kw/2；
+    · 与本体相接的一侧**直角**（拨柄是插进本体的）；
+    · 外端**也是直角**（不打圆角），底边中间开一个 **V 型缺口**（与杆帽契合）；
+      V 尺寸图纸未给，取宽 1.00 / 深 0.60（= 拨柄宽的一半 / 0.3 倍）。
+
+    cx/cy = 元件中心，kx_off = 拨柄中心相对元件中心的水平偏移。
+    """
     y0 = cy + body_h / 2.0 * u                 # 本体下边缘
     y1 = y0 + kl * u                           # 拨柄外端
     xl = cx + (kx_off - kw / 2.0) * u
     xr = cx + (kx_off + kw / 2.0) * u
-    rr = r * u
-    return (f"M {xl:.3f} {y0:.3f} L {xr:.3f} {y0:.3f} "
-            f"L {xr:.3f} {y1 - rr:.3f} Q {xr:.3f} {y1:.3f} {xr - rr:.3f} {y1:.3f} "
-            f"L {xl + rr:.3f} {y1:.3f} Q {xl:.3f} {y1:.3f} {xl:.3f} {y1 - rr:.3f} Z")
+    xc = (xl + xr) / 2.0
+    nw, nd = notch_w * u / 2.0, notch_d * u
+    return (f"M {xl:.3f} {y0:.3f} L {xr:.3f} {y0:.3f} L {xr:.3f} {y1:.3f} "
+            f"L {xc + nw:.3f} {y1:.3f} L {xc:.3f} {y1 - nd:.3f} L {xc - nw:.3f} {y1:.3f} "
+            f"L {xl:.3f} {y1:.3f} Z")
 
 
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
     """俯视图：深灰本体 8.6 × 4.4 + 下边缘伸出的白色拨柄 + pin1 圆点 + 丝印名。
 
-    拨柄（用户 2026-09-17 定）：位于**右半中间**（不居中）、与本体相接一侧**直角**、
-    外端两角圆角（见 knob_path）。
+    拨柄（用户 2026-09-17 按图纸定）：宽 2.00、**左边缘对齐本体中线**、与本体相接一侧
+    与**外端都是直角**（外端底边中间开 V 型缺口，见 knob_path）。
     """
     hw, hh = BODY_W / 2.0, BODY_H / 2.0
     W = BODY_W + 1.0
@@ -92,8 +99,8 @@ def gen_icon_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.2f}mm" height="{H:.2f}mm" '
          f'viewBox="{x0:.2f} {y0:.2f} {W:.2f} {H:.2f}">\n',
          '  <g id="icon">\n']
-    L.append(f'    <path d="{knob_path(0, 0, 1.0, BODY_H, ACT_W, ACT_L, BODY_W / 4.0)}" '
-             f'fill="#e8e8e8" stroke="none"/>\n')                          # 拨柄（右半中间）
+    L.append(f'    <path d="{knob_path(0, 0, 1.0, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
+             f'fill="#e8e8e8" stroke="none"/>\n')                          # 拨柄（左缘对齐本体中线）
     L.append(f'    <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
              f'fill="#2b2b2b" stroke="none"/>\n')                              # 本体
     L.append(f'    <circle cx="{-hw + 0.75:.3f}" cy="{-hh + 0.75:.3f}" r="0.30" fill="#c0c0c0" '
@@ -125,8 +132,8 @@ def gen_breadboard_svg():
          ' <g id="breadboard">\n',
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
-    # 元件（1:1）：拨柄朝下、位于右半中间（与本体相接侧直角）
-    L.append(f'  <path d="{knob_path(cx, cy, U, BODY_H, ACT_W, ACT_L, BODY_W / 4.0, 0.25)}" '
+    # 元件（1:1）：拨柄朝下、左缘对齐本体中线（按图纸）
+    L.append(f'  <path d="{knob_path(cx, cy, U, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
              f'fill="#e8e8e8" stroke="none"/>\n')
     L.append(f'  <rect x="{cx - BODY_W / 2 * U:.1f}" y="{cy - BODY_H / 2 * U:.1f}" '
              f'width="{BODY_W * U:.1f}" height="{BODY_H * U:.1f}" fill="#2b2b2b" stroke="none"/>\n')

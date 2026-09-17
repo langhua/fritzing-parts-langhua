@@ -2,7 +2,7 @@
 <!-- SK-12D02VG3 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="9.60mm" height="7.90mm" viewBox="-4.80 -2.70 9.60 7.90">
   <g id="icon">
-    <path d="M 1.350 2.200 L 2.950 2.200 L 2.950 4.450 Q 2.950 4.700 2.700 4.700 L 1.600 4.700 Q 1.350 4.700 1.350 4.450 Z" fill="#e8e8e8" stroke="none"/>
+    <path d="M 0.000 2.200 L 2.000 2.200 L 2.000 4.700 L 1.500 4.700 L 1.000 4.100 L 0.500 4.700 L 0.000 4.700 Z" fill="#e8e8e8" stroke="none"/>
     <rect x="-4.300" y="-2.200" width="8.60" height="4.40" fill="#2b2b2b" stroke="none"/>
     <circle cx="-3.550" cy="-1.450" r="0.30" fill="#c0c0c0" stroke="none"/>
     <text x="0" y="-0.2" font-size="1.15" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">SK-12D02</text>
