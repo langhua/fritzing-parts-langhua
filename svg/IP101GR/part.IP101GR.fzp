@@ -4,7 +4,7 @@
  <date>2026-09-17</date>
  <label>U</label>
  <author>Shi Jinghai</author>
- <title>IP101GR 10/100M Ethernet PHY (VQFN-32)</title>
+ <title>IP101GR 10/100M Ethernet PHY (QFN-32)</title>
  <tags>
   <tag>IP101GR</tag>
   <tag>PHY</tag>
@@ -12,10 +12,10 @@
   <tag>10/100M</tag>
   <tag>MII</tag>
   <tag>RMII</tag>
-  <tag>VQFN-32</tag>
+  <tag>QFN-32</tag>
  </tags>
  <properties>
-  <property name="package">VQFN-32</property>
+  <property name="package">QFN-32</property>
   <property name="family">IC+ Ethernet PHY</property>
   <property name="pins">33</property>
  </properties>

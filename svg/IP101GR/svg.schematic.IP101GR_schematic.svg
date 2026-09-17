@@ -135,6 +135,6 @@
   <text x="275" y="1306" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">32</text>
   <text x="375" y="1342" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">RESET_N</text>
   <text x="1170" y="1008" font-size="79" fill="#000000" text-anchor="middle" font-family="DroidSans">IP101GR</text>
-  <text x="1170" y="1098" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">VQFN-32</text>
+  <text x="1170" y="1098" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">QFN-32</text>
  </g>
 </svg>

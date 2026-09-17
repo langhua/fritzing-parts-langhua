@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-gen_part.py — 生成 Fritzing 自定义元件 IP101GR (IC+ 10/100M 以太网 PHY, VQFN-32)。
+gen_part.py — 生成 Fritzing 自定义元件 IP101GR (IC+ 10/100M 以太网 PHY, QFN-32)。
 
 芯片工作流（AGENTS.md §2）：icon → breadboard → schematic → pcb。
 源文件（part.<id>.fzp + 4 个 svg.<view>.* + 本脚本）同目录，.fzpz 输出到仓库顶层 fzpz/。
@@ -18,7 +18,9 @@ gen_part.py — 生成 Fritzing 自定义元件 IP101GR (IC+ 10/100M 以太网 P
      ★ 图纠正了表里的一个陷阱：表里写 `6,7,8,9 TXD[3:0]` / `15,16,17,18 RXD[3:0]`，
        图上是 **6=TXD3 7=TXD2 8=TXD1 9=TXD0**、**15=RXD3 16=RXD2 17=RXD1 18=RXD0**
        （即标号递减），照着表里的"直觉顺序"写就会把 TXD0/RXD0 放反。
-   · 第 64 页 Figure 25 32-PIN QFN Dimension（本体 4×4、节距 0.4）。
+   · 第 64 页 Figure 25 **32-PIN QFN Dimension**（本体 4×4、节距 0.4）。
+     ★ 封装名以手册为准 = **QFN-32**（不是 VQFN-32，用户 2026-09-17 指正）；
+       下面那份立创封装的**文件名**里带 "VQFN-32" 字样，但那只是它的命名习惯。
    · 底板裸露焊盘 = `GND`（手册原文）—— 但按 AGENTS §5「裸露焊盘必须独立成网」，
      本元件里名字用 **EPAD**、**不进任何 `<bus>`**：布线时要特意接到 GND。
 2) **嘉立创/立创EDA 封装**（用户 2026-09-17 提供
@@ -32,7 +34,7 @@ gen_part.py — 生成 Fritzing 自定义元件 IP101GR (IC+ 10/100M 以太网 P
   [x] 1. icon（QFN32 顶视图：黑体 4×4 + 四边金焊盘 + pin1 圆点）
   [x] 2. breadboard（绿色转接板 + 33 个 2.54mm 排针）
   [x] 3. schematic（矩形符号，四边逆时针 9/8/8/8 脚）
-  [x] 4. pcb（VQFN-32 4×4 P0.4 + 中心 EPAD，按立创）
+  [x] 4. pcb（QFN-32 4×4 P0.4 + 中心 EPAD，按立创）
   [x] 5. part.IP101GR.fzp + 打包 fzpz
 
 用法：python gen_part.py
@@ -69,9 +71,9 @@ BOTTOM_WITH_PAD = [0] + BOTTOM     # 原理图底边：EPAD(0) 在最左，与 p
 
 ICON_LABEL = "IP101GR"
 SCHEM_LABEL = "IP101GR"
-TITLE = "IP101GR 10/100M Ethernet PHY (VQFN-32)"
+TITLE = "IP101GR 10/100M Ethernet PHY (QFN-32)"
 LABEL = "U"
-PACKAGE = "VQFN-32"
+PACKAGE = "QFN-32"
 FAMILY = "IC+ Ethernet PHY"
 
 # ---- 封装几何（mm；见文件头数据来源 2）--------------------------------------
@@ -89,7 +91,7 @@ SILK_W = 0.1524            # 角标线宽
 PIN1_MARK = (-1.4, 2.51)   # pin1 标记（相对本体中心；立创把圆放在底边首盘的外侧 = SVG 的 +y 方向）
 
 SVG_HDR = ('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
-           '<!-- IP101GR VQFN-32 -->\n')
+           '<!-- IP101GR QFN-32 -->\n')
 
 
 def esc(s):
@@ -295,14 +297,16 @@ def gen_schematic_svg():
              f'{esc(SCHEM_LABEL)}</text>\n')
     L.append(f'  <text x="{BX0 + BW // 2}" y="{BY0 + BH // 2 + round(CHIP_FS * 0.35) + 90}" '
              f'font-size="{FN}" fill="#000000" text-anchor="middle" font-family="DroidSans">'
-             f'VQFN-32</text>\n')
+             f'QFN-32</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
 
 # ------------------------------------------------------------------------ pcb
 def gen_pcb_svg():
-    """PCB 视图：**数据全按嘉立创 VQFN-32 封装**（AGENTS §4.3 取证顺序）。
+    """PCB 视图：**数据全按嘉立创封装**（AGENTS §4.3 取证顺序）。
+    封装名用 **QFN-32**（手册 Figure 25 的写法）；立创那份封装的**文件名**叫
+    `VQFN-32-L4.0-W4.0-P0.40-BL-EP`，只是它的命名习惯，几何一样。
     坐标 = mm，原点在本体中心。
       焊盘：0.20(切向) × 0.38(径向)，中心 ±1.9173，节距 0.40，每边 8 个；
       底边 1..8 左→右、右边 9..16 下→上、顶边 17..24 右→左、左边 25..32 上→下；
@@ -368,7 +372,7 @@ def gen_fzp():
             f' <label>{LABEL}</label>\n <author>Shi Jinghai</author>\n'
             f' <title>{TITLE}</title>\n <tags>\n  <tag>IP101GR</tag>\n  <tag>PHY</tag>\n'
             f'  <tag>Ethernet</tag>\n  <tag>10/100M</tag>\n  <tag>MII</tag>\n  <tag>RMII</tag>\n'
-            f'  <tag>VQFN-32</tag>\n </tags>\n'
+            f'  <tag>QFN-32</tag>\n </tags>\n'
             f' <properties>\n  <property name="package">{PACKAGE}</property>\n'
             f'  <property name="family">{FAMILY}</property>\n'
             f'  <property name="pins">33</property>\n </properties>\n'
