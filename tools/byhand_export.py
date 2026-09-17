@@ -302,6 +302,20 @@ def run(part_dir):
                 best, bd = name, d
         return best if bd < tol else None
 
+    def emit_path(d, el, m2):
+        """收一段**局部坐标**的 path（含 polygon / ellipse 转来的）。
+
+        ★ 为什么要"照搬 d + 一个累乘 matrix"而不是"烘坐标"（2026-09-18 加，T-Halow-RJ45）：
+          d 里可能有弧（A），fill 又可能是渐变（url(#…)）—— 硬烘要处理 ×scale/×rotate 下的
+          rx/ry，很容易错。原样搬是等价的，且不需解释 path 语法。
+        ⚠ stroke-width 是**局部单位**（随自带 matrix 一起缩放）⇒ 原值写回，不走 u()/t2()。
+        """
+        fill, stroke = styled(el, "fill"), styled(el, "stroke")
+        sw = styled(el, "stroke-width")
+        mtx = matrix_str(m2)
+        paths.append((d, mtx, fill, stroke, sw))
+        shapes.append(("path", d, mtx, fill, stroke, sw))
+
     def walk(el, m):
         tag = el.tag.replace(NS, "")
         # 隐藏图层/元素整棵跳过（辅助层，例如刻度）
@@ -442,19 +456,44 @@ def run(part_dir):
             shapes.append(("line", u(p0[0]), u(p0[1]), u(p1[0]), u(p1[1]), styled(el, "stroke"),
                            round(num(styled(el, "stroke-width")) * (sc[0] + sc[1]) / 2.0 * UF, 3)))
         elif tag == "path":
-            # ★ path 照搬（2026-09-18 加，T-Halow-RJ45）：`d` 里可能有弧（A），
-            #   fill 又可能是渐变（url(#…)）—— 硬去"烘坐标"要处理 ×scale/×rotate 下的 rx/ry，
-            #   很容易错。所以**原样搬 d + 一个显式的累乘 matrix**（等价、不必解释 path 语法）。
-            #   ⚠ path 的 stroke-width 是**局部单位**（元素自带 matrix，渲染时会一起被缩放）——
-            #     与 rect/circle 那套"内部单位"口径不同，生成器要**原值写回**。
             d = (el.get("d") or "").strip()
-            if not d:
-                return
-            fill, stroke = styled(el, "fill"), styled(el, "stroke")
-            sw = styled(el, "stroke-width")
-            mtx = matrix_str(m2)
-            paths.append((d, mtx, fill, stroke, sw))
-            shapes.append(("path", d, mtx, fill, stroke, sw))
+            if d:
+                emit_path(d, el, m2)
+        elif tag in ("polygon", "polyline"):
+            # ★ 多边形（2026-09-18 加，T-Halow-RJ45 的 LED 卡口就是 polygon）：
+            #   原来**不处理 ⇒ 静默丢掉**（图上少块东西，但什么都不报）。
+            nums = [float(v) for v in re.split(r"[\s,]+", (el.get("points") or "").strip()) if v]
+            if len(nums) >= 4:
+                d = "M " + " L ".join("%.4f %.4f" % (nums[i], nums[i + 1])
+                                       for i in range(0, len(nums) - 1, 2))
+                emit_path(d + (" Z" if tag == "polygon" else ""), el, m2)
+        elif tag == "ellipse":
+            # ★ 椭圆/圆（2026-09-18 加）：Inkscape 的椭圆工具出的是 <ellipse>，
+            #   原来不处理 ⇒ 静默丢（用户报「黑色圆按钮没有了」就是它）。
+            #   · **接近正圆**（rx≈ry，误差 <3%）⇒ 直接**烘成普通 `<circle>`**（无任何变换）：
+            #     圆心/半径都算成绝对值。为什么非烘不可 —— AGENTS §5：Fritzing 对
+            #     `transform="matrix(...)"`（尤其带旋转）的解释与 Inkscape 不一致，
+            #     会出现「缩到看不见」；库内 icon 也是这么烘的。圆是旋转不变的，烘完零误差。
+            #   · 明显是椭圆 ⇒ 只能走 path（两段 A 弧）+ matrix（少见；Fritzing 里需实测）。
+            cx, cy = num(el.get("cx")), num(el.get("cy"))
+            erx, ery = num(el.get("rx")), num(el.get("ry"))
+            if erx > 0 and ery > 0:
+                p = ap(m2, cx, cy)
+                sca2 = (sc[0] + sc[1]) / 2.0
+                if abs(erx - ery) / max(erx, ery) < 0.03:
+                    rr = (erx + ery) / 2.0 * sca2 * UF
+                    sw2 = styled(el, "stroke-width")
+                    circles.append((u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
+                                    styled(el, "stroke"),
+                                    round(num(sw2) * sca2 * UF, 3) if sw2 else None))
+                    shapes.append(("circle", u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
+                                   styled(el, "stroke"),
+                                   round(num(sw2) * sca2 * UF, 3) if sw2 else None))
+                else:
+                    emit_path("M %.4f %.4f A %.4f %.4f 0 1 0 %.4f %.4f "
+                              "A %.4f %.4f 0 1 0 %.4f %.4f Z"
+                              % (cx - erx, cy, erx, ery, cx + erx, cy, erx, ery, cx - erx, cy),
+                              el, m2)
         for c in el:
             walk(c, m2)
 
