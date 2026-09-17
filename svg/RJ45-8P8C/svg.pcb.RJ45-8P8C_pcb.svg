@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- RJ45-8P8C -->
+<svg xmlns="http://www.w3.org/2000/svg" width="14.0mm" height="29.0mm" viewBox="-7.0 -18.8 14.0 29.0">
+  <g id="copper1">
+<ellipse id="connector0pin" connectorname="1" cx="-3.570" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="-3.570" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector1pin" connectorname="2" cx="-2.550" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="-2.550" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector2pin" connectorname="3" cx="-1.530" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="-1.530" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector3pin" connectorname="4" cx="-0.510" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="-0.510" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector4pin" connectorname="5" cx="0.510" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="0.510" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector5pin" connectorname="6" cx="1.530" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="1.530" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector6pin" connectorname="7" cx="2.550" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="2.550" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<ellipse id="connector7pin" connectorname="8" cx="3.570" cy="0.000" rx="0.400" ry="0.900" fill="#F7BD13" stroke="none"/>
+<circle cx="3.570" cy="0.000" r="0.350" fill="none" stroke="#7a5a00" stroke-width="0.1"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<circle cx="-4.445" cy="5.080" r="0.800" fill="none" stroke="#9a9a9a" stroke-width="0.15"/>
+<circle cx="4.445" cy="5.080" r="0.800" fill="none" stroke="#9a9a9a" stroke-width="0.15"/>
+<path d="M -4.615 -17.800 L 5.815 -17.800 L 5.815 9.200 L -5.815 9.200 L -5.815 -16.600 Z" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
+<circle cx="-3.270" cy="-1.600" r="0.45" fill="#f0f0f0" stroke="none"/>
+<text x="-5.22" y="8.40" font-size="1.4" fill="#f0f0f0" font-family="DroidSans">RJ45</text>
+  </g>
+</svg>
