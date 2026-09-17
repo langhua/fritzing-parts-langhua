@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- IP101GR VQFN-32 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="5.6mm" height="5.6mm" viewBox="0 0 5.6 5.6">
+  <g id="copper1">
+<rect id="connector1pad" connectorname="TXER/FXSD" x="1.3000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector2pad" connectorname="X1" x="1.7000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector3pad" connectorname="X2" x="2.1000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector4pad" connectorname="COL/RMII" x="2.5000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector5pad" connectorname="TXEN" x="2.9000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector6pad" connectorname="TXD3" x="3.3000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector7pad" connectorname="TXD2" x="3.7000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector8pad" connectorname="TXD1" x="4.1000" y="4.5273" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector9pad" connectorname="TXD0" x="4.5273" y="4.1000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector10pad" connectorname="TXCLK/50M_CLKI" x="4.5273" y="3.7000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector11pad" connectorname="LED0/PHY_AD0" x="4.5273" y="3.3000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector12pad" connectorname="LED3/PHY_AD3" x="4.5273" y="2.9000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector13pad" connectorname="VDD_IO" x="4.5273" y="2.5000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector14pad" connectorname="RXCLK/50M_CLKO" x="4.5273" y="2.1000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector15pad" connectorname="RXD3" x="4.5273" y="1.7000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector16pad" connectorname="RXD2" x="4.5273" y="1.3000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector17pad" connectorname="RXD1" x="4.1000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector18pad" connectorname="RXD0" x="3.7000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector19pad" connectorname="RXDV/CRS_DV/FX_HEN" x="3.3000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector20pad" connectorname="CRS/LEDMOD" x="2.9000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector21pad" connectorname="RXER/INTR_32" x="2.5000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector22pad" connectorname="MDC" x="2.1000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector23pad" connectorname="MDIO" x="1.7000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector24pad" connectorname="TEST_ON" x="1.3000" y="0.6927" width="0.200" height="0.380" fill="#F7BD13" stroke="none"/>
+<rect id="connector25pad" connectorname="ISET" x="0.6927" y="1.3000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector26pad" connectorname="MDI_RN" x="0.6927" y="1.7000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector27pad" connectorname="MDI_RP" x="0.6927" y="2.1000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector28pad" connectorname="REGOUT" x="0.6927" y="2.5000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector29pad" connectorname="MDI_TN" x="0.6927" y="2.9000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector30pad" connectorname="MDI_TP" x="0.6927" y="3.3000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector31pad" connectorname="AVDD33" x="0.6927" y="3.7000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector32pad" connectorname="RESET_N" x="0.6927" y="4.1000" width="0.380" height="0.200" fill="#F7BD13" stroke="none"/>
+<rect id="connector0pad" connectorname="EPAD" x="1.4000" y="1.4000" width="2.800" height="2.800" fill="#F7BD13" stroke="none"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<line x1="0.724" y1="0.724" x2="1.098" y2="0.724" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="0.724" y1="0.724" x2="0.724" y2="1.098" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="0.724" y1="4.876" x2="1.098" y2="4.876" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="0.724" y1="4.876" x2="0.724" y2="4.502" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="4.876" y1="0.724" x2="4.502" y2="0.724" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="4.876" y1="0.724" x2="4.876" y2="1.098" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="4.876" y1="4.876" x2="4.502" y2="4.876" stroke="#f0f0f0" stroke-width="0.1524"/>
+<line x1="4.876" y1="4.876" x2="4.876" y2="4.502" stroke="#f0f0f0" stroke-width="0.1524"/>
+<circle cx="1.400" cy="5.310" r="0.20" fill="#f0f0f0" stroke="none" class="other"/>
+  </g>
+</svg>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="25.40mm" height="25.40mm" viewBox="0 0 1000 1000">
+ <g id="breadboard">
+  <rect x="0" y="0" width="1000" height="1000" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="421.24" y="421.24" width="157.48" height="157.48" fill="#303030" stroke="none"/>
+  <rect x="440.93" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="440.93" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="440.93" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="440.93" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="456.67" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="456.67" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="456.67" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="456.67" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="472.42" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="472.42" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="472.42" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="472.42" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="488.17" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="488.17" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="488.17" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="488.17" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="503.96" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="503.96" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="503.96" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="503.96" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="519.67" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="519.67" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="519.67" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="519.67" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="535.41" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="535.41" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="535.41" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="535.41" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="551.20" y="417.03" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="551.20" y="578.72" width="7.87" height="4.21" fill="#f7bf13" stroke="none"/>
+  <rect x="417.03" y="551.20" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <rect x="578.72" y="551.20" width="4.21" height="7.87" fill="#f7bf13" stroke="none"/>
+  <circle cx="444.86" cy="555.14" r="7.09" fill="#c0c0c0" stroke="none"/>
+  <text x="499.98" y="495.37" font-size="23.62" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">IP101GR</text>
+  <text x="499.98" y="528.44" font-size="12.60" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">QFN32</text>
+  <circle id="connector1pin" connectorname="TXER/FXSD" cx="100" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="100" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100 824)">1</text>
+  <circle id="connector2pin" connectorname="X1" cx="200" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="200" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200 824)">2</text>
+  <circle id="connector3pin" connectorname="X2" cx="300" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="300" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300 824)">3</text>
+  <circle id="connector4pin" connectorname="COL/RMII" cx="400" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="400" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400 824)">4</text>
+  <circle id="connector5pin" connectorname="TXEN" cx="500" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="500" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="500" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 500 824)">5</text>
+  <circle id="connector6pin" connectorname="TXD3" cx="600" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="600" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 600 824)">6</text>
+  <circle id="connector7pin" connectorname="TXD2" cx="700" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="700" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="700" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 700 824)">7</text>
+  <circle id="connector8pin" connectorname="TXD1" cx="800" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="800" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="800" y="824" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 800 824)">8</text>
+  <circle id="connector9pin" connectorname="TXD0" cx="900" cy="800" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="800" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="800" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 800)">9</text>
+  <circle id="connector10pin" connectorname="TXCLK/50M_CLKI" cx="900" cy="700" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="700" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="700" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 700)">10</text>
+  <circle id="connector11pin" connectorname="LED0/PHY_AD0" cx="900" cy="600" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="600" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="600" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 600)">11</text>
+  <circle id="connector12pin" connectorname="LED3/PHY_AD3" cx="900" cy="500" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="500" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="500" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 500)">12</text>
+  <circle id="connector13pin" connectorname="VDD_IO" cx="900" cy="400" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="400" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="400" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 400)">13</text>
+  <circle id="connector14pin" connectorname="RXCLK/50M_CLKO" cx="900" cy="300" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="300" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="300" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 300)">14</text>
+  <circle id="connector15pin" connectorname="RXD3" cx="900" cy="200" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="200" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="200" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 200)">15</text>
+  <circle id="connector16pin" connectorname="RXD2" cx="900" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="100" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 100)">16</text>
+  <circle id="connector17pin" connectorname="RXD1" cx="800" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="800" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="800" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 800 176)">17</text>
+  <circle id="connector18pin" connectorname="RXD0" cx="700" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="700" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="700" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 700 176)">18</text>
+  <circle id="connector19pin" connectorname="RXDV/CRS_DV/FX_HEN" cx="600" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="600" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="600" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 600 176)">19</text>
+  <circle id="connector20pin" connectorname="CRS/LEDMOD" cx="500" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="500" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="500" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 500 176)">20</text>
+  <circle id="connector21pin" connectorname="RXER/INTR_32" cx="400" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="400" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400 176)">21</text>
+  <circle id="connector22pin" connectorname="MDC" cx="300" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="300" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300 176)">22</text>
+  <circle id="connector23pin" connectorname="MDIO" cx="200" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="200" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200 176)">23</text>
+  <circle id="connector24pin" connectorname="TEST_ON" cx="100" cy="100" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="100" r="19.1" fill="#2b2b2b"/>
+  <text x="100" y="176" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100 176)">24</text>
+  <circle id="connector25pin" connectorname="ISET" cx="100" cy="200" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="200" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="200" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 200)">25</text>
+  <circle id="connector26pin" connectorname="MDI_RN" cx="100" cy="300" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="300" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="300" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 300)">26</text>
+  <circle id="connector27pin" connectorname="MDI_RP" cx="100" cy="400" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="400" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="400" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 400)">27</text>
+  <circle id="connector28pin" connectorname="REGOUT" cx="100" cy="500" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="500" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="500" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 500)">28</text>
+  <circle id="connector29pin" connectorname="MDI_TN" cx="100" cy="600" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="600" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="600" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 600)">29</text>
+  <circle id="connector30pin" connectorname="MDI_TP" cx="100" cy="700" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="700" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="700" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 700)">30</text>
+  <circle id="connector31pin" connectorname="AVDD33" cx="100" cy="800" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="800" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="800" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 800)">31</text>
+  <circle id="connector32pin" connectorname="RESET_N" cx="100" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="176" y="900" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 176 900)">32</text>
+  <circle id="connector0pin" connectorname="EPAD" cx="900" cy="900" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="900" cy="900" r="19.1" fill="#2b2b2b"/>
+  <text x="824" y="900" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 824 900)">EP</text>
+ </g>
+</svg>

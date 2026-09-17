@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- IP101GR VQFN-32 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="4.21mm" height="4.21mm" viewBox="0 0 4.215 4.215">
+  <g id="icon">
+    <rect x="0.107" y="0.107" width="4.0" height="4.0" fill="#303030" stroke="none"/>
+    <rect x="0.607" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0.607" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="0.607" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="0.607" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="1.007" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="1.007" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="1.007" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="1.007" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="1.407" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="1.407" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="1.407" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="1.407" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="1.807" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="1.807" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="1.807" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="1.807" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="2.208" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="2.208" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="2.208" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="2.208" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="2.607" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="2.607" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="2.607" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="2.607" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="3.007" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="3.007" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="3.007" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="3.007" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="3.408" y="0" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="3.408" y="4.107" width="0.20" height="0.107" fill="#f7bf13" stroke="none"/>
+    <rect x="0" y="3.408" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <rect x="4.107" y="3.408" width="0.107" height="0.20" fill="#f7bf13" stroke="none"/>
+    <circle cx="0.707" cy="3.508" r="0.18" fill="#c0c0c0" stroke="none"/>
+    <text x="2.107" y="1.99" font-size="0.60" fill="#c0c0c0" text-anchor="middle" font-family="DroidSans">IP101GR</text>
+    <text x="2.107" y="2.83" font-size="0.32" fill="#c0c0c0" text-anchor="middle" font-family="DroidSans">QFN32</text>
+  </g>
+</svg>
