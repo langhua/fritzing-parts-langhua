@@ -213,7 +213,7 @@ def gen_schematic_svg():
     """
     P, WIRE, FN, CH = 100, 130, 35, 20
     BX0, BY0 = 340, 200
-    BW, BH = 520, 8 * P + 2 * P                  # 上下各留 1 个脚距
+    BW, BH = 520, 7 * P + 2 * P                  # 首尾脚占 7P，上下各留 1 个脚距
     BX1, BY1 = BX0 + BW, BY0 + BH
     VBX, VBY = BX0 - WIRE - 20, BY0 - 20
     VBW, VBH = BW + WIRE + 40, BH + 40
@@ -251,40 +251,36 @@ def gen_schematic_svg():
 
 # ------------------------------------------------------------------------ pcb
 def gen_pcb_svg():
-    """PCB 视图：8 脚椭圆焊盘（1.02 脚距 / 7.14 跨距）+ 2 个定位柱孔 + 本体丝印。
+    """PCB 视图（用户 2026-09-17 给的焊盘排列图）：
 
-    坐标原点 = **引脚排中心**（x 居中于 8 脚）。尾端面在 y = +9.20（图纸），
-    插口端在 y = 9.20 − 27.00 = −17.80。定位柱在引脚排后方 5.08。
+    · 8 个**通孔圆焊盘**排成 **2 列 × 4 行**：外径 **1.60**、孔径 **1.00**；
+    · **两列中心距 1.50**、**同列相邻两脚中心距 2.04**；
+    · 丝印方框 **11.80（左右边线）× 12.20（上下边线）**，左侧第一列中心距左边线 **1.50**；
+    · 脚序：左列 pin1..4（上→下）、右列 pin5..8（上→下）—— 双列插座的常见排法。
     """
-    y_dip = 0.0
-    y_tail = DIP_FROM_TAIL
-    y_front = DIP_FROM_TAIL - BODY_L
-    y_post = y_dip + POST_BACK
-    x0, x1 = -7.0, 7.0
-    y0, y1 = y_front - 1.0, y_tail + 1.0
-    W, H = x1 - x0, y1 - y0
+    PAD_D, HOLE_D = 1.60, 1.00
+    COL_P, ROW_P = 1.50, 2.04
+    BOX_W, BOX_H = 11.80, 12.20
+    COL0 = 1.50
+    M = 1.5                                      # 画布留边
+    W, H = BOX_W + 2 * M, BOX_H + 2 * M
+    x0, y0 = -W / 2, -H / 2
+    bx, by = x0 + M, y0 + M
     pads, silk = [], []
-    for i, (_ci, _n, _d) in enumerate(CONN):
-        x = -SPAN / 2 + i * PITCH
-        pads.append(f'<ellipse id="connector{i}pin" connectorname="{esc(CONN[i][1])}" '
-                    f'cx="{x:.3f}" cy="{y_dip:.3f}" rx="{PAD_W / 2:.3f}" ry="{PAD_H / 2:.3f}" '
-                    f'fill="#F7BD13" stroke="none"/>')
-        pads.append(f'<circle cx="{x:.3f}" cy="{y_dip:.3f}" r="{DRILL / 2:.3f}" fill="none" '
-                    f'stroke="#7a5a00" stroke-width="0.1"/>')
-    xb0, xb1 = -BODY_W / 2, BODY_W / 2
-    sk = 1.2
-    # 定位柱（非电孔）：画在丝印层，不进铜层
-    for sy in (-1, 1):
-        silk.append(f'<circle cx="{sy * POST_PITCH / 2:.3f}" cy="{y_post:.3f}" '
-                    f'r="{POST_HOLE / 2:.3f}" fill="none" stroke="#9a9a9a" stroke-width="0.15"/>')
-    # 本体丝印轮廓（左端 = 插口端，左上切 45° 角）—— 用本体真实边界
-    silk.append(f'<path d="M {xb0 + sk:.3f} {y_front:.3f} L {xb1:.3f} {y_front:.3f} '
-                f'L {xb1:.3f} {y_tail:.3f} L {xb0:.3f} {y_tail:.3f} '
-                f'L {xb0:.3f} {y_front + sk:.3f} Z" fill="none" '
-                f'stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<circle cx="{-SPAN / 2 + 0.3:.3f}" cy="{y_dip - 1.6:.3f}" r="0.45" '
-                f'fill="#f0f0f0" stroke="none"/>')          # pin1 标记（朝插口端一侧）
-    silk.append(f'<text x="{xb0 + 0.6:.2f}" y="{y_tail - 0.8:.2f}" font-size="1.4" '
+    for i in range(N_PINS):
+        col, row = divmod(i, 4)
+        x = bx + COL0 + col * COL_P
+        y = by + BOX_H / 2 + (row - 1.5) * ROW_P
+        pads.append(f'<circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" '
+                    f'cx="{x:.3f}" cy="{y:.3f}" r="{PAD_D / 2:.3f}" fill="#F7BD13" '
+                    f'stroke="none"/>')
+        pads.append(f'<circle cx="{x:.3f}" cy="{y:.3f}" r="{HOLE_D / 2:.3f}" '
+                    f'fill="#0b2b3a" stroke="none"/>')
+    silk.append(f'<rect x="{bx:.3f}" y="{by:.3f}" width="{BOX_W:.2f}" height="{BOX_H:.2f}" '
+                f'fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>')
+    silk.append(f'<circle cx="{bx + 0.8:.3f}" cy="{by + 0.8:.3f}" '
+                f'r="0.45" fill="#f0f0f0" stroke="none"/>')          # pin1 标记（框内左上角）
+    silk.append(f'<text x="{bx + COL0 + 1.9:.2f}" y="{by + BOX_H - 0.8:.2f}" font-size="1.4" '
                 f'fill="#f0f0f0" font-family="DroidSans">{esc(ICON_LABEL)}</text>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
