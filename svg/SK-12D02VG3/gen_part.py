@@ -63,10 +63,27 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+def knob_path(cx, cy, u, body_h, kw, kl, kx_off, r=0.25):
+    """拨柄轮廓（用户 2026-09-17 定）：从本体下边缘向下伸出，
+    **与本体相接的那一侧是直角**（拨柄是插进本体的），只把**外端两个角**倒圆。
+    cx/cy = 元件中心，kx_off = 拨柄中心相对元件中心的水平偏移。"""
+    y0 = cy + body_h / 2.0 * u                 # 本体下边缘
+    y1 = y0 + kl * u                           # 拨柄外端
+    xl = cx + (kx_off - kw / 2.0) * u
+    xr = cx + (kx_off + kw / 2.0) * u
+    rr = r * u
+    return (f"M {xl:.3f} {y0:.3f} L {xr:.3f} {y0:.3f} "
+            f"L {xr:.3f} {y1 - rr:.3f} Q {xr:.3f} {y1:.3f} {xr - rr:.3f} {y1:.3f} "
+            f"L {xl + rr:.3f} {y1:.3f} Q {xl:.3f} {y1:.3f} {xl:.3f} {y1 - rr:.3f} Z")
+
+
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
-    """俯视图：深灰本体 8.6 × 4.4 + **下边缘伸出的白色拨柄**（用户 2026-09-17 定）
-    + pin1 圆点 + 丝印名。"""
+    """俯视图：深灰本体 8.6 × 4.4 + 下边缘伸出的白色拨柄 + pin1 圆点 + 丝印名。
+
+    拨柄（用户 2026-09-17 定）：位于**右半中间**（不居中）、与本体相接一侧**直角**、
+    外端两角圆角（见 knob_path）。
+    """
     hw, hh = BODY_W / 2.0, BODY_H / 2.0
     W = BODY_W + 1.0
     H = BODY_H + ACT_L + 1.0
@@ -75,8 +92,8 @@ def gen_icon_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.2f}mm" height="{H:.2f}mm" '
          f'viewBox="{x0:.2f} {y0:.2f} {W:.2f} {H:.2f}">\n',
          '  <g id="icon">\n']
-    L.append(f'    <rect x="{-ACT_W / 2:.3f}" y="{hh:.3f}" width="{ACT_W:.2f}" '
-             f'height="{ACT_L:.2f}" rx="0.2" ry="0.2" fill="#e8e8e8" stroke="none"/>\n')
+    L.append(f'    <path d="{knob_path(0, 0, 1.0, BODY_H, ACT_W, ACT_L, BODY_W / 4.0)}" '
+             f'fill="#e8e8e8" stroke="none"/>\n')                          # 拨柄（右半中间）
     L.append(f'    <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
              f'fill="#2b2b2b" stroke="none"/>\n')                              # 本体
     L.append(f'    <circle cx="{-hw + 0.75:.3f}" cy="{-hh + 0.75:.3f}" r="0.30" fill="#c0c0c0" '
@@ -108,10 +125,9 @@ def gen_breadboard_svg():
          ' <g id="breadboard">\n',
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
-    # 元件（1:1）：拨柄朝下
-    L.append(f'  <rect x="{cx - ACT_W / 2 * U:.1f}" y="{cy + BODY_H / 2 * U:.1f}" '
-             f'width="{ACT_W * U:.1f}" height="{ACT_L * U:.1f}" rx="8" ry="8" fill="#e8e8e8" '
-             f'stroke="none"/>\n')
+    # 元件（1:1）：拨柄朝下、位于右半中间（与本体相接侧直角）
+    L.append(f'  <path d="{knob_path(cx, cy, U, BODY_H, ACT_W, ACT_L, BODY_W / 4.0, 0.25)}" '
+             f'fill="#e8e8e8" stroke="none"/>\n')
     L.append(f'  <rect x="{cx - BODY_W / 2 * U:.1f}" y="{cy - BODY_H / 2 * U:.1f}" '
              f'width="{BODY_W * U:.1f}" height="{BODY_H * U:.1f}" fill="#2b2b2b" stroke="none"/>\n')
     L.append(f'  <circle cx="{cx - BODY_W / 2 * U + 30:.1f}" cy="{cy - BODY_H / 2 * U + 30:.1f}" '
@@ -186,11 +202,7 @@ def gen_schematic_svg():
              f'stroke-width="5" stroke-dasharray="14 10"/>\n')
     L.append(f'  <line x1="{X_MID}" y1="{Y_BAR}" x2="{BX0 + 300}" y2="{Y_BAR}" stroke="#000000" '
              f'stroke-width="5"/>\n')
-    # 框内脚名（照截图：只在左下写 5、右下写 4）
-    L.append(f'  <text x="{BX0 + CH}" y="{BY1 - CH}" font-size="{FN}" fill="#000000" '
-             f'font-family="DroidSans">5</text>\n')
-    L.append(f'  <text x="{BX1 - CH}" y="{BY1 - CH}" font-size="{FN}" fill="#000000" '
-             f'text-anchor="end" font-family="DroidSans">4</text>\n')
+    # 框内**不写**脚名（用户 2026-09-17：截图里那个位置的 4/5 是原图细节错误）
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
@@ -225,7 +237,8 @@ def gen_pcb_svg():
             silk.append(f'<line x1="{C + sx * hw:.3f}" y1="{C + sy * hh:.3f}" '
                         f'x2="{C + sx * hw:.3f}" y2="{C + sy * (hh - SILK_ARM):.3f}" '
                         f'stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<circle cx="{C - hw + 0.75:.3f}" cy="{C - hh + 0.75:.3f}" r="0.30" '
+    # pin1 标记：在 pin1 焊盘**正上方**（用户 2026-09-17 定）
+    silk.append(f'<circle cx="{C + PAD_Y[1]:.3f}" cy="{C - hh + 0.75:.3f}" r="0.30" '
                 f'fill="#f0f0f0" stroke="none"/>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))

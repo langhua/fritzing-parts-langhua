@@ -21,6 +21,6 @@
 <line x1="1.700" y1="8.200" x2="1.700" y2="7.100" stroke="#f0f0f0" stroke-width="0.1524"/>
 <line x1="10.300" y1="3.800" x2="10.300" y2="4.900" stroke="#f0f0f0" stroke-width="0.1524"/>
 <line x1="10.300" y1="8.200" x2="10.300" y2="7.100" stroke="#f0f0f0" stroke-width="0.1524"/>
-<circle cx="2.450" cy="4.550" r="0.30" fill="#f0f0f0" stroke="none"/>
+<circle cx="4.000" cy="4.550" r="0.30" fill="#f0f0f0" stroke="none"/>
   </g>
 </svg>
