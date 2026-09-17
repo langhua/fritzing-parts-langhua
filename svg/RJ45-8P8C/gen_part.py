@@ -60,6 +60,11 @@ POST_HOLE = 1.60                   # 定位柱孔（推测）
 POST_PITCH = 8.89                  # 定位柱间距（推测：8P8C 通用 0.35"）
 POST_BACK = 5.08                   # 定位柱在引脚排后方（推测：0.2"）
 
+# ---- icon 里的弹片 / 凹槽 / 斜角（用户 2026-09-17 定）--------------------------
+BLADE_L, BLADE_W = 14.00, 0.45     # 弹片（长 × 宽）
+NOTCH_D = BLADE_W * 2              # 本体凹槽深 = 弹片宽（金属线宽）的 2 倍
+TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进量 = 凹槽深的 1.5 倍
+
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
 
@@ -67,16 +72,16 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def body_path(cx, cy, u, w, ln, skew=None):
+def body_path(cx, cy, u, w, ln, skew_w=None):
     """俯视本体轮廓：左端（插口端）两个角按 **30°** 斜切，右端（尾部）直角。
 
-    30° 的取法（用户 2026-09-17 更正）：进深方向（x）收 `skew`，宽度方向（y）收
-    `skew × tan30°` —— 即斜边与本体长边成 30°，斜边沿进深方向爬得长。
+    几何由**宽度方向的收进量** `skew_w` 定（用户 2026-09-17：它等于凹槽深的 1.5 倍，
+    见 TRIM_W）；进深方向（x）的收进量再由 30° 推出 ⇒ 斜边与本体长边成 30°。
     """
     x0, x1 = cx - ln / 2 * u, cx + ln / 2 * u
     y0, y1 = cy - w / 2 * u, cy + w / 2 * u
-    c = (skew or 0) * u                      # 进深方向的收进量
-    d = c * math.tan(math.radians(30))       # 宽度方向的收进量
+    d = (skew_w or 0) * u                    # 宽度方向的收进量
+    c = d / math.tan(math.radians(30))       # 进深方向的收进量（30° 推出）
     return (f"M {x0 + c:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} L {x1:.1f} {y1:.1f} "
             f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
 
@@ -95,8 +100,6 @@ def gen_icon_svg():
       而不是写个名字」。
     """
     u = 1.0
-    sk = 1.2
-    blade_l, blade_w = 14.0, 0.45
     gold, silver = "#d8b45a", "#b9bdc2"
     x0, x1 = -(BODY_L / 2 + 0.3), (BODY_L / 2 + 0.3)
     y0, y1 = -(BODY_W / 2 + 0.3), (BODY_W / 2 + 0.3)
@@ -104,25 +107,25 @@ def gen_icon_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{x1 - x0:.2f}mm" height="{y1 - y0:.2f}mm" '
          f'viewBox="{x0:.2f} {y0:.2f} {x1 - x0:.2f} {y1 - y0:.2f}">\n',
          '  <g id="icon">\n',
-         f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, sk)}" fill="#2b2b2b" stroke="none"/>\n']
+         f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, TRIM_W)}" fill="#2b2b2b" stroke="none"/>\n']
     bx = -BODY_L / 2 + 1.2
     # 上下本体的**凹槽**（用户 2026-09-17）：俯视时银色段那一段是敞开的槽 ——
     # 槽宽 = 银色线长的 80%、槽深 = 线宽的 2 倍、**右侧槽壁与金属线右端平齐**。
-    nw, nd = blade_l / 2 * 0.80, blade_w * 2
-    nx = bx + blade_l - nw
+    nw, nd = BLADE_L / 2 * 0.80, NOTCH_D
+    nx = bx + BLADE_L - nw
     for sy in (-1, 1):
         ye = sy * BODY_W / 2
         L.append(f'    <rect x="{nx:.2f}" y="{min(ye, ye - sy * nd):.2f}" width="{nw:.2f}" '
                  f'height="{nd:.2f}" fill="#141414" stroke="none"/>\n')
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
-        L.append(f'    <rect x="{bx:.2f}" y="{yy - blade_w / 2:.3f}" width="{blade_l / 2:.2f}" '
-                 f'height="{blade_w:.2f}" rx="0.10" fill="{gold}" stroke="none"/>\n')
-        L.append(f'    <rect x="{bx + blade_l / 2:.2f}" y="{yy - blade_w / 2:.3f}" '
-                 f'width="{blade_l / 2:.2f}" height="{blade_w:.2f}" rx="0.10" fill="{silver}" '
+        L.append(f'    <rect x="{bx:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{BLADE_L / 2:.2f}" '
+                 f'height="{BLADE_W:.2f}" fill="{gold}" stroke="none"/>\n')
+        L.append(f'    <rect x="{bx + BLADE_L / 2:.2f}" y="{yy - BLADE_W / 2:.3f}" '
+                 f'width="{BLADE_L / 2:.2f}" height="{BLADE_W:.2f}" fill="{silver}" '
                  f'stroke="none"/>\n')
     for sy in (-1, 1):                                                       # 尾部两个卡扣
-        L.append(f'    <rect x="{bx + blade_l + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
+        L.append(f'    <rect x="{bx + BLADE_L + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
                  f'height="2.60" rx="0.15" fill="#cfcfcf" stroke="none"/>\n')
     L.append('  </g>\n</svg>\n')
     return "".join(L)
@@ -149,7 +152,7 @@ def gen_breadboard_svg():
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
     # 元件 1:1（横放俯视）
-    L.append(f'  <path d="{body_path(cx, cy, U, BODY_W, BODY_L, 1.2)}" fill="#2b2b2b" '
+    L.append(f'  <path d="{body_path(cx, cy, U, BODY_W, BODY_L, TRIM_W)}" fill="#2b2b2b" '
              f'stroke="none"/>\n')
     ix = cx - BODY_L / 2 * U + 1.2 * U
     L.append(f'  <rect x="{ix - 0.9 * U:.1f}" y="{cy - FRONT_H / 2 * U:.1f}" '
