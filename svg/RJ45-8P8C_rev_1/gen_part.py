@@ -83,11 +83,12 @@ NOTCH_D = BLADE_W * 2              # 本体凹槽深 = 弹片宽（金属线宽�
 WIN_W, WIN_H = 2.20, 4.60          # 尾部两个圆角矩形「窗口」（宽 × 高，用户 2026-09-17 实测）
 WIN_FROM_RIGHT = 4.60             # 窗口右边距壳体右边缘
 TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进量 = 凹槽深的 1.5 倍
-GOLD_SHIFT = 0.50                  # 镀金/银色分界左移量（用户 2026-09-17）
+GOLD_LEN = 5.00                    # 镀金段长（用户 2026-09-18；原为「弹片长/2 − 0.5」）
 SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的距离（交替用）
 
 BLADE_X0 = -BODY_L / 2 + 1.20                     # 弹片起点（插口端内侧）
-GOLD_END = BLADE_X0 + BLADE_L / 2 - GOLD_SHIFT    # 镀金/银色分界（x）
+GOLD_LEN = 5.00                                   # 镀金段长度（用户 2026-09-18）
+GOLD_END = BLADE_X0 + GOLD_LEN                    # 镀金/银色分界（x）
 SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交替的银色右端
 NOTCH_L_FROM_LEFT = 7.20           # 凹槽**左缘**距本体左边缘（用户 2026-09-18）
 NOTCH_W = (max(SILVER_END) - GOLD_END) * 0.80     # 凹槽宽 = 银色线长（最长那根）的 80%
