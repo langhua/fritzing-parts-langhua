@@ -388,6 +388,7 @@ def run(part_dir):
             ps = [ap(m2, x, y), ap(m2, x + w, y), ap(m2, x, y + h), ap(m2, x + w, y + h)]
             xs = [p[0] for p in ps]; ys = [p[1] for p in ps]
             sw = styled(el, "stroke-width")
+            rr = styled(el, "rx") or styled(el, "ry")
             rd = ang(m2) % 90.0
             if 0.5 < rd < 89.5:
                 # ★ **任意角度**的矩形（手工版里少见，T-Halow-RJ45 有 3 个 -139.7°）：
@@ -401,13 +402,16 @@ def run(part_dir):
                                round(num(sw) * sca4 * UF, 3) if sw else None))
                 paths.append((d4, "", styled(el, "fill"), styled(el, "stroke"), None))
                 return
-            rects.append((u(min(xs)), u(min(ys)), u(max(xs) - min(xs)), u(max(ys) - min(ys)),
-                          styled(el, "fill"), ang(m2), styled(el, "stroke"),
-                          round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
-            shapes.append(("rect", u(min(xs)), u(min(ys)), u(max(xs) - min(xs)),
-                           u(max(ys) - min(ys)), styled(el, "fill"), ang(m2),
-                           styled(el, "stroke"),
-                           round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None))
+            rect = ("rect", u(min(xs)), u(min(ys)), u(max(xs) - min(xs)), u(max(ys) - min(ys)),
+                    styled(el, "fill"), ang(m2), styled(el, "stroke"),
+                    round(num(sw) * (sc[0] + sc[1]) / 2.0 * UF, 3) if sw else None)
+            if rr:
+                # ★ 圆角矩形（2026-09-18 加，T-Halow-RJ45）：手工版里板框/芯片本体都带 rx，
+                #   原来不搬 ⇒ 一角变直角。rx 作为**可选第 10 个字段**接在后面
+                #   （老表只有 9 个字段，生成器按 `len(sh) > 9` 判，不影响已在库的表）。
+                rect += (round(num(rr) * (sc[0] + sc[1]) / 2.0 * UF, 2),)
+            rects.append(rect)
+            shapes.append(rect)
         elif tag == "text":
             fs = num(styled(el, "font-size")) * (sc[0] + sc[1]) / 2.0 * UF
             fw = "bold" if (styled(el, "font-weight") or "").lower() in \
@@ -496,7 +500,7 @@ def run(part_dir):
         out.append('    ("%s", %s, %s, %s, "%s", %s, "%s", %s),'
                    % (t, x, y, fs, anchor, a, fill, "'bold'" if fw else "None"))
     out += ["]", "", "# ★ 图元（**按手工版里的先后顺序**，就是叠放次序）—— 类型：",
-            "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw)",
+            "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw[, rx])",
             "#   (\"circle\", x, y, r, fill, stroke, sw)",
             "#   (\"pad\",    id, net, x, y[, \"square\"])  ← 焊盘：出图时要带 connectorNpin",
             "#   (\"line\",   x1, y1, x2, y2, stroke, sw)",
@@ -505,7 +509,10 @@ def run(part_dir):
             "SHAPES = ["]
     for s in shapes:
         if s[0] in ("rect",):
-            out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s"),' % s[1:])
+            if len(s) > 9:
+                out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s", %s),' % s[1:])
+            else:
+                out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s"),' % s[1:])
         elif s[0] == "circle":
             out.append('    ("circle", %s, %s, %s, "%s", "%s", %s),' % s[1:])
         elif s[0] == "pad":

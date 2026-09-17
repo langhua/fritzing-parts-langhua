@@ -486,10 +486,13 @@ def build_breadboard():
     for i, sh in enumerate(SHAPES):        # ★ 按手工版文档次序画（叠放次序）
         kind = sh[0]
         if kind == "rect":
-            _k, x, y, w, h, fill, _rot, stroke, sw = sh
+            _k, x, y, w, h, fill, _rot, stroke, sw = sh[:9]
+            rx = sh[9] if len(sh) > 9 else 0        # 可选第 10 字段：圆角半径（表单位）
             a = ' fill="%s"' % fill if fill and fill != "None" else ''
             if stroke and stroke != "None":
                 a += ' stroke="%s" stroke-width="%s"' % (stroke, u(t2(_f(sw))))
+            if rx:
+                a += ' rx="%s"' % u(t2(rx))
             L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>'
                      % (u(t2(x)), u(t2(y)), u(t2(w)), u(t2(h)), a))
         elif kind == "circle":
