@@ -30,7 +30,21 @@ gen_part.py — CH347F 高速 USB 转 SPI/I2C/JTAG/UART 芯片（WCH）Fritzing 
   [x] 2. breadboard（= CH347F-EVT-R0-1v0 整块评估板）
   [x] 3. schematic（矩形 29 脚符号）
   [x] 4. pcb（QFN28 4×4 P0.4 + 底板 EPAD）
-  [ ] 5. part.CH347F.fzp + 打包 fzpz
+  [x] 5. part.CH347F.fzp + 打包 fzpz
+
+按 CH347T 那套规则复核过（2026-09-15，用户要求"CH347F 也检查一遍"）：
+  · **名字 = 板上丝印**：48 个面包板焊盘逐个对过手工版丝印 —— 47 个的字面就写在旁边
+    （`GND/KEY` 那两个是丝印的两行 `GND` + `/KEY` 合起来的写法，同 CH347T）；
+    **唯一没有丝印的是 P8（FLASH 片选跳线）中间脚** —— 手工版里它的 `connectorname`
+    写着 `FLASH_CS`（隐藏名，按规则不作为依据），该脚连到板上 U3（flash）的 CS。
+    这里保留 `FLASH_CS` 这个**描述性**名字，并记明它**不是**丝印原文（见 BUSES 上方注释）。
+  · **只有名字完全一致才共 bus**：21 条网络里，`SCL↔11`/`SDA↔12`/`SCS1↔7`/`SCS0↔13`
+    四个是同一个芯片脚的**多功能名 vs 丝印短名**（P5/P8/P4 排针），`3V3↔VCC(21)`、
+    `VREF↔VIO(6)` 是板上直通（用户万用表实测）→ 全部在 `BUSES` 里**显式**并、并注明出处；
+    其余同网焊盘都是**同名**。跳线（`JP1` = VIO 选择、`P8` = flash 片选选择）按 CH347T
+    的模型：**每个脚各接自己那条线**（外脚分别接 VIO/3V3、SCS1/SCS0，中间脚接 flash）。
+  · **EPAD（0#，`connector0`）不在任何 `<bus>` 里**：裸露焊盘独立成网、布线时特意接 GND
+    （用户 2026-09-15 定；`tools/fzp_check.py` 第 ⑥ 条守）。
 """
 import os
 import re
@@ -268,12 +282,21 @@ def pad_rows():
 #     · 两个 GND/KEY 之间**互通**（同一条按键扫描线），但它们与 GND **不通** → 单独成一条总线
 #   ❗**0#（底板 EPAD）不进 GND 总线**（用户 2026-09-15 定）：裸露焊盘要布线时特意接到 GND，
 #     不自动成同网 —— 同 RT6150 的 `EP`、TX-AH 的 `EPAD1/2`、TXW8301 的 `EPAD`。
+#   ❗下面"芯片脚 + 板级网名"不同名的几条，**都是同一条物理线**（板级排针的丝印用的是
+#     芯片脚的**多功能短名**）——按 AGENTS §5"只有名字完全一致才共 bus"，它们必须**显式**并：
+#       SCL  ← pin11（手册 pin11 主名 = CTS1/SCL；板上 P5 那针的丝印写的是 SCL）
+#       SDA  ← pin12（主名 = RTS1/SDA；丝印 SDA）
+#       SCS1 ← pin7 （主名 = DTR1/TNOW1/SCS1；丝印 SCS1，P8/P4 各一针）
+#       SCS0 ← pin13（主名就是 SCS0 —— **同名**，靠名字就能并，列在这里只是标出处）
+#       VCC  ← 板上 3V3 轨（VCC 是芯片脚名，板级丝印写 3V3）
+#     `FLASH_CS`（P8 中间脚，连到 U3 flash 的 CS）丝印上**没有名字**，是描述性名字 ——
+#     保留它，但**不当成丝印原文**（同一条线上没有第二个焊盘，无需并）。
 BUSES = [("GND", (20,), ("GND",)),                  # 20 = GND（0# EPAD 不并进来）
          ("VCC", (21,), ("3V3",)),                    # 板上 3V3 轨
          ("VIO", (6,), ("VIO", "VREF")),              # VREF 与 VIO 板上 0Ω 直通
-         ("SCL", (11,), ("SCL",)),                    # pin11 = CTS1/SCL
-         ("SDA", (12,), ("SDA",)),                    # pin12 = RTS1/SDA
-         ("SCS1", (7,), ("SCS1",)),                   # pin7 = DTR1/TNOW1/SCS1
+         ("SCL", (11,), ("SCL",)),                    # pin11 = CTS1/SCL（P5 丝印 SCL）
+         ("SDA", (12,), ("SDA",)),                    # pin12 = RTS1/SDA（P5 丝印 SDA）
+         ("SCS1", (7,), ("SCS1",)),                   # pin7 = DTR1/TNOW1/SCS1（P8/P4 丝印 SCS1）
          ("SCS0", (13,), ("SCS0",)),                  # pin13 = SCS0（P8 的 pin3 也是 SCS0，用户实测互通）
          ("KEY", (), ("GND/KEY",))]                   # 两个 GND/KEY 脚互联（不是地）
 
