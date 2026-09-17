@@ -27,6 +27,7 @@
 """
 
 import os
+import re
 import zipfile
 
 SC = 2.8346456692913385  # pt per mm —— 与 CH347F / TX-AH-R900PNR_rev_1 / ESP32-S3-DevKitC-1 一致
@@ -35,6 +36,14 @@ OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 FZPZ_DIR = os.path.abspath(os.path.join(OUT_DIR, "..", "..", "fzpz"))
 
 PART_ID = "T-Halow-RJ45"
+
+# 跨部件 1:1 复用的图形素材（AGENTS §4：允许引用仓库内其它部件目录的 svg，
+# 但绝不引用仓库外文件；文件缺失就报错，不静默退化）
+SMA_ASSET = os.path.abspath(os.path.join(OUT_DIR, "..", "SMA-PJ1.7-L9.5",
+                                         "svg.icon.SMA-PJ1.7-L9.5_icon.svg"))
+TYC_ASSET = os.path.abspath(os.path.join(
+    OUT_DIR, "..", "TypeC16Pin",
+    "svg.icon.TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1_icon.svg"))
 
 # ---------------------------------------------------------------- 几何常量 (mm)
 BW, BH = 30, 55          # 主板（实测）
@@ -57,11 +66,12 @@ PADS = ["MCLR", "IOA9", "IOA6", "IOA7", "IOA8", "IOB1", "TX", "RX", "3V3", "GND"
 RJ45_X0, RJ45_X1 = 66.0, 72.0   # 金手指 y 区间
 RJ45_PITCH, RJ45_W = 1.5, 0.9   # 8 条金手指的间距 / 宽度
 
-SMA_CX = BW / 2.0               # SMA 座中心（照片里基本居中）
-SMA_BASE_Y0, SMA_BASE_Y1 = 0.2, 4.0
-SMA_BASE_W = 5.2
-SMA_STEM_W = 4.2
-SMA_STEM_TOP = -9.0             # 螺纹柱伸出板外（俯视图画成向上伸出的侧影，与照片一致）
+SMA_CX = BW / 2.0               # 天线座中心（照片里基本居中）
+SMA_ASSET_W, SMA_ASSET_H = 13.5, 6.503   # 素材 svg/SMA-PJ1.7-L9.5 的 icon 物理尺寸（mm）
+SMA_PIN_END_Y = 4.5             # 素材引脚末端落在板内的 y；柱端 = 4.5 - 13.5 = -9.0mm（照片量 10.9）
+
+TYPEC_Y0 = 19.8                 # USB-C 座：素材旋转 90° 后占 x 23.4..31.0（插口朝板右边缘）/ y 19.8..28.7
+TYPEC_X1 = 31.0
 
 KEY_R = 1.7
 KEY_L = (2.9, 3.7)              # Connect / PAIR 键
@@ -73,9 +83,6 @@ LED_NAMES = ["RSSI3", "RSSI2", "RSSI1", "CONN"]
 
 MOD_X0, MOD_X1 = 6.2, 23.4      # U3 TX-AH-RX00P 模组（含半孔焊盘区）
 MOD_Y0, MOD_Y1 = 14.4, 30.0
-
-TYPEC_X0, TYPEC_X1 = 24.2, 29.6
-TYPEC_Y0, TYPEC_Y1 = 19.8, 26.6
 
 JMP_X = 2.9                     # STA / NO / AP 三针跳线（在板左下）
 JMP_YS = [41.5, 47.3, 50.3]
@@ -93,14 +100,47 @@ LABEL = "#f2f2f2"
 FONT = "DroidSans"
 
 # 画布（mm）：上方留给 SMA 柱，下方到水晶头前端
-VB_X0, VB_Y0 = -1.0, SMA_STEM_TOP - 1.0
-VB_X1, VB_Y1 = BW + 1.0, CAP_Y1 + 1.0
+VB_X0, VB_Y0 = -1.0, SMA_PIN_END_Y - SMA_ASSET_W - 1.0
+VB_X1, VB_Y1 = BW + 4.0, CAP_Y1 + 1.0
 
 
 def u(v):
     """mm -> svg 内部单位（pt）"""
     s = f"{v * SC:.4f}".rstrip("0").rstrip(".")
     return s if s not in ("", "-") else "0"
+
+
+def read_group(path, gid):
+    """从另一个部件的 svg 里抠出 <g id="gid">…</g> 片段（跨部件 1:1 复用）。
+    素材文件缺失/找不到该组 → 直接报错（不静默退化成自画图形）。"""
+    with open(path, encoding="utf-8") as fh:
+        s = fh.read()
+    m = re.search(r'<g\s[^>]*id="%s"' % re.escape(gid), s)
+    if not m:
+        raise ValueError('no <g id="%s"> in %s' % (gid, path))
+    start = m.start()
+    i, depth = start, 0
+    while True:
+        nopen = s.find("<g", i)
+        nclose = s.find("</g>", i)
+        if nclose < 0:
+            raise ValueError("unbalanced <g> in %s" % path)
+        if 0 <= nopen < nclose:
+            depth += 1
+            i = nopen + 2
+        else:
+            depth -= 1
+            i = nclose + 4
+            if depth == 0:
+                return s[start:i]
+
+
+def dedupe_defs(g):
+    """素材里同一份 <defs> 重复出现多次（id 重复），内联时只留第一份"""
+    blocks = re.findall(r"<defs>.*?</defs>", g, re.S)
+    for b in blocks[1:]:
+        g = g.replace(b, "", 1)
+    return g
 
 
 def txt(x, y, s, size=1.35, anchor=None, rotate=None, fill=SILK, weight=None):
@@ -159,22 +199,19 @@ def board_body():
 
 
 def sma_art():
-    """SMA 母座：座身方块 + 向上伸出的螺纹柱（照片的姿态）"""
-    L = []
-    L.append(rect(SMA_CX - SMA_BASE_W / 2.0, SMA_BASE_Y0, SMA_BASE_W,
-                  SMA_BASE_Y1 - SMA_BASE_Y0, GOLD, GOLD_EDGE, 0.2, rx=0.35))
-    L.append(rect(SMA_CX - SMA_STEM_W / 2.0, SMA_STEM_TOP, SMA_STEM_W,
-                  -SMA_STEM_TOP + SMA_BASE_Y0, GOLD, GOLD_EDGE, 0.2, rx=0.3))
-    y = SMA_STEM_TOP + 0.6
-    while y < -0.4:
-        L.append(line(SMA_CX - SMA_STEM_W / 2.0 + 0.15, y, SMA_CX + SMA_STEM_W / 2.0 - 0.15, y, GOLD_EDGE, 0.16))
-        y += 0.75
-    L.append(rect(SMA_CX - SMA_STEM_W / 2.0 - 0.35, SMA_STEM_TOP - 0.6, SMA_STEM_W + 0.7, 1.0,
-                  GOLD, GOLD_EDGE, 0.2, rx=0.2))
-    # 座身中心（俯视看进去）
-    L.append(circ(SMA_CX, (SMA_BASE_Y0 + SMA_BASE_Y1) / 2.0, 1.5, SILVER, GOLD_EDGE, 0.15))
-    L.append(circ(SMA_CX, (SMA_BASE_Y0 + SMA_BASE_Y1) / 2.0, 0.75, LABEL, GOLD_EDGE, 0.12))
-    return L
+    """天线座（RF1）：1:1 复用 svg/SMA-PJ1.7-L9.5 的 icon 图形（素材是侧视、柱朝右），
+    旋转 -90° 使螺纹柱朝板外（上），与实物照片的姿态一致。"""
+    g = dedupe_defs(read_group(SMA_ASSET, "icon"))
+    tx = u(SMA_CX - SMA_ASSET_H / 2.0)
+    return ['<g transform="translate(%s %s) rotate(-90) scale(%s)">\n%s\n</g>'
+            % (tx, u(SMA_PIN_END_Y), SC, g)]
+
+
+def typec_art():
+    """USB-C（USB1）：1:1 复用 svg/TypeC16Pin 的 icon 图形，旋转 90° 使插口朝板右边缘。"""
+    g = dedupe_defs(read_group(TYC_ASSET, "g40446"))
+    return ['<g transform="translate(%s %s) rotate(90)">\n%s\n</g>'
+            % (u(TYPEC_X1), u(TYPEC_Y0), g)]
 
 
 def top_features():
@@ -199,12 +236,6 @@ def top_features():
     L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 10.8, "MODEL: T-HALOW", 0.8, fill="#5a5a5a"))
     L.append(txt(MOD_X0 + 2.6, MOD_Y0 + 13.8, "902MHz~928MHz", 0.8, fill="#5a5a5a"))
     L.append(txt(24.2, 16.4, "LILYGO", 1.0, rotate=-90, fill="#8f8f93"))
-
-    # Type-C（USB1）
-    L.append(rect(TYPEC_X0, TYPEC_Y0, TYPEC_X1 - TYPEC_X0, TYPEC_Y1 - TYPEC_Y0,
-                  SILVER, "#7c7c81", 0.2, rx=0.6))
-    L.append(rect(TYPEC_X0 + 0.7, TYPEC_Y0 + 0.9, TYPEC_X1 - TYPEC_X0 - 1.4,
-                  TYPEC_Y1 - TYPEC_Y0 - 1.8, "#2a2a2c", "#6f6f74", 0.15, rx=0.3))
 
     # STA / NO / AP 跳线（三针）
     for name, y in zip(("STA", "NO", "AP"), JMP_YS):
@@ -256,15 +287,16 @@ def build_breadboard():
     L += board_body()
     L += sma_art()
     L += top_features()
+    L += typec_art()
     L += pad_art()
     L += rj45_art()
-    # SMA 天线连接器（座身中心）
+    # SMA 天线连接器（座子正下方的板内一点）
     L.append(f'<g id="connector18pin">'
-             + circ(SMA_CX, (SMA_BASE_Y0 + SMA_BASE_Y1) / 2.0, 1.0, "none", "none", 0)
+             + circ(SMA_CX, 1.2, 1.0, "none", "none", 0)
              + '</g>')
-    # Type-C：VBUS / GND（金属壳内两点）
-    L.append(f'<g id="connector19pin"><circle cx="{u(TYPEC_X0 + 1.6)}" cy="{u((TYPEC_Y0 + TYPEC_Y1) / 2)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
-    L.append(f'<g id="connector20pin"><circle cx="{u(TYPEC_X1 - 1.6)}" cy="{u((TYPEC_Y0 + TYPEC_Y1) / 2)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
+    # Type-C：VBUS / GND（座子内部两点）
+    L.append(f'<g id="connector19pin"><circle cx="{u(27.0)}" cy="{u(21.5)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
+    L.append(f'<g id="connector20pin"><circle cx="{u(27.0)}" cy="{u(27.0)}" r="{u(0.45)}" fill="none" stroke="none"/></g>')
     L.append(f'  </g>\n</svg>\n')
     return "\n".join(L)
 
@@ -282,9 +314,9 @@ def build_icon():
         rect(MOD_X0, MOD_Y0, MOD_X1 - MOD_X0, MOD_Y1 - MOD_Y0, "#3d4a63", "#2a3346", 0.2, rx=0.4),
         rect(MOD_X0 + 1.5, MOD_Y0 + 1.4, MOD_X1 - MOD_X0 - 3.0, MOD_Y1 - MOD_Y0 - 2.8,
              LABEL, "#c8c8c8", 0.2, rx=0.2),
-        rect(TYPEC_X0, TYPEC_Y0, TYPEC_X1 - TYPEC_X0, TYPEC_Y1 - TYPEC_Y0, SILVER, "#7c7c81", 0.2, rx=0.6),
         txt(10.6, 42.0, "T-Halow RJ45", 1.6, rotate=-90),
     ]
+    L += typec_art()
     for i in range(len(PADS)):
         y = PAD_Y0 + i * PAD_DY
         L.append(circ(PAD_X, y, PAD_R, LABEL, "#a9a9ad", 0.12))
