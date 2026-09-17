@@ -82,9 +82,8 @@ GOLD_LEN = 5.00                                   # 镀金段长度（用户 202
 GOLD_END = BLADE_X0 + GOLD_LEN                    # 镀金/银色分界（x）
 SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交替的银色右端
 NOTCH_L_FROM_LEFT = 7.20           # 凹槽**左缘**距本体左边缘（用户 2026-09-18）
-NOTCH_R_FROM_RIGHT = 4.80          # 凹槽**右缘**距本体右边缘（用户 2026-09-18）
+NOTCH_W = 10.00                    # 凹槽宽固定 10.00（用户 2026-09-18）；右缘 = 本体右边缘 − 9.80
 NOTCH_X = -BODY_L / 2 + NOTCH_L_FROM_LEFT         # 凹槽左缘（x，相对元件中心）
-NOTCH_W = BODY_L - NOTCH_L_FROM_LEFT - NOTCH_R_FROM_RIGHT   # 宽由两个边距定死
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
@@ -268,7 +267,7 @@ def gen_pcb_svg():
     """
     PAD_D, HOLE_D = 1.20, 0.70                  # 实物就这么小（用户 2026-09-17 确认）
     COL_P, ROW_P = 1.50, 2.04
-    BOX_W, BOX_H = 11.68, 12.20
+    BOX_W, BOX_H = 9.48, 12.20                 # 宽 11.68 − 2.20（右框线左移 2.2，其余不动；用户 2026-09-18）
     COL0 = 1.50                             # 左侧第一列中心距左边线
     M = 1.5                                      # 画布留边
     W, H = BOX_W + 2 * M, BOX_H + 2 * M
