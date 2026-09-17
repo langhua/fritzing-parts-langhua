@@ -205,18 +205,18 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------ schematic
 def gen_schematic_svg():
-    """原理图（用户 2026-09-17）：「rj45 是插头，所以不是左右画，而是都画在一侧」——
+    """原理图（用户 2026-09-17）：插口**朝左**、**8 个针脚全在右侧**
+    （「rj45 是插头，脚都画在一侧」；插口在左 ⇒ 引脚自然从尾部/右侧出来）。
 
-    · 矩形框竖放，**8 个信号脚全在左侧**，从上到下 = pin8 .. pin1（照截图）；
-    · 脚写编号（引线上方）+ 框内功能名（靠左），名字从 SCH_NAME 取；
-    · 框内右侧画一个 **RJ45 口的图形**，插口**朝左**（与 icon / 面包板 / PCB 同向，
-      用户 2026-09-17）：外壳轮廓 + 8 条触点线往左伸。
+    · 矩形框竖放，8 个信号脚均从**右边**向右引出，从上到下 = pin8 .. pin1；
+    · 引线上方写脚号，框内**靠右**写功能名（名字从 SCH_NAME 取）；
+    · 框内左侧画 **RJ45 口的图形**，插口朝左（与 icon / 面包板 / PCB 同向）。
     """
     P, WIRE, FN, CH = 100, 130, 35, 20
     BX0, BY0 = 340, 200
-    BW, BH = 520, 7 * P + 2 * P                  # 首尾脚占 7P，上下各留 1 个脚距
+    BW, BH = 440, 7 * P + 2 * P                  # 宽只留「口图形 + 名字」两栏；高：首尾脚占 7P + 上下各 1P
     BX1, BY1 = BX0 + BW, BY0 + BH
-    VBX, VBY = BX0 - WIRE - 20, BY0 - 20
+    VBX, VBY = BX0 - 20, BY0 - 20
     VBW, VBH = BW + WIRE + 40, BH + 40
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{VBW / 1000:.6f}in" '
@@ -224,8 +224,8 @@ def gen_schematic_svg():
          ' <g id="schematic">\n',
          f'  <rect class="interior rect" x="{BX0}" y="{BY0}" width="{BW}" height="{BH}" '
          f'fill="#FFFFFF" stroke="#787878" stroke-width="5"/>\n']
-    # 框内的 RJ45 口图形：插口**朝左**（外壳的右边是竖线，上下横线往左伸）+ 8 条触点线
-    gx0, gx1 = BX0 + BW - 240, BX0 + BW - 120
+    # 框内左侧的 RJ45 口图形：插口**朝左**（外壳的右边是竖线，上下横线往左伸）+ 8 条触点线
+    gx0, gx1 = BX0 + 160, BX0 + 280
     gy0, gy1 = BY0 + 320, BY0 + 680
     L.append(f'  <path d="M {gx0} {gy0} L {gx1} {gy0} L {gx1} {gy1} L {gx0} {gy1}" '
              f'fill="none" stroke="#000000" stroke-width="5"/>\n')
@@ -233,19 +233,19 @@ def gen_schematic_svg():
         y = gy0 + 40 + i * 40
         L.append(f'  <line x1="{gx0}" y1="{y}" x2="{gx0 - 80}" y2="{y}" '
                  f'stroke="#000000" stroke-width="5"/>\n')
-    # 8 个脚全在左侧：从上到下 = pin8 .. pin1
+    # 8 个脚全在右侧：从上到下 = pin8 .. pin1
     for k, ci in enumerate(range(7, -1, -1)):
         y = BY0 + P + k * P
         num = CONN[ci][1]
         L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(num)}" '
-                 f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="#000000" '
+                 f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="#000000" '
                  f'stroke-width="5"/>\n')
-        L.append(f'  <rect class="terminal" id="connector{ci}terminal" x="{BX0 - WIRE - 11}" '
+        L.append(f'  <rect class="terminal" id="connector{ci}terminal" x="{BX1 + WIRE - 11}" '
                  f'y="{y - 11}" width="22" height="22" fill="none" stroke="none"/>\n')
-        L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
+        L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
                  f'text-anchor="middle" font-family="DroidSans">{esc(num)}</text>\n')
-        L.append(f'  <text x="{BX0 + CH}" y="{y + 12}" font-size="{FN}" fill="#000000" '
-                 f'font-family="DroidSans">{esc(SCH_NAME.get(num, num))}</text>\n')
+        L.append(f'  <text x="{BX1 - CH}" y="{y + 12}" font-size="{FN}" fill="#000000" '
+                 f'text-anchor="end" font-family="DroidSans">{esc(SCH_NAME.get(num, num))}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
