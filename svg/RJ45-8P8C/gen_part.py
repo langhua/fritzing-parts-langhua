@@ -136,10 +136,15 @@ def gen_icon_svg():
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
         xe = ends[i % 2]
-        L.append(f'    <rect x="{bx:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{ge - bx:.2f}" '
-                 f'height="{BLADE_W:.2f}" fill="{gold}" stroke="none"/>\n')
-        L.append(f'    <rect x="{ge:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{xe - ge:.2f}" '
-                 f'height="{BLADE_W:.2f}" fill="{silver}" stroke="none"/>\n')
+        r = BLADE_W / 2
+        # 金色：**左端半圆**、右端直角（与银色相接处是直角，用户 2026-09-17）
+        L.append(f'    <path d="M {ge:.3f} {yy - r:.3f} L {bx + r:.3f} {yy - r:.3f} '
+                 f'A {r:.3f} {r:.3f} 0 0 0 {bx + r:.3f} {yy + r:.3f} '
+                 f'L {ge:.3f} {yy + r:.3f} Z" fill="{gold}" stroke="none"/>\n')
+        # 银色：左端直角、**右端半圆**
+        L.append(f'    <path d="M {ge:.3f} {yy - r:.3f} L {xe - r:.3f} {yy - r:.3f} '
+                 f'A {r:.3f} {r:.3f} 0 0 1 {xe - r:.3f} {yy + r:.3f} '
+                 f'L {ge:.3f} {yy + r:.3f} Z" fill="{silver}" stroke="none"/>\n')
     for sy in (-1, 1):                                                       # 尾部两个窗口
         L.append(f'    <rect x="{BODY_L / 2 - WIN_FROM_RIGHT - WIN_W:.2f}" y="{sy * 2.6 - WIN_H / 2:.2f}" '
                  f'width="{WIN_W:.2f}" height="{WIN_H:.2f}" rx="0.30" fill="#141414" '
