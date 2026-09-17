@@ -191,8 +191,10 @@ def gen_breadboard_svg():
         L.append(f'  <circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" cx="{x}" '
                  f'cy="{y_pin}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
         L.append(f'  <circle cx="{x}" cy="{y_pin}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-        L.append(f'  <text x="{x}" y="{y_pin + 81}" font-size="60" fill="#ffffff" '
-                 f'text-anchor="middle" font-family="DroidSans">{i + 1}</text>\n')
+        ty = y_pin + 81
+        L.append(f'  <text x="{x}" y="{ty}" font-size="60" fill="#ffffff" text-anchor="middle" '
+                 f'dominant-baseline="central" font-family="DroidSans" '
+                 f'transform="rotate(-90 {x} {ty})">{i + 1}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
