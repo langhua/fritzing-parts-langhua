@@ -5,8 +5,8 @@
     <rect x="-0.770" y="-5.500" width="1.54" height="1.80" fill="#c0c0c0" stroke="none"/>
     <rect x="-0.770" y="3.700" width="1.54" height="1.80" fill="#c0c0c0" stroke="none"/>
     <rect x="-1.270" y="-3.050" width="2.540" height="6.10" fill="#2b2b2b" stroke="none"/>
-    <rect x="-0.635" y="-1.778" width="1.27" height="3.56" fill="none" stroke="#7a7a7a" stroke-width="0.10"/>
-    <rect x="-0.635" y="-0.572" width="1.27" height="1.14" fill="#e8e8e8" stroke="none"/>
+    <rect x="0" y="-1.778" width="1.27" height="3.56" fill="none" stroke="#7a7a7a" stroke-width="0.10"/>
+    <rect x="0" y="-0.572" width="1.27" height="1.14" fill="#e8e8e8" stroke="none"/>
     <text x="0" y="-2.00" font-size="0.85" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">ON</text>
     <text x="0" y="2.70" font-size="0.85" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">1</text>
   </g>
