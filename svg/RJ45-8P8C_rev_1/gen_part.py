@@ -89,8 +89,10 @@ GOLD_LEN = 5.00                                   # 镀金段长度（用户 202
 GOLD_END = BLADE_X0 + GOLD_LEN                    # 镀金/银色分界（x）
 SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交替的银色右端
 NOTCH_L_FROM_LEFT = 7.20           # 凹槽**左缘**距本体左边缘（用户 2026-09-18）
-NOTCH_W = 10.00                    # 凹槽宽固定 10.00（用户 2026-09-18）；rev_1 右缘距右 4.80
+NOTCH_R_FROM_RIGHT = 4.80          # 凹槽**右缘**距本体右边缘（用户 2026-09-18）
 NOTCH_X = -BODY_L / 2 + NOTCH_L_FROM_LEFT         # 凹槽左缘（x，相对元件中心）
+# 宽度由两端边距定死 ⇒ rev_1(22.00) = 10.00（与用户给的一致）；原版(27.00) = 15.00。
+NOTCH_W = BODY_L - NOTCH_L_FROM_LEFT - NOTCH_R_FROM_RIGHT
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
