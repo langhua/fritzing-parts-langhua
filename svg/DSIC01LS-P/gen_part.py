@@ -93,14 +93,16 @@ def gen_breadboard_svg():
     **上下各 1 个 2.54mm 排针**。
 
     坐标 100 单位 = 2.54mm：实物焊盘中心距 9.20mm → 取最近的 2.54 整倍数 **10.16mm**
-    （针 y=200 / 800，间距 600 单位）；再近（400 单位）就会压到本体（本体高 6.2 + 两焊盘
-    共 11mm）。板 600×800（15.24×20.32mm），pin1 在**下**（与 icon/PCB 同向）。
+    （针 y=100 / 900，间距 800 单位 = 20.32mm，比元件含焊盘的 11mm 宽得多）；这个行距是
+    为了让**数字能落在焊盘内侧**（AGENTS §3b，用户 2026-09-17 定为硬规则）：数字占焊盘
+    内侧约 81 单位，元件含焊盘半高 216 单位，两者之间才留得下（各留 72 单位 ≈ 1.8mm）。
+    板 400×1000（10.16×25.40mm），pin1 在**下**（与 icon/PCB 同向）。
     """
     U = 39.37
     bw, bh = 400, 1000
     cx, cy = 200, 500
     pad_r, hole_r = 1.0 * U, 0.485 * U
-    y_pins = [200, 800]
+    y_pins = [100, 900]
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
          f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
@@ -125,7 +127,7 @@ def gen_breadboard_svg():
                  f'cx="{cx}" cy="{y}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" '
                  f'stroke-width="4"/>\n')
         L.append(f'  <circle cx="{cx}" cy="{y}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-        ty = y - 130 if y < cy else y + 130      # 数字放排针**外侧**（内侧是元件，放不下）
+        ty = y + 81 if y < cy else y - 81       # 数字放排针**内侧**（朝板心，AGENTS §3b）
         L.append(f'  <text x="{cx}" y="{ty}" font-size="60" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans" '
                  f'transform="rotate(-90 {cx} {ty})">{label}</text>\n')
@@ -135,37 +137,36 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------ schematic
 def gen_schematic_svg():
-    """矩形框符号（AGENTS §5，与 svg/SK-12D02VG3 同口径）：左 pin1、右 pin2，框内写型号。
+    """原理图：**开关图形符号**（照用户 2026-09-17 给的截图）—— 上下两个空心圆
+    （pin1 在下、pin2 在上）+ 一条斜线作开关刀（从 pin1 圆边向右上斜出、**不接** pin2）；
+    **不画本体框**。引脚线从圆圈外侧竖直引出，脚号标在引线左侧。
 
-    引脚线/数字/框线同色黑、整图同字号 35；四角留 CORNER=100。物理尺寸用 in（1000 单位 = 1in）。
+    引脚线 / 圆圈 / 脚号同色黑、整图同字号 35；物理尺寸用 in（1000 单位 = 1in）。
     """
-    P, WIRE, FN = 100, 130, 35
-    CORNER = 100
-    BX0, BY0 = 340, 200
-    BW, BH = 720, P + 2 * CORNER
-    BX1, BY1 = BX0 + BW, BY0 + BH
-    VBX, VBY = BX0 - WIRE - 5, BY0 - WIRE - 5
-    VBW, VBH = BW + 2 * WIRE + 10, BH + 2 * WIRE + 10
+    P, WIRE, FN, R = 100, 130, 35, 12
+    BX = 400                                  # 两脚同轴（竖直）
+    Y1 = 560                                  # pin1（下）
+    Y2 = Y1 - P                               # pin2（上）
+    VBX, VBY = BX - 90, Y2 - R - WIRE - 20
+    VBW, VBH = 200, (Y1 + R + WIRE + 20) - VBY
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{VBW / 1000:.6f}in" '
          f'height="{VBH / 1000:.6f}in" viewBox="{VBX} {VBY} {VBW} {VBH}">\n',
-         ' <g id="schematic">\n',
-         f'  <rect class="interior rect" x="{BX0}" y="{BY0}" width="{BW}" height="{BH}" '
-         f'fill="#FFFFFF" stroke="#787878" stroke-width="5"/>\n']
-    y = BY0 + BH // 2
-    for cn, sx, tx in ((0, -1, "1"), (1, 1, "2")):
-        x1 = BX0 if sx < 0 else BX1
-        x2 = BX1 if sx < 0 else BX0          # 引线由框边向外
+         ' <g id="schematic">\n']
+    for cn, y, sy in ((0, Y1, 1), (1, Y2, -1)):     # sy：+1 向下（pin1）、-1 向上（pin2）
+        y_end = y + sy * (R + WIRE)
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
-                 f'x1="{x1}" y1="{y}" x2="{x1 + sx * WIRE}" y2="{y}" stroke="#000000" '
+                 f'x1="{BX}" y1="{y + sy * R}" x2="{BX}" y2="{y_end}" stroke="#000000" '
                  f'stroke-width="5"/>\n')
-        L.append(f'  <rect class="terminal" id="connector{cn}terminal" '
-                 f'x="{x1 + sx * WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none" '
-                 f'stroke="none"/>\n')
-        L.append(f'  <text x="{x1 + sx * WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="middle" font-family="DroidSans">{tx}</text>\n')
-    L.append(f'  <text x="{BX0 + BW // 2}" y="{y + 20}" font-size="50" fill="#000000" '
-             f'text-anchor="middle" font-family="DroidSans">{esc(ICON_LABEL)}</text>\n')
+        L.append(f'  <rect class="terminal" id="connector{cn}terminal" x="{BX - 11}" '
+                 f'y="{y_end - 11}" width="22" height="22" fill="none" stroke="none"/>\n')
+        L.append(f'  <circle cx="{BX}" cy="{y}" r="{R}" fill="none" stroke="#000000" '
+                 f'stroke-width="5"/>\n')
+        L.append(f'  <text x="{BX - FN}" y="{y + sy * (R + WIRE // 2) + 12}" font-size="{FN}" '
+                 f'fill="#000000" font-family="DroidSans">{cn + 1}</text>\n')
+    # 开关刀：从 pin1 圆边向右上斜出（不接 pin2）
+    L.append(f'  <line x1="{BX + 9}" y1="{Y1 - 9}" x2="{BX + 40}" y2="{Y1 - 100}" '
+             f'stroke="#000000" stroke-width="5"/>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 

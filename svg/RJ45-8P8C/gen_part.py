@@ -120,7 +120,7 @@ def gen_breadboard_svg():
     U = 39.37
     bw, bh = 1300, 900
     cx, cy = 650, 550
-    y_pin = 250
+    y_pin = 100          # 排针靠板端（数字要放**内侧**，见 AGENTS §3b）
     pad_r, hole_r = 1.0 * U, 0.485 * U
     xs = [300 + 100 * i for i in range(N_PINS)]
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
@@ -151,7 +151,7 @@ def gen_breadboard_svg():
         L.append(f'  <circle id="connector{i}pin" connectorname="{esc(CONN[i][1])}" cx="{x}" '
                  f'cy="{y_pin}" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
         L.append(f'  <circle cx="{x}" cy="{y_pin}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-        L.append(f'  <text x="{x}" y="{y_pin - 90}" font-size="60" fill="#ffffff" '
+        L.append(f'  <text x="{x}" y="{y_pin + 81}" font-size="60" fill="#ffffff" '
                  f'text-anchor="middle" font-family="DroidSans">{i + 1}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
