@@ -91,8 +91,9 @@ SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交�
 NOTCH_L_FROM_LEFT = 7.20           # 凹槽**左缘**距本体左边缘（用户 2026-09-18）
 NOTCH_R_FROM_RIGHT = 4.80          # 凹槽**右缘**距本体右边缘（用户 2026-09-18）
 NOTCH_X = -BODY_L / 2 + NOTCH_L_FROM_LEFT         # 凹槽左缘（x，相对元件中心）
-# 宽度由两端边距定死 ⇒ rev_1(22.00) = 10.00（与用户给的一致）；原版(27.00) = 15.00。
-NOTCH_W = BODY_L - NOTCH_L_FROM_LEFT - NOTCH_R_FROM_RIGHT
+# rev_1 专用：宽度由两端边距定死 ⇒ 22.00 − 7.20 − 4.80 = 10.00（与用户给的一致）。
+# ⚠ 这两个边距**不要**搬去原版 RJ45-8P8C（那边凹槽宽另有一套，用户 2026-09-18 澄清）。
+NOTCH_W = 10.00
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
