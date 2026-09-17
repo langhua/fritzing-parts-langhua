@@ -69,6 +69,12 @@ TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进
 GOLD_SHIFT = 0.50                  # 镀金/银色分界左移量（用户 2026-09-17）
 SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的距离（交替用）
 
+BLADE_X0 = -BODY_L / 2 + 1.20                     # 弹片起点（插口端内侧）
+GOLD_END = BLADE_X0 + BLADE_L / 2 - GOLD_SHIFT    # 镀金/银色分界（x）
+SILVER_END = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)   # 两根交替的银色右端
+NOTCH_W = (max(SILVER_END) - GOLD_END) * 0.80     # 凹槽宽 = 银色线长（最长那根）的 80%
+NOTCH_X = max(SILVER_END) - NOTCH_W               # 凹槽左缘（右缘与最长金属线右端平齐）
+
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- RJ45-8P8C -->\n'
 
 
@@ -76,18 +82,28 @@ def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def body_path(cx, cy, u, w, ln, skew_w=None):
-    """俯视本体轮廓：左端（插口端）两个角按 **30°** 斜切，右端（尾部）直角。
+def body_path(cx, cy, u, w, ln, skew_w=None, notch=None):
+    """俯视本体轮廓：
 
-    几何由**宽度方向的收进量** `skew_w` 定（用户 2026-09-17：它等于凹槽深的 1.5 倍，
-    见 TRIM_W）；进深方向（x）的收进量再由 30° 推出 ⇒ 斜边与本体长边成 30°。
+    · 左端（插口端）两个角按 **30°** 斜切，斜边在宽度方向的收进量 = skew_w；
+    · `notch = (x_left, width, depth)`（mm，x 相对元件中心）—— 上下边缘各**挖掉**
+      一块 ⇒ 凹槽处不画本体、**透出背景 = 真透明**（用户 2026-09-17：不能拿深色
+      去「画」一个槽，那样看不出是透的）。
     """
     x0, x1 = cx - ln / 2 * u, cx + ln / 2 * u
     y0, y1 = cy - w / 2 * u, cy + w / 2 * u
     d = (skew_w or 0) * u                    # 宽度方向的收进量
     c = d / math.tan(math.radians(30))       # 进深方向的收进量（30° 推出）
-    return (f"M {x0 + c:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} L {x1:.1f} {y1:.1f} "
-            f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
+    if not notch:
+        return (f"M {x0 + c:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} L {x1:.1f} {y1:.1f} "
+                f"L {x0 + c:.1f} {y1:.1f} L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
+    nx = cx + notch[0] * u
+    nw, nd = notch[1] * u, notch[2] * u
+    return (f"M {x0 + c:.1f} {y0:.1f} L {nx:.1f} {y0:.1f} L {nx:.1f} {y0 + nd:.1f} "
+            f"L {nx + nw:.1f} {y0 + nd:.1f} L {nx + nw:.1f} {y0:.1f} L {x1:.1f} {y0:.1f} "
+            f"L {x1:.1f} {y1:.1f} L {nx + nw:.1f} {y1:.1f} L {nx + nw:.1f} {y1 - nd:.1f} "
+            f"L {nx:.1f} {y1 - nd:.1f} L {nx:.1f} {y1:.1f} L {x0 + c:.1f} {y1:.1f} "
+            f"L {x0:.1f} {y1 - d:.1f} L {x0:.1f} {y0 + d:.1f} Z")
 
 
 # ----------------------------------------------------------------------- icon
@@ -111,20 +127,12 @@ def gen_icon_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{x1 - x0:.2f}mm" height="{y1 - y0:.2f}mm" '
          f'viewBox="{x0:.2f} {y0:.2f} {x1 - x0:.2f} {y1 - y0:.2f}">\n',
          '  <g id="icon">\n',
-         f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, TRIM_W)}" fill="#2b2b2b" stroke="none"/>\n']
-    bx = -BODY_L / 2 + 1.2
-    ge = bx + BLADE_L / 2 - GOLD_SHIFT          # 镀金/银色分界（左移 GOLD_SHIFT）
-    # 银色右端：第 1/3/5/7 根到「距本体右缘 SILVER_FAR」、第 2/4/6/8 根到 SILVER_NEAR，交替
-    ends = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)
+         f'    <path d="{body_path(0, 0, u, BODY_W, BODY_L, TRIM_W, (NOTCH_X, NOTCH_W, NOTCH_D))}" '
+         f'fill="#2b2b2b" stroke="none"/>\n']
+    bx = BLADE_X0
+    ge = GOLD_END
+    ends = SILVER_END
     far = max(ends)
-    # 上下本体的**凹槽**：槽宽 = 银色线长（最长那根）的 80%、槽深 = 线宽的 2 倍、
-    # 右侧槽壁与**最长**那根金属线的右端平齐。
-    nw, nd = (far - ge) * 0.80, NOTCH_D
-    nx = far - nw
-    for sy in (-1, 1):
-        ye = sy * BODY_W / 2
-        L.append(f'    <rect x="{nx:.2f}" y="{min(ye, ye - sy * nd):.2f}" width="{nw:.2f}" '
-                 f'height="{nd:.2f}" fill="#141414" stroke="none"/>\n')
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
         xe = ends[i % 2]
@@ -161,13 +169,8 @@ def gen_breadboard_svg():
          f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
     # 元件 1:1（横放俯视）
-    L.append(f'  <path d="{body_path(cx, cy, U, BODY_W, BODY_L, TRIM_W)}" fill="#2b2b2b" '
-             f'stroke="none"/>\n')
-    ix = cx - BODY_L / 2 * U + 1.2 * U
-    L.append(f'  <rect x="{ix - 0.9 * U:.1f}" y="{cy - FRONT_H / 2 * U:.1f}" '
-             f'width="{1.2 * U:.1f}" height="{FRONT_H * U:.1f}" fill="#101010" stroke="none"/>\n')
-    L.append(f'  <rect x="{ix:.1f}" y="{cy - (FRONT_H / 2 - 0.55) * U:.1f}" width="{9.0 * U:.1f}" '
-             f'height="{(FRONT_H - 1.10) * U:.1f}" fill="#8a8a8a" stroke="none"/>\n')
+    L.append(f'  <path d="{body_path(cx, cy, U, BODY_W, BODY_L, TRIM_W, (NOTCH_X, NOTCH_W, NOTCH_D))}" '
+             f'fill="#2b2b2b" stroke="none"/>\n')
     px = cx + (BODY_L / 2 - DIP_FROM_TAIL) * U
     for i in range(N_PINS):
         yy = cy - SPAN / 2 * U + i * PITCH * U
