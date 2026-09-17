@@ -62,12 +62,10 @@ POST_BACK = 5.08                   # 定位柱在引脚排后方（推测：0.2"
 
 # ---- icon 里的弹片 / 凹槽 / 斜角（用户 2026-09-17 定）--------------------------
 BLADE_L, BLADE_W = 14.00, 0.45     # 弹片（长 × 宽）
-WIN_L, WIN_D = 4.60, 2.20          # 本体上下「窗口」（长 × 深；用户 2026-09-17 实测 2.2×4.6）
+NOTCH_D = BLADE_W * 2              # 本体凹槽深 = 弹片宽（金属线宽）的 2 倍
+WIN_W, WIN_H = 2.20, 4.60          # 尾部两个圆角矩形「窗口」（宽 × 高，用户 2026-09-17 实测）
 WIN_FROM_RIGHT = 4.60             # 窗口右边距壳体右边缘
-TRIM_W = 1.35                      # 插口端斜角在**宽度方向**的收进量
-#   注：用户 2026-09-17 定它「= 凹槽（窗口）深的 1.5 倍」，当时窗口深 0.90 ⇒ 1.35；
-#   同日窗口改为实测 2.20 × 4.60 后，严格按 1.5 倍应为 3.30 —— 但那会让 30° 斜角
-#   在本体两侧各吃掉 3.3mm，观感离实物很远，故**暂维持 1.35**，待用户确认再动。
+TRIM_W = NOTCH_D * 1.5             # 插口端斜角在**宽度方向**的收进量 = 凹槽深的 1.5 倍
 GOLD_SHIFT = 0.50                  # 镀金/银色分界左移量（用户 2026-09-17）
 SILVER_FAR, SILVER_NEAR = 9.20, 10.70   # 银色右端距本体**右边缘**的距离（交替用）
 
@@ -96,8 +94,8 @@ def body_path(cx, cy, u, w, ln, skew_w=None):
 def gen_icon_svg():
     """**俯视外观**（照产品图里「一眼能认出是 RJ45」的那一面 = 图纸 C2-3）：
 
-    · 本体：插口端两个角 **30° 斜切**；俯视时在**上/下边缘**各有一个**窗口**
-      （2.20 × 4.60，右边距壳体右边缘 4.60）；
+    · 本体：插口端两个角 **30° 斜切**；俯视时上/下边缘各有一条**凹槽**
+      （敞开露出金属线），尾部有**两个圆角矩形窗口**（2.20 × 4.60，右边距壳体右边缘 4.60）；
     · **8 根沿进深方向的弹片**（间距 1.02 / 跨度 7.14，PIN1 在下、PIN8 在上）：
       **靠插口那一半镀金**（反复插拔处）、**靠尾部那一半是普通银色金属**
       —— 用户 2026-09-17：「水晶头不是全部镀金」；
@@ -119,14 +117,14 @@ def gen_icon_svg():
     # 银色右端：第 1/3/5/7 根到「距本体右缘 SILVER_FAR」、第 2/4/6/8 根到 SILVER_NEAR，交替
     ends = (BODY_L / 2 - SILVER_FAR, BODY_L / 2 - SILVER_NEAR)
     far = max(ends)
-    # 上下本体的**窗口**（用户 2026-09-17 实测）：2.20（长）× 4.60（深），
-    # 且**窗口右边距壳体右边缘 4.60**。
-    we = BODY_L / 2 - WIN_FROM_RIGHT
-    wl = we - WIN_L
+    # 上下本体的**凹槽**：槽宽 = 银色线长（最长那根）的 80%、槽深 = 线宽的 2 倍、
+    # 右侧槽壁与**最长**那根金属线的右端平齐。
+    nw, nd = (far - ge) * 0.80, NOTCH_D
+    nx = far - nw
     for sy in (-1, 1):
         ye = sy * BODY_W / 2
-        L.append(f'    <rect x="{wl:.2f}" y="{min(ye, ye - sy * WIN_D):.2f}" width="{WIN_L:.2f}" '
-                 f'height="{WIN_D:.2f}" fill="#141414" stroke="none"/>\n')
+        L.append(f'    <rect x="{nx:.2f}" y="{min(ye, ye - sy * nd):.2f}" width="{nw:.2f}" '
+                 f'height="{nd:.2f}" fill="#141414" stroke="none"/>\n')
     for i in range(N_PINS):                                                  # 8 根弹片
         yy = -SPAN / 2 + i * PITCH
         xe = ends[i % 2]
@@ -134,9 +132,10 @@ def gen_icon_svg():
                  f'height="{BLADE_W:.2f}" fill="{gold}" stroke="none"/>\n')
         L.append(f'    <rect x="{ge:.2f}" y="{yy - BLADE_W / 2:.3f}" width="{xe - ge:.2f}" '
                  f'height="{BLADE_W:.2f}" fill="{silver}" stroke="none"/>\n')
-    for sy in (-1, 1):                                                       # 尾部两个卡扣
-        L.append(f'    <rect x="{far + 1.4:.2f}" y="{sy * 2.6 - 1.3:.2f}" width="1.20" '
-                 f'height="2.60" rx="0.15" fill="#cfcfcf" stroke="none"/>\n')
+    for sy in (-1, 1):                                                       # 尾部两个窗口
+        L.append(f'    <rect x="{BODY_L / 2 - WIN_FROM_RIGHT - WIN_W:.2f}" y="{sy * 2.6 - WIN_H / 2:.2f}" '
+                 f'width="{WIN_W:.2f}" height="{WIN_H:.2f}" rx="0.30" fill="#141414" '
+                 f'stroke="none"/>\n')
     L.append('  </g>\n</svg>\n')
     return "".join(L)
 
