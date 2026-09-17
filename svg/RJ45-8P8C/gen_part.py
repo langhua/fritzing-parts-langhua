@@ -41,6 +41,10 @@ N_PINS = 8
 CONN = [(i, str(i + 1), "8P8C contact %d" % (i + 1)) for i in range(N_PINS)]
 
 ICON_LABEL = "RJ45"
+# 原理图框内的脚名（照用户 2026-09-17 给的截图；只是**显示名**，
+# connector name 仍是 1..8，不影响连线）
+SCH_NAME = {"1": "M0+", "2": "M0-", "3": "M1+", "4": "M1-",
+            "5": "M2+", "6": "M2-", "7": "M3+", "8": "M3-"}
 TITLE = "RJ45 8P8C PCB Socket (DIP, unshielded)"
 LABEL = "J"
 PACKAGE = "DIP-8P8C (11.63 x 27.00 mm)"
@@ -201,42 +205,46 @@ def gen_breadboard_svg():
 
 # ------------------------------------------------------------------ schematic
 def gen_schematic_svg():
-    """矩形框符号（AGENTS §5：两列排布 —— 左 pin1..4 上→下、右 pin8..5 上→下），框内写 RJ45。"""
-    P, WIRE, FN = 100, 130, 35
+    """原理图（用户 2026-09-17）：「rj45 是插头，所以不是左右画，而是都画在一侧」——
+
+    · 矩形框竖放，**8 个信号脚全在左侧**，从上到下 = pin8 .. pin1（照截图）；
+    · 脚写编号（引线上方）+ 框内功能名（靠左），名字从 SCH_NAME 取；
+    · 框内右侧画一个 **RJ45 口的图形**（外壳轮廓 + 8 条触点线），与截图一致。
+    """
+    P, WIRE, FN, CH = 100, 130, 35, 20
     BX0, BY0 = 340, 200
-    BW = 620
-    BH = 5 * P                                   # 4 脚/边，首尾各留 1 个脚距
+    BW, BH = 520, 8 * P + 2 * P                  # 上下各留 1 个脚距
     BX1, BY1 = BX0 + BW, BY0 + BH
-    VBX, VBY = BX0 - WIRE - 5, BY0 - WIRE - 5
-    VBW, VBH = BW + 2 * WIRE + 10, BH + 2 * WIRE + 10
+    VBX, VBY = BX0 - WIRE - 20, BY0 - 20
+    VBW, VBH = BW + WIRE + 40, BH + 40
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{VBW / 1000:.6f}in" '
          f'height="{VBH / 1000:.6f}in" viewBox="{VBX} {VBY} {VBW} {VBH}">\n',
          ' <g id="schematic">\n',
          f'  <rect class="interior rect" x="{BX0}" y="{BY0}" width="{BW}" height="{BH}" '
          f'fill="#FFFFFF" stroke="#787878" stroke-width="5"/>\n']
-    left = list(range(0, 4))                     # connector0..3 → pin1..4
-    right = list(range(7, 3, -1))                # connector7..4 → pin8..5
-    for k, ci in enumerate(left):
+    # 框内的 RJ45 口图形：外壳（左开口的「凹」）+ 8 条触点线
+    gx0, gx1 = BX0 + BW - 240, BX0 + BW - 120
+    gy0, gy1 = BY0 + 320, BY0 + 680
+    L.append(f'  <path d="M {gx1} {gy0} L {gx0} {gy0} L {gx0} {gy1} L {gx1} {gy1}" '
+             f'fill="none" stroke="#000000" stroke-width="5"/>\n')
+    for i in range(N_PINS):
+        y = gy0 + 40 + i * 40
+        L.append(f'  <line x1="{gx1}" y1="{y}" x2="{gx1 + 80}" y2="{y}" '
+                 f'stroke="#000000" stroke-width="5"/>\n')
+    # 8 个脚全在左侧：从上到下 = pin8 .. pin1
+    for k, ci in enumerate(range(7, -1, -1)):
         y = BY0 + P + k * P
-        L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(CONN[ci][1])}" '
+        num = CONN[ci][1]
+        L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(num)}" '
                  f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="#000000" '
                  f'stroke-width="5"/>\n')
         L.append(f'  <rect class="terminal" id="connector{ci}terminal" x="{BX0 - WIRE - 11}" '
                  f'y="{y - 11}" width="22" height="22" fill="none" stroke="none"/>\n')
         L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="middle" font-family="DroidSans">{esc(CONN[ci][1])}</text>\n')
-    for k, ci in enumerate(right):
-        y = BY0 + P + k * P
-        L.append(f'  <line class="pin" id="connector{ci}pin" connectorname="{esc(CONN[ci][1])}" '
-                 f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="#000000" '
-                 f'stroke-width="5"/>\n')
-        L.append(f'  <rect class="terminal" id="connector{ci}terminal" x="{BX1 + WIRE - 11}" '
-                 f'y="{y - 11}" width="22" height="22" fill="none" stroke="none"/>\n')
-        L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" '
-                 f'text-anchor="middle" font-family="DroidSans">{esc(CONN[ci][1])}</text>\n')
-    L.append(f'  <text x="{BX0 + BW // 2}" y="{BY0 + BH // 2 + 20}" font-size="60" fill="#000000" '
-             f'text-anchor="middle" font-family="DroidSans">{esc(ICON_LABEL)}</text>\n')
+                 f'text-anchor="middle" font-family="DroidSans">{esc(num)}</text>\n')
+        L.append(f'  <text x="{BX0 + CH}" y="{y + 12}" font-size="{FN}" fill="#000000" '
+                 f'font-family="DroidSans">{esc(SCH_NAME.get(num, num))}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 

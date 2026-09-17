@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="0.890000in" height="0.770000in" viewBox="205 65 890 770">
+<svg xmlns="http://www.w3.org/2000/svg" width="0.690000in" height="1.040000in" viewBox="190 180 690 1040">
  <g id="schematic">
-  <rect class="interior rect" x="340" y="200" width="620" height="500" fill="#FFFFFF" stroke="#787878" stroke-width="5"/>
-  <line class="pin" id="connector0pin" connectorname="1" x1="340" y1="300" x2="210" y2="300" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector0terminal" x="199" y="289" width="22" height="22" fill="none" stroke="none"/>
-  <text x="275" y="276" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">1</text>
-  <line class="pin" id="connector1pin" connectorname="2" x1="340" y1="400" x2="210" y2="400" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector1terminal" x="199" y="389" width="22" height="22" fill="none" stroke="none"/>
-  <text x="275" y="376" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">2</text>
-  <line class="pin" id="connector2pin" connectorname="3" x1="340" y1="500" x2="210" y2="500" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector2terminal" x="199" y="489" width="22" height="22" fill="none" stroke="none"/>
-  <text x="275" y="476" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">3</text>
-  <line class="pin" id="connector3pin" connectorname="4" x1="340" y1="600" x2="210" y2="600" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector3terminal" x="199" y="589" width="22" height="22" fill="none" stroke="none"/>
-  <text x="275" y="576" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">4</text>
-  <line class="pin" id="connector7pin" connectorname="8" x1="960" y1="300" x2="1090" y2="300" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector7terminal" x="1079" y="289" width="22" height="22" fill="none" stroke="none"/>
-  <text x="1025" y="276" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">8</text>
-  <line class="pin" id="connector6pin" connectorname="7" x1="960" y1="400" x2="1090" y2="400" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector6terminal" x="1079" y="389" width="22" height="22" fill="none" stroke="none"/>
-  <text x="1025" y="376" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">7</text>
-  <line class="pin" id="connector5pin" connectorname="6" x1="960" y1="500" x2="1090" y2="500" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector5terminal" x="1079" y="489" width="22" height="22" fill="none" stroke="none"/>
-  <text x="1025" y="476" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">6</text>
-  <line class="pin" id="connector4pin" connectorname="5" x1="960" y1="600" x2="1090" y2="600" stroke="#000000" stroke-width="5"/>
-  <rect class="terminal" id="connector4terminal" x="1079" y="589" width="22" height="22" fill="none" stroke="none"/>
-  <text x="1025" y="576" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">5</text>
-  <text x="650" y="470" font-size="60" fill="#000000" text-anchor="middle" font-family="DroidSans">RJ45</text>
+  <rect class="interior rect" x="340" y="200" width="520" height="1000" fill="#FFFFFF" stroke="#787878" stroke-width="5"/>
+  <path d="M 740 520 L 620 520 L 620 880 L 740 880" fill="none" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="560" x2="820" y2="560" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="600" x2="820" y2="600" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="640" x2="820" y2="640" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="680" x2="820" y2="680" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="720" x2="820" y2="720" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="760" x2="820" y2="760" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="800" x2="820" y2="800" stroke="#000000" stroke-width="5"/>
+  <line x1="740" y1="840" x2="820" y2="840" stroke="#000000" stroke-width="5"/>
+  <line class="pin" id="connector7pin" connectorname="8" x1="340" y1="300" x2="210" y2="300" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector7terminal" x="199" y="289" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="276" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">8</text>
+  <text x="360" y="312" font-size="35" fill="#000000" font-family="DroidSans">M3-</text>
+  <line class="pin" id="connector6pin" connectorname="7" x1="340" y1="400" x2="210" y2="400" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector6terminal" x="199" y="389" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="376" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">7</text>
+  <text x="360" y="412" font-size="35" fill="#000000" font-family="DroidSans">M3+</text>
+  <line class="pin" id="connector5pin" connectorname="6" x1="340" y1="500" x2="210" y2="500" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector5terminal" x="199" y="489" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="476" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">6</text>
+  <text x="360" y="512" font-size="35" fill="#000000" font-family="DroidSans">M2-</text>
+  <line class="pin" id="connector4pin" connectorname="5" x1="340" y1="600" x2="210" y2="600" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector4terminal" x="199" y="589" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="576" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">5</text>
+  <text x="360" y="612" font-size="35" fill="#000000" font-family="DroidSans">M2+</text>
+  <line class="pin" id="connector3pin" connectorname="4" x1="340" y1="700" x2="210" y2="700" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector3terminal" x="199" y="689" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="676" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">4</text>
+  <text x="360" y="712" font-size="35" fill="#000000" font-family="DroidSans">M1-</text>
+  <line class="pin" id="connector2pin" connectorname="3" x1="340" y1="800" x2="210" y2="800" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector2terminal" x="199" y="789" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="776" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">3</text>
+  <text x="360" y="812" font-size="35" fill="#000000" font-family="DroidSans">M1+</text>
+  <line class="pin" id="connector1pin" connectorname="2" x1="340" y1="900" x2="210" y2="900" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector1terminal" x="199" y="889" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="876" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">2</text>
+  <text x="360" y="912" font-size="35" fill="#000000" font-family="DroidSans">M0-</text>
+  <line class="pin" id="connector0pin" connectorname="1" x1="340" y1="1000" x2="210" y2="1000" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector0terminal" x="199" y="989" width="22" height="22" fill="none" stroke="none"/>
+  <text x="275" y="976" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">1</text>
+  <text x="360" y="1012" font-size="35" fill="#000000" font-family="DroidSans">M0+</text>
  </g>
 </svg>
