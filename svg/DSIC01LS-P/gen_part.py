@@ -42,12 +42,15 @@ LABEL = "SW"
 PACKAGE = "SMD DIP-2 (4.06 x 6.20 mm)"
 FAMILY = "DIP Switch"
 
-# ---- 几何（mm；立创 + 图纸互证）--------------------------------------------
-BODY_W, BODY_H = 4.056, 6.20      # 本体（俯视 宽 × 高）
-PAD_W, PAD_H = 1.10, 1.80         # 焊盘
-PAD_DY = 4.60                     # 焊盘中心到本体中心（中心距 9.20，pin1 在下）
-SLOT_W, SLOT_H = 1.27, 3.556      # 拨柄滑槽框
-KNOB_W, KNOB_H = 1.27, 1.143      # 拨柄位置框（在上半侧）
+# ---- 几何（mm）--------------------------------------------------------------
+# 本体尺寸与引脚宽度：用户 2026-09-17 实测（1 位时本体宽 = 一个位距 2.54、长 6.10，
+# 引脚宽 1.54）。注意立创丝印框量出来是 4.056 × 6.20，比实物宽不少（大概是含拨柄
+# 行程余量），这里以**实物**为准。
+BODY_W, BODY_H = 2.54, 6.10       # 本体（俯视 宽 × 长）
+PAD_W, PAD_H = 1.54, 1.80         # 焊盘：宽 = 引脚宽 1.54（实测），长 1.80（立创）
+PAD_DY = 4.60                     # 焊盘中心到本体中心（中心距 9.20 - 6.10 = 两侧各 1.55）
+SLOT_W, SLOT_H = 1.27, 3.556      # 拨柄滑槽框（立创）
+KNOB_W, KNOB_H = 1.27, 1.143      # 拨柄位置框（立创）
 
 SVG_HDR = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- DSIC01LS-P -->\n'
 
@@ -181,14 +184,16 @@ def gen_pcb_svg():
     hw, hh = BODY_W / 2, BODY_H / 2
     silk.append(f'<rect x="{C - hw:.3f}" y="{C - hh:.3f}" width="{BODY_W:.3f}" '
                 f'height="{BODY_H:.2f}" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<rect x="{C - SLOT_W / 2:.3f}" y="{C - hh + 0.35:.3f}" width="{SLOT_W:.2f}" '
+    silk.append(f'<rect x="{C - SLOT_W / 2:.3f}" y="{C - SLOT_H / 2:.3f}" width="{SLOT_W:.2f}" '
                 f'height="{SLOT_H:.2f}" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<rect x="{C - KNOB_W / 2:.3f}" y="{C - 0.95:.2f}" width="{KNOB_W:.2f}" '
+    silk.append(f'<rect x="{C - KNOB_W / 2:.3f}" y="{C:.3f}" width="{KNOB_W:.2f}" '
                 f'height="{KNOB_H:.2f}" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>')
-    silk.append(f'<text x="{C - hw + 0.35:.2f}" y="{C - hh + 1.35:.2f}" font-size="0.85" '
-                f'fill="#f0f0f0" font-family="DroidSans">ON</text>')
-    silk.append(f'<text x="{C - hw + 0.35:.2f}" y="{C + hh - 0.45:.2f}" font-size="0.85" '
-                f'fill="#f0f0f0" font-family="DroidSans">1</text>')
+    # ON / 1：立创给的是相对本体中心的 (-1.524, -2.032) 与 (-0.127, +2.921)，但那套坐标
+    # 是基于它 4.056 宽的丝印框；实物本体只有 2.54 宽 ⇒ 照抄会溢出到体外，故 x 改居中。
+    silk.append(f'<text x="{C:.2f}" y="{C - 2.032:.2f}" font-size="0.85" '
+                f'fill="#f0f0f0" text-anchor="middle" font-family="DroidSans">ON</text>')
+    silk.append(f'<text x="{C:.2f}" y="{C + 2.921:.2f}" font-size="0.85" '
+                f'fill="#f0f0f0" text-anchor="middle" font-family="DroidSans">1</text>')
     inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
     return (SVG_HDR +

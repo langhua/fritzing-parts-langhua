@@ -2,15 +2,15 @@
 <!-- DSIC01LS-P -->
 <svg xmlns="http://www.w3.org/2000/svg" width="12.0mm" height="12.0mm" viewBox="0 0 12.0 12.0">
   <g id="copper1">
-<rect id="connector0pin" connectorname="1" x="5.450" y="9.700" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
-<rect id="connector1pin" connectorname="2" x="5.450" y="0.500" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
+<rect id="connector0pin" connectorname="1" x="5.230" y="9.700" width="1.54" height="1.80" fill="#F7BD13" stroke="none"/>
+<rect id="connector1pin" connectorname="2" x="5.230" y="0.500" width="1.54" height="1.80" fill="#F7BD13" stroke="none"/>
 <g id="copper0"/>
   </g>
   <g id="silkscreen">
-<rect x="3.972" y="2.900" width="4.056" height="6.20" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
-<rect x="5.365" y="3.250" width="1.27" height="3.56" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
-<rect x="5.365" y="5.05" width="1.27" height="1.14" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
-<text x="4.32" y="4.25" font-size="0.85" fill="#f0f0f0" font-family="DroidSans">ON</text>
-<text x="4.32" y="8.65" font-size="0.85" fill="#f0f0f0" font-family="DroidSans">1</text>
+<rect x="4.730" y="2.950" width="2.540" height="6.10" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
+<rect x="5.365" y="4.222" width="1.27" height="3.56" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
+<rect x="5.365" y="6.000" width="1.27" height="1.14" fill="none" stroke="#f0f0f0" stroke-width="0.1524"/>
+<text x="6.00" y="3.97" font-size="0.85" fill="#f0f0f0" text-anchor="middle" font-family="DroidSans">ON</text>
+<text x="6.00" y="8.92" font-size="0.85" fill="#f0f0f0" text-anchor="middle" font-family="DroidSans">1</text>
   </g>
 </svg>
