@@ -425,21 +425,25 @@ def icon_svg():
             rx = sh[9] if len(sh) > 9 else 0
             # 第 11 个字段是元素 opacity。**故意不用**：用户 2026-09-18 —— 手工版里给
             # 电容写的那几个 opacity:0.75 是他误加的，元件实际不透明，转换时一律取消。
+            if (fill or "").lower() == BOARD.lower() and bites:
+                # ★ 板底不是纯矩形：把 36 个半孔缺口**从板底一起挖掉**，用 path 表达。
+                #   缺口本身要留（实物是镀金半孔），但缺口里不能透出板底的蓝色 ——
+                #   用户 2026-09-18：「通过 path 方式，把蓝色半圆去掉」。
+                # ★ **不给板底描边**：用户 2026-09-18「去掉那一圈深色线吧，要最真实的
+                #   缺口」。描边（#1b2940，0.1mm）是沿整条轮廓画的 —— 缺口既然是轮廓的
+                #   一部分，描边就会在缺口里画一圈深色弧，看着像孔壁多了一圈线。
+                #   去掉后缺口就是干净的豁口（焊盘 path 本身没有描边）。
+                bx0, by0 = x * _TU_MM, y * _TU_MM
+                bx1, by1 = bx0 + w * _TU_MM, by0 + h * _TU_MM
+                L.append('  <path d="%s" fill="%s"/>\n'
+                         % (_board_path(bx0, by0, bx1, by1, bites, _mm), fill))
+                continue
             a = ' fill="%s"' % fill if fill and fill != "None" else ''
             swf = _n(sw)
             if stroke and stroke != "None" and swf is not None:
                 a += ' stroke="%s" stroke-width="%s"' % (stroke, v(swf))
             if rx:
                 a += ' rx="%s"' % v(rx)
-            if (fill or "").lower() == BOARD.lower() and bites:
-                # ★ 板底不是纯矩形：把 36 个半孔缺口**从板底一起挖掉**，用 path 表达。
-                #   缺口本身要留（实物是镀金半孔），但缺口里不能透出板底的蓝色 ——
-                #   用户 2026-09-18：「通过 path 方式，把蓝色半圆去掉」。
-                bx0, by0 = x * _TU_MM, y * _TU_MM
-                bx1, by1 = bx0 + w * _TU_MM, by0 + h * _TU_MM
-                L.append('  <path d="%s"%s/>\n'
-                         % (_board_path(bx0, by0, bx1, by1, bites, _mm), a))
-                continue
             L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
                      % (v(x), v(y), v(w), v(h), a))
         elif kind == "circle":
