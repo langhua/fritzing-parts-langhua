@@ -82,6 +82,16 @@ EPADS = ["EPAD1", "EPAD2"]
 sys.path.insert(0, OUT_DIR)
 from byHand_tables import DEFS, ICONS, SHAPES, TEXTS           # noqa: E402
 
+# ---- 面包板视图的几何来源 = 同一工作流的**面包板**数据表（另一个视图，另存一个文件）----
+#   2026-09-19 用户在 Inkscape 里拿实物照片当底图重做了面包板（补元件、调位置）：
+#     改图 = 改手工版 → `python tools\byhand_export.py svg\TX-AH-R900PNR breadboard` → 重跑本脚本。
+#   两视图各有手工版 ⇒ 导出器按视图分文件（byHand_tables.py = icon，本文件 = breadboard）。
+from byHand_tables_breadboard import (                          # noqa: E402
+    DEFS as BB_DEFS, ICONS as BB_ICONS, SHAPES as BB_SHAPES, TEXTS as BB_TEXTS,
+    PAD_R as BB_PAD_R, PAD_SW as BB_PAD_SW, PAD_FILL as BB_PAD_FILL,
+    PAD_EDGE as BB_PAD_EDGE, UF as BB_UF, DOC_MM_W as BB_MM_W,
+    DOC_MM_H as BB_MM_H, DOC_VIEWBOX as BB_VB)
+
 _TU_MM = 0.0254      # 数据表内部单位（100 单位 = 2.54mm）→ mm
 
 
@@ -900,7 +910,158 @@ def _btn1101ne():
     return _BTN_1101NE_INNER.strip("\n")
 
 
+def _bb(v):
+    """面包板表里的**内部单位** → 手工版用户单位（= 文档 viewBox 单位）。
+
+    path 的 d / matrix 已经是用户单位（表里原样存的），所以只有 rect/circle/line/
+    pad/text 要过这一道。系数 UF 来自表（由手工版根 svg 的 width ÷ viewBox 算出）——
+    单一源，不在两处各写一份。
+    """
+    s = "%.4f" % (v / BB_UF)
+    return s.rstrip("0").rstrip(".") or "0"
+
+
+def _bbn(v):
+    """表里可能有 None / "None"（那个样式没写）→ 0.0"""
+    return 0.0 if v in (None, "None", "") else float(v)
+
+
+def _bb_name_map():
+    """connector 号 → 名字：**与 .fzp 同源**（面包板分配表里的板级丝印名）。
+
+    手工版里焊盘的 connectorname 是手写的，既有缺失（导出成字面量 "None"）也不想让
+    它和 .fzp 各写一份 —— 名字只从这四处分配表来（gen_fzp() 用的就是同一份）。
+    """
+    m = {}
+    for f in (_con1_bb_assign, _con2_bb_assign, _con3_bb_assign, _debug_bb_assign):
+        for i, _x, _y, lab in f():
+            m[i] = lab
+    return m
+
+
+_BB_NAME = None
+
+
+def _bb_conn_name(cn):
+    """connector 号 → .fzp 里用的那个名字（分配表优先，其次模组边脚名）。"""
+    global _BB_NAME
+    if _BB_NAME is None:
+        _BB_NAME = _bb_name_map()
+    if cn in _BB_NAME:
+        return _BB_NAME[cn]
+    return PINS_EDGE[cn] if cn < 36 else None
+
+
+def _bb_pad(cid, x, y, square):
+    """一个连接点。id **必须**是 connectorNpin（Fritzing 靠 id 找连接点），
+    connectorname = 板上丝印名（与 .fzp 同一份来源，见 _bb_conn_name）。"""
+    m = re.match(r"connector(\d+)pin$", cid)
+    if not m:
+        raise RuntimeError("面包板表里的焊盘 id 不是 connectorNpin：%r" % (cid,))
+    nm = _bb_conn_name(int(m.group(1)))
+    a = ' id="%s"' % cid
+    if nm:
+        a += ' connectorname="%s"' % esc(nm)
+    st = ' fill="%s" stroke="%s" stroke-width="%s"' % (
+        BB_PAD_FILL, BB_PAD_EDGE, _bb(BB_PAD_SW))
+    if square:
+        return ('  <rect%s x="%s" y="%s" width="%s" height="%s"%s/>\n'
+                % (a, _bb(x - BB_PAD_R), _bb(y - BB_PAD_R), _bb(2 * BB_PAD_R),
+                   _bb(2 * BB_PAD_R), st))
+    return ('  <circle%s cx="%s" cy="%s" r="%s"%s/>\n'
+            % (a, _bb(x), _bb(y), _bb(BB_PAD_R), st))
+
+
 def breadboard_svg():
+    """面包板视图 = **用户手工对齐版**（byHand_tables_breadboard.py）逐图元照搬。
+
+    2026-09-19：用户对着实物照片重做了这版面包板（补了元件、调了位置），本视图不再由
+    本脚本现画（旧的自画版本留档在 `_breadboard_svg_scripted()`）。用法上这块板是
+    **杜邦线插排针**（同 CH347F-EVT 板），不要求针位落在 2.54mm 栅格上。
+
+    单位（两套，别混；与 icon 视图同一规矩）：
+      · 本视图坐标 = 手工版用户单位（1 单位 = 0.3527mm）—— rect/circle/line/pad/text
+        在表里是**内部单位**（100 = 2.54mm）→ ÷UF；
+      · path 的 d 与 matrix 已经是用户单位 → 原样写回。
+    """
+    if BB_ICONS:
+        raise RuntimeError("面包板表里不该有嵌入式元件（本视图已含全部图元）：%r" % (BB_ICONS,))
+    L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
+         '<svg xmlns="http://www.w3.org/2000/svg" '
+         'xmlns:xlink="http://www.w3.org/1999/xlink" '
+         'width="%smm" height="%smm" viewBox="%s %s %s %s">\n'
+         % (BB_MM_W, BB_MM_H, BB_VB[0], BB_VB[1], BB_VB[2], BB_VB[3]),
+         ' <g id="breadboard">\n']
+    if BB_DEFS:                      # 渐变（手工版里的金属/渐变填充）—— 不带就会变黑
+        L.append('  <defs>\n')
+        L += ['   %s\n' % d for d in BB_DEFS]
+        L.append('  </defs>\n')
+    for sh in BB_SHAPES:             # ★ 按手工版文档次序画（叠放次序就是画法次序）
+        kind = sh[0]
+        if kind == "rect":
+            # (x, y, w, h) 已是**旋转后的最终外框**（旋转烘在里面）—— 不要再按 rot 换宽高。
+            _k, x, y, w, h, fill, _rot, stroke, sw = sh[:9]
+            rx = sh[9] if len(sh) > 9 else 0
+            # 第 11 个字段是 opacity：**故意不用**（与 icon 视图同一条）—— 用户 2026-09-18
+            # 「电容等没有透明度，是我的错误，转换时取消」；手工版里 67 个电容本体写的 0.75。
+            a = ' fill="%s"' % fill if fill and fill != "None" else ''
+            if stroke and stroke != "None":
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, _bb(_bbn(sw)))
+            if rx:
+                a += ' rx="%s"' % _bb(rx)
+            L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
+                     % (_bb(x), _bb(y), _bb(w), _bb(h), a))
+        elif kind == "circle":
+            _k, x, y, r, fill, stroke, sw = sh
+            a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
+            if stroke and stroke != "None":
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, _bb(_bbn(sw)))
+            L.append('  <circle cx="%s" cy="%s" r="%s"%s/>\n'
+                     % (_bb(x), _bb(y), _bb(r), a))
+        elif kind == "pad":
+            _k, cid, _net, x, y = sh[:5]
+            L.append(_bb_pad(cid, x, y, len(sh) > 5 and sh[5] == "square"))
+        elif kind == "line":
+            _k, x1, y1, x2, y2, stroke, sw = sh
+            L.append('  <line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" '
+                     'stroke-width="%s"/>\n'
+                     % (_bb(x1), _bb(y1), _bb(x2), _bb(y2), stroke, _bb(_bbn(sw))))
+        elif kind == "path":
+            _k, d, mtx, fill, stroke, sw = sh
+            a = ''
+            if fill and fill != "None":
+                a += ' fill="%s"' % fill
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+            if sw and sw != "None":
+                a += ' stroke-width="%s"' % sw      # ⚠ 已是用户单位，原样
+            if mtx:
+                a += ' transform="%s"' % mtx
+            L.append('  <path d="%s"%s/>\n' % (d, a))
+        else:
+            raise RuntimeError("面包板表里出现没见过的图元 %r" % (kind,))
+    for t, x, y, fs, anchor, rot, fill, fw in BB_TEXTS:
+        a = ' fill="%s"' % (fill if fill and fill != "None" else "#c0c0c0")
+        if anchor and anchor != "None":
+            a += ' text-anchor="%s"' % anchor
+        if fw:
+            a += ' font-weight="%s"' % fw
+        if rot:
+            a += ' transform="rotate(%g %s %s)"' % (rot, _bb(x), _bb(y))
+        L.append('  <text x="%s" y="%s" font-size="%s" font-family="DroidSans"%s>%s</text>\n'
+                 % (_bb(x), _bb(y), _bb(fs), a, esc(t)))
+    L.append(' </g>\n')
+    L.append('</svg>\n')
+    return "".join(L)
+
+
+def _breadboard_svg_scripted():
+    """**已停用（2026-09-19）**：面包板改为按用户手工版出图（见上面 breadboard_svg()）。
+
+    这段是 2026-09-19 之前的自画版本，留档备查（当前**没有任何地方调用**）。
+    里面的 `_con1_bb_assign()` 等坐标公式仍被 `gen_fzp()` 用来决定哪些 connector
+    在面包板视图有 pin（那 38 个与手工版里的 38 个焊盘一致）。
+    """
     """TX-AH-R900PNR 面包板视图（v1 外观稿）：泰芯 AH 模组开发板 V1.6 EVB，
     70x55mm 圆角深蓝 PCB（用户量测）。布局按手册图 2-1 主视图 + 用户锚点：
     CON1 丝印距左边 ~14mm、CON3 距左边 ~5mm、DEBUG-PORT 距右边 ~17mm。

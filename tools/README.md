@@ -13,6 +13,8 @@
 2. **导出成数据表**：`tools/byhand_export.py svg\<部件> [breadboard|icon]`
    （不写视图时先找 breadboard、再找 icon）
    → 生成 `svg/<部件>/byHand_tables.py`（纯数据，入库）
+   ★ **一个部件两个视图都有手工版时**（TX-AH-R900PNR）：面包板那份另存
+   `byHand_tables_breadboard.py`（规则见下面 2026-09-19 那节），icon 表名字不变。
 3. **生成器读表**：`gen_part.py` 里 `from byHand_tables import …`；
    以后要挪位置 = 改表里的数字（不用再开 Inkscape）
 
@@ -176,6 +178,28 @@ CH347T 手工版里有 **14 组**这样偏了 0.135~0.228mm → **改的是手�
 
 效果：**像素差异 >60 = 0.32%**（两种图元补上之前也是 0.32% —— 因为它们**面积很小**，
 像素比对里几乎看不出来，**只能靠人在 Fritzing 里看**）。
+
+### ★ 2026-09-19（第四批）：一个部件两个视图都有手工版（TX-AH-R900PNR）
+
+用户把 TX-AH 的**面包板**也手画了（`svg.breadboard.TX-AH-R900PNR_1_breadboard_byHand.svg`）——
+此时该目录里已经有 icon 视图的表，三个问题一次抖出来：
+
+1. **表按视图分文件（不改旧名字）**：导出器原来固定写 `byHand_tables.py` ⇒ 跑面包板会
+   **静静地盖掉 icon 表**。规则：先看同名表头部 `# 源：…` 里那个手工版文件名 ——
+   **属于另一个视图**就改写成 `byHand_tables_<view>.py`（这里 = `byHand_tables_breadboard.py`）；
+   同视图（或还没表）照旧。单视图部件（CH347F/CH347T/T-Halow-RJ45）文件名**不变**。
+2. **`<ellipse>` 画的焊盘要进 PADS**：手工版里 38 个 `connectorNpin` 中 **22 个是 ellipse**
+   （Inkscape 椭圆工具画的连接点）—— 原来只进 `circles` ⇒ **静默丢 22 个接点**（PADS 只到 16）。
+   现在与 `<circle>` 同口径：id 匹配 `^connector\d+pin$` ⇒ 同时记入 `pads` 与 `shapes`。
+3. **表里多两个文档字段**（免得生成器两边各写一份）：
+   · `UF` = 手工版用户单位 → 内部单位 的系数（由根 svg 的 `width ÷ viewBox` 算出）；
+     `path` 的 `d/matrix` **已经是用户单位**，其余图元都要 ÷`UF` 才能同坐标系落地。
+   · `DOC_MM_W/H` + `DOC_VIEWBOX` ⇒ 生成器的 `<svg width/height/viewBox>` 直接照拄。
+
+★ 同批：TX-AH 的 **面包板改成读表出图**（原来由脚本硬画 1000 余行）——改图 = 改手工版
+重导，同 T-Halow-RJ45 的套路（旧自画版本改名 `_breadboard_svg_scripted()` 留档，无人调用）。
+该板用法是**杜邦线插排针**（同 CH347F-EVT 板），**不要求针位落在 2.54 栅格上**（用户 2026-09-19 定），
+所以导出/生成都不做量化；`.fzp` 里那 38 个面包板 `svgId` 与手工版里的 38 个焊盘一致（改完 `.fzp` 逐字节未变）。
 
 ## `.fzp` / 打包
 

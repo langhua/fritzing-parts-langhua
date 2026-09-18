@@ -553,12 +553,27 @@ def run(part_dir, view=None):
                 if abs(erx - ery) / max(erx, ery) < 0.03:
                     rr = (erx + ery) / 2.0 * sca2 * UF
                     sw2 = styled(el, "stroke-width")
-                    circles.append((u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
-                                    styled(el, "stroke"),
-                                    round(num(sw2) * sca2 * UF, 3) if sw2 else None))
-                    shapes.append(("circle", u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
-                                   styled(el, "stroke"),
-                                   round(num(sw2) * sca2 * UF, 3) if sw2 else None))
+                    cid_e = el.get("id") or ""
+                    if PIN_G_RE.match(cid_e):
+                        # ★ **椭圆画的焊盘**（Inkscape 里拿椭圆工具画连接点就会这样）：
+                        #   2026-09-19 加。TX-AH-R900PNR 的手工面包板里 38 个 connectorNpin
+                        #   有 22 个是 ellipse ⇒ 原来只进 circles ⇒ **静默丢了 22 个连接点**
+                        #   （PADS 只有 16 条）。焊盘与普通圆都要画，所以两边都 append。
+                        pads.append((cid_e, el.get("connectorname"), u(p[0]), u(p[1])))
+                        shapes.append(("pad", re.sub(r"pin.*$", "pin", cid_e),
+                                       el.get("connectorname"), u(p[0]), u(p[1])))
+                    else:
+                        circles.append((u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
+                                        styled(el, "stroke"),
+                                        round(num(sw2) * sca2 * UF, 3) if sw2 else None))
+                        shapes.append(("circle", u(p[0]), u(p[1]), round(rr, 2), styled(el, "fill"),
+                                       styled(el, "stroke"),
+                                       round(num(sw2) * sca2 * UF, 3) if sw2 else None))
+                    if not pad_style and PIN_G_RE.match(cid_e):
+                        pad_style.append(round(rr, 2))
+                        pad_style.append(round(num(sw2) * sca2 * UF, 2) if sw2 else 0.0)
+                        pad_col.append(styled(el, "fill"))
+                        pad_col.append(styled(el, "stroke"))
                 else:
                     emit_path("M %.4f %.4f A %.4f %.4f 0 1 0 %.4f %.4f "
                               "A %.4f %.4f 0 1 0 %.4f %.4f Z"
@@ -569,9 +584,22 @@ def run(part_dir, view=None):
 
     global UF, UF_NOTE
     doc = ET.parse(src)
-    UF, UF_NOTE = doc_units(doc.getroot())
-    print("单位：%s → 换算系数 %.4f（内部单位）" % (UF_NOTE, UF))
     root = doc.getroot()
+    UF, UF_NOTE = doc_units(root)
+    print("单位：%s → 换算系数 %.4f（内部单位）" % (UF_NOTE, UF))
+    # 文档画布：写进表，生成器直接照拄（否则尺寸/位置要在两处各写一份）
+    def _n(v):
+        return float(re.sub(r"[^0-9.\-]", "", v or ""))
+    _vb = (root.get("viewBox") or "0 0 0 0").replace(",", " ").split()
+    if len(_vb) < 4:
+        raise SystemExit("手工版根 svg 的 viewBox 不足 4 个数：%r" % (root.get("viewBox"),))
+    try:
+        doc_mm_w = repr(_n(root.get("width")))
+        doc_mm_h = repr(_n(root.get("height")))
+        doc_vb = tuple(repr(float(x)) for x in _vb[:4])
+    except (TypeError, ValueError):
+        raise SystemExit("手工版根 svg 读不到 width/height/viewBox，无法写 DOC：%r %r"
+                         % (root.get("width"), root.get("viewBox")))
     splice_pad_groups(root)          # 「焊盘画成一个组」的手工版先摊平
     inherit_styles(root)             # 祖先组的 fill/stroke/stroke-width 下发给缺失的后代
     walk(root, (1, 0, 0, 1, 0, 0))
@@ -592,8 +620,14 @@ def run(part_dir, view=None):
            "PAD_R = %s" % (pad_style[0] if pad_style else 26.0),
            "PAD_SW = %s" % (pad_style[1] if len(pad_style) > 1 else 5.0),
            "PAD_FILL = %s" % repr(pad_col[0] if pad_col else "#f2f2f2"),
-           "PAD_EDGE = %s" % repr(pad_col[1] if len(pad_col) > 1 else "#a9a9ad"),
-           "", "# 被形状引用的渐变定义（原样给出；生成器写进 <defs>，否则渐变填充会变黑）",
+           "PAD_EDGE = %s" % repr(pad_col[1] if len(pad_col) > 1 else "#a9a9ad"),           "",
+           "# 手工版文档的画布（生成器直接照拄，免得两边各写一份）：",
+           "#   UF = 手工版用户单位 → 内部单位 的系数（path 的 d/matrix 已经是用户单位，其余要除它）",
+           "#   DOC_MM_W/H = width/height（mm）；DOC_VIEWBOX = viewBox 的 4 个数（= 用户单位）",
+           "UF = %r" % UF,
+           "DOC_MM_W = %s" % doc_mm_w,
+           "DOC_MM_H = %s" % doc_mm_h,
+           "DOC_VIEWBOX = (%s, %s, %s, %s)" % doc_vb,           "", "# 被形状引用的渐变定义（原样给出；生成器写进 <defs>，否则渐变填充会变黑）",
            "DEFS = ["]
     for d in defs:
         out.append('    %s,' % repr(d))
@@ -640,7 +674,18 @@ def run(part_dir, view=None):
         else:
             out.append('    ("line", %s, %s, %s, %s, "%s", %s),' % s[1:])
     out += ["]", ""]
+    # ★ 表名按**视图**分文件：一个部件可能两个视图都有手工版（TX-AH-R900PNR：icon + 面包板）。
+    #   规则：同名的 byHand_tables.py 已存在、且**它的来源是另一个视图** ⇒ 改用
+    #   byHand_tables_<view>.py，绝不静默盖掉另一个视图的表。
+    #   单视图部件（CH347F/CH347T/T-Halow-RJ45）名字不变 ⇒ 不影响已有生成器。
     dst = os.path.join(part_dir, "byHand_tables.py")
+    if os.path.isfile(dst):
+        head = open(dst, encoding="utf-8").read(400)
+        m_src = re.search(r"# 源：svg/[^/]+/(\S+)", head)
+        if m_src and ("_%s_" % view) not in m_src.group(1):
+            dst = os.path.join(part_dir, "byHand_tables_%s.py" % view)
+            print("已有 byHand_tables.py 属于另一个视图（%s）⇒ 本表另写：%s"
+                  % (m_src.group(1), os.path.basename(dst)))
     open(dst, "w", encoding="utf-8").write("\n".join(out))
     print("焊盘 %d / 图标 %d %s / 丝印 %d / 矩形 %d / 圆 %d / 线 %d / path %d / 渐变 %d"
           % (len(pads), len(icons), [i[0] for i in icons], len(texts), len(rects),
