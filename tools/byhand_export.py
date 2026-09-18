@@ -88,6 +88,11 @@ FS_UNIFORM_BY_PART = {"CH347T": None, "T-Halow-RJ45": None, "TX-AH-R900PNR": Non
 ICON_MATCH_BY_PART = {"T-Halow-RJ45": False, "TX-AH-R900PNR": False}
 # 多行丝印的**行距倍率**：1.0 = 照手工版；用户 2026-09-15 定 **0.5**（两行靠得更紧）
 LINE_PITCH = 0.5
+# 逐部件覆盖（用得上就加一条，并在此写清为什么）：
+#   TX-AH-R900PNR 的手工版里多行丝印（电容的 `220` / `6.3V`）行距是**刻意拉开**的，
+#   再乘 0.5 会把两行掰到 0.88mm（字高 1.41mm）——两行几乎叠在一起。
+#   用户 2026-09-19：「三个元件上的文字位置错误、间距错误」→ 本部件照手工版（1.0）。
+LINE_PITCH_BY_PART = {"TX-AH-R900PNR": 1.0}
 
 XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
 
@@ -339,6 +344,7 @@ def run(part_dir, view=None):
     sizes = icon_sizes(repo_svg)
     skip_fill = SKIP_RECT_FILL_BY_PART.get(part, SKIP_RECT_FILL)
     fs_uniform = FS_UNIFORM_BY_PART.get(part, FS_UNIFORM)
+    line_pitch = LINE_PITCH_BY_PART.get(part, LINE_PITCH)
     allow_icons = ICON_MATCH_BY_PART.get(part, True)
     pads, texts, rects, circles, lines, icons, unknown = [], [], [], [], [], [], []
     paths = []                               # path 也照搬（d + 累乘 matrix）
@@ -505,7 +511,7 @@ def run(part_dir, view=None):
             tlines = text_lines(el)
             if len(tlines) > 1:
                 y0 = tlines[0][2]           # 行距沿**局部 y**（换行方向），首行不动
-                tlines = [(t, x, y0 + (y - y0) * LINE_PITCH) for t, x, y in tlines]
+                tlines = [(t, x, y0 + (y - y0) * line_pitch) for t, x, y in tlines]
             for txt, lx, ly in tlines:
                 if not txt:
                     continue

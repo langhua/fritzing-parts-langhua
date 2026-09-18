@@ -666,6 +666,102 @@
     </breadboardView>
    </views>
   </connector>
+  <connector id="connector57" name="GND" type="male">
+   <description>GND (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector57pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector58" name="A31" type="male">
+   <description>A31 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector58pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector59" name="A30" type="male">
+   <description>A30 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector59pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector60" name="VCC" type="male">
+   <description>VCC (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector60pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector61" name="GND" type="male">
+   <description>GND (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector61pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector62" name="A11" type="male">
+   <description>A11 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector62pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector63" name="A10" type="male">
+   <description>A10 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector63pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector64" name="VCC" type="male">
+   <description>VCC (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector64pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector65" name="GND" type="male">
+   <description>GND (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector65pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector66" name="A13" type="male">
+   <description>A13 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector66pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector67" name="A12" type="male">
+   <description>A12 (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector67pin"/>
+    </breadboardView>
+   </views>
+  </connector>
+  <connector id="connector68" name="VCC" type="male">
+   <description>VCC (J5/J4 header pin)</description>
+   <views>
+    <breadboardView>
+     <p layer="breadboard" svgId="connector68pin"/>
+    </breadboardView>
+   </views>
+  </connector>
  </connectors>
  <buses>
   <bus id="GND">
@@ -674,16 +770,46 @@
    <nodeMember connectorId="connector35"/>
    <nodeMember connectorId="connector48"/>
    <nodeMember connectorId="connector55"/>
+   <nodeMember connectorId="connector57"/>
+   <nodeMember connectorId="connector61"/>
+   <nodeMember connectorId="connector65"/>
   </bus>
   <bus id="VCC">
    <nodeMember connectorId="connector41"/>
    <nodeMember connectorId="connector47"/>
    <nodeMember connectorId="connector39"/>
    <nodeMember connectorId="connector56"/>
+   <nodeMember connectorId="connector60"/>
+   <nodeMember connectorId="connector64"/>
+   <nodeMember connectorId="connector68"/>
   </bus>
   <bus id="IOB0">
    <nodeMember connectorId="connector21"/>
    <nodeMember connectorId="connector38"/>
+  </bus>
+  <bus id="A31">
+   <nodeMember connectorId="connector58"/>
+   <nodeMember connectorId="connector12"/>
+  </bus>
+  <bus id="A30">
+   <nodeMember connectorId="connector59"/>
+   <nodeMember connectorId="connector11"/>
+  </bus>
+  <bus id="A11">
+   <nodeMember connectorId="connector62"/>
+   <nodeMember connectorId="connector15"/>
+  </bus>
+  <bus id="A10">
+   <nodeMember connectorId="connector63"/>
+   <nodeMember connectorId="connector14"/>
+  </bus>
+  <bus id="A13">
+   <nodeMember connectorId="connector66"/>
+   <nodeMember connectorId="connector32"/>
+  </bus>
+  <bus id="A12">
+   <nodeMember connectorId="connector67"/>
+   <nodeMember connectorId="connector31"/>
   </bus>
  </buses>
 </module>

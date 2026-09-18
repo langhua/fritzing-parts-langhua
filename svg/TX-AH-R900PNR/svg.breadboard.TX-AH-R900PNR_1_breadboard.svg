@@ -344,7 +344,7 @@
   <circle id="connector24pin" connectorname="IOB3" cx="166.4236" cy="148.8223" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector46pin" connectorname="NC" cx="173.7063" cy="148.8223" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector47pin" connectorname="VCC" cx="180.9884" cy="148.8223" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
-  <rect x="105.0435" y="138.3224" width="77.9758" height="13.1763" fill="none" stroke="#f5f5f5" stroke-width="0.36"/>
+  <rect x="105.0435" y="138.3224" width="79.7044" height="13.1763" fill="none" stroke="#f5f5f5" stroke-width="0.36"/>
   <line x1="111.8063" y1="139.407" x2="111.8063" y2="151.2883" stroke="#f5f5f5" stroke-width="0.3688"/>
   <line x1="148.2181" y1="139.407" x2="148.2181" y2="151.2883" stroke="#f5f5f5" stroke-width="0.3688"/>
   <rect x="181.2081" y="-1.4534" width="34.8662" height="16.2991" fill="#e6e6e6" stroke="#000000" stroke-width="0.363"/>
@@ -412,18 +412,18 @@
   <path d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z" fill="#8c8c8c" transform="matrix(-0.999936,0,0,-0.999936,269.621,155.223)"/>
   <rect x="234.042" y="140.2064" width="3.4628" height="1.4239" fill="#8c8c8c"/>
   <rect x="244.1394" y="140.2071" width="3.4628" height="1.4239" fill="#8c8c8c"/>
-  <circle cx="183.3637" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="183.3637" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="183.3637" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="190.5636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="190.5636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="190.5636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="197.7636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="197.7636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="197.7636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="204.9635" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="204.9635" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
-  <circle cx="204.9635" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.36"/>
+  <circle id="connector57pin" connectorname="GND" cx="183.3637" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector61pin" connectorname="GND" cx="183.3637" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector65pin" connectorname="GND" cx="183.3637" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector58pin" connectorname="A31" cx="190.5636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector62pin" connectorname="A11" cx="190.5636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector66pin" connectorname="A13" cx="190.5636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector59pin" connectorname="A30" cx="197.7636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector63pin" connectorname="A10" cx="197.7636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector67pin" connectorname="A12" cx="197.7636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector60pin" connectorname="VCC" cx="204.9635" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector64pin" connectorname="VCC" cx="204.9635" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector68pin" connectorname="VCC" cx="204.9635" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <rect x="179.7633" y="40.6977" width="28.7998" height="14.1838" fill="none" stroke="#f5f5f5" stroke-width="0.36"/>
   <rect x="179.7633" y="54.8815" width="28.7998" height="7.0559" fill="none" stroke="#f5f5f5" stroke-width="0.36"/>
   <rect x="187.3234" y="48.1137" width="6.5518" height="13.6077" fill="#e6b53d" rx="0.8643"/>
@@ -774,10 +774,10 @@
   <text x="109.771" y="3.6752" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">U2</text>
   <text x="237.6791" y="9.3923" font-size="2.8009" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold" transform="rotate(-90 237.6791 9.3923)">PWR_LED</text>
   <text x="107.1732" y="12.1665" font-size="2.2679" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(90 107.1732 12.1665)">25Q16JVSIQ</text>
-  <text x="208.5062" y="19.45" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">VCC</text>
-  <text x="202.0344" y="19.5955" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">A30</text>
-  <text x="183.1195" y="19.741" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">GND</text>
-  <text x="189.7375" y="19.741" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">A31</text>
+  <text x="204.965" y="19.45" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">VCC</text>
+  <text x="197.7628" y="19.5955" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">A30</text>
+  <text x="183.3658" y="19.741" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">GND</text>
+  <text x="190.5607" y="19.741" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">A31</text>
   <text x="73.9859" y="20.3121" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">D2</text>
   <text x="73.9801" y="23.1267" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">D3</text>
   <text x="171.4067" y="25.9082" font-size="5.04" font-family="DroidSans" fill="#c8ccd0" text-anchor="start">TAIXIN-AH-RX00P_EVB_V1.7</text>
@@ -826,10 +826,10 @@
   <text x="171.4182" y="99.4453" font-size="0.7368" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180 171.4182 99.4453)">S2F</text>
   <text x="141.4466" y="99.7507" font-size="4.0015" font-family="DroidSans" fill="#000000">220</text>
   <text x="171.4182" y="100.6359" font-size="0.9636" font-family="DroidSans" fill="#ffffff" text-anchor="middle" transform="rotate(180 171.4182 100.6359)">ETA3425</text>
-  <text x="141.4466" y="102.2513" font-size="4.0015" font-family="DroidSans" fill="#000000">6.3V</text>
   <text x="176.1687" y="104.3529" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="start" font-weight="bold">U6</text>
+  <text x="141.4466" y="104.7519" font-size="4.0015" font-family="DroidSans" fill="#000000">6.3V</text>
   <text x="189.5697" y="112.7275" font-size="4.0015" font-family="DroidSans" fill="#000000" transform="rotate(-90 189.5697 112.7275)">220</text>
-  <text x="192.0703" y="112.7275" font-size="4.0015" font-family="DroidSans" fill="#000000" transform="rotate(-90 192.0703 112.7275)">6.3V</text>
+  <text x="194.5709" y="112.7275" font-size="4.0015" font-family="DroidSans" fill="#000000" transform="rotate(-90 194.5709 112.7275)">6.3V</text>
   <text x="82.7206" y="119.0718" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="middle" font-weight="bold">DEBUG</text>
   <text x="69.7431" y="126.2991" font-size="3.2006" font-family="DroidSans" fill="#f5f5f5" text-anchor="end" font-weight="bold">S3</text>
   <text x="239.2909" y="127.0194" font-size="4.2478" font-family="DroidSans" fill="#c8ccd0" text-anchor="middle" font-weight="bold">UART</text>

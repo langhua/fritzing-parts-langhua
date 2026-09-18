@@ -74,6 +74,18 @@ PINS_EDGE = [
 ]
 EPADS = ["EPAD1", "EPAD2"]
 
+# ---- 板上 J5/J4 两个排针（用户 2026-09-19：「J4/J5 的 GND/A10/A11/VCC 要能接线」）----
+#   共 12 个焊盘：手工版里已挂上 connector57..68pin（几何在手工版，导出表里是 12 个 pad）。
+#   本表只定义**名字**与**并到哪条网**（名字照板上丝印；Axx 并到对应的模组边脚，见 PINS_EDGE）：
+#     · GND / VCC → 并进已有的 GND / VCC 总线（tie=None）
+#     · A31→connector12(IOA31)、A30→11(IOA30)、A11→15(IOA11)、A10→14(IOA10)、
+#       A13→32(IOA13)、A12→31(IOA12)
+J45_PADS = [
+    (57, "GND", None), (58, "A31", 12), (59, "A30", 11), (60, "VCC", None),
+    (61, "GND", None), (62, "A11", 15), (63, "A10", 14), (64, "VCC", None),
+    (65, "GND", None), (66, "A13", 32), (67, "A12", 31), (68, "VCC", None),
+]
+
 # ---- icon 视图的几何来源 = **用户手画版导出的数据表**（工作流见 tools/README.md）----
 #   2026-09-18 用户在 Inkscape 里手画了一版模组顶视图
 #   （svg.icon.TX-AH-R900PNR_1_icon_byHand.svg，15x17mm），本视图不再由本脚本现画：
@@ -660,11 +672,12 @@ def pcb_svg():
             '  <g id="copper1">\n' + inner + '\n  </g>\n</svg>\n')
 
 
-def buses_xml(gnd_extra=(), vcc_conns=()):
+def buses_xml(gnd_extra=(), vcc_conns=(), tie_buses=()):
     """显式声明内部互通网：
-    - GND：全部 GND 边脚(connector0/2/35) + 面包板专用 GND 针(gnd_extra，CON3 的 connector48) 同网；
-    - 面包板专用 VCC 针（CON1 两排 + CON2）同一条 VCC 轨（vcc_conns 传入）；
-    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网。"""
+    - GND：全部 GND 边脚(connector0/2/35) + 面包板专用 GND 针(gnd_extra，含 CON3 的 48 与 J5/J4 的三个 GND)同网；
+    - 面包板专用 VCC 针（CON1 两排 + CON2 + J5/J4）同一条 VCC 轨（vcc_conns 传入）；
+    - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网；
+    - tie_buses：其余“一个排针脚 ↔ 一个模组边脚”的成对网（J5/J4 的 Axx，见 J45_PADS）。"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
     L = [" <buses>\n", '  <bus id="GND">\n']
     for cid in gnd:
@@ -680,6 +693,11 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     for cid in ("connector21", "connector38"):
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
+    for nm, pair in tie_buses:          # 成对网：排针脚 ↔ 模组边脚（名字照板上丝印）
+        L.append(f'  <bus id="{nm}">\n')
+        for cid in pair:
+            L.append(f'   <nodeMember connectorId="connector{cid}"/>\n')
+        L.append("  </bus>\n")
     L.append(" </buses>\n")
     return "".join(L)
 
@@ -806,6 +824,15 @@ def gen_fzp():
             f'    <breadboardView>\n     <p layer="breadboard" svgId="connector{cn}pin"/>\n    </breadboardView>\n'
             f'   </views>\n'
             f'  </connector>')
+    # J5/J4 两个排针共 12 个焊盘（connector57..68）：只有面包板视图（用户 2026-09-19 要求可接杜邦线）。
+    for cn, nm, _tie in J45_PADS:
+        conns.append(
+            f'  <connector id="connector{cn}" name="{esc(nm)}" type="male">\n'
+            f'   <description>{esc(nm)} (J5/J4 header pin)</description>\n'
+            f'   <views>\n'
+            f'    <breadboardView>\n     <p layer="breadboard" svgId="connector{cn}pin"/>\n    </breadboardView>\n'
+            f'   </views>\n'
+            f'  </connector>')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
             f' <version>4</version>\n <date>2026-09-03</date>\n'
@@ -824,8 +851,13 @@ def gen_fzp():
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
             f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n'
-            + buses_xml([f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "GND"],
-                        [f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"]) + '</module>\n')
+            + buses_xml(
+                gnd_extra=[f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "GND"]
+                          + [f"connector{cn}" for cn, nm, _t in J45_PADS if nm == "GND"],
+                vcc_conns=[f"connector{i}" for i, lab in bbmap.items() if i >= 38 and lab == "VCC"]
+                          + [f"connector{cn}" for cn, nm, _t in J45_PADS if nm == "VCC"],
+                tie_buses=[(nm, (cn, tie)) for cn, nm, tie in J45_PADS if tie is not None]
+            ) + '</module>\n')
 
 
 # ---- 外部元件图形复用（DEBUG=JST XH 4A；UART=TypeC16Pin icon） ----
@@ -936,6 +968,8 @@ def _bb_name_map():
     for f in (_con1_bb_assign, _con2_bb_assign, _con3_bb_assign, _debug_bb_assign):
         for i, _x, _y, lab in f():
             m[i] = lab
+    for cn, nm, _tie in J45_PADS:          # J5/J4 的 12 个（名字同上，与 .fzp 同源）
+        m[cn] = nm
     return m
 
 
