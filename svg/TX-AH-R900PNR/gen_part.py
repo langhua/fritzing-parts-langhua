@@ -733,9 +733,24 @@ def breadboard_svg():
     # 主板内容整体右移 TF_OVER（保持全部原有板内坐标不变）
     L.append('  <g transform="translate(%d 0)">\n' % u(TF_OVER))
 
-    # 深蓝圆角 PCB
-    L.append('  <rect x="0" y="0" width="%d" height="%d" rx="%d" fill="%s" stroke="%s" stroke-width="8"/>\n'
-             % (W, H, u(4), PCB, PCB_E))
+    # 深蓝圆角 PCB：主板 + 左侧舌板（黑脖子）合成**一条**闭合轮廓
+    # 2026-09-18 用户要求（照 T-Halow-RJ45 的做法）：原先主板是描边 rect、黑脖子是另一条
+    # 无描边 path，主板描边在交界处留一条内线；合并后板边线绕整块板（含舌板）一圈，
+    # 交界处无内线，舌板黑脖子也随主板有同一条板边线。几何与原来逐点相同，只换画法。
+    EC_LEN = 15.0                     # 舌板端部银灰卡长（= 标准 microSD 15mm）
+    FL = 3.0                          # 舌根两肩圆角半径（mm）
+    NECK = TF_OVER - EC_LEN           # 黑色脖子的水平长度（mm）
+    CR = u(4)                         # 主板四角半径（= 原 rect 的 rx）
+    SR = u(min(FL, TF_OVER - EC_LEN))  # 舌根两肩圆角半径（与舌边、主板左缘相切）
+    t_yT, t_yB = u(TF_TOP), u(TF_TOP + TF_H)   # 舌头上/下边（主板内坐标）
+    t_xS = u(EC_LEN) - u(TF_OVER)              # 舌头短边 x（主板内坐标，在主板左缘左侧）
+    d_board = ("M %d,0 H %d A %d,%d 0 0 1 %d,%d V %d A %d,%d 0 0 1 %d,%d H %d "
+               "A %d,%d 0 0 1 0,%d V %d A %d,%d 0 0 0 %d,%d H %d V %d H %d "
+               "A %d,%d 0 0 0 0,%d V %d A %d,%d 0 0 1 %d,0 Z"
+               % (CR, W - CR, CR, CR, W, CR, H - CR, CR, CR, W - CR, H, CR,
+                  CR, CR, H - CR, t_yB + SR, SR, SR, -SR, t_yB, t_xS, t_yT, -SR,
+                  SR, SR, t_yT - SR, CR, CR, CR, CR))
+    L.append('  <path d="%s" fill="%s" stroke="%s" stroke-width="8"/>\n' % (d_board, PCB, PCB_E))
     # 4 个安装孔：金色盘外径 6mm（r=3.0）、内孔孔径 3mm（r=1.5）
     # 2026-09-06 用户定位（按「外圈距主板边沿」约束反推孔心，主板 70x55）：
     #   左孔 x=6.0（外圈距左边 3mm）、右孔 x=66.0（外圈距右边 1mm）
@@ -1170,21 +1185,11 @@ def breadboard_svg():
     # 按用户 microsd.png（透明底、15×11mm）像素测量 1:1 还原卡形：
     #   卡 15.0×11.0mm；上边一个缺口（距自由端 7.84~9.6mm、深 0.64mm，右斜 45°左陡）；
     #   自由端上角 microSD 防呆切（上边 x0.5~4.7 下凹 1.24mm，x4.7~6.0 斜接回 17.3）。
-    EC_LEN = 15.0                     # 卡长 = 标准 microSD 15mm
-    NECK = TF_OVER - EC_LEN           # 黑色脖子的水平长度（mm）
-    FL = 3.0                          # 脖子在主板侧向上/下张开的量（mm）
     TF_FILL, TF_EDGE = "#d4d7da", "#9aa0a6"   # 银灰边缘连接器
     yT, yB = TF_TOP, TF_TOP + TF_H
-    xS = EC_LEN                       # 脖子短边 x（贴边缘连接器，= 卡宽 11mm）
-    # 1) 黑色脖子：直舌头（卡宽 11mm）在左、主板在右；上/下两肩各一个**内凹圆角**
-    #    （quarter-arc，sweep=0），圆弧两端分别与舌头边、主板左缘相切 → 平滑内凹。
-    r = min(FL, TF_OVER - EC_LEN)     # 内凹圆角半径（mm），不超过脖子长度
-    xB = TF_OVER                       # 主板左缘 x（圆角相切于此）
-    d_neck = ("M %d,%d L %d,%d A %d,%d 0 0 0 %d,%d L %d,%d A %d,%d 0 0 0 %d,%d L %d,%d Z"
-              % (u(xS), u(yT), u(xB - r), u(yT), u(r), u(r), u(xB), u(yT - r),
-                 u(xB), u(yB + r), u(r), u(r), u(xB - r), u(yB), u(xS), u(yB)))
-    L.append('  <path d="%s" fill="%s"/>\n' % (d_neck, PCB))
-    # 2) 银灰 microSD 卡（缺口 + 防呆切 + 自由端圆角），压在脖子短边上（微重叠防缝）
+    # 1) 黑色脖子：2026-09-18 起并入主板轮廓（见函数开头 d_board），此处不再单独画；
+    #    舌根两肩的凹圆角由 d_board 的两个 A 段承担（同一段弧、同一个半径）。
+    # 2) 银灰 microSD 卡（缺口 + 防呆切 + 自由端圆角），压在舌根上（微重叠防缝）
     xR = EC_LEN + 0.2                 # 卡根端 x（压上脖子）
     rc = 0.5                          # 自由端下角圆角（mm）
     # 防呆切（自由端上角）：上边下凹 1.24mm
@@ -1207,8 +1212,8 @@ def breadboard_svg():
                u(rc), u(rc), u(0), u(yB - rc),                       # 自由端下圆角
                u(0), u(18.88)))                                      # 左缘回起点
     L.append('  <path d="%s" fill="%s" stroke="%s" stroke-width="7"/>\n' % (d_ec, TF_FILL, TF_EDGE))
-    # 注：脖子上下两条圆弧不再加黑色实线描边（用户：箭头处不应有黑实线），
-    # 仅靠填充色边界呈现，弧线自然清晰即可。
+    # 注：舌根两肩的圆弧不另加描边；2026-09-18 合并轮廓后，板边线（stroke-width 8
+    # ＝0.2mm，与主板同一条）沿整块板一圈，弧线上不会多出一条黑实线（用户 2026-09-06 要求）。
     # ---- 过孔阵列（用户 2026-09-06）：银灰 microSD 卡靠右部分打 6行x8列=48 个过孔，
     #      孔径 0.2mm（半径 0.1）；左边为卡接口留空（x<6mm 不打孔），避开防呆切/缺口；
     #      行距 1.2mm＝列距（均匀网格）；整体下移半个行距(0.6mm)与左端对中 ----
