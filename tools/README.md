@@ -216,6 +216,24 @@ CH347T 手工版里有 **14 组**这样偏了 0.135~0.228mm → **改的是手�
    属性跳行也能改；同一手法顺带把 J5 上排 4 个丝印对齐到它们各自的焊盘列
    （原来 A30/VCC 偏了 1.5/1.25mm，另两排是精确对齐的）。
 
+### ★ 2026-09-19（第三批）：文字转成路径（用户提议，TX-AH 面包板）
+
+用户 2026-09-19：「在 Inkscape 里能把字体转成 svg 路径，你能转吗？」—— 能，而且**应该用 Inkscape 自己转**
+（字体/排版与用户看到的完全一致；cairosvg 渲染不可信，见 AGENTS §0 规则 4）。
+
+做法（命令行的 action 串，Inkscape 1.x）：
+
+```
+"D:\Program Files\Inkscape\bin\inkscape.com" ^
+  --actions="select-by-element:text;object-to-path;export-filename:<出>.svg;export-do" <手工版>.svg
+```
+
+· 这里只选中 `<text>` 再转路径，**不会**动别的东西；照片（内嵌 data URI）也保留（实测 `<image>` 仍为 1）。
+· TX-AH 面包板实测：`<text>` 92 → 0，`<path>` 137 → 482，文件 1.79MB → 1.95MB。
+· 转完把出图换回手工版、重导导出器：表里 `TEXTS` 变 0、字形象进 `SHAPES`（带 matrix，同上口径）。
+  生成的面包板 svg 于是**一条 `<text>` 也没有** ⇒ Fritzing 不再依赖字体，位置与 Inkscape 里一致。
+· 注意：转完**字号/字体信息就没了**，以后要改字得回 Inkscape 改（改前先留备份）。
+
 ## `.fzp` / 打包
 - **`connector 号是三个视图的共同语言**：面包板焊盘 id、原理图 `connectorNpin`、PCB `connectorNpad`、
   .fzp 里的 `id="connectorN"` 必须是同一个 N（AGENTS §5「连接器是灵魂」）。

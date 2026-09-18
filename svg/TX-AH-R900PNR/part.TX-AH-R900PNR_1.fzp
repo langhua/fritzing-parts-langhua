@@ -674,16 +674,16 @@
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector58" name="A31" type="male">
-   <description>A31 (J5/J4 header pin)</description>
+  <connector id="connector58" name="A10" type="male">
+   <description>A10 (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector58pin"/>
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector59" name="A30" type="male">
-   <description>A30 (J5/J4 header pin)</description>
+  <connector id="connector59" name="A11" type="male">
+   <description>A11 (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector59pin"/>
@@ -706,16 +706,16 @@
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector62" name="A11" type="male">
-   <description>A11 (J5/J4 header pin)</description>
+  <connector id="connector62" name="TX" type="male">
+   <description>TX (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector62pin"/>
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector63" name="A10" type="male">
-   <description>A10 (J5/J4 header pin)</description>
+  <connector id="connector63" name="RX" type="male">
+   <description>RX (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector63pin"/>
@@ -787,21 +787,13 @@
    <nodeMember connectorId="connector21"/>
    <nodeMember connectorId="connector38"/>
   </bus>
-  <bus id="A31">
+  <bus id="A10">
    <nodeMember connectorId="connector58"/>
-   <nodeMember connectorId="connector12"/>
-  </bus>
-  <bus id="A30">
-   <nodeMember connectorId="connector59"/>
-   <nodeMember connectorId="connector11"/>
+   <nodeMember connectorId="connector14"/>
   </bus>
   <bus id="A11">
-   <nodeMember connectorId="connector62"/>
+   <nodeMember connectorId="connector59"/>
    <nodeMember connectorId="connector15"/>
-  </bus>
-  <bus id="A10">
-   <nodeMember connectorId="connector63"/>
-   <nodeMember connectorId="connector14"/>
   </bus>
   <bus id="A13">
    <nodeMember connectorId="connector66"/>
