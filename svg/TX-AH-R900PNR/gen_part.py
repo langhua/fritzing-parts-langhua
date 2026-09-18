@@ -83,12 +83,17 @@ EPADS = ["EPAD1", "EPAD2"]
 #       col4: 1=VCC / 2=?   col3: 3=A10 / 4=CH340E TX
 #       col2: 5=A11 / 6=CH340E RX   col1: 7=GND / 8=GND
 #     J4（1x4，丝印 GND A13 A12 VCC）：1=VCC、2=IOA12、3=IOA13、4=GND
-#   Axx 并到对应的模组边脚（见 PINS_EDGE）：A10→connector14(IOA10)、A11→15(IOA11)、
-#   A12→31(IOA12)、A13→32(IOA13)；TX/RX 是 CH340E 侧的网络，暂不并（待用户确认接到哪条）。
+#   ★ A10/A11/A12/A13 这四个焊盘**不并到模组边脚**：用户 2026-09-16 用万用表实测它们与
+#   IOA10…IOA13 **不通**（中间有串阻/未连接）⇒ 各自就是独立网（`tie=None`，不写进 <buses>）。
+#   实测记录同时写在 `../TX-AH-R900PNR_rev_1/gen_part.py` 的 JU_MAP 旁。
+#   TX/RX 是 CH340E 侧的网络（用户 2026-09-19 定：名字写作 "CH340E TX" / "CH340E RX"，
+#   不并到其它网络）。
+#   第 3 项 = 要并进去的模组边脚 connector 号；None = 独立网。
 J45_PADS = [
-    (57, "GND", None), (58, "A11", 15), (59, "A10", 14), (60, "VCC", None),
-    (61, "GND", None), (62, "RX", None), (63, "TX", None), (64, "VCC", None),
-    (65, "GND", None), (66, "A13", 32), (67, "A12", 31), (68, "VCC", None),
+    (57, "GND", None), (58, "A11", None), (59, "A10", None), (60, "VCC", None),
+    (61, "GND", None), (62, "CH340E RX", None), (63, "CH340E TX", None),
+    (64, "VCC", None),
+    (65, "GND", None), (66, "A13", None), (67, "A12", None), (68, "VCC", None),
 ]
 
 # ---- icon 视图的几何来源 = **用户手画版导出的数据表**（工作流见 tools/README.md）----

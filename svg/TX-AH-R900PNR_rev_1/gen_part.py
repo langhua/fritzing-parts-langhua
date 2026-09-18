@@ -53,7 +53,11 @@ DATE = "2026-09-16"
 # 复用源：icon / schematic / pcb 三个视图从这个目录**逐字节复制**（只换文件名）
 SRC_DIR = os.path.normpath(os.path.join(OUT_DIR, "..", "TX-AH-R900PNR"))
 SRC_PART_ID = "TX-AH-R900PNR_1"
-REUSE_VIEWS = ("icon", "schematic", "pcb")
+# 2026-09-19 用户：“这个文件 svg\TX-AH-R900PNR_rev_1\svg.breadboard.…，也应重新生成。”
+#   两个部件是**同一块板**（id/title/日期之外无实质差异）⇒ 面包板也**1:1 复用原版**
+#   （原版那份是用户 2026-09-19 在 Inkscape 里拿实物照片手画、并已转成 path 的版本）。
+#   复用的前提：本部件 J45 的 connector 号必须与原版一致（见下面 JU_MAP）。
+REUSE_VIEWS = ("icon", "schematic", "pcb", "breadboard")
 
 ICON_SVG = "svg.icon.%s_icon.svg" % PART_ID
 BB_SVG = "svg.breadboard.%s_breadboard.svg" % PART_ID
@@ -581,10 +585,14 @@ JU_COLS = (JU_GN, JU_J4, JU_J5, JU_VC)      # 列序（左→右）= GND | J4 | 
 #   第 2 排（黄帽盖住的那排）丝印上没有字 ⇒ 用户 2026-09-16 定：真板 J5 第二排（CH340E 侧），
 #   A11 列下 = CH340E_RX、A10 列下 = CH340E_TX（真板 J5 的 2×4 列配对：pin5/6、pin3/4）。
 JU_MAP = {
-    (0, 0): (57, "GND"), (1, 0): (60, "A11"), (2, 0): (62, "A10"), (3, 0): (64, "VCC"),
-    (0, 1): (58, "GND"), (1, 1): (67, "CH340E_RX"), (2, 1): (68, "CH340E_TX"), (3, 1): (65, "VCC"),
-    (0, 2): (59, "GND"), (1, 2): (61, "A13"), (2, 2): (63, "A12"), (3, 2): (66, "VCC"),
+    (0, 0): (57, "GND"), (1, 0): (58, "A11"), (2, 0): (59, "A10"), (3, 0): (60, "VCC"),
+    (0, 1): (61, "GND"), (1, 1): (62, "CH340E RX"), (2, 1): (63, "CH340E TX"), (3, 1): (64, "VCC"),
+    (0, 2): (65, "GND"), (1, 2): (66, "A13"), (2, 2): (67, "A12"), (3, 2): (68, "VCC"),
 }
+# ★ 2026-09-19：编号/名字**与原版 `../TX-AH-R900PNR/gen_part.py` 的 J45_PADS 完全对齐** ——
+#   因为面包板视图现在是 1:1 复用原版那张手画图，图里的 pad id（connector57..68pin）
+#   就是原版的编号。二者不一致 = 图中 pad 挂到错的 connector（连出来的网全是错的）。
+#   （改前本文件用的是另一套编号 + `CH340E_RX` 下划线写法，已废弃。）
 # ⚠ 2026-09-16 用户用万用表实测：A10/A11/A12/A13 这些焊盘与模组脚 IOA10…IOA13 **不通**
 #   （中间有串阻/未连接）⇒ **不做任何 tie**，它们各自就是独立网（不写进 <buses>）。
 #   （原版当初没有这几个 connector，所以也没这个问题）
@@ -1303,14 +1311,10 @@ def reuse_view(view):
 
 
 def main():
-    # 只**新生成**面包板视图 + fzp；icon/schematic/pcb 复用原版（见 reuse_view）。
-    # ⚠ 顺序要紧：面包板视图会**内嵌**本部件的 icon（`_module_icon_group()` 读 OUT_DIR/ICON_SVG），
-    #   所以必须**先**把 icon 复制过来，再生成面包板。
+    # 四个视图**全部**复用原版（见 reuse_view）：两个部件是同一块板，
+    # 面包板视图 2026-09-19 起也复用原版那张手画图（`breadboard_svg()` 已弃用，仅作存档）。
     for view in REUSE_VIEWS:
         reuse_view(view)
-    with open(os.path.join(OUT_DIR, BB_SVG), "w", encoding="utf-8") as f:
-        f.write(breadboard_svg())
-    print("wrote", BB_SVG)
 
     fzp_name = f"part.{PART_ID}.fzp"
     with open(os.path.join(OUT_DIR, fzp_name), "w", encoding="utf-8") as f:

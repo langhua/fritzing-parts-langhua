@@ -706,16 +706,16 @@
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector62" name="RX" type="male">
-   <description>RX (J5/J4 header pin)</description>
+  <connector id="connector62" name="CH340E RX" type="male">
+   <description>CH340E RX (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector62pin"/>
     </breadboardView>
    </views>
   </connector>
-  <connector id="connector63" name="TX" type="male">
-   <description>TX (J5/J4 header pin)</description>
+  <connector id="connector63" name="CH340E TX" type="male">
+   <description>CH340E TX (J5/J4 header pin)</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector63pin"/>
@@ -786,22 +786,6 @@
   <bus id="IOB0">
    <nodeMember connectorId="connector21"/>
    <nodeMember connectorId="connector38"/>
-  </bus>
-  <bus id="A11">
-   <nodeMember connectorId="connector58"/>
-   <nodeMember connectorId="connector15"/>
-  </bus>
-  <bus id="A10">
-   <nodeMember connectorId="connector59"/>
-   <nodeMember connectorId="connector14"/>
-  </bus>
-  <bus id="A13">
-   <nodeMember connectorId="connector66"/>
-   <nodeMember connectorId="connector32"/>
-  </bus>
-  <bus id="A12">
-   <nodeMember connectorId="connector67"/>
-   <nodeMember connectorId="connector31"/>
   </bus>
  </buses>
 </module>

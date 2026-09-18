@@ -614,10 +614,10 @@
   <circle id="connector61pin" connectorname="GND" cx="183.3637" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector65pin" connectorname="GND" cx="183.3637" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector58pin" connectorname="A11" cx="190.5636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
-  <circle id="connector62pin" connectorname="RX" cx="190.5636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector62pin" connectorname="CH340E RX" cx="190.5636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector66pin" connectorname="A13" cx="190.5636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector59pin" connectorname="A10" cx="197.7636" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
-  <circle id="connector63pin" connectorname="TX" cx="197.7636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
+  <circle id="connector63pin" connectorname="CH340E TX" cx="197.7636" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector67pin" connectorname="A12" cx="197.7636" cy="58.4819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector60pin" connectorname="VCC" cx="204.9635" cy="44.082" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
   <circle id="connector64pin" connectorname="VCC" cx="204.9635" cy="51.2819" r="1.8718" fill="#d0d0d0" stroke="#8a8a8a" stroke-width="0.3601"/>
