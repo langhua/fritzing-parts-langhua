@@ -13,42 +13,42 @@
   <circle cx="2598" cy="1728" r="59" fill="#0a0d11"/>
   <g transform="translate(925 846) rotate(90) translate(-295 -335) scale(39.37)">
   <rect x="0" y="0" width="15" height="17" fill="#2b3d58" stroke="#1b2940" stroke-width="0.1"/>
-  <rect x="0" y="0.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="0.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="1.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="1.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="3.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="3.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="4.25" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="4.25" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="5.45" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="5.45" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="6.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="6.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="7.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="7.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="9.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="9.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="10.25" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="10.25" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="11.45" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="11.45" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="12.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="12.65" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="13.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="13.85" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="0" y="15.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="14.75" y="15.05" width="0.25" height="0.7" fill="#e3b23c"/>
-  <rect x="1.75" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="2.95" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="4.15" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="5.35" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="6.55" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="7.75" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="8.95" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="10.15" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="11.35" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
-  <rect x="12.55" y="16.75" width="0.7" height="0.25" fill="#e3b23c"/>
+  <path d="M 0.25,0.65 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,0.65 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,1.85 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,1.85 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,3.05 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,3.05 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,4.25 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,4.25 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,5.45 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,5.45 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,6.65 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,6.65 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,7.85 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,7.85 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,9.05 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,9.05 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,10.25 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,10.25 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,11.45 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,11.45 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,12.65 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,12.65 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,13.85 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,13.85 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 0.25,15.05 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z" fill="#e3b23c"/>
+  <path d="M 14.75,15.05 H 15 v 0.2 a 0.15,0.15 0 0 0 0,0.3 v 0.2 h -0.25 z" fill="#e3b23c"/>
+  <path d="M 1.75,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 2.95,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 4.15,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 5.35,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 6.55,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 7.75,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 8.95,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 10.15,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 11.35,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
+  <path d="M 12.55,16.75 V 17 h 0.2 a 0.15,0.15 0 0 1 0.3,0 h 0.2 v -0.25 z" fill="#e3b23c"/>
   <rect x="8.41" y="4.244" width="0.28" height="0.24" fill="#f7bf13"/>
   <rect x="8.41" y="1.244" width="0.28" height="0.24" fill="#f7bf13"/>
   <rect x="8.91" y="4.244" width="0.28" height="0.24" fill="#f7bf13"/>
