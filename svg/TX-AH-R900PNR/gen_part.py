@@ -29,6 +29,7 @@ TX-AH-R900PNR — 泰芯 TXW8301 (802.11ah) 贴片模组 Fritzing 元件生成�
 """
 import os
 import re
+import sys
 import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -72,6 +73,17 @@ PINS_EDGE = [
     "NC", "NC", "IOA12", "IOA13", "VDD1V3A", "VDD1V3D", "GND",
 ]
 EPADS = ["EPAD1", "EPAD2"]
+
+# ---- icon 视图的几何来源 = **用户手画版导出的数据表**（工作流见 tools/README.md）----
+#   2026-09-18 用户在 Inkscape 里手画了一版模组顶视图
+#   （svg.icon.TX-AH-R900PNR_1_icon_byHand.svg，15x17mm），本视图不再由本脚本现画：
+#     改图 = 改手工版 → `python tools\byhand_export.py svg\TX-AH-R900PNR icon` → 重跑本脚本。
+#   **不要在这里改几何数字**（AGENTS §4）。
+sys.path.insert(0, OUT_DIR)
+from byHand_tables import DEFS, ICONS, SHAPES, TEXTS           # noqa: E402
+
+_TU_MM = 0.0254      # 数据表内部单位（100 单位 = 2.54mm）→ mm
+
 
 def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -219,7 +231,11 @@ def _bottom_x():
     return [2.1 + i * PITCH for i in range(10)]
 
 
-def icon_svg():
+def _icon_svg_scripted():
+    """**已停用（2026-09-18）**：icon 改为按用户手画版出图（见下面 icon_svg()）。
+    这里保留旧版“脚本现画”的实现作对照，**不再被调用**；它用到的
+    _txw8301_icon_group()/_rt6150rev_icon_group() 等辅助函数也一并停用
+    （面包板视图仍用 _module_icon_group()）。"""
     L = []
     L.append('<?xml version="1.0" encoding="UTF-8"?>\n')
     L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%dmm" height="%dmm" viewBox="0 0 %d %d">\n'
@@ -292,6 +308,99 @@ def icon_svg():
     L.append('   <text x="14.5" y="16.6" font-size="1.0" text-anchor="end">NR</text>\n')
     L.append('  </g>\n')
 
+    L.append(' </g>\n')
+    L.append('</svg>\n')
+    return "".join(L)
+
+
+def icon_svg():
+    """icon 视图 = **用户手画版**（byHand_tables.py）逐图元照搬。
+
+    2026-09-18：用户在 Inkscape 里手画了一版模组顶视图（15×17mm），本视图不再由本
+    脚本现画 —— 改图 = 改手工版 → `python tools\\byhand_export.py svg\\TX-AH-R900PNR icon`
+    → 重跑本脚本。手工版 1 用户单位 = 1mm，故表里的内部单位 ÷39.37 就是本视图坐标。
+
+    单位约定（两处不同，别混，tools/README.md 有记）：
+      · rect / circle / line 的 stroke-width 在表里是**内部单位** → ×0.0254 转 mm；
+      · path 的 stroke-width 与 d 是**局部单位**（随它自带的 matrix 一起缩放）→ 原样写回。
+    """
+    def v(mm_u):                     # 表内部单位（100 = 2.54mm）→ 本视图 mm
+        s = "%.3f" % (mm_u * _TU_MM)
+        return s.rstrip("0").rstrip(".") or "0"
+
+    def _n(sw):                      # 表里的描边宽（内部单位）；没写（None/'None'）就 None
+        return None if sw in (None, "None", "") else float(sw)
+
+    L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
+         '<svg xmlns="http://www.w3.org/2000/svg" '
+         'width="%dmm" height="%dmm" viewBox="0 0 %d %d">\n'
+         % (int(MW), int(MH), int(MW), int(MH)),
+         ' <g id="icon">\n']         # ← 面包板视图靠 _module_icon_group() 内嵌这一段
+    for d in DEFS:
+        L.append('  %s\n' % d)
+    for sh in SHAPES:                # ★ 按手工版文档次序画（叠放次序就是画法次序）
+        kind = sh[0]
+        if kind == "rect":
+            _k, x, y, w, h, fill, rot, stroke, sw = sh[:9]
+            rx = sh[9] if len(sh) > 9 else 0
+            op = sh[10] if len(sh) > 10 else None      # 元素透明度（手工版给电容写的 0.75）
+            if abs((rot or 0) % 180) == 90:
+                # 表里给的是**旋转后的 bbox**；±90/270 用中心反算回原矩形
+                # （不写 rotate，Fritzing 认绝对坐标最稳，AGENTS §5）
+                cx, cy = x + w / 2.0, y + h / 2.0
+                x, y, w, h = cx - h / 2.0, cy - w / 2.0, h, w
+            a = ' fill="%s"' % fill if fill and fill != "None" else ''
+            swf = _n(sw)
+            if stroke and stroke != "None" and swf is not None:
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, v(swf))
+            if rx:
+                a += ' rx="%s"' % v(rx)
+            if op is not None:
+                a += ' opacity="%g"' % op
+            L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
+                     % (v(x), v(y), v(w), v(h), a))
+        elif kind == "circle":
+            _k, x, y, r, fill, stroke, sw = sh
+            a = ' fill="%s"' % (fill if fill and fill != "None" else "none")
+            swf = _n(sw)
+            if stroke and stroke != "None" and swf is not None:
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, v(swf))
+            L.append('  <circle cx="%s" cy="%s" r="%s"%s/>\n' % (v(x), v(y), v(r), a))
+        elif kind == "line":
+            _k, x1, y1, x2, y2, stroke, sw = sh
+            swf = _n(sw)
+            L.append('  <line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" '
+                     'stroke-width="%s"/>\n'
+                     % (v(x1), v(y1), v(x2), v(y2), stroke, v(swf or 0.0)))
+        elif kind == "path":
+            _k, d, mtx, fill, stroke, sw = sh
+            a = ''
+            if fill and fill != "None":
+                a += ' fill="%s"' % fill
+            if stroke and stroke != "None":
+                a += ' stroke="%s"' % stroke
+            if sw and sw != "None":
+                a += ' stroke-width="%s"' % sw       # ⚠ 局部单位，原样
+            if mtx:
+                a += ' transform="%s"' % mtx
+            L.append('  <path d="%s"%s/>\n' % (d, a))
+        else:
+            raise RuntimeError("byHand_tables.py 里出现没见过的图元 %r" % (kind,))
+    if ICONS:
+        raise RuntimeError("icon 视图里不该有嵌入式元件（导出时已关自动认图标）：%r" % (ICONS,))
+    for t, x, y, fs, anchor, rot, fill, fw in TEXTS:
+        # 手工版里 P9 / NR 的白来自父组 <g fill="#ffffff">（导出器只看到元素自身 → fill=None）
+        a = ' fill="%s"' % (fill if fill and fill != "None" else TXT_W)
+        if anchor and anchor != "None":
+            a += ' text-anchor="%s"' % anchor
+        if fw:
+            a += ' font-weight="%s"' % fw
+        if rot:
+            a += ' transform="rotate(%g %s %s)"' % (rot, v(x), v(y))
+        # 字体：手工版里模组丝印是 DroidSans（P9/NR 那两条继承的是 Arial）；
+        # 统一用 DroidSans —— 它是 Fritzing 支持的字体（AGENTS §3b），也是手工版的多数。
+        L.append('  <text x="%s" y="%s" font-size="%s" font-family="DroidSans"%s>%s</text>\n'
+                 % (v(x), v(y), v(fs), a, esc(t)))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)

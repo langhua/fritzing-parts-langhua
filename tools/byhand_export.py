@@ -7,12 +7,15 @@ byhand_export.py — **开发辅助**：把"Inkscape 手工对齐版"的面包�
   ① 用户在 Inkscape 里拿实物照片当底，把排针/元件摆好，存成
         svg/<部件>/svg.breadboard.<部件>_breadboard_byHand.svg
      （该文件带照片、是草稿 → 已在 .gitignore 里：`*_byHand.svg`）
+     ★ 同一个工作流也用于 **icon 视图**（用户 2026-09-18，TX-AH-R900PNR 手画的模组顶视图）：
+        svg/<部件>/svg.icon.<部件>_icon_byHand.svg
   ② 跑本脚本 → 生成 svg/<部件>/byHand_tables.py（**纯数据**，入库）
   ③ gen_part.py `import byHand_tables` 渲染；以后挪位置 = 改这张表
 
 用法：
     C:\Python313\python.exe tools\byhand_export.py svg\CH347F
-    （在仓库根跑；也可以给绝对路径）
+    C:\Python313\python.exe tools\byhand_export.py svg\TX-AH-R900PNR icon    ← 指定视图
+    （在仓库根跑；也可以给绝对路径；不给视图时先找 breadboard、再找 icon）
 
 做了什么：
   · 把嵌套 transform **累乘展开**，每个元素都换成等效绝对几何
@@ -33,6 +36,7 @@ byhand_export.py — **开发辅助**：把"Inkscape 手工对齐版"的面包�
   · **隐藏图层（style="display:none"）整棵跳过**：那种层是辅助用的（比如
     `make_trace_svg.py` 的 mm 刻度层），不该进数据表。
 """
+import glob
 import math
 import os
 import re
@@ -70,13 +74,18 @@ FS_KEEP_RATIO = 1.3
 #   再拉平到 30 反而会变小（用户 2026-09-15：「文字字号小了，应该跟 byHand 里一致」）。
 #   T-Halow-RJ45 同理：整块板是用户 2026-09-18 重画的，字号是**刻意**的（焊盘名比丝印大），
 #   拉平会让 10 个焊盘名从 3.26 缩到 2.16 —— 与他的图不一致。
-FS_UNIFORM_BY_PART = {"CH347T": None, "T-Halow-RJ45": None}
+#   TX-AH-R900PNR 的 **icon**（2026-09-18 用户手画的模组顶视图）也照搬：模组上
+#   （TXW8301 0.95mm / 802.11ah 0.55mm / P9·NR 1mm）本来就是**分大小**的，
+#   拉平到 30 内部单位(0.76mm) 会全乱。
+FS_UNIFORM_BY_PART = {"CH347T": None, "T-Halow-RJ45": None, "TX-AH-R900PNR": None}
 # 逐部件关闭「按尺寸自动认图标」：
 #   T-Halow-RJ45 的图是用户**整块手画**的，里面那些芯片也是手画的（与仓库里同名 icon
 #   只是尺寸碰巧相近）—— 一做替换就会把手画的本体/焊盘/丝印丢掉。2026-09-18 实测：
 #   IP101GR 被换成仓库 icon 后**灰本体+金焊盘全没了**；手画的 CH340N 被认成 AT24C02，
 #   丝印 CH340N 也一起丢了。默认 True（CH347F/CH347T 靠它复用仓库 icon）。
-ICON_MATCH_BY_PART = {"T-Halow-RJ45": False}
+#   TX-AH-R900PNR 的 icon 同理：整颗模组（171 个矩形）是手画的，按尺寸认图标会把
+#   手画的本体/焊盘换掉。
+ICON_MATCH_BY_PART = {"T-Halow-RJ45": False, "TX-AH-R900PNR": False}
 # 多行丝印的**行距倍率**：1.0 = 照手工版；用户 2026-09-15 定 **0.5**（两行靠得更紧）
 LINE_PITCH = 0.5
 
@@ -162,6 +171,32 @@ def styled(el, key, default=None):
                 return v.strip()
     v = el.get(key)
     return v if v else default
+
+
+def inherit_styles(root, keys=("fill", "stroke", "stroke-width")):
+    r"""把祖先组上的 fill / stroke / stroke-width **下发**到缺失的后代元素上。
+
+    2026-09-18 加（TX-AH-R900PNR 手画的 icon 踩到）：SVG 里这三个属性**会继承**，
+    而本脚本只读元素自身的属性 ⇒ 手工版里"靠父组给颜色"的元素会一律变成**黑色**。
+    实测：那 36 个焊盘 path 自己没有 fill，颜色来自 `<g fill="#e3b23c">`（ENIG 金），
+    导出后全部画成黑块（看着像焊盘变黑，其实是丢继承）。
+
+    做法是**就地补属性**：元素自己写了的不动，只给缺的补上（补进 style，
+    与 styled() “style 优先”的读取次序一致）。
+    """
+    def rec(el, inh):
+        inh = dict(inh)
+        for k in keys:
+            v = styled(el, k)
+            if v is None:
+                if inh.get(k):
+                    st = (el.get("style") or "").strip().rstrip(";")
+                    el.set("style", (st + ";" if st else "") + "%s:%s" % (k, inh[k]))
+            else:
+                inh[k] = v
+        for c in el:
+            rec(c, inh)
+    rec(root, {})
 
 
 def num(sv, default=0.0):
@@ -273,13 +308,34 @@ def splice_pad_groups(root):
         parent[:] = new_kids
 
 
-def run(part_dir):
+def run(part_dir, view=None):
     repo_svg = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(part_dir)), ""))
     part_dir = os.path.abspath(part_dir)
     part = os.path.basename(part_dir)
-    src = os.path.join(part_dir, "svg.breadboard.%s_breadboard_byHand.svg" % part)
-    if not os.path.isfile(src):
-        raise SystemExit("没找到手工版：%s" % src)
+    # 手工版文件：默认 breadboard；也支持 icon（用户 2026-09-18 手画的模组 icon）。
+    # 不给 view 时先找 breadboard、再找 icon（一个部件一般只有一种手工版）。
+    tpl = {"breadboard": "svg.breadboard.%s_breadboard_byHand.svg" % part,
+           "icon": "svg.icon.%s_icon_byHand.svg" % part}
+    order = [view] if view else ["breadboard", "icon"]
+    src = None
+    for v in order:
+        if v not in tpl:
+            raise SystemExit("未知视图 %r（只认 breadboard / icon）" % v)
+        p = os.path.join(part_dir, tpl[v])
+        if os.path.isfile(p):
+            src, view = p, v
+            break
+        # 払底：目录名 ≠ 元件 id 时（如 svg/TX-AH-R900PNR 里所有文件都带 _1，
+        # 因为 part id 是 TX-AH-R900PNR_1），按“这个目录下该视图的手工版”找。
+        cand = sorted(glob.glob(os.path.join(part_dir, "svg.%s.*_byHand.svg" % v)))
+        if cand:
+            src, view = cand[0], v
+            print("提示：按目录名没找到，改用：%s" % os.path.basename(src))
+            break
+    if src is None:
+        raise SystemExit("没找到手工版：%s 或 %s"
+                         % (os.path.join(part_dir, tpl["breadboard"]),
+                            os.path.join(part_dir, tpl["icon"])))
     sizes = icon_sizes(repo_svg)
     skip_fill = SKIP_RECT_FILL_BY_PART.get(part, SKIP_RECT_FILL)
     fs_uniform = FS_UNIFORM_BY_PART.get(part, FS_UNIFORM)
@@ -424,6 +480,20 @@ def run(part_dir):
                 #   原来不搬 ⇒ 一角变直角。rx 作为**可选第 10 个字段**接在后面
                 #   （老表只有 9 个字段，生成器按 `len(sh) > 9` 判，不影响已在库的表）。
                 rect += (round(num(rr) * (sc[0] + sc[1]) / 2.0 * UF, 2),)
+            # ★ 元素透明度（2026-09-18 加，TX-AH-R900PNR 手画 icon 的电容是
+            #   `opacity:0.75` + `fill-opacity:0.74902`，实际 0.5625）：丢了会画成
+            #   全不透明、明显偏亮（实测同一处 (86,65,57) vs (120,68,33)）。
+            #   只搬 **rect** 上的（四个部件的 byHand 都只有 rect 用非 1 的透明度），
+            #   且**追加在最后**（第 11 个字段；rx 缺就用 None 占位），
+            #   已在库的表只读 9~10 个字段 ⇒ 多一个被忽略，不会报错。
+            #   两个透明度**相乘**写成一个 opacity —— 这 36 个图元都没有描边，
+            #   与浏览器算法完全等价（有描边的情形再拆成两个字段）。
+            op = (num(styled(el, "opacity") or "", 1.0)
+                  * num(styled(el, "fill-opacity") or "", 1.0))
+            if abs(op - 1.0) > 1e-6:
+                if not rr:
+                    rect += (None,)
+                rect += (op,)
             rects.append(rect)
             shapes.append(rect)
         elif tag == "text":
@@ -503,6 +573,7 @@ def run(part_dir):
     print("单位：%s → 换算系数 %.4f（内部单位）" % (UF_NOTE, UF))
     root = doc.getroot()
     splice_pad_groups(root)          # 「焊盘画成一个组」的手工版先摊平
+    inherit_styles(root)             # 祖先组的 fill/stroke/stroke-width 下发给缺失的后代
     walk(root, (1, 0, 0, 1, 0, 0))
 
     globals_refs = set()
@@ -514,7 +585,7 @@ def run(part_dir):
 
     out = ["# -*- coding: utf-8 -*-",
            "# 由 tools/byhand_export.py 自动生成 —— **请不要手改**，改完手工版重跑脚本即可。",
-           "# 源：svg/%s/svg.breadboard.%s_breadboard_byHand.svg（照片底稿，不入库）" % (part, part),
+           "# 源：svg/%s/%s（手工版底稿，不入库）" % (part, os.path.basename(src)),
            "# 单位：内部单位（100 单位 = 2.54mm）",
            "",
            "# 焊盘样式（半径 / 描边宽 / 填充 / 描边色，内部单位）—— 也从手工版里读，免得两边各写一份",
@@ -539,7 +610,7 @@ def run(part_dir):
         out.append('    ("%s", %s, %s, %s, "%s", %s, "%s", %s),'
                    % (t, x, y, fs, anchor, a, fill, "'bold'" if fw else "None"))
     out += ["]", "", "# ★ 图元（**按手工版里的先后顺序**，就是叠放次序）—— 类型：",
-            "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw[, rx])",
+            "#   (\"rect\",   x, y, w, h, fill, rot, stroke, sw[, rx[, opacity]])",
             "#   (\"circle\", x, y, r, fill, stroke, sw)",
             "#   (\"pad\",    id, net, x, y[, \"square\"])  ← 焊盘：出图时要带 connectorNpin",
             "#   (\"line\",   x1, y1, x2, y2, stroke, sw)",
@@ -548,7 +619,10 @@ def run(part_dir):
             "SHAPES = ["]
     for s in shapes:
         if s[0] in ("rect",):
-            if len(s) > 9:
+            if len(s) > 10:                  # 10 个值：rx 占位（可能是 None）+ opacity
+                out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s", %s, %s),'
+                           % s[1:])
+            elif len(s) > 9:
                 out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s", %s),' % s[1:])
             else:
                 out.append('    ("rect", %s, %s, %s, %s, "%s", %s, "%s", "%s"),' % s[1:])
@@ -581,4 +655,4 @@ if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
-    run(sys.argv[1])
+    run(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)

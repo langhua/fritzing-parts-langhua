@@ -8,7 +8,10 @@
 1. **你在 Inkscape 里手工对齐**：把实物照片当底图，把排针/元件摆到照片上的实际位置，
    存成 `svg/<部件>/svg.breadboard.<部件>_breadboard_byHand.svg`
    （带照片、属草稿 → `.gitignore` 里已忽略 `*_byHand.svg`，不入库）
-2. **导出成数据表**：`tools/byhand_export.py svg\<部件>`
+   ★ 这套流程**也用于 icon 视图**（2026-09-18 起，TX-AH-R900PNR 手画的模组顶视图）：
+   `svg/<部件>/svg.icon.<部件>_icon_byHand.svg`
+2. **导出成数据表**：`tools/byhand_export.py svg\<部件> [breadboard|icon]`
+   （不写视图时先找 breadboard、再找 icon）
    → 生成 `svg/<部件>/byHand_tables.py`（纯数据，入库）
 3. **生成器读表**：`gen_part.py` 里 `from byHand_tables import …`；
    以后要挪位置 = 改表里的数字（不用再开 Inkscape）
@@ -19,7 +22,7 @@
 
 | 脚本 | 干什么 |
 |---|---|
-| `byhand_export.py <部件目录>` | 手工版 → `byHand_tables.py`：嵌套 transform 累乘展开、单位统一成**内部单位**（100 = 2.54mm，**跟着文档的 width/height 走**，见下）、**`style=` 优先于同名属性**（CSS 规则）、**`SHAPES` 按文档次序**（保叠放）、按尺寸自动认图标（可用 `ICON_MATCH_BY_PART` 关）、丢掉照片与 Inkscape 壳、**隐藏图层整棵跳过**、多行文字按行拆、丝印统一字号（`FS_UNIFORM` / 大字规则 / 按部件关掉）、字重照搬、行距压紧（`LINE_PITCH`）、**`<path>` 照搬**（d + 累乘 matrix + 被引用的渐变）、焊盘（含**画成组**与**方形**）、圆角矩形的 `rx`（`("rect", …, sw[, rx])`，可选第 10 字段）、导出 `PAD_R`/`PAD_SW`/`PAD_FILL`/`PAD_EDGE`/`DEFS` |
+| `byhand_export.py <部件目录> [breadboard\|icon]` | 手工版 → `byHand_tables.py`：嵌套 transform 累乘展开、单位统一成**内部单位**（100 = 2.54mm，**跟着文档的 width/height 走**，见下）、**`style=` 优先于同名属性**（CSS 规则）、**`SHAPES` 按文档次序**（保叠放）、按尺寸自动认图标（可用 `ICON_MATCH_BY_PART` 关）、丢掉照片与 Inkscape 壳、**隐藏图层整棵跳过**、多行文字按行拆、丝印统一字号（`FS_UNIFORM` / 大字规则 / 按部件关掉）、字重照搬、行距压紧（`LINE_PITCH`）、**`<path>` 照搬**（d + 累乘 matrix + 被引用的渐变）、焊盘（含**画成组**与**方形**）、圆角矩形的 `rx`（可选第 10 字段）、rect 的 `opacity`（可选第 11 字段）、导出 `PAD_R`/`PAD_SW`/`PAD_FILL`/`PAD_EDGE`/`DEFS`；**祖先组的 fill/stroke/stroke-width 会下发给缺失的后代**（2026-09-18）；目录名 ≠ 元件 id 时（如 `svg/TX-AH-R900PNR` 里文件都带 `_1`）按“本目录下该视图的手工版”兑底找 |
 | `byhand_check.py <部件目录> [--png]` | 核对：元素计数（`text` 按**行**计）+ **加粗条数** + 每条文字的有效字号（能一眼看出整体缩放错）；`--png` 另出像素差与"左程序版 / 右手工版"对比图 |
 | `schem_check.py <部件目录> [--png] [--no-ccw]` | 核对**矩形符号原理图**（AGENTS §5）：① svg 头 width/height 齐不齐、viewBox 装不装得下 ② 每个脚 `connectorNpin`+`connectorNterminal` 齐不齐、端点是否落在引线末端 ③ 每脚一个编号（框外）+ 一个名（框内）、同字号 ④ **脚号逆时针连续**（沿 左→下→右→上 走一圈应是所有脚号的循环移位，且递增） |
 | `fzp_check.py <部件目录> [--fzpz 包]` | 核对 `.fzp` ↔ 四个视图 svg：① 视图 `image=` 用**子目录路径** ② 每条 `svgId`/`terminalId` 在对应 svg 里真存在 ③ svg 里的 connector id 都被 .fzp 声明 ④ **svg 内 id 不重复** ⑤ `<buses>` 引用存在且不重复入总线 ⑥ **裸露焊盘（EPAD/EP）不许进任何总线**（独立成网、布线时特意接 GND，AGENTS §5）⑦ 面包板里同名焊盘必须在同一条总线里（NC/DNP 除外）⑧ `--fzpz` 包内**平铺**且成员齐全 |
