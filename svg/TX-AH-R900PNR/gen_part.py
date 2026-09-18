@@ -313,6 +313,71 @@ def _icon_svg_scripted():
     return "".join(L)
 
 
+def _pad_solid_box(d):
+    """把「矩形 + 外缘半圆缺口」的金焊盘 path 还原成**没有缺口的实心矩形**。
+
+    用户 2026-09-18：「金色引脚所含的那个半圆篮板，是不应该有的，请设法全部消除」。
+    手工版里 36 个模组金焊盘（左 13 / 右 13 / 底 10）都画成「小矩形 + 边缘一个半径
+    0.15 的半圆缺口」，例如
+
+        M 0.25,0.65 H 0 v 0.2 a 0.15,0.15 0 0 1 0,0.3 v 0.2 h 0.25 z
+
+    缺口圆弧完全落在焊盘**内部** ⇒ 走一遍路径、**跳过圆弧**、取其余顶点的外接框，
+    得到的就是实心焊盘（0.25 × 0.7 mm，与原矩形一致）。
+
+    返回 (x, y, w, h)（用户单位 = mm）；路径里出现不认识的命令（贝塞尔/二次曲线等）
+    时返回 None，调用方就照原样输出 —— 宁可留着缺口，也不要乱猜几何。
+    """
+    toks = re.findall(r"[MmLlHhVvAaZz]|-?\d+\.?\d*", d)
+    if not toks or toks[0] not in ("M", "m"):
+        return None
+    pts = []
+    cx = cy = 0.0
+    cmd = "M"
+    i = 1
+    while i < len(toks):
+        t = toks[i]
+        if t.isalpha():
+            cmd = t
+            i += 1
+            continue
+        try:
+            if cmd in ("M", "L", "m", "l"):
+                x, y = float(toks[i]), float(toks[i + 1])
+                i += 2
+                if cmd.islower():
+                    x += cx
+                    y += cy
+                cx, cy = x, y
+            elif cmd in ("H", "h"):
+                x = float(toks[i])
+                i += 1
+                cx = cx + x if cmd == "h" else x
+            elif cmd in ("V", "v"):
+                y = float(toks[i])
+                i += 1
+                cy = cy + y if cmd == "v" else y
+            elif cmd in ("A", "a"):
+                # 半孔缺口圆弧：只把当前点移到弧终点，**不把它算进外接框**（缺口在盘内）
+                ddx, ddy = float(toks[i + 5]), float(toks[i + 6])
+                i += 7
+                if cmd == "a":
+                    cx += ddx
+                    cy += ddy
+                else:
+                    cx, cy = ddx, ddy
+            else:                    # Z/z 之外还有别的命令 → 不认，交给调用方原样输出
+                return None
+        except (IndexError, ValueError):
+            return None
+        pts.append((cx, cy))
+    if len(pts) < 4:
+        return None
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    return (min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys))
+
+
 def icon_svg():
     """icon 视图 = **用户手画版**（byHand_tables.py）逐图元照搬。
 
@@ -331,6 +396,10 @@ def icon_svg():
     def _n(sw):                      # 表里的描边宽（内部单位）；没写（None/'None'）就 None
         return None if sw in (None, "None", "") else float(sw)
 
+    def _u(x):                       # path 的 d 里的数 = 手工版用户单位 = 本视图 mm → 原样
+        s = "%.4f" % x
+        return s.rstrip("0").rstrip(".") or "0"
+
     L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
          '<svg xmlns="http://www.w3.org/2000/svg" '
          'width="%dmm" height="%dmm" viewBox="0 0 %d %d">\n'
@@ -341,22 +410,20 @@ def icon_svg():
     for sh in SHAPES:                # ★ 按手工版文档次序画（叠放次序就是画法次序）
         kind = sh[0]
         if kind == "rect":
+            # ★ (x, y, w, h) 就是**旋转之后的最终外框**（导出器取的是变换后四角的外接框，
+            #   旋转已经烘进去了），`rot` 只是留档的元数据 —— **不要再按它交换宽高**。
+            #   2026-09-18 踩过：我按 rot 又换了一次 w/h，结果电容两端的金属端头、
+            #   TXW8301 的 48 个焊盘全被多转了 90°（用户对照原图指出）。照表直接画即可。
             _k, x, y, w, h, fill, rot, stroke, sw = sh[:9]
             rx = sh[9] if len(sh) > 9 else 0
-            op = sh[10] if len(sh) > 10 else None      # 元素透明度（手工版给电容写的 0.75）
-            if abs((rot or 0) % 180) == 90:
-                # 表里给的是**旋转后的 bbox**；±90/270 用中心反算回原矩形
-                # （不写 rotate，Fritzing 认绝对坐标最稳，AGENTS §5）
-                cx, cy = x + w / 2.0, y + h / 2.0
-                x, y, w, h = cx - h / 2.0, cy - w / 2.0, h, w
+            # 第 11 个字段是元素 opacity。**故意不用**：用户 2026-09-18 —— 手工版里给
+            # 电容写的那几个 opacity:0.75 是他误加的，元件实际不透明，转换时一律取消。
             a = ' fill="%s"' % fill if fill and fill != "None" else ''
             swf = _n(sw)
             if stroke and stroke != "None" and swf is not None:
                 a += ' stroke="%s" stroke-width="%s"' % (stroke, v(swf))
             if rx:
                 a += ' rx="%s"' % v(rx)
-            if op is not None:
-                a += ' opacity="%g"' % op
             L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
                      % (v(x), v(y), v(w), v(h), a))
         elif kind == "circle":
@@ -374,6 +441,18 @@ def icon_svg():
                      % (v(x1), v(y1), v(x2), v(y2), stroke, v(swf or 0.0)))
         elif kind == "path":
             _k, d, mtx, fill, stroke, sw = sh
+            # ★ 金焊盘去半孔缺口（用户 2026-09-18：「金色引脚所含的那个半圆篮板是
+            #   不应该有的，请设法全部消除」）。手工版把 36 个模组金焊盘画成
+            #   「矩形 + 外缘半圆缺口」（d 里那段 `a 0.15,0.15 …` 就是缺口圆弧），
+            #   缺口落在焊盘**内部** ⇒ 取其余顶点的外接框 = 没有缺口的实心焊盘。
+            if (fill or "").lower() == PAD.lower() and "a 0.15,0.15" in d \
+                    and not (mtx or "").strip():
+                box = _pad_solid_box(d)
+                if box:
+                    bx, by, bw, bh = box
+                    L.append('  <rect x="%s" y="%s" width="%s" height="%s" fill="%s"/>\n'
+                             % (_u(bx), _u(by), _u(bw), _u(bh), fill))
+                    continue
             a = ''
             if fill and fill != "None":
                 a += ' fill="%s"' % fill
@@ -1337,10 +1416,16 @@ def breadboard_svg():
 
 
 def main():
-    files = {BB_SVG: breadboard_svg(), ICON_SVG: icon_svg(), SCHEM_SVG: schematic_svg(), PCB_SVG: pcb_svg()}
-    for name, content in files.items():
+    # ★ 顺序要紧：面包板视图会把 icon 的 <g id="icon"> **原样嵌**进板上实物（
+    #   `_module_icon_group()` → `_inner_g_icon()` 是**读盘**取 icon 文件的），
+    #   所以必须**先把 icon 写盘**、再生成面包板 —— 否则面包板嵌到的是上一次
+    #   运行留在盘上的旧 icon。2026-09-18 踩过：icon 里改了电容朝向/焊盘形状，
+    #   面包板却还是旧样子，而且**单跑一次看不出来**（要跑两次才对）。
+    order = [ICON_SVG, BB_SVG, SCHEM_SVG, PCB_SVG]
+    gen = {ICON_SVG: icon_svg, BB_SVG: breadboard_svg, SCHEM_SVG: schematic_svg, PCB_SVG: pcb_svg}
+    for name in order:
         with open(os.path.join(OUT_DIR, name), "w", encoding="utf-8") as f:
-            f.write(content)
+            f.write(gen[name]())
         print("wrote", name)
 
     fzp_name = f"part.{PART_ID}.fzp"
