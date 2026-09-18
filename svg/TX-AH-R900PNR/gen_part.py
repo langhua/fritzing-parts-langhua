@@ -313,6 +313,76 @@ def _icon_svg_scripted():
     return "".join(L)
 
 
+# 手工版里 36 个镀金半孔焊盘的两种画法（见 byHand_tables.py 的 SHAPES）：
+#   左右列：M a,b H c v 0.2 a 0.15,0.15 0 0 s 0,0.3 v 0.2 h ±0.25 z
+#   底排：  M a,b V c h 0.2 a 0.15,0.15 0 0 s 0.3,0 h 0.2 v -0.25 z
+# 末段 h/v 的方向 = 焊盘从板边向板内延伸的方向（也就是缺口弧鼓的方向）。
+_PAD_A_RE = re.compile(
+    r"^M ([\d.]+),([\d.]+) H ([\d.]+) v ([\d.]+) a 0\.15,0\.15 0 0 [01] ([\d.-]+),([\d.-]+) "
+    r"v ([\d.-]+) h ([\d.-]+) z$")
+_PAD_B_RE = re.compile(
+    r"^M ([\d.]+),([\d.]+) V ([\d.]+) h ([\d.]+) a 0\.15,0\.15 0 0 [01] ([\d.-]+),([\d.-]+) "
+    r"h ([\d.-]+) v ([\d.-]+) z$")
+
+
+def _pad_bites(shapes):
+    """从金半孔焊盘推出「缺口半圆」：返回 [(cx, cy, r, inx, iny)]（本视图 mm）。
+
+    缺口是弦落在板边上的半圆，弧朝板内鼓（inx/iny = 朝板内的方向）。
+    板底要把同样的半圆挖掉 —— 否则缺口里透出板底的蓝色，看着像焊盘上贴了个
+    蓝色圆斑（用户 2026-09-18 截图指出：「通过 path 方式，把蓝色半圆去掉」）。
+    焊盘本身**保留缺口**（实物就是镀金半孔 castellated）。
+    """
+    out = []
+    for sh in shapes:
+        if sh[0] != "path" or (sh[3] or "").lower() != PAD.lower():
+            continue
+        d = sh[1]
+        m = _PAD_A_RE.match(d)
+        if m:
+            b, c, v1, _adx, ady, _v2, hh = (float(m.group(i)) for i in range(2, 9))
+            out.append((c, b + v1 + ady / 2.0, abs(ady) / 2.0,
+                        1.0 if hh > 0 else -1.0, 0.0))
+            continue
+        m = _PAD_B_RE.match(d)
+        if m:
+            a, _b, c, h1, adx, _ady, _h2, dv = (float(m.group(i)) for i in range(1, 9))
+            out.append((a + h1 + adx / 2.0, c, abs(adx) / 2.0,
+                        0.0, 1.0 if dv > 0 else -1.0))
+            continue
+        raise RuntimeError("认不出的金焊盘 path（半孔缺口要靠它推几何）：%r" % (d,))
+    return out
+
+
+def _board_path(x0, y0, x1, y1, bites, f):
+    """深蓝板底 → 带 36 个半孔缺口的 path（d 字符串，本视图 mm）。
+
+    轮廓按顺时针走（屏幕坐标 y 向下），缺口是凹口 ⇒ 圆弧一律 sweep=0。
+    左 13 / 右 13 / 底 10（上边没有焊盘）；缺口半径直接取焊盘自己的 0.15。
+    """
+    g = {"L": [], "R": [], "B": [], "T": []}
+    for cx, cy, r, ix, _iy in bites:
+        if ix:                       # 左右边（缺口朝 ±x 鼓）
+            g["L" if cx <= (x0 + x1) / 2.0 else "R"].append((cy, r))
+        else:                        # 上下边（缺口朝 ±y 鼓）
+            g["B" if cy >= (y0 + y1) / 2.0 else "T"].append((cx, r))
+    d = ["M %s,%s" % (f(x0), f(y0)), "L %s,%s" % (f(x1), f(y0))]        # 上边（+x）
+    for c, r in sorted(g["R"]):                                          # 右边（+y）
+        d += ["L %s,%s" % (f(x1), f(c - r)),
+              "A %s,%s 0 0 0 %s,%s" % (f(r), f(r), f(x1), f(c + r))]
+    d.append("L %s,%s" % (f(x1), f(y1)))
+    for c, r in sorted(g["B"], reverse=True):                            # 下边（-x）
+        d += ["L %s,%s" % (f(c + r), f(y1)),
+              "A %s,%s 0 0 0 %s,%s" % (f(r), f(r), f(c - r), f(y1))]
+    d.append("L %s,%s" % (f(x0), f(y1)))
+    for c, r in sorted(g["L"], reverse=True):                            # 左边（-y）
+        d += ["L %s,%s" % (f(x0), f(c + r)),
+              "A %s,%s 0 0 0 %s,%s" % (f(r), f(r), f(x0), f(c - r))]
+    d.append("L %s,%s" % (f(x0), f(y0)))
+    d.append("Z")
+    return " ".join(d)
+
+
 def icon_svg():
     """icon 视图 = **用户手画版**（byHand_tables.py）逐图元照搬。
 
@@ -330,6 +400,12 @@ def icon_svg():
 
     def _n(sw):                      # 表里的描边宽（内部单位）；没写（None/'None'）就 None
         return None if sw in (None, "None", "") else float(sw)
+
+    def _mm(x):                      # 本视图 mm → 属性文本（path 的 d 用）
+        s = "%.3f" % x
+        return s.rstrip("0").rstrip(".") or "0"
+
+    bites = _pad_bites(SHAPES)       # 板边上被挖掉的 36 个半圆（见 _pad_bites）
 
     L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
          '<svg xmlns="http://www.w3.org/2000/svg" '
@@ -355,6 +431,15 @@ def icon_svg():
                 a += ' stroke="%s" stroke-width="%s"' % (stroke, v(swf))
             if rx:
                 a += ' rx="%s"' % v(rx)
+            if (fill or "").lower() == BOARD.lower() and bites:
+                # ★ 板底不是纯矩形：把 36 个半孔缺口**从板底一起挖掉**，用 path 表达。
+                #   缺口本身要留（实物是镀金半孔），但缺口里不能透出板底的蓝色 ——
+                #   用户 2026-09-18：「通过 path 方式，把蓝色半圆去掉」。
+                bx0, by0 = x * _TU_MM, y * _TU_MM
+                bx1, by1 = bx0 + w * _TU_MM, by0 + h * _TU_MM
+                L.append('  <path d="%s"%s/>\n'
+                         % (_board_path(bx0, by0, bx1, by1, bites, _mm), a))
+                continue
             L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
                      % (v(x), v(y), v(w), v(h), a))
         elif kind == "circle":
