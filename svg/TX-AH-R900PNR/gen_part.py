@@ -1016,8 +1016,12 @@ def _bb_pad(cid, x, y, square):
             % (a, _bb(x), _bb(y), _bb(BB_PAD_R), st))
 
 
-def breadboard_svg():
+def breadboard_svg(skip=None):
     """面包板视图 = **用户手工对齐版**（byHand_tables_breadboard.py）逐图元照搬。
+
+    `skip`：可选的图元过滤函数（收一行表数据、返回 True 表示**不画**）。
+      `TX-AH-R900PNR_rev_1` 用它减掉 J4/J5 的两个黄色跳线（两个部件唯一的外观差别，
+      见 `../TX-AH-R900PNR_rev_1/gen_part.py`）—— 版面几何仍只有这一份实现。
 
     2026-09-19：用户对着实物照片重做了这版面包板（补了元件、调了位置），本视图不再由
     本脚本现画（旧的自画版本留档在 `_breadboard_svg_scripted()`）。用法上这块板是
@@ -1041,6 +1045,8 @@ def breadboard_svg():
         L += ['   %s\n' % d for d in BB_DEFS]
         L.append('  </defs>\n')
     for sh in BB_SHAPES:             # ★ 按手工版文档次序画（叠放次序就是画法次序）
+        if skip is not None and skip(sh):
+            continue
         kind = sh[0]
         if kind == "rect":
             # (x, y, w, h) 已是**旋转后的最终外框**（旋转烘在里面）—— 不要再按 rot 换宽高。

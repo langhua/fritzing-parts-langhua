@@ -16,9 +16,11 @@ icon / schematic / pcb 三个视图**复用原版**（`../TX-AH-R900PNR/`）—�
      —— 用户 2026-09-16 用万用表实测：这几个焊盘与模组脚**不通**（中间有串阻/未连），
      不能当同一根线（AGENTS §5：名字对不上就必须显式 tie，而这里**实测就不该 tie**）；
      CH340E_RX / CH340E_TX 同理，也不并到任何网。
-  4. **删掉 J4/J5 列上那两个黄帽**（用户 2026-09-16：“A12、A13 的那个跳线删除吧”）——
-     原版那帽把第 2/3 排画成“中-下连着”，而实际中间隔着电阻；删掉后 12 个焊盘都是普通焊盘圆，
-     接线更好点（不用去点帽心）。J7/J8 那两个蓝帽（装饰）不动。
+  4. **没有 J4/J5 的黄色跳线**（用户 2026-09-16：“A12、A13 的那个跳线删除吧”；2026-09-19 再次确认
+     “这是这个 rev_1 与原版的唯一区别”）—— 原版那帽把第 2/3 排画成“中-下连着”，而实际中间隔着电阻；
+     删掉后 12 个焊盘都是普通焊盘圆，接线更好点（不用去点帽心）。J7/J8 那两个蓝帽（装饰）不动。
+     ★ 做法：面包板 = **原版手画版 − 黄帽**（`_ORIG.breadboard_svg(skip=…)`，见下面 `breadboard_svg()`）
+     —— 不再复制原版那份 svg，也不另画一份（版面几何/叠放次序只有原版那一份实现）。
 
 模块实物（泰芯 802.11ah TX-AH-Rx00P 系列模组技术规格书 V6.8，20260311 版）：
   - 封装尺寸 (17.00±0.40) x (15.00±0.25) x (2.40±0.20) mm
@@ -38,6 +40,7 @@ icon / schematic / pcb 三个视图**复用原版**（`../TX-AH-R900PNR/`）—�
 
 比例：1 单位 = 1 mm（icon 与 PCB/面包板视图同几何，便于复用/检查）。
 """
+import importlib.util
 import os
 import re
 import zipfile
@@ -54,10 +57,11 @@ DATE = "2026-09-16"
 SRC_DIR = os.path.normpath(os.path.join(OUT_DIR, "..", "TX-AH-R900PNR"))
 SRC_PART_ID = "TX-AH-R900PNR_1"
 # 2026-09-19 用户：“这个文件 svg\TX-AH-R900PNR_rev_1\svg.breadboard.…，也应重新生成。”
-#   两个部件是**同一块板**（id/title/日期之外无实质差异）⇒ 面包板也**1:1 复用原版**
-#   （原版那份是用户 2026-09-19 在 Inkscape 里拿实物照片手画、并已转成 path 的版本）。
-#   复用的前提：本部件 J45 的 connector 号必须与原版一致（见下面 JU_MAP）。
-REUSE_VIEWS = ("icon", "schematic", "pcb", "breadboard")
+#   两个部件是**同一块板**，外观只差一处：**rev_1 没有 J4/J5 的黄色跳线**（用户 2026-09-19）。
+#   ⇒ icon/schematic/pcb 三个视图**逐字节复用**原版；面包板**调用原版生成器**再减掉黄帽
+#   （见下面 `breadboard_svg()`：版面几何/叠放次序仍只有原版那一份实现，不抄第二份）。
+#   ⚠ 原版手工图里 pad 的 id 就是 `connector57..68pin`，所以本部件 J45 的编号必须与它一致（见 JU_MAP）。
+REUSE_VIEWS = ("icon", "schematic", "pcb")
 
 ICON_SVG = "svg.icon.%s_icon.svg" % PART_ID
 BB_SVG = "svg.breadboard.%s_breadboard.svg" % PART_ID
@@ -758,8 +762,10 @@ def _btn1101ne():
     return _BTN_1101NE_INNER.strip("\n")
 
 
-def breadboard_svg():
-    """TX-AH-R900PNR 面包板视图（v1 外观稿）：泰芯 AH 模组开发板 V1.6 EVB，
+def _breadboard_svg_scripted():
+    """（**已弃用，仅留档**；2026-09-19 起面包板 = 原版手画版 − J4/J5 黄帽，见 `breadboard_svg()`）
+
+    TX-AH-R900PNR 面包板视图（v1 外观稿）：泰芯 AH 模组开发板 V1.6 EVB，
     70x55mm 圆角深蓝 PCB（用户量测）。布局按手册图 2-1 主视图 + 用户锚点：
     CON1 丝印距左边 ~14mm、CON3 距左边 ~5mm、DEBUG-PORT 距右边 ~17mm。
     中央模组直接复用本元件 icon（15x17mm）作板上实物。排针/丝印为 v1 外观，
@@ -1297,6 +1303,97 @@ def breadboard_svg():
     return "".join(L)
 
 
+# ---- 面包板：原版手画版 **减去 J4/J5 黄帽**（rev_1 与原版唯一的外观差别）----
+def _load_orig_gen():
+    """按**绝对路径**加载原版 `../TX-AH-R900PNR/gen_part.py`。
+
+    为什么不写 `import gen_part`：本文件也叫 gen_part.py，且 `sys.path[0]` 是**本目录**，
+    那样会把这个文件再执行一遍（多出一个同名模块对象）。按路径加载最不含糊。
+    原版模块有 `if __name__ == "__main__"` 守卫，import 不会写任何文件。
+    """
+    path = os.path.join(SRC_DIR, "gen_part.py")
+    spec = importlib.util.spec_from_file_location("txah_orig_gen_part", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_ORIG = _load_orig_gen()
+
+CAP_BODY_FILL = "#e6b53d"                  # 黄帽本体（原版手工图里只有这两个 rect 用它）
+CAP_INNER_FILLS = ("#d9dde0", "#33507f")   # 帽内金属片 / 孔（**蓝帽 J7/J8 也用它** ⇒ 必须再按位置区分）
+
+
+def _bb_shape_bbox(sh):
+    """表行的外框（内部单位）；只对 rect / circle 有意义（path 行返回 None）。"""
+    if sh[0] == "rect":
+        return (sh[1], sh[2], sh[1] + sh[3], sh[2] + sh[4])
+    if sh[0] == "circle":
+        return (sh[1] - sh[3], sh[2] - sh[3], sh[1] + sh[3], sh[2] + sh[3])
+    return None
+
+
+def _bb_shape_fill(sh):
+    """表行的填充色（**下标按图元种类不同，别写成一个数**）：
+    rect = (x,y,w,h,fill,rot,stroke,sw[,rx]) → 5；circle = (x,y,r,fill,stroke,sw) → 4。"""
+    if sh[0] == "rect":
+        return sh[5] if len(sh) > 5 else None
+    if sh[0] == "circle":
+        return sh[4] if len(sh) > 4 else None
+    return None
+
+
+def _make_skip_yellow_jumper():
+    """返回 (skip, state)：skip 给原版 `breadboard_svg(skip=…)`；state["n"] 计跳过了几个图元。
+
+    判据：① 帽体 = fill 为 `#e6b53d` 的 rect（全图只有这 2 个）；
+         ② 帽内图元 = fill ∈ CAP_INNER_FILLS 且外框**落在某个帽体框内**
+            （蓝帽用同样的颜色，所以不能只按颜色删）。
+    """
+    bodies = [b for sh in _ORIG.BB_SHAPES
+              if sh[0] == "rect" and _bb_shape_fill(sh) == CAP_BODY_FILL
+              for b in (_bb_shape_bbox(sh),)]
+    state = {"n": 0, "bodies": len(bodies)}
+
+    def skip(sh):
+        if sh[0] not in ("rect", "circle"):
+            return False
+        fill = _bb_shape_fill(sh)
+        if sh[0] == "rect" and fill == CAP_BODY_FILL:
+            state["n"] += 1
+            return True
+        if fill in CAP_INNER_FILLS:
+            b = _bb_shape_bbox(sh)
+            if any(b[0] >= bd[0] - 0.5 and b[1] >= bd[1] - 0.5 and
+                   b[2] <= bd[2] + 0.5 and b[3] <= bd[3] + 0.5 for bd in bodies):
+                state["n"] += 1
+                return True
+        return False
+
+    return skip, state
+
+
+def breadboard_svg():
+    """面包板 = 原版（用户手画版）**减去 J4/J5 的两个黄色跳线**。
+
+    用户 2026-09-19（指文件 svg.breadboard.TX-AH-R900PNR_rev_1_breadboard.svg）：“应该没有
+    J4/J5 的黄色跳线，这是这个 rev_1 与原版的唯一区别。” ⇒ 不再复制原版那份 svg 文件，
+    改为调原版的 `breadboard_svg()` 并跳过黄帽的 12 个图元
+    （每帽 6 = 帽体 + 2×（金属片圆 + 孔圆）+ 连接条）。原版手工图若重画、判据失效，
+    这里**当场报错**，不会静默把黄帽留在图上。
+    """
+    skip, state = _make_skip_yellow_jumper()
+    svg = _ORIG.breadboard_svg(skip=skip)
+    if state["bodies"] != 2 or state["n"] != 12:
+        raise RuntimeError(
+            "rev_1：黄帽判据失效（找到帽体 %d 个、跳过图元 %d 个，应为 2 / 12）—— "
+            "原版 %s 可能重画过，请核对 CAP_BODY_FILL / CAP_INNER_FILLS 与位置判据。"
+            % (state["bodies"], state["n"],
+               os.path.join(SRC_DIR, "byHand_tables_breadboard.py")))
+    print("breadboard: 原版手画版 − J4/J5 黄帽（跳过 %d 个图元）" % state["n"])
+    return svg
+
+
 def reuse_view(view):
     """icon / schematic / pcb 三个视图**1:1 复用原版**（`../TX-AH-R900PNR/`）：
     逐字节复制、只换文件名 —— 用户 2026-09-16：“其它 svg 文件可以复用的”。"""
@@ -1311,10 +1408,12 @@ def reuse_view(view):
 
 
 def main():
-    # 四个视图**全部**复用原版（见 reuse_view）：两个部件是同一块板，
-    # 面包板视图 2026-09-19 起也复用原版那张手画图（`breadboard_svg()` 已弃用，仅作存档）。
+    # icon/schematic/pcb **逐字节复用**原版；面包板 = 原版手画版 − J4/J5 黄帽（见 breadboard_svg）。
     for view in REUSE_VIEWS:
         reuse_view(view)
+    with open(os.path.join(OUT_DIR, BB_SVG), "w", encoding="utf-8") as f:
+        f.write(breadboard_svg())
+    print("wrote", BB_SVG)
 
     fzp_name = f"part.{PART_ID}.fzp"
     with open(os.path.join(OUT_DIR, fzp_name), "w", encoding="utf-8") as f:
