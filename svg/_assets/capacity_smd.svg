@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg4691"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="capacity_byHand.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4693"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="13.744515"
+     inkscape:cx="99.894394"
+     inkscape:cy="337.37094"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g3082" />
+  <defs
+     id="defs4688">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1539">
+      <g
+         inkscape:label="Clip"
+         id="use1541">
+        <path
+           sodipodi:type="star"
+           style="opacity:1;fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;stroke:#000000;stroke-width:0.212;stroke-miterlimit:3.9"
+           id="path1543"
+           inkscape:flatsided="true"
+           sodipodi:sides="6"
+           sodipodi:cx="7.9695425"
+           sodipodi:cy="77.115913"
+           sodipodi:r1="7.8570485"
+           sodipodi:r2="1.691957"
+           sodipodi:arg1="0.15143006"
+           sodipodi:arg2="0.67502884"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="M 15.736678,78.301165 10.826652,84.435076 3.0595171,83.249824 0.20240722,75.930662 5.1124326,69.796751 12.879568,70.982003 Z"
+           inkscape:transform-center-x="-0.6733228"
+           inkscape:transform-center-y="0.012941453"
+           transform="rotate(22.036,2.0281525,90.653448)" />
+      </g>
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="图层 1"
+     inkscape:groupmode="layer"
+     id="layer1" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="图层 2">
+    <g
+       id="g3082">
+      <g
+         id="g3196">
+        <path
+           id="path2233"
+           style="opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.290133;stroke-miterlimit:3.9"
+           inkscape:transform-center-y="-1.7540198e-06"
+           d="m 31.918481,85.027248 -5.057542,-0.04982 0.07338,-6.053536 4.964764,0.01595 1.075462,0.92633 -0.01058,4.134435 z"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:transform-center-x="2.0592613e-06" />
+        <rect
+           style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.242809;stroke-miterlimit:3.9"
+           id="rect2303"
+           width="0.35419407"
+           height="0.55719131"
+           x="26.291794"
+           y="81.732094" />
+        <rect
+           style="fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.242809;stroke-miterlimit:3.9"
+           id="rect2303-7"
+           width="0.35419407"
+           height="0.55719131"
+           x="33.221836"
+           y="81.751343" />
+        <circle
+           style="opacity:1;fill:#ffffff;fill-opacity:0.74902;fill-rule:evenodd;stroke:#000000;stroke-width:0.0579231;stroke-miterlimit:3.9"
+           id="path4864"
+           cx="29.938839"
+           cy="81.99337"
+           r="3.1210384" />
+        <circle
+           style="fill:#ffffff;fill-opacity:0.74902;fill-rule:evenodd;stroke:#000000;stroke-width:0.0551649;stroke-miterlimit:3.9"
+           id="path4864-2"
+           cx="29.938999"
+           cy="81.993004"
+           r="2.9724176" />
+        <path
+           style="fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;stroke:#000000;stroke-width:0.0444381;stroke-miterlimit:3.9"
+           id="circle4991"
+           sodipodi:type="arc"
+           sodipodi:cx="68.460762"
+           sodipodi:cy="-46.616375"
+           sodipodi:rx="2.62432"
+           sodipodi:ry="2.1846936"
+           sodipodi:start="0"
+           sodipodi:end="2.60328"
+           sodipodi:open="true"
+           sodipodi:arc-type="arc"
+           d="m 71.085082,-46.616375 a 2.62432,2.1846936 0 0 1 -1.926465,2.106035 2.62432,2.1846936 0 0 1 -2.951031,-0.985969"
+           transform="matrix(-0.2186781,0.97579704,-0.94548772,-0.32565774,0,0)" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;opacity:1;fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;stroke:#000000;stroke-width:0.0863117;stroke-miterlimit:3.9"
+           x="30.237087"
+           y="81.684456"
+           id="text7053"><tspan
+             sodipodi:role="line"
+             id="tspan7051"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.0863117"
+             x="30.237087"
+             y="81.684456">220 </tspan><tspan
+             sodipodi:role="line"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.41111px;font-family:Roboto;-inkscape-font-specification:'Roboto, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.0863117"
+             x="30.237087"
+             y="83.448341"
+             id="tspan7055">6.3V</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

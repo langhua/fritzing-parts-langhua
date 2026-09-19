@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="4.6999812mm"
+   height="4.7000685mm"
+   viewBox="0 0 4.6999812 4.7000685"
+   version="1.1"
+   id="svg19646"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="lqh.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview19648"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="14.732594"
+     inkscape:cx="0.71270546"
+     inkscape:cy="8.2809587"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs19643" />
+  <g
+     inkscape:label="图层 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-24.65521,-58.707394)">
+    <g
+       id="g19915">
+      <path
+         id="path19767"
+         style="opacity:1;fill:#808080;fill-rule:evenodd;stroke:none;stroke-width:0.212;stroke-miterlimit:3.9"
+         transform="matrix(0.07204134,0,0,0.07204268,22.880115,54.473836)"
+         d="m 89.649457,115.69582 c -1.15618,4.28766 -3.651841,7.23587 -8.12899,8.20262 l -48.322605,-0.12435 c -4.490408,-1.45488 -6.575405,-4.71378 -8.451714,-8.12919 l 0.124346,-48.571488 c 1.720316,-3.476205 3.784235,-6.694714 8.12899,-8.202627 l 48.571893,0.124347 c 2.877646,1.509116 6.517793,2.189504 8.202426,8.129194 z"
+         sodipodi:nodetypes="ccccccccc" />
+      <text
+         xml:space="preserve"
+         style="font-size:1.41111px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI, Semi-Bold';text-align:center;text-anchor:middle;opacity:1;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.212;stroke-miterlimit:3.9;font-weight:600;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+         x="27.007845"
+         y="61.509007"
+         id="text19844"><tspan
+           sodipodi:role="line"
+           id="tspan19842"
+           style="fill:#000000;stroke-width:0.212;-inkscape-font-specification:'Segoe UI, Semi-Bold';font-family:'Segoe UI';font-weight:600;font-style:normal;font-stretch:normal;font-variant:normal;font-size:1.41111002px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+           x="27.007845"
+           y="61.509007">4R7</tspan></text>
+    </g>
+  </g>
+</svg>
