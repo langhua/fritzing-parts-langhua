@@ -38,6 +38,16 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 > 尺寸口径：图上的数字是 icon 文件里 `width`/`height` **写明的**值（本库新做的元件按实物 1:1 画）；
 > 早年从 `fritzing-parts` 导入的旧件若只写无单位数字（那是视觉比例、不是实物尺寸），图上就**不标数字**。
 
+**同一个分组也能变成 Fritzing 里的元件箱**（不用在界面上一个个点）：
+
+```bash
+python tools/make_bins.py            # 写成 <用户目录>/Documents/Fritzing/bins/fzh_*.fzb
+```
+
+重启 Fritzing 后，元件面板里会多出这 6 个箱（标题与上面的图一致）。分组表只有一份
+——`tools/make_preview.py` 的 `SHEETS`——所以「README 里的图」与「Fritzing 里的箱」永远同源。
+箱文件存的是**本机已装零件的引用**（不是零件本体），所以它不入库、换机要重跑一次脚本。
+
 ## 已有部件
 
 > 下表由 `fzpz/` 目录自动核对生成（88 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
