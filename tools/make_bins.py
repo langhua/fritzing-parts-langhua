@@ -31,14 +31,22 @@
 与别人的箱一律不碰。
 
 用法：
-    python tools/make_bins.py                 # 写进 ~/Documents/Fritzing/bins（会先报告匹配情况）
+    python tools/make_bins.py                 # 写进 ~/Documents/Fritzing/bins，并镜像一份到仓库 `bins/`
     python tools/make_bins.py --list          # 只报告，不写文件
     python tools/make_bins.py --verbose       # 逐条报告「哪个零件按什么规则匹配到哪个已装 fzp」
     python tools/make_bins.py --verify --list # 只自检已有箱（写入后也会自动跑一次）
+    python tools/make_bins.py --no-mirror     # 不写仓库 `bins/`（只写 Fritzing 目录）
     python tools/make_bins.py --bins-dir D:\\x --parts-dir D:\\y    # 换目录（别的机器/别的盘）
+
+★ **两个目录的分工别搞反**：
+  · 主输出 = `<Documents>/Fritzing/bins` —— **Fritzing 只读这里**（路径写死在 `folderutils.cpp`：
+    `QStandardPaths::DocumentsLocation + "/Fritzing/bins"`，没有配置项），换到别处箱就不见了；
+  · 仓库 `bins/` = **镜像/归档**（便于入库、审阅、分享）—— Fritzing 不读它。
+  注意箱里的 `path` 是**本机已装零件的绝对路径**，所以仓库那份是「本机快照」，换机器要重跑。
 """
 import re
 import sys
+import shutil
 import pathlib
 import xml.etree.ElementTree as ET
 
@@ -48,6 +56,7 @@ from make_preview import (SHEETS, SVG_DIR, ROOT_RE, ATTR_RE, find_icon,   # noqa
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+ROOT = pathlib.Path(__file__).resolve().parent.parent   # 仓库根
 HOME = pathlib.Path.home()
 DEF_FRITZING = HOME / "Documents" / "Fritzing"
 BIN_PREFIX = "fzh_"          # 我们生成的箱文件名前缀（别与 my_parts.fzb / 别人的箱混）
@@ -338,6 +347,7 @@ def main():
     fritzing = opt("--fritzing-dir", DEF_FRITZING)
     bins_dir = opt("--bins-dir", fritzing / "bins")
     parts_dir = opt("--parts-dir", fritzing / "parts")
+    mirror_dir = None if "--no-mirror" in args else opt("--mirror-dir", ROOT / "bins")
     write = "--list" not in args
 
     problems = precheck() + check_sections()
@@ -362,7 +372,7 @@ def main():
 
     version = read_version(bins_dir)
     verbose = "--verbose" in args or "-v" in args
-    total_parts, total_written, missing_all = 0, 0, []
+    total_parts, total_written, missing_all, written = 0, 0, [], []
     print(f"{'箱':10s} {'命中':>4s} {'未装':>4s} {'小节':>4s}  标题")
     for name, (title, _cols, items) in SHEETS.items():
         missing, by_label = [], {}
@@ -390,9 +400,11 @@ def main():
         if member_out := members:
             if write:
                 out = bins_dir / f"{BIN_PREFIX}{name}.fzb"
-                icon_name, _mono = write_bin_icon(BIN_ICON_OF.get(name, items[0][0]), name, bins_dir)
+                icon_name, mono_name = write_bin_icon(BIN_ICON_OF.get(name, items[0][0]),
+                                                     name, bins_dir)
                 out.write_text(fzb_text(title, member_out, version, icon_name),
                                encoding="utf-8", newline="\n")
+                written += [out.name, icon_name, mono_name]
                 total_written += 1
 
     print(f"\n合计：分类表里 {total_parts} 个零件，命中 {total_parts - len(missing_all)}，"
@@ -405,6 +417,12 @@ def main():
     if write:
         print()
         verify(bins_dir)
+        if mirror_dir is not None:
+            mirror_dir.mkdir(parents=True, exist_ok=True)
+            for n in written:
+                shutil.copy2(bins_dir / n, mirror_dir / n)
+            print(f"镜像：{len(written)} 个文件 → {mirror_dir}"
+                  "（Fritzing 不读这里，仅归档/入库用；箱里的 path 是本机绝对路径）")
 
 
 if __name__ == "__main__":

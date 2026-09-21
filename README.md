@@ -48,7 +48,9 @@ python tools/make_bins.py            # 写成 <用户目录>/Documents/Fritzing/
 （如电源箱：DC-DC / LDO / 锂电充电 / 锂电保护 / 电池）。分组表只有一份
 ——`tools/make_preview.py` 的 `SHEETS`（箱内小节表在 `tools/make_bins.py` 的 `SECTIONS`，
 两者必须盖住同一批元件，脚本会自检）——所以「README 里的图」与「Fritzing 里的箱」永远同源。
-箱文件存的是**本机已装零件的引用**（不是零件本体），所以它不入库、换机要重跑一次脚本。
+箱文件写在 `<用户目录>/Documents/Fritzing/bins`（**Fritzing 只读那里** —— 路径写死在 `folderutils.cpp`，
+没有配置项），同时镜像一份到本仓 `bins/`（归档/审阅用，Fritzing 不读它）。箱里存的是
+**本机已装零件的引用**（不是零件本体）—— 所以换机器要重跑一次脚本，镜像那份里的路径也只对本机有效。
 
 ## 已有部件
 
