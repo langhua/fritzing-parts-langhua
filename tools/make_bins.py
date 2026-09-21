@@ -34,7 +34,6 @@ import re
 import sys
 import pathlib
 import xml.etree.ElementTree as ET
-import xml.sax.saxutils as saxutils
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from make_preview import (SHEETS, SVG_DIR, ROOT_RE, ATTR_RE, find_icon,   # noqa: E402
@@ -48,11 +47,19 @@ BIN_PREFIX = "fzh_"          # 我们生成的箱文件名前缀（别与 my_par
 HASH_RE = re.compile(r"_[0-9a-f]{16,}_\d+$")
 TRAIL_RE = re.compile(r"_\d+$")
 
-# 箱图标：Fritzing 只认「内嵌在 icon="…" 里的 SVG 文本」，而且该 SVG 里必须含这句 title
-# （`partsbinpalettewidget.cpp`：`isCustomSvg(s) = s.startsWith("<?xml") && s.contains(CustomIconTitle)`，
-#  CustomIconTitle = "Fritzing Custom Icon"）。否则退回内置图标 —— 6 个箱就全长成 MINE。
-ICON_MARKER = "Fritzing Custom Icon"
-ICON_BOX, ICON_PAD = 64.0, 2.0        # 图标画布 64×64（QtSvg 按 viewBox 出图）
+# 箱图标：**必须是文件** —— `icon="<名字>.png"`，且同目录要有 `<名字>.png` 与 `<名字>-mono.png`。
+# 为什么不能用「内嵌 SVG 文本」那个看起来更简洁的写法（踩过两次）：
+#   ① `isCustomSvg()` 只认内嵌 SVG，走到那条分支后 `m_monoIcon` 被**写死**成内置
+#      `:resources/bins/icons/Custom1-mono.png`（一个黑六边形），而标签栏画的是 mono 图标
+#      → **未选中的箱全变黑六边形**，只有选中的那个才显示我们的图；
+#   ② 走「文件名」分支时才会顺手找 `-mono` 变体：
+#      `path.insert(ix, "-mono"); if (file3.exists()) m_monoIcon = new QIcon(path);`
+#   （源码：`partsbinpalettewidget.cpp` 的 `grabTitle()`）
+# 两张图我们**用同一张彩图**：Fritzing 只要求文件名以 `-mono` 结尾，没要求真·单色，
+# 而彩图在标签栏里最好认（要改成黑剪影就改 `mono_png` 的写法）。
+ICON_SIZE = 64            # 图标像素尺寸（画布 viewBox 也是 64×64）
+ICON_MARKER = "Fritzing Custom Icon"   # 保留在 SVG 里（万一以后要改回内嵌写法）
+ICON_BOX, ICON_PAD = 64.0, 2.0
 # 每组拿哪个零件当箱图标（要一眼能认出来；顺便选了体积小的 icon）
 BIN_ICON_OF = {
     "chips": "CH32V203C8T6",        # QFP48 顶视
@@ -151,12 +158,11 @@ def bin_icon_svg(sub, key):
             f'translate({-cx:g},{-cy:g})">\n{inner}\n</g>\n</svg>\n')
 
 
-def fzb_text(title, members, fritzing_version, icon_text):
+def fzb_text(title, members, fritzing_version, icon_name):
     ver = f' fritzingVersion="{fritzing_version}"' if fritzing_version else ""
-    icon_attr = saxutils.escape(icon_text, {'"': "&quot;"})      # 整段 SVG 进属性
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              f'<!-- 由 fritzing-parts-langhua 的 tools/make_bins.py 生成（勿手改） -->',
-             f'<module{ver} icon="{icon_attr}">',
+             f'<module{ver} icon="{icon_name}">',
              f'    <title>{title}</title>',
              '    <instances>']
     for module_id, path in members:
@@ -186,10 +192,12 @@ def verify(bins_dir, quiet=False):
     bad, total = 0, 0
     for f in sorted(bins_dir.glob(f"{BIN_PREFIX}*.fzb")):
         root = ET.fromstring(f.read_text(encoding="utf-8"))
-        icon = root.get("icon") or ""
-        if not (icon.startswith("<?xml") and ICON_MARKER in icon):
-            bad += 1
-            print(f"  !! 箱图标不是内嵌自定义 SVG（会退回内置 MINE 图标）：{f.name}")
+        icon = (root.get("icon") or "").strip()
+        # 图标必须是**同目录的两个 PNG**：只有 .fzb 里那个、没 -mono 的话，标签栏会退回黑六边形
+        for want in (icon, icon.replace(".png", "-mono.png")):
+            if not want or not (bins_dir / want).is_file():
+                bad += 1
+                print(f"  !! 箱图标缺失：{f.name} 需要 {want!r}（否则未选中的箱是内置黑六边形）")
         for it in root.findall("./instances/instance"):
             total += 1
             p = pathlib.Path(it.get("path") or "")
@@ -206,6 +214,21 @@ def verify(bins_dir, quiet=False):
     if not quiet:
         print(f"自检：{total - bad}/{total} 条引用落地" + ("，全部通过" if bad == 0 else f"，{bad} 处有问题"))
     return bad
+
+
+def write_bin_icon(sub, name, bins_dir):
+    """渲出箱图标：`fzh_<组>.png` + `fzh_<组>-mono.png`（两者内容相同），返回 .fzb 里该写的文件名。
+
+    Fritzing 在**箱文件同目录**找 `icon=` 那个名字，再顺手找同名 `-mono` —— 两文件都在，
+    标签栏（未选中）与当前箱才都是我们的图。
+    """
+    from cairosvg import svg2png          # 与 tools/byhand_check.py 同一套依赖
+    png = bins_dir / f"{BIN_PREFIX}{name}.png"
+    svg2png(bytestring=bin_icon_svg(sub, name).encode("utf-8"),
+            write_to=str(png), output_width=ICON_SIZE, output_height=ICON_SIZE)
+    mono = bins_dir / f"{BIN_PREFIX}{name}-mono.png"
+    mono.write_bytes(png.read_bytes())
+    return png.name, mono.name
 
 
 def main():
@@ -252,10 +275,9 @@ def main():
         if member_out := members:
             if write:
                 out = bins_dir / f"{BIN_PREFIX}{name}.fzb"
-                icon_sub = BIN_ICON_OF.get(name, items[0][0])
-                out.write_text(
-                    fzb_text(title, member_out, version, bin_icon_svg(icon_sub, name)),
-                    encoding="utf-8", newline="\n")
+                icon_name, _mono = write_bin_icon(BIN_ICON_OF.get(name, items[0][0]), name, bins_dir)
+                out.write_text(fzb_text(title, member_out, version, icon_name),
+                               encoding="utf-8", newline="\n")
                 total_written += 1
 
     print(f"\n合计：分类表里 {total_parts} 个零件，命中 {total_parts - len(missing_all)}，"
