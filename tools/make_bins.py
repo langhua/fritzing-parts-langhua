@@ -19,7 +19,12 @@
   `isCustomSvg(s) = s.startsWith("<?xml") && s.contains("Fritzing Custom Icon")`）——
   不满足就退回内置图标，**6 个箱全长成 MINE、看不出区别**（踩过）。
   本工具用每组代表零件**自己的 icon 几何**缩进 64×64 画布当箱图标（不手绘）。
+- ★ **箱内可以分小节**（就像自带 CORE 里的「基本/输入/输出」）：在流里插一条
+  `moduleIdRef="__spacer__"` 的实例，**文字就是它的 `path` 属性**；spacer 同样要带 `<views>`
+  （`modelbase.cpp` 里它被建成 `ModelPart::Space`、`setInstanceText(path)` —— 写法照 `core.fzb`）。
+  小节内容写在脚本的 `SECTIONS` 里（**必须恰好盖住该组全部条目**，否则报错不静默丢）。
 - `modelIndex` **不写**：那是 Fritzing 保存时的运行时编号，不是箱文件的要求。
+  （只有 spacer 抄了 core.fzb 的 `modelIndex="3"`。）
 - 箱里存的是**零件引用**（`path` 指到已安装的 `.fzp`），不是拷贝；零件一动，那条就失效。
 
 **只写 `fzh_*.fzb`**（本工具自己的前缀）：`my_parts.fzb`（Fritzing 自维护的「我的零件」箱）
@@ -28,6 +33,8 @@
 用法：
     python tools/make_bins.py                 # 写进 ~/Documents/Fritzing/bins（会先报告匹配情况）
     python tools/make_bins.py --list          # 只报告，不写文件
+    python tools/make_bins.py --verbose       # 逐条报告「哪个零件按什么规则匹配到哪个已装 fzp」
+    python tools/make_bins.py --verify --list # 只自检已有箱（写入后也会自动跑一次）
     python tools/make_bins.py --bins-dir D:\\x --parts-dir D:\\y    # 换目录（别的机器/别的盘）
 """
 import re
@@ -37,7 +44,7 @@ import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from make_preview import (SHEETS, SVG_DIR, ROOT_RE, ATTR_RE, find_icon,   # noqa: E402
-                          viewbox_of, strip_shell, namespace, scope_style)
+                          viewbox_of, strip_shell, namespace, scope_style, precheck)
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -47,7 +54,65 @@ BIN_PREFIX = "fzh_"          # 我们生成的箱文件名前缀（别与 my_par
 HASH_RE = re.compile(r"_[0-9a-f]{16,}_\d+$")
 TRAIL_RE = re.compile(r"_\d+$")
 
-# 箱图标：**必须是文件** —— `icon="<名字>.png"`，且同目录要有 `<名字>.png` 与 `<名字>-mono.png`。
+# 小节标题：Fritzing 用**一条 `__spacer__` 实例**当分割栏，文字就是它的 `path` 属性
+# （`ModuleIDNames::SpacerModuleIDName = "__spacer__"`；`modelbase.cpp` 里这种实例建成
+#  `ModelPart::Space`，`setInstanceText(instance.attribute("path"))` —— 写法照自带 `core.fzb`：
+#  spacer 也必须有 `<views>`，否则会被 `checkViews` 跳过）。自带 core 用 Basic/Input/Output
+# 这类英文（界面会翻译），我们写中文就原样显示。
+SPACER_ID = "__spacer__"
+SPACER_VIEW = ('        <views>\n            <iconView layer="icon">\n'
+               '                <geometry z="-1" x="-1" y="-1"/>\n'
+               '            </iconView>\n        </views>')
+
+# 每个箱内部的小节：**本表必须恰好盖住该组全部条目**（自检会拦漏/重/写错名字）
+SECTIONS = {
+    "chips": [
+        ("MCU", ["CH32V203C8T6"]),
+        ("USB 接口芯片", ["CH340C", "CH340E", "CH340K", "CH340N", "CH340X", "CH347F", "CH347T"]),
+        ("开关机 / 电源路径", ["CH213K", "MAX40200", "SAM8108", "EC190708"]),
+        ("存储", ["W25Q16JV", "AT24C02"]),
+        ("显示 / LED 驱动", ["TM1637", "TM1638"]),
+        ("网络", ["IP101GR", "H1102NLT"]),
+        ("模拟开关 / 多路 / 光耦", ["CD74HC4067", "TS3A44159PWR", "PC817_SOP4"]),
+    ],
+    "power": [
+        ("DC-DC（降/升压）", ["ETA3425S2F", "SY8089", "SM5701", "RT6150AGQW",
+                          "RT6150AGQW rev.1", "TPS63051RMWR", "TPS631000DRLR"]),
+        ("LDO", ["RT9013", "RT9193", "XC6206P332MR", "LD1117"]),
+        ("锂电充电", ["TP4056", "TP4057", "ME4054", "SM5206", "CN3165"]),
+        ("锂电保护", ["DW01A", "DW03", "DW06D"]),
+        ("电池", ["Li300mAh", "Li300mAh-1.25", "Li300mAh-1.25-SMD"]),
+    ],
+    "modules": [
+        ("无线 SoC / 模组", ["TXW8301", "ESP32-S3-WROOM-1", "ESP-12F"]),
+        ("开发板", ["ESP32-S3-DevKitC-1", "ESP8266+CH340+SSD1306", "TX-AH-R900PNR"]),
+        ("显示", ["TFTSPI1.9in", "UART1.9inIPS"]),
+        ("LED / 指示", ["WS2812B-5050", "WS2812B-2020", "WS2812B-5050-4x4", "3Pin-LED"]),
+        ("感应 / 天线", ["NFC Coil"]),
+    ],
+    "conn": [
+        ("插座 / 连接器", ["TypeC16Pin", "USB-B01", "FPC-05F-12P-H15", "RJ45-8P8C",
+                          "RJ45-8P8C rev.1", "SMA-PJ1.7-L9.5"]),
+        ("拨动 / 滑动开关", ["DPDT7x7-6P", "SK-12D02VG3", "DSIC01LS-P", "TS-D014"]),
+        ("按键", ["PB86-A0-BLACK", "PB86-A0-BLUE", "PB86-A0-GRAY", "PB86-A0-GREEN",
+                 "PB86-A0-RED", "PB86-A0-YELLOW"]),
+        ("网络标签焊盘", ["NetLabel-Pad"]),
+    ],
+    "passive": [
+        ("SMD 电阻", ["R 01005", "R 0201", "R 0402", "R 0603", "R 0805",
+                     "R 1206", "R 1210", "R 1812", "R 2010", "R 2512"]),
+        ("晶振", ["Crystal-3215", "Crystal-3225"]),
+        ("模压功率电感", ["SHC0420", "SHC0520", "SHC0630", "SHC1040", "SHC1250", "SHC1265"]),
+    ],
+    "discrete": [
+        ("二极管（肖特基 / TVS）", ["SOD-123", "SOD-123FL", "SOD-323", "SOD-523",
+                                   "BAT54S", "SS34"]),
+        ("MOSFET", ["8205HA", "8205S"]),
+        ("排阻", ["YC164"]),
+    ],
+}
+
+# 箱图标：**必须是文件名** —— `icon="<名字>.png"`，且同目录里要有 `<名字>.png` 与 `<名字>-mono.png`。
 # 为什么不能用「内嵌 SVG 文本」那个看起来更简洁的写法（踩过两次）：
 #   ① `isCustomSvg()` 只认内嵌 SVG，走到那条分支后 `m_monoIcon` 被**写死**成内置
 #      `:resources/bins/icons/Custom1-mono.png`（一个黑六边形），而标签栏画的是 mono 图标
@@ -159,13 +224,20 @@ def bin_icon_svg(sub, key):
 
 
 def fzb_text(title, members, fritzing_version, icon_name):
+    """members 里每个元素：`(SPACER_ID, 小节名, None)` 是小节分割栏，否则是 `(moduleId, path, how)`。"""
     ver = f' fritzingVersion="{fritzing_version}"' if fritzing_version else ""
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              f'<!-- 由 fritzing-parts-langhua 的 tools/make_bins.py 生成（勿手改） -->',
              f'<module{ver} icon="{icon_name}">',
              f'    <title>{title}</title>',
              '    <instances>']
-    for module_id, path in members:
+    for module_id, path, _how in members:
+        if module_id == SPACER_ID:
+            lines.append(f'        <instance moduleIdRef="{SPACER_ID}" modelIndex="3" '
+                         f'path="{path}">')
+            lines.append(SPACER_VIEW)
+            lines.append('        </instance>')
+            continue
         lines.append(f'        <instance moduleIdRef="{module_id}" '
                      f'path="{path.as_posix()}">')
         lines.append('            <views/>')
@@ -200,16 +272,22 @@ def verify(bins_dir, quiet=False):
                 print(f"  !! 箱图标缺失：{f.name} 需要 {want!r}（否则未选中的箱是内置黑六边形）")
         for it in root.findall("./instances/instance"):
             total += 1
+            mid = it.get("moduleIdRef")
+            if mid == SPACER_ID:                      # 小节分割栏：path = 标题文字，不是文件
+                if not (it.get("path") or "").strip() or it.find("views") is None:
+                    bad += 1
+                    print(f"  !! 小节栏不完整（缺 path 或 views）：{f.name} {it.get('path')!r}")
+                continue
             p = pathlib.Path(it.get("path") or "")
             if it.find("views") is None:
                 bad += 1
-                print(f"  !! 缺 <views/>：{f.name} {it.get('moduleIdRef')}")
+                print(f"  !! 缺 <views/>：{f.name} {mid}")
             elif not p.is_file():
                 bad += 1
                 print(f"  !! path 不存在：{f.name} → {p}")
-            elif module_id_of(p) != it.get("moduleIdRef"):
+            elif module_id_of(p) != mid:
                 bad += 1
-                print(f"  !! moduleId 不一致：{f.name} 写 {it.get('moduleIdRef')!r}，"
+                print(f"  !! moduleId 不一致：{f.name} 写 {mid!r}，"
                       f"{p.name} 里是 {module_id_of(p)!r}")
     if not quiet:
         print(f"自检：{total - bad}/{total} 条引用落地" + ("，全部通过" if bad == 0 else f"，{bad} 处有问题"))
@@ -231,6 +309,26 @@ def write_bin_icon(sub, name, bins_dir):
     return png.name, mono.name
 
 
+def check_sections():
+    """SECTIONS 必须**恰好盖住**每个分组的全部条目 —— 漏一个零件、写错一个名字、
+    同一个零件进两个小节，都在这里当场报出来（不静默丢）。"""
+    problems = []
+    for name, (_title, _cols, items) in SHEETS.items():
+        labels = [lbl for _sub, lbl in items]
+        sec = SECTIONS.get(name)
+        if sec is None:
+            problems.append(f"{name}: SECTIONS 里没有这个组")
+            continue
+        listed = [l for _t, ls in sec for l in ls]
+        problems += [f"{name}: SECTIONS 里的 {l!r} 不在分组表里（名字写错？）"
+                     for l in listed if l not in labels]
+        problems += [f"{name}: 分组表里的 {l!r} 没被任何小节收录"
+                     for l in labels if l not in listed]
+        problems += [f"{name}: {l!r} 出现在多个小节里"
+                     for l in sorted({l for l in listed if listed.count(l) > 1})]
+    return problems
+
+
 def main():
     args = sys.argv[1:]
 
@@ -241,6 +339,14 @@ def main():
     bins_dir = opt("--bins-dir", fritzing / "bins")
     parts_dir = opt("--parts-dir", fritzing / "parts")
     write = "--list" not in args
+
+    problems = precheck() + check_sections()
+    if problems:
+        print("!! 先修这些再生成：")
+        for p in problems:
+            print("   ", p)
+        if "--force" not in args:
+            raise SystemExit(1)
 
     if not bins_dir.is_dir():
         raise SystemExit(f"!! 箱目录不存在：{bins_dir}\n"
@@ -257,9 +363,9 @@ def main():
     version = read_version(bins_dir)
     verbose = "--verbose" in args or "-v" in args
     total_parts, total_written, missing_all = 0, 0, []
-    print(f"{'箱':10s} {'命中':>4s} {'未装':>4s}  标题")
+    print(f"{'箱':10s} {'命中':>4s} {'未装':>4s} {'小节':>4s}  标题")
     for name, (title, _cols, items) in SHEETS.items():
-        members, missing = [], []
+        missing, by_label = [], {}
         for entry in items:
             total_parts += 1
             path, how = match(entry, index)
@@ -268,10 +374,19 @@ def main():
             if path is None:
                 missing.append((entry[1], how))
                 continue
-            members.append((module_id_of(path), path))
+            by_label[entry[1]] = (module_id_of(path), path)
         missing_all += [(name, lbl, how) for lbl, how in missing]
-        print(f"{name:10s} {len(members):4d} {len(missing):4d}  {title}"
-              + ("  → 不写空箱" if not members else ""))
+
+        members, sections_used = [], 0
+        for section, labels in SECTIONS[name]:
+            rows = [by_label[l] for l in labels if l in by_label]
+            if not rows:              # 整节都没装 → 不撑一个空标题
+                continue
+            sections_used += 1
+            members.append((SPACER_ID, section, None))
+            members += [(mid, p, "") for mid, p in rows]
+        print(f"{name:10s} {len(members) - sections_used:4d} {len(missing):4d} "
+              f"{sections_used:4d}  {title}" + ("  → 不写空箱" if not members else ""))
         if member_out := members:
             if write:
                 out = bins_dir / f"{BIN_PREFIX}{name}.fzb"
