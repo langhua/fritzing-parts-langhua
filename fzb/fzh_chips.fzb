@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_chips.png">
+    <title>芯片与接口 IC</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="MCU">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="CH32V203C8T6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V203C8T6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="USB 接口芯片">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="CH340C" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH340C.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH340E" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH340E.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH340K_17e31ab5fb1721cfa20e5f7d08d5867f_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH340K_17e31ab5fb1721cfa20e5f7d08d5867f_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH340N" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH340N.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH340X_ad06d7c23acb066920f45661ff7d5ca4_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH340X_ad06d7c23acb066920f45661ff7d5ca4_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH347F" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH347F.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH347T" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH347T.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="开关机 / 电源路径">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="CH213K_bc8801d14fe98272e3bf75c11b6c136b_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH213K_bc8801d14fe98272e3bf75c11b6c136b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="MAX40200_0f1279831a07fe5e01afb00512194bda_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MAX40200_0f1279831a07fe5e01afb00512194bda_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SAM8108_0601f60166f47101feaf4709d6d1f47b_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SAM8108_0601f60166f47101feaf4709d6d1f47b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="EC190708_aa34fac64f4e3f2de08c569090cc3004_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/EC190708_aa34fac64f4e3f2de08c569090cc3004_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="存储">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="W25Q16JV" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/W25Q16JV.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="AT24C02" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/AT24C02.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="显示 / LED 驱动">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="TM1637_65e4ff26e0f8f17028c66fb6f3211ec1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TM1637_65e4ff26e0f8f17028c66fb6f3211ec1_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TM1638_f0904e70b8d46a56e653908808bd6e91_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TM1638_f0904e70b8d46a56e653908808bd6e91_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="网络">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="IP101GR" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/IP101GR.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="H1102NLT" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/H1102NLT.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="模拟开关 / 多路 / 光耦">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="CD74HC4067" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CD74HC4067.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TS3A44159PWR_TSSOP16_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TS3A44159PWR_TSSOP16_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PC817_9ee982c12a8813a71e233e10b9406004_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PC817_9ee982c12a8813a71e233e10b9406004_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

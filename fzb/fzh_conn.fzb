@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_conn.png">
+    <title>连接器 / 开关 / 按键</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="插座 / 连接器">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="USB-B01" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/USB-B01.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="FPC-05F-12P-H15" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/FPC-05F-12P-H15.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RJ45-8P8C" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RJ45-8P8C.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RJ45-8P8C_rev_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RJ45-8P8C_rev_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SMA-PJ1.7-L9.5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMA-PJ1.7-L9.5.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="拨动 / 滑动开关">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="DPDT7x7-6P" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DPDT7x7-6P.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SK-12D02VG3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SK-12D02VG3.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="DSIC01LS-P" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DSIC01LS-P.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="按键">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PB86-A0" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0_7072363ba1b31d70136d785d0604754f_2.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="网络标签焊盘">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="NetLabel-Pad" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/NetLabel-Pad_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

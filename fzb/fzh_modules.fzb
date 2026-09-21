@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_modules.png">
+    <title>模块 / 开发板 / 显示 / 指示</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="无线 SoC / 模组">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="TXW8301_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TXW8301_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ESP32-S3-WROOM-1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ESP32-S3-WROOM-1_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ESP12F_943e8077003283b6a894b0ad59b7ddc6_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ESP12F_943e8077003283b6a894b0ad59b7ddc6_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="开发板">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="ESP32-S3-DevKitC-1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ESP32-S3-DevKitC-1_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ESP8266 CH340G with SSD1306_6c07ad7571a14899715d9cf7655bdc9b_12" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ESP8266 CH340G with SSD1306_6c07ad7571a14899715d9cf7655bdc9b_12.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TX-AH-R900PNR_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TX-AH-R900PNR_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="显示">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="TFTSPI1.9in_27347880dd6cf106f04d9a1fdcbc32e8_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TFTSPI1.9in_27347880dd6cf106f04d9a1fdcbc32e8_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="UART1.9inIPS_12995d91bab047f974a18a45997d36b9_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/UART1.9inIPS_12995d91bab047f974a18a45997d36b9_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="LED / 指示">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="WS2812B_5050_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_5050_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WS2812B_2020_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_2020_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WS2812B_5050_4x4_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_5050_4x4_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="感应 / 天线">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="NFC_Coil_20mm_6T_0p2_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/NFC_Coil_20mm_6T_0p2_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

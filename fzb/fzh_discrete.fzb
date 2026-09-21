@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_discrete.png">
+    <title>分立器件（二极管 / MOS / 排阻）</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="二极管（肖特基 / TVS）">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="SOD123_03874d05d1f0a70f16469b746a39ee19_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SOD123_03874d05d1f0a70f16469b746a39ee19_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SOD123FL_e93b14345efa3e1d7641046bf0dc9d3a_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SOD323_81e76efd26d041c7a6c165e290350a0e_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SOD323_81e76efd26d041c7a6c165e290350a0e_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SOD523_73caea5f9eb99b697a9f5a5fe3001586_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SOD523_73caea5f9eb99b697a9f5a5fe3001586_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="BAT54S_SOT23_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/BAT54S_SOT23_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SS34" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SS34.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="MOSFET">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="8205HA_0138693661b1c8f29900b3ab6832fec0_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/8205HA_0138693661b1c8f29900b3ab6832fec0_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="8205S_cf091738df10d4a672900c0e9dd81176_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/8205S_cf091738df10d4a672900c0e9dd81176_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="排阻">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="YC164_dba884c43b3f4a095028f2c065fc457d_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/YC164_dba884c43b3f4a095028f2c065fc457d_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

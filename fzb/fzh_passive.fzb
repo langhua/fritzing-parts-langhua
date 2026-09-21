@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_passive.png">
+    <title>无源件（电阻 / 晶振 / 电感）</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="SMD 电阻">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="R01005_bb8e89a6ed23fc3a1e60ce55bfc6c233_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R01005_bb8e89a6ed23fc3a1e60ce55bfc6c233_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R0201_0907ca3823e59cbac7a986e9401a00d6_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R0201_0907ca3823e59cbac7a986e9401a00d6_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R0402_7e77de42b07f5e89f21edc15e9289a71_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R0402_7e77de42b07f5e89f21edc15e9289a71_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R0603_36137a0f26fc46e91e48eb74468f61a7_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R0603_36137a0f26fc46e91e48eb74468f61a7_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R0805_0a212ee8e15d616ed79a8cc68f76bf99_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R0805_0a212ee8e15d616ed79a8cc68f76bf99_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R1206_0a212ee8e15d616ed79a8cc68f76bf99_2" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R1206_0a212ee8e15d616ed79a8cc68f76bf99_2.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R1210_2f4ee44f5bc1b113b67cafb2c6858e2f_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R1210_2f4ee44f5bc1b113b67cafb2c6858e2f_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R1812_0a212ee8e15d616ed79a8cc68f76bf99_3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R1812_0a212ee8e15d616ed79a8cc68f76bf99_3.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R2010_0a212ee8e15d616ed79a8cc68f76bf99_4" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R2010_0a212ee8e15d616ed79a8cc68f76bf99_4.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="R2512_0a212ee8e15d616ed79a8cc68f76bf99_5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R2512_0a212ee8e15d616ed79a8cc68f76bf99_5.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="晶振">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="Crystal-3215" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3215.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Crystal-3225" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3225.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="模压功率电感">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHC0520_b75f63a4f1165cd13d1be47f6e630415_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0520_b75f63a4f1165cd13d1be47f6e630415_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHC1040_29769af91d59cce900be9aa0cad985fa_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1040_29769af91d59cce900be9aa0cad985fa_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_power.png">
+    <title>电源 / 充电 / 保护 / 电池</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="DC-DC（降/升压）">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="ETA3425S2F" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ETA3425S2F.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SY8089" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SY8089.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SM5701_4819f35db22aac2af42b3c1db3e40f98_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SM5701_4819f35db22aac2af42b3c1db3e40f98_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RT6150AGQW_4ed271eec6d1705c62e9b6071ed42d09_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RT6150AGQW_4ed271eec6d1705c62e9b6071ed42d09_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RT6150AGQW_rev_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RT6150AGQW_rev_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TPS63051RMWR_52901c521763a2187c732466a788e200_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TPS63051RMWR_52901c521763a2187c732466a788e200_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TPS631000DRLR_61af59d1b6cea59ddf3ba40d52124ace_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TPS631000DRLR_61af59d1b6cea59ddf3ba40d52124ace_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="LDO">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="RT9013_df443f1d4b1ebaf1099c5628e2dae19b_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RT9013_df443f1d4b1ebaf1099c5628e2dae19b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RT9193_e88fa12220d1997d264356f86a24e2ae_2" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RT9193_e88fa12220d1997d264356f86a24e2ae_2.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="XC6206P332MR" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/XC6206P332MR.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="LD1117" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LD1117.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="锂电充电">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="TP4056_579ccf94866a80ee52641a188643f1ed_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TP4056_579ccf94866a80ee52641a188643f1ed_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TP4057_f22cbcd408ed437358d8970ccff96325_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TP4057_f22cbcd408ed437358d8970ccff96325_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ME4054_b52b3af44ac0fe9f1dd99211c870cee3_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ME4054_b52b3af44ac0fe9f1dd99211c870cee3_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SM5206_a5360f1ff9ab352e4428d9658abb9256_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SM5206_a5360f1ff9ab352e4428d9658abb9256_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CN3165" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CN3165.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="锂电保护">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="DW01A_fd6f11bca8e7b1260d23c44b8fe175d2_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DW01A_fd6f11bca8e7b1260d23c44b8fe175d2_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="DW03_9f3062e882d798ab93596d01c883d0b1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DW03_9f3062e882d798ab93596d01c883d0b1_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="DW06D_8cd96964717473906d8cdd14631e5d20_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DW06D_8cd96964717473906d8cdd14631e5d20_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="电池">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="Li300mAh_44006848175b5b567dc5abeb26412ea1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Li300mAh_44006848175b5b567dc5abeb26412ea1_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Li300mAh-1.25_521eaefe6f01770df157d38353454e73_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Li300mAh-1.25_521eaefe6f01770df157d38353454e73_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Li300mAh-1.25-SMD_48518d54a67ea743b3828b1dbb568ec1_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Li300mAh-1.25-SMD_48518d54a67ea743b3828b1dbb568ec1_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>
