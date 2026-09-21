@@ -29,6 +29,7 @@
 | `schem_check.py <部件目录> [--png] [--no-ccw]` | 核对**矩形符号原理图**（AGENTS §5）：① svg 头 width/height 齐不齐、viewBox 装不装得下 ② 每个脚 `connectorNpin`+`connectorNterminal` 齐不齐、端点是否落在引线末端 ③ 每脚一个编号（框外）+ 一个名（框内）、同字号 ④ **脚号逆时针连续**（沿 左→下→右→上 走一圈应是所有脚号的循环移位，且递增） |
 | `fzp_check.py <部件目录> [--fzpz 包]` | 核对 `.fzp` ↔ 四个视图 svg：① 视图 `image=` 用**子目录路径** ② 每条 `svgId`/`terminalId` 在对应 svg 里真存在 ③ svg 里的 connector id 都被 .fzp 声明 ④ **svg 内 id 不重复** ⑤ `<buses>` 引用存在且不重复入总线 ⑥ **裸露焊盘（EPAD/EP）不许进任何总线**（独立成网、布线时特意接 GND，AGENTS §5）⑦ 面包板里同名焊盘必须在同一条总线里（NC/DNP 除外）⑧ `--fzpz` 包内**平铺**且成员齐全 |
 | `svg_lines.py` | `tools/` 内部共用小工具：把 `<text>` 拆成**行**（Inkscape 多行 = 同个 `<text>` 里多个 `role="line"` 的 tspan）；导出与核对**共用这一份口径**，否则一个按行、一个按整段，核对表会冒假差异 |
+| `make_preview.py` | 生成 **README 用的元件预览拼图**（`docs/preview/<组>.svg`；AGENTS §9 图文并茂）：内容 = 各部件自己的 `svg.icon.*_icon.svg`，**不手绘、不复制几何**，改完 icon 重跑即刷新。三个不显然处：① 每格用**嵌套 `<svg viewBox>`** 当视口等比装框（源 icon 坐标有 mm / 老 px / Inkscape 三种单位，写 transform 必算错）；② `id` 与 `<style>` 选择器**逐格加前缀**（拼图是一个文档，id/CSS 是文档级，不加就串色）；③ 清 Inkscape 壳（`<sodipodi:namedview>`、`<inkscape:path-effect>` **元素**、命名空间属性）后用 `ET.fromstring` 自检 —— 漏清元素会 `unbound prefix` 整张炸。格下尺寸**只在 icon 写了带单位 width/height 时才标**（老件是无单位视觉比例，标了就是假数字）。分组清单在脚本的 `SHEETS`；`--list` 只看不写 |
 | `../svg/<部件>/trace_photo.py` | 把实物照片按卡尺比例叠到我们图上，用来判断"哪块偏了多少"（照片不进仓库） |
 
 ## 约定（踩过的坑，别重复踩）

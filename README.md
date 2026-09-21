@@ -3,6 +3,40 @@
 Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库。
 
 > 本仓库最初是 `fritzing-parts` 的 fork：LM393-A3144-HALL-3Pins、PB86-A0 等用于 SandFlower 的部件仍保留。
+## 元件预览（图 = 各部件自己的 icon 视图，自动拼版）
+
+下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
+`tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
+每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
+共 100 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`SYB-118`、`LM393-A3144-HALL-3PINS`
+没收录 —— 这三个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
+
+**芯片与接口 IC** —— MCU / USB-UART / 理想二极管 / 存储 / LED 驱动 / 网络
+
+[![芯片与接口 IC：CH340C/E/K/N/X、CH32V203C8T6、CH347F/T、CH213K、MAX40200、W25Q16JV、TM1637/1638 等](docs/preview/chips.svg)](docs/preview/chips.svg)
+
+**电源 / 充电 / 保护 / 电池** —— DC-DC、LDO、充电 IC、锂电保护、电池
+
+[![电源类：ETA3425S2F、RT6150AGQW、RT9013/9193、TPS63051RMWR、TP4056/4057、ME4054、DW01A/03/06D、Li300mAh 等](docs/preview/power.svg)](docs/preview/power.svg)
+
+**模块 / 开发板 / 显示 / 指示** —— WiFi、HaLow、NFC、WS2812B、TFT、霍尔
+
+[![模块与开发板：ESP-12F、ESP32-S3-WROOM-1、ESP32-S3-DevKitC-1、TX-AH-R900PNR、TXW8301、NFC Coil、WS2812B、TFTSPI1.9in 等](docs/preview/modules.svg)](docs/preview/modules.svg)
+
+**连接器 / 开关 / 按键** —— Type-C、USB、FPC、RJ45、SMA、拨动开关、PB86-A0 六色
+
+[![连接器与开关：TypeC16Pin、USB-B01、FPC-05F-12P-H15、RJ45-8P8C、SMA-PJ1.7-L9.5、DPDT7x7-6P、SK-12D02VG3、PB86-A0 六色等](docs/preview/conn.svg)](docs/preview/conn.svg)
+
+**无源件** —— SMD 电阻 11 种尺寸、晶振、模压功率电感
+
+[![无源件：Resistor-01005~2512、Crystal-3215/3225、SHC0420~1265 模压电感](docs/preview/passive.svg)](docs/preview/passive.svg)
+
+**分立器件** —— 肖特基 / TVS、双 MOS、排阻
+
+[![分立器件：SOD-123/323/523/123FL、BAT54S、SS34、8205HA/8205S、YC164](docs/preview/discrete.svg)](docs/preview/discrete.svg)
+
+> 尺寸口径：图上的数字是 icon 文件里 `width`/`height` **写明的**值（本库新做的元件按实物 1:1 画）；
+> 早年从 `fritzing-parts` 导入的旧件若只写无单位数字（那是视觉比例、不是实物尺寸），图上就**不标数字**。
 
 ## 已有部件
 

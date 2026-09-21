@@ -1,0 +1,1369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 tools/make_preview.py 生成（勿手改）：无源件（电阻 / 晶振 / 电感） -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="186mm" height="173mm" viewBox="0 0 186 173">
+  <rect x="0" y="0" width="186" height="173" fill="#ffffff"/>
+  <text x="8" y="14" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="5.0" fill="#202020">无源件（电阻 / 晶振 / 电感）</text>
+  <svg id="p0" x="10.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 0.43000001 0.24" preserveAspectRatio="xMidYMid meet">
+    <defs
+       id="p0_defs435" />
+        <desc
+       id="p0_desc417">
+            <referenceFile>resistor_icon_220.svg</referenceFile>
+        </desc>
+        <rect
+       gorn="0.2"
+       height="0.2"
+       id="p0_connector0pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="0.1"
+       x="0.02"
+       y="0.02" />
+        <rect
+       gorn="0.3"
+       height="0.2"
+       id="p0_connector1pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="0.1"
+       x="0.31999999"
+       y="0.02" />
+        
+        <rect
+       gorn="0.5"
+       height="0.2"
+       id="p0_rect787"
+       style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.0224811"
+       width="0.2"
+       x="0.12"
+       y="0.02" />
+  </svg>
+  <text x="25.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 01005</text>
+  <svg id="p1" x="44.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 2.456693 1.511811" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p1_defs435" /><desc
+         id="p1_desc417" /><g
+         gorn="0.1.0"
+         id="p1_copper1"
+         transform="scale(0.03779528)"><rect
+           gorn="0.1.0.0"
+           height="29.999996"
+           id="p1_connector0pad-0"
+           style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+           width="14.999998"
+           x="5"
+           y="5" /><rect
+           gorn="0.1.0.1"
+           height="29.999996"
+           id="p1_connector1pad-5"
+           style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+           width="14.999998"
+           x="46.733204"
+           y="5.2726388" /></g><rect
+         gorn="0.2"
+         height="1.4554554"
+         id="p1_silkscreen"
+         style="fill:none;stroke:#ffffff;stroke-width:0.0563556;stroke-opacity:1"
+         width="2.4003372"
+         x="0.0281778"
+         y="0.0281778" /><rect
+         style="opacity:0.75;fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;stroke-width:2.47957;stroke-linecap:round"
+         id="p1_rect1403"
+         width="1"
+         height="1.1338583"
+         x="0.75590551"
+         y="0.18897638" />
+  </svg>
+  <text x="59.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 0201</text>
+  <svg id="p2" x="78.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 4.1574807 2.2677175" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p2_defs435" /><desc
+         id="p2_desc417" /><g
+         gorn="0.1.0"
+         id="p2_copper1"
+         transform="matrix(0.0176378,0,0,0.00755906,-0.16377871,0.11338577)"><rect
+           gorn="0.1.0.0"
+           height="250"
+           id="p2_connector0pad-1"
+           style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+           width="53.571415"
+           x="20"
+           y="10" /><rect
+           gorn="0.1.0.1"
+           height="250"
+           id="p2_connector1pad-1"
+           style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+           width="53.571415"
+           x="180.71419"
+           y="10.000004" /><rect
+           style="opacity:0.75;fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;stroke-width:260.819;stroke-linecap:round"
+           id="p2_rect889"
+           width="107.14283"
+           height="249.99983"
+           x="73.571365"
+           y="10.000004" /></g><rect
+         gorn="0.2"
+         height="2.1779733"
+         id="p2_silkscreen"
+         style="fill:none;stroke:#ffffff;stroke-width:0.0897444;stroke-opacity:1"
+         width="4.0677361"
+         x="0.044872198"
+         y="0.044872198" />
+  </svg>
+  <text x="93.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 0402</text>
+  <svg id="p3" x="112.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 6.4251967 3.4015749" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p3_defs435" /><desc
+         id="p3_desc417" /><rect
+         gorn="0.2"
+         height="3.023622"
+         id="p3_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.1338583"
+         x="0.18897638"
+         y="0.18897638" /><rect
+         gorn="0.3"
+         height="3.023622"
+         id="p3_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.1338583"
+         x="5.1023622"
+         y="0.18897638" /><rect
+         gorn="0.4"
+         height="3.4015749"
+         id="p3_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.140957;stroke-opacity:1"
+         width="6.4251966"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="3.023622"
+         id="p3_rect787"
+         style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.379989"
+         width="3.7795277"
+         x="1.3228346"
+         y="0.18897638" /><g
+         gorn="0.6"
+         id="p3_text851"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4px;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;opacity:0.75;fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:0.96"
+         transform="matrix(0.36167145,0,0,0.70719547,0.14445783,-2.1870788)"><g
+           aria-label="221"
+           transform="scale(1.3983395,0.71513392)"
+           id="p3_text351"
+           style="font-size:3.95461px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;stroke-width:5.69463;stroke-linecap:round"><path
+             d="m 3.6939329,8.8163299 h 1.308976 V 9.1287441 H 3.156106 V 8.9033313 l 0.9372426,-1.044017 q 0.2649588,-0.2926412 0.3638241,-0.4587348 0.098865,-0.1700482 0.098865,-0.3677787 0,-0.2530951 -0.1384113,-0.3915064 Q 4.2792152,6.502883 4.0696209,6.502883 q -0.213549,0 -0.375688,0.1463206 -0.162139,0.142366 -0.233322,0.3796426 L 3.175879,6.8667071 q 0.087001,-0.324278 0.3440511,-0.5022354 0.2570496,-0.1819121 0.5734185,-0.1819121 0.2293673,0 0.4191886,0.098865 0.1898213,0.094911 0.3005504,0.284732 0.1146837,0.1858666 0.1146837,0.4508255 0,0.2570497 -0.1265475,0.4864171 -0.1265476,0.2293674 -0.4429164,0.577373 z"
+             id="p3_path296" /><path
+             d="M 5.9480595,8.8163299 H 7.2570354 V 9.1287441 H 5.4102325 V 8.9033313 L 6.3474751,7.8593143 Q 6.612434,7.5666731 6.7112992,7.4005795 q 0.098865,-0.1700482 0.098865,-0.3677787 0,-0.2530951 -0.1384114,-0.3915064 Q 6.5333418,6.502883 6.3237474,6.502883 q -0.2135489,0 -0.3756879,0.1463206 -0.162139,0.142366 -0.233322,0.3796426 L 5.4300056,6.8667071 q 0.087001,-0.324278 0.344051,-0.5022354 0.2570497,-0.1819121 0.5734185,-0.1819121 0.2293674,0 0.4191887,0.098865 0.1898213,0.094911 0.3005503,0.284732 0.1146837,0.1858666 0.1146837,0.4508255 0,0.2570497 -0.1265475,0.4864171 -0.1265475,0.2293674 -0.4429163,0.577373 z"
+             id="p3_path298" /><path
+             d="M 7.858135,7.0842107 V 6.7203866 L 8.7004669,6.2300149 H 8.9693804 V 9.1287441 H 8.6134655 V 6.6531582 Z"
+             id="p3_path300" /></g><path
+           style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.227159;stroke-linecap:butt;stroke-miterlimit:3.9;stroke-dasharray:none"
+           d="M 4.3420236,6.9380165 H 12.702158"
+           id="p3_path559" /></g>
+  </svg>
+  <text x="127.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 0603</text>
+  <svg id="p4" x="146.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 7.9370081 5.1023622" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p4_defs435" /><rect
+         gorn="0.2"
+         height="4.7244096"
+         id="p4_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.511811"
+         x="-1.7007874"
+         y="0.18897638"
+         transform="scale(-1,1)" /><rect
+         gorn="0.3"
+         height="4.7244096"
+         id="p4_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.511811"
+         x="6.2362204"
+         y="0.18897638" /><rect
+         gorn="0.4"
+         height="5.1023622"
+         id="p4_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.191876;stroke-opacity:1"
+         width="7.9370079"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="4.7244096"
+         id="p4_rect787"
+         style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.520321"
+         width="4.5354333"
+         x="1.690667"
+         y="0.18897638" /><g
+         aria-label="2201"
+         transform="scale(0.88918283,1.1246281)"
+         id="p4_text361"
+         style="font-size:1.79223px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.101607;stroke-miterlimit:3.9"><path
+           d="M 2.8527377,2.8046757 H 3.4459659 V 2.9462619 H 2.6089945 V 2.8441048 L 3.033753,2.370956 Q 3.1538324,2.238331 3.1986381,2.1630574 3.2434439,2.0859915 3.2434439,1.99638 q 0,-0.1147027 -0.062728,-0.1774308 -0.062728,-0.062728 -0.1577162,-0.062728 -0.09678,0 -0.1702619,0.066312 -0.073481,0.06452 -0.1057415,0.172054 L 2.6179556,1.9211063 q 0.039429,-0.1469628 0.155924,-0.2276132 0.116495,-0.082443 0.2598734,-0.082443 0.1039493,0 0.1899763,0.044806 0.086027,0.043014 0.1362095,0.1290405 0.051975,0.084235 0.051975,0.2043143 0,0.1164949 -0.057351,0.2204442 -0.057351,0.1039494 -0.2007297,0.2616656 z"
+           id="p4_path294" /><path
+           d="M 3.8743083,2.8046757 H 4.4675364 V 2.9462619 H 3.630565 V 2.8441048 L 4.0553235,2.370956 Q 4.1754029,2.238331 4.2202087,2.1630574 4.2650144,2.0859915 4.2650144,1.99638 q 0,-0.1147027 -0.062728,-0.1774308 -0.062728,-0.062728 -0.1577163,-0.062728 -0.09678,0 -0.1702618,0.066312 -0.073481,0.06452 -0.1057416,0.172054 L 3.6395262,1.9211063 q 0.039429,-0.1469628 0.155924,-0.2276132 0.1164949,-0.082443 0.2598733,-0.082443 0.1039494,0 0.1899764,0.044806 0.086027,0.043014 0.1362095,0.1290405 0.051975,0.084235 0.051975,0.2043143 0,0.1164949 -0.057351,0.2204442 -0.057351,0.1039494 -0.2007298,0.2616656 z"
+           id="p4_path296" /><path
+           d="m 5.4998604,2.2903057 q 0,0.3333548 -0.1111183,0.5054089 -0.109326,0.1702618 -0.3154325,0.1702618 -0.2043142,0 -0.3154324,-0.1720541 -0.1093261,-0.172054 -0.1093261,-0.5036166 0,-0.3333548 0.1093261,-0.5054089 0.1111182,-0.1738463 0.3154324,-0.1738463 0.2061065,0 0.3154325,0.1720541 0.1111183,0.1720541 0.1111183,0.5072011 z m -0.6810474,0 q 0,0.2670423 0.060936,0.3978751 0.062728,0.1308328 0.1935608,0.1308328 0.1308328,0 0.1935609,-0.1290406 0.062728,-0.1308328 0.062728,-0.3996673 0,-0.2706267 -0.062728,-0.4014595 -0.062728,-0.132625 -0.1935609,-0.132625 -0.1308328,0 -0.1935608,0.132625 Q 4.818813,2.019679 4.818813,2.2903057 Z"
+           id="p4_path298" /><path
+           d="M 5.7615253,2.019679 V 1.8547938 L 6.1432703,1.6325573 H 6.2651419 V 2.9462619 H 6.1038412 v -1.121936 z"
+           id="p4_path300" /></g>
+  </svg>
+  <text x="161.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 0805</text>
+  <svg id="p5" x="10.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 12.472441 6.6141735" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p5_defs435" /><rect
+         gorn="0.2"
+         height="5.8582678"
+         id="p5_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.7007874"
+         x="0.37795377"
+         y="0.37795186" /><rect
+         gorn="0.3"
+         height="5.8582678"
+         id="p5_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.7007874"
+         x="10.393701"
+         y="0.37795186" /><rect
+         gorn="0.4"
+         height="6.6141734"
+         id="p5_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.273853;stroke-opacity:1"
+         width="12.472441"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="5.8582678"
+         id="p5_rect787"
+         style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.784518"
+         width="8.3149605"
+         x="2.0787401"
+         y="0.37795275" /><g
+         aria-label="1002"
+         transform="scale(0.86760669,1.152596)"
+         id="p5_text369"
+         style="font-size:2.76179px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.156574;stroke-miterlimit:3.9"><path
+           d="M 4.4575169,2.5473433 V 2.2932586 L 5.0457782,1.9507966 H 5.2335799 V 3.9751887 H 4.9850188 V 2.2463082 Z"
+           id="p5_path293" /><path
+           d="m 7.2027353,2.9643736 q 0,0.5136929 -0.171231,0.7788248 -0.1684691,0.26237 -0.486075,0.26237 -0.3148441,0 -0.486075,-0.2651318 -0.1684692,-0.2651319 -0.1684692,-0.776063 0,-0.513693 0.1684692,-0.7788248 0.1712309,-0.2678936 0.486075,-0.2678936 0.3176059,0 0.486075,0.2651318 0.171231,0.2651318 0.171231,0.7815866 z m -1.0494802,0 q 0,0.4115067 0.093901,0.6131174 0.096663,0.2016106 0.2982733,0.2016106 0.2016107,0 0.2982733,-0.1988488 0.096663,-0.2016107 0.096663,-0.6158792 0,-0.4170303 -0.096663,-0.618641 Q 6.74704,2.1413601 6.5454293,2.1413601 q -0.2016107,0 -0.2982733,0.2043725 -0.093901,0.2016107 -0.093901,0.618641 z"
+           id="p5_path295" /><path
+           d="m 8.7769548,2.9643736 q 0,0.5136929 -0.171231,0.7788248 -0.1684692,0.26237 -0.486075,0.26237 -0.3148441,0 -0.4860751,-0.2651318 -0.1684692,-0.2651319 -0.1684692,-0.776063 0,-0.513693 0.1684692,-0.7788248 0.171231,-0.2678936 0.4860751,-0.2678936 0.3176058,0 0.486075,0.2651318 0.171231,0.2651318 0.171231,0.7815866 z m -1.0494802,0 q 0,0.4115067 0.093901,0.6131174 0.096663,0.2016106 0.2982734,0.2016106 0.2016106,0 0.2982733,-0.1988488 0.096663,-0.2016107 0.096663,-0.6158792 0,-0.4170303 -0.096663,-0.618641 -0.096663,-0.2043725 -0.2982733,-0.2043725 -0.2016107,0 -0.2982734,0.2043725 -0.093901,0.2016107 -0.093901,0.618641 z"
+           id="p5_path297" /><path
+           d="M 9.4204508,3.7570073 H 10.334603 V 3.9751887 H 9.0448473 V 3.8177667 L 9.6993916,3.0886541 Q 9.8844315,2.8842817 9.9534763,2.7682865 10.022521,2.6495295 10.022521,2.51144 q 0,-0.1767545 -0.096663,-0.2734172 -0.096663,-0.096663 -0.2430376,-0.096663 -0.1491366,0 -0.26237,0.1021863 -0.1132334,0.099424 -0.1629456,0.2651318 L 9.0586563,2.3954448 Q 9.1194157,2.168978 9.298932,2.0446975 9.4784484,1.9176552 9.6993916,1.9176552 q 0.1601838,0 0.2927497,0.069045 0.1325657,0.066283 0.2098957,0.1988489 0.08009,0.1298041 0.08009,0.3148441 0,0.1795163 -0.08838,0.3397001 -0.08838,0.1601838 -0.3093205,0.4032214 z"
+           id="p5_path299" /></g>
+  </svg>
+  <text x="25.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 1206</text>
+  <svg id="p6" x="44.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 12.472441 10.582677" preserveAspectRatio="xMidYMid meet">
+    <defs
+       id="p6_defs435" />
+        <desc
+       id="p6_desc417">
+            <referenceFile>resistor_icon_220.svg</referenceFile>
+        </desc>
+        
+    <rect
+       gorn="0.0.0"
+       height="9.8267727"
+       id="p6_connector0pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="1.8897638"
+       x="0.37795377"
+       y="0.37795186" /><rect
+       gorn="0.0.1"
+       height="9.8267727"
+       id="p6_connector1pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="1.8897638"
+       x="10.204724"
+       y="0.37795186" /><rect
+       gorn="0.1.0"
+       height="10.582677"
+       id="p6_silkscreen"
+       style="fill:none;stroke:none;stroke-width:0.346399;stroke-opacity:1"
+       width="12.472441"
+       x="0"
+       y="0" /><rect
+       style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.994508"
+       id="p6_rect787"
+       width="7.9753542"
+       height="9.8149948"
+       x="2.2677166"
+       y="0.37795275" /><g
+       aria-label="91R0"
+       transform="matrix(0.70112258,0.00666364,0,1.4262841,0,0)"
+       id="p6_text851"
+       style="font-size:3.86596px;font-family:Gabriola;-inkscape-font-specification:Gabriola;opacity:0.75;fill:#ffffff;fill-rule:evenodd;stroke-width:0.927834"><path
+         d="m 5.2674234,2.1454026 q 0.2667512,0 0.4755131,0.1159788 0.2087618,0.1159788 0.3247406,0.3247407 0.1159788,0.2087618 0.1159788,0.475513 0,0.2087618 -0.077319,0.386596 -0.073453,0.1739682 -0.2474214,0.4600492 l -0.676543,1.1133965 h -0.390462 l 0.58376,-0.9510262 q 0.054123,-0.085051 0.1082469,-0.1585043 -0.1198448,0.03866 -0.2667513,0.03866 -0.2512874,0 -0.4484513,-0.1198448 Q 4.5715506,3.7111164 4.4594378,3.5062205 4.3511909,3.3013246 4.3511909,3.0539032 q 0,-0.2551534 0.1159788,-0.4639152 Q 4.5870145,2.3812262 4.7957763,2.2652474 5.0084041,2.1454026 5.2674234,2.1454026 Z m 0,1.4883946 q 0.2512874,0 0.3981939,-0.1623703 0.1507724,-0.1662363 0.1507724,-0.4291216 0,-0.2628853 -0.1507724,-0.4213896 -0.1469065,-0.1623703 -0.3981939,-0.1623703 -0.2474214,0 -0.3981939,0.1623703 -0.1469064,0.1623703 -0.1469064,0.4213896 0,0.2628853 0.1469064,0.4291216 0.1469065,0.1623703 0.3981939,0.1623703 z"
+         style="font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC'"
+         id="p6_path294" /><path
+         d="M 6.7712805,3.0268415 V 2.6711732 L 7.59473,2.1917941 H 7.8576153 V 5.0255427 H 7.5096789 V 2.6054518 Z"
+         style="font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC'"
+         id="p6_path296" /><path
+         d="m 11.074093,5.0255427 h -0.42139 L 9.8331195,3.8657548 H 9.7983259 9.2725553 V 5.0255427 H 8.9284849 V 2.1956601 h 0.869841 q 0.2899471,0 0.5141731,0.1043809 0.228091,0.1043809 0.351802,0.2976789 0.127577,0.1894321 0.127577,0.4368535 0,0.2783491 -0.158505,0.483245 -0.158504,0.2010299 -0.436853,0.289947 z M 9.2725553,2.497205 v 1.0670049 h 0.483245 q 0.3286067,0 0.4987087,-0.1430405 0.173968,-0.1469065 0.173968,-0.386596 0,-0.2396895 -0.173968,-0.386596 Q 10.084407,2.497205 9.7558003,2.497205 Z"
+         style="font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC'"
+         id="p6_path298" /><path
+         d="m 13.09599,3.6106014 q 0,0.7190686 -0.239689,1.0902007 -0.235824,0.3672662 -0.680409,0.3672662 -0.44072,0 -0.680409,-0.3711322 -0.235824,-0.3711321 -0.235824,-1.0863347 0,-0.7190685 0.235824,-1.0902007 0.239689,-0.3749981 0.680409,-0.3749981 0.444585,0 0.680409,0.3711322 0.239689,0.3711321 0.239689,1.0940666 z m -1.469064,0 q 0,0.576028 0.131442,0.8582431 0.135309,0.2822151 0.417524,0.2822151 0.282215,0 0.417524,-0.2783491 0.135308,-0.2822151 0.135308,-0.8621091 0,-0.5837599 -0.135308,-0.865975 -0.135309,-0.286081 -0.417524,-0.286081 -0.282215,0 -0.417524,0.286081 -0.131442,0.2822151 -0.131442,0.865975 z"
+         style="font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC'"
+         id="p6_path300" /></g>
+  </svg>
+  <text x="59.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 1210</text>
+  <svg id="p7" x="78.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 17.763779 12.850394" preserveAspectRatio="xMidYMid meet">
+    <defs
+       id="p7_defs435" />
+        <desc
+       id="p7_desc417">
+            <referenceFile>resistor_icon_220.svg</referenceFile>
+        </desc>
+        <rect
+       gorn="0.2"
+       height="12.094488"
+       id="p7_connector0pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="1.8897638"
+       x="0.37795353"
+       y="0.37795186" />
+        <rect
+       gorn="0.3"
+       height="12.094488"
+       id="p7_connector1pad"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="1.8897638"
+       x="15.496063"
+       y="0.37795186" />
+        <rect
+       gorn="0.4"
+       height="12.850393"
+       id="p7_silkscreen"
+       style="fill:none;stroke:none;stroke-width:0.455542;stroke-opacity:1"
+       width="17.763779"
+       x="0"
+       y="0" />
+        <rect
+       gorn="0.5"
+       height="12.094488"
+       id="p7_rect787"
+       style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1.42179"
+       width="13.228347"
+       x="2.2677164"
+       y="0.37795275" />
+        
+    <g
+       aria-label="5100"
+       transform="scale(0.93264643,1.0722177)"
+       id="p7_text361"
+       style="font-size:4.99967px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.121478;stroke-miterlimit:3.9"><path
+         d="m 5.4127284,5.1317698 q 0.3249786,0 0.5799617,0.1549897 0.2549832,0.1499901 0.394974,0.4199723 0.1399907,0.2649825 0.1399907,0.6049601 0,0.3549766 -0.1549897,0.6299584 Q 6.2176753,7.2166322 5.9476931,7.3716219 5.6777109,7.521612 5.3477327,7.521612 4.9827568,7.521612 4.6977756,7.3416239 4.4177941,7.1566361 4.3078013,6.8066592 L 4.6677776,6.6016728 q 0.089994,0.2549831 0.2599828,0.3849746 0.1749885,0.1299914 0.4199723,0.1299914 0.3299782,0 0.5199657,-0.2199855 0.1899874,-0.2199855 0.1899874,-0.5649627 0,-0.3349779 -0.1849877,-0.5649627 Q 5.6927099,5.536743 5.3477327,5.536743 q -0.4349713,0 -0.6799551,0.394974 L 4.3827964,5.7867265 4.6327799,3.7968579 H 6.3626657 V 4.1868321 H 5.0227542 L 4.8777637,5.2717605 Q 5.0977492,5.1317698 5.4127284,5.1317698 Z"
+         id="p7_path294" /><path
+         d="M 7.3076018,4.8817863 V 4.4218166 L 8.3725315,3.8018575 H 8.7125091 V 7.4666157 H 8.2625388 V 4.3368222 Z"
+         id="p7_path296" /><path
+         d="m 12.277272,5.6367364 q 0,0.9299387 -0.309979,1.409907 -0.30498,0.4749686 -0.879942,0.4749686 -0.569963,0 -0.879942,-0.4799683 -0.30498,-0.4799683 -0.30498,-1.4049073 0,-0.9299386 0.30498,-1.4099069 0.309979,-0.484968 0.879942,-0.484968 0.574962,0 0.879942,0.4799683 0.309979,0.4799684 0.309979,1.4149066 z m -1.899874,0 q 0,0.7449509 0.169988,1.1099268 0.174989,0.3649759 0.539965,0.3649759 0.364976,0 0.539964,-0.3599762 0.174989,-0.3649759 0.174989,-1.1149265 0,-0.7549501 -0.174989,-1.119926 -0.174988,-0.3699756 -0.539964,-0.3699756 -0.364976,0 -0.539965,0.3699756 -0.169988,0.3649759 -0.169988,1.119926 z"
+         id="p7_path298" /><path
+         d="m 15.127082,5.6367364 q 0,0.9299387 -0.309979,1.409907 -0.30498,0.4749686 -0.879942,0.4749686 -0.569962,0 -0.879942,-0.4799683 -0.30498,-0.4799683 -0.30498,-1.4049073 0,-0.9299386 0.30498,-1.4099069 0.30998,-0.484968 0.879942,-0.484968 0.574962,0 0.879942,0.4799683 0.309979,0.4799684 0.309979,1.4149066 z m -1.899874,0 q 0,0.7449509 0.169989,1.1099268 0.174988,0.3649759 0.539964,0.3649759 0.364976,0 0.539964,-0.3599762 0.174989,-0.3649759 0.174989,-1.1149265 0,-0.7549501 -0.174989,-1.119926 -0.174988,-0.3699756 -0.539964,-0.3699756 -0.364976,0 -0.539964,0.3699756 -0.169989,0.3649759 -0.169989,1.119926 z"
+         id="p7_path300" /></g>
+  </svg>
+  <text x="93.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 1812</text>
+  <text x="93.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">4.7×3.4mm</text>
+  <svg id="p8" x="112.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 19.653544 10.204724" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p8_defs435" /><desc
+         id="p8_desc417" /><rect
+         gorn="0.2"
+         height="9.4488192"
+         id="p8_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="2.2677166"
+         x="0.37795377"
+         y="0.37795186" /><rect
+         gorn="0.3"
+         height="9.4488192"
+         id="p8_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="2.2677166"
+         x="17.007874"
+         y="0.37795186" /><rect
+         gorn="0.4"
+         height="10.204724"
+         id="p8_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.426997;stroke-opacity:1"
+         width="19.653543"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="9.4488192"
+         id="p8_rect787"
+         style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1.30945"
+         width="14.362205"
+         x="2.6456692"
+         y="0.37795275" /><g
+         aria-label="8R20"
+         transform="scale(0.95976493,1.0419218)"
+         id="p8_text361"
+         style="font-size:4.86014px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.118087;stroke-miterlimit:3.9"><path
+           d="m 6.5263475,4.77457 q 0.277028,0.1263637 0.4325525,0.3693707 0.1603846,0.243007 0.1603846,0.558916 0,0.3013287 -0.1458042,0.5443357 -0.140944,0.2381469 -0.4033916,0.3790909 -0.2575874,0.1360839 -0.5929371,0.1360839 -0.3450699,0 -0.6075174,-0.1360839 Q 5.1071867,6.4901994 4.9613825,6.2471924 4.8155783,6.0041854 4.8155783,5.7028567 q 0,-0.315909 0.1555245,-0.558916 Q 5.1314874,4.9009337 5.4133755,4.77457 5.1898091,4.6579267 5.0634454,4.4635211 4.9370818,4.2642554 4.9370818,4.0163882 q 0,-0.2527273 0.1312238,-0.4665734 0.1312238,-0.2138462 0.3693706,-0.3353497 0.2381469,-0.1263636 0.5394755,-0.1263636 0.2964686,0 0.5248951,0.1263636 0.2332868,0.1215035 0.3596504,0.3353497 0.1263636,0.208986 0.1263636,0.4665734 0,0.2478672 -0.1215035,0.4471329 Q 6.7450538,4.6579267 6.5263475,4.77457 Z M 5.9771517,3.4671924 q -0.2721678,0 -0.4325524,0.1555245 -0.1555245,0.1555245 -0.1555245,0.4082517 0,0.2478672 0.1555245,0.4033916 0.1603846,0.1555245 0.4325524,0.1555245 0.2673077,0 0.4228322,-0.1555245 0.1555245,-0.1603846 0.1555245,-0.4033916 0,-0.2478671 -0.1555245,-0.4033916 Q 6.2444594,3.4671924 5.9771517,3.4671924 Z m 0,2.9063636 q 0.311049,0 0.5005944,-0.1846853 0.1895455,-0.1846853 0.1895455,-0.5005944 0,-0.3207692 -0.1846853,-0.5103147 Q 6.297921,4.9884162 5.9771517,4.9884162 q -0.3256293,0 -0.5151748,0.1895454 -0.1846853,0.1895455 -0.1846853,0.5103147 0,0.3207693 0.1895455,0.5054546 0.1895454,0.1798251 0.5103146,0.1798251 z"
+           id="p8_path294" /><path
+           d="M 10.47278,6.7089057 H 9.9430244 L 8.9126747,5.2508637 H 8.8689335 8.2079544 v 1.458042 H 7.775402 V 3.1512833 h 1.0935315 q 0.3645104,0 0.6463986,0.1312238 0.2867482,0.1312238 0.4422727,0.3742308 0.1603842,0.2381468 0.1603842,0.5491958 0,0.34993 -0.1992653,0.6075175 Q 9.7194579,5.0661784 9.3695279,5.1779616 Z M 8.2079544,3.5303742 v 1.3413986 h 0.6075175 q 0.4131119,0 0.6269581,-0.1798251 0.2187062,-0.1846854 0.2187062,-0.486014 0,-0.3013287 -0.2187062,-0.486014 Q 9.2285838,3.5303742 8.8154719,3.5303742 Z"
+           id="p8_path296" /><path
+           d="m 11.376766,6.3249546 h 1.608707 V 6.7089057 H 10.715787 V 6.4318777 L 11.86764,5.1488008 q 0.32563,-0.3596503 0.447133,-0.5637762 0.121504,-0.208986 0.121504,-0.451993 0,-0.311049 -0.170105,-0.4811539 -0.170105,-0.1701049 -0.427692,-0.1701049 -0.262448,0 -0.461714,0.1798252 -0.199265,0.174965 -0.286748,0.4665734 l -0.34993,-0.1992657 q 0.106923,-0.3985315 0.422832,-0.6172378 0.315909,-0.2235664 0.70472,-0.2235664 0.281888,0 0.515175,0.1215035 0.233287,0.1166434 0.369371,0.3499301 0.140944,0.2284265 0.140944,0.5540559 0,0.3159091 -0.155525,0.5977972 -0.155524,0.2818881 -0.544335,0.7095804 z"
+           id="p8_path298" /><path
+           d="m 15.784911,4.9300945 q 0,0.903986 -0.301328,1.3705594 -0.296469,0.4617133 -0.855385,0.4617133 -0.554056,0 -0.855385,-0.4665734 -0.296468,-0.4665734 -0.296468,-1.3656993 0,-0.903986 0.296468,-1.3705594 0.301329,-0.4714336 0.855385,-0.4714336 0.558916,0 0.855385,0.4665734 0.301328,0.4665735 0.301328,1.3754196 z m -1.846853,0 q 0,0.7241609 0.165245,1.0789511 0.170105,0.3547902 0.524895,0.3547902 0.35479,0 0.524895,-0.3499301 0.170105,-0.3547902 0.170105,-1.0838112 0,-0.7338811 -0.170105,-1.0886713 -0.170105,-0.3596504 -0.524895,-0.3596504 -0.35479,0 -0.524895,0.3596504 -0.165245,0.3547902 -0.165245,1.0886713 z"
+           id="p8_path300" /></g>
+  </svg>
+  <text x="127.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 2010</text>
+  <svg id="p9" x="146.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 24.755905 12.850393" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p9_defs435" /><rect
+         gorn="0.2"
+         height="12.094488"
+         id="p9_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="2.2677166"
+         x="0.37795377"
+         y="0.37795186" /><rect
+         gorn="0.3"
+         height="12.094488"
+         id="p9_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="2.2677166"
+         x="22.110237"
+         y="0.37795186" /><rect
+         gorn="0.4"
+         height="12.850393"
+         id="p9_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.537775;stroke-opacity:1"
+         width="24.755905"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="12.094488"
+         id="p9_rect787"
+         style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1.72466"
+         width="19.464567"
+         x="2.6456692"
+         y="0.37795275" /><g
+         aria-label="R150"
+         id="p9_text360"
+         style="font-size:6px;font-family:'HarmonyOS Sans SC';-inkscape-font-specification:'HarmonyOS Sans SC';opacity:1;fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.113386;stroke-miterlimit:3.9"><path
+           d="m 9.1782801,8.8771334 h -0.654 l -1.272,-1.8 h -0.054 -0.816 v 1.8 h -0.534 v -4.392 h 1.35 q 0.45,0 0.798,0.162 0.354,0.162 0.546,0.462 0.198,0.294 0.198,0.678 0,0.432 -0.246,0.75 -0.246,0.312 -0.678,0.45 z m -2.796,-3.924 v 1.656 h 0.75 q 0.51,0 0.774,-0.222 0.27,-0.228 0.27,-0.6 0,-0.372 -0.27,-0.6 -0.264,-0.234 -0.774,-0.234 z"
+           id="p9_path421" /><path
+           d="m 9.7722813,5.7751334 v -0.552 l 1.2779997,-0.744 h 0.408 v 4.398 h -0.54 v -3.756 z"
+           id="p9_path423" /><path
+           d="m 14.338279,6.0751334 q 0.39,0 0.696,0.186 0.306,0.18 0.474,0.504 0.168,0.318 0.168,0.726 0,0.426 -0.186,0.756 -0.186,0.33 -0.51,0.516 -0.324,0.18 -0.72,0.18 -0.438,0 -0.78,-0.216 -0.336,-0.222 -0.468,-0.642 l 0.432,-0.246 q 0.108,0.306 0.312,0.462 0.21,0.156 0.504,0.156 0.396,0 0.624,-0.264 0.228,-0.264 0.228,-0.678 0,-0.402 -0.222,-0.678 -0.216,-0.276 -0.63,-0.276 -0.522,0 -0.816,0.474 l -0.342,-0.174 0.3,-2.388 h 2.076 v 0.468 h -1.608 l -0.174,1.302 q 0.264,-0.168 0.642,-0.168 z"
+           id="p9_path425" /><path
+           d="m 19.156278,6.6811334 q 0,1.116 -0.372,1.692 -0.366,0.57 -1.056,0.57 -0.684,0 -1.056,-0.576 -0.366,-0.576 -0.366,-1.686 0,-1.116 0.366,-1.692 0.372,-0.582 1.056,-0.582 0.69,0 1.056,0.576 0.372,0.576 0.372,1.698 z m -2.28,0 q 0,0.894 0.204,1.332 0.21,0.438 0.648,0.438 0.438,0 0.648,-0.432 0.21,-0.438 0.21,-1.338 0,-0.906 -0.21,-1.344 -0.21,-0.444 -0.648,-0.444 -0.438,0 -0.648,0.444 -0.204,0.438 -0.204,1.344 z"
+           id="p9_path427" /></g>
+  </svg>
+  <text x="161.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">R 2512</text>
+  <text x="161.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">6.55×3.4mm</text>
+  <svg id="p10" x="10.00" y="94.50" width="30.00" height="22.00" viewBox="-1.75 -0.90 3.50 1.80" preserveAspectRatio="xMidYMid meet">
+    <g id="p10_icon">
+      <rect x="-1.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
+      <rect x="0.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
+      <rect x="-1.60" y="-0.75" width="3.20" height="1.50" rx="0.2" ry="0.2" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
+     </g>
+  </svg>
+  <text x="25.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3215</text>
+  <text x="25.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.5×1.8mm</text>
+  <svg id="p11" x="44.00" y="94.50" width="30.00" height="22.00" viewBox="-1.65 -1.35 3.30 2.70" preserveAspectRatio="xMidYMid meet">
+    <g id="p11_icon">
+      <rect x="-1.65" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+      <rect x="0.55" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+      <rect x="0.55" y="0.15" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+      <rect x="-1.65" y="0.15" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
+      <rect x="-1.60" y="-1.25" width="3.20" height="2.50" rx="0.25" ry="0.25" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
+     </g>
+  </svg>
+  <text x="59.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3225</text>
+  <text x="59.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.3×2.7mm</text>
+  <svg id="p12" x="78.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 373.236 400" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p12_defs84" />
+      <g
+         gorn="0.1"
+         id="p12_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p12_icon">
+          <path
+             d="m 0,0 v 170 a 30.000002,30.000001 0 0 1 0,60 V 400 H 373.236 V 0 Z"
+             fill="#1f7a34"
+             gorn="0.1.0.0"
+             id="p12_path6"
+             stroke="none"
+             stroke-width="0" />
+          <g
+             gorn="0.1.0.1.0.0.0.0.0.0"
+             id="p12_g7970"
+             transform="translate(363.90376,140.96478)">
+            <path
+               d="m -215.31794,-23.94386 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.1"
+               id="p12_path3158"
+               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <path
+               d="m -215.31794,142.68158 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.2"
+               id="p12_path3158-0"
+               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <g
+               transform="matrix(0.8858577,0,0,0.88586692,69.625044,-111.3274)"
+               id="p12_g9">
+              <g
+                 gorn="0.1.0.1.0.0.0.0.0.0.0.0"
+                 id="p12_rect1358">
+                <path
+                   d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
+                   id="p12_path1362"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                <path
+                   d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
+                   id="p12_path1364"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,334.05512)"
+           id="p12_g31">
+          <g
+             gorn="0.1.1.0"
+             id="p12_g62">
+            <g
+               gorn="0.1.1.0.0"
+               id="p12_g60">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.1.0.0.0"
+                 height="31.9"
+                 id="p12_connector0pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.1.0.0.1"
+                 height="16.415199"
+                 id="p12_rect50"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.1.0.0.2"
+                 id="p12_polygon52"
+                 points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.1.0.0.3"
+                 id="p12_polygon54"
+                 points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.1.0.0.4"
+                 id="p12_polygon56"
+                 points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.1.0.0.5"
+                 id="p12_polygon58"
+                 points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 " />
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,34.05)"
+           id="p12_g41">
+          <g
+             gorn="0.1.2.0"
+             id="p12_g77">
+            <g
+               gorn="0.1.2.0.0"
+               id="p12_g75">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.2.0.0.0"
+                 height="31.9"
+                 id="p12_connector1pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.2.0.0.1"
+                 height="16.415199"
+                 id="p12_rect65"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.2.0.0.2"
+                 id="p12_polygon67"
+                 points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.2.0.0.3"
+                 id="p12_polygon69"
+                 points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.2.0.0.4"
+                 id="p12_polygon71"
+                 points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.2.0.0.5"
+                 id="p12_polygon73"
+                 points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+            </g>
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="93.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0420</text>
+  <text x="93.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×10.16mm</text>
+  <svg id="p13" x="112.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 373.236 400" preserveAspectRatio="xMidYMid meet">
+    <desc
+         id="p13_desc2">
+        <referenceFile>SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1_breadboard.svg</referenceFile>
+      </desc>
+      <defs
+         id="p13_defs84" />
+      <g
+         gorn="0.1"
+         id="p13_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p13_icon">
+          <path
+             d="m 0,0 v 170 a 30.000002,30.000001 0 0 1 0,60 V 400 H 373.236 V 0 Z"
+             fill="#1f7a34"
+             gorn="0.1.0.0"
+             id="p13_path6"
+             stroke="none"
+             stroke-width="0" />
+          <g
+             gorn="0.1.0.1.0.0.0.0.0.0"
+             id="p13_g7970"
+             transform="translate(364.16747,116.84518)">
+            <path
+               d="m -211.89079,-21.606339 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.1"
+               id="p13_path3158"
+               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <path
+               d="m -211.89079,189.8862 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.2"
+               id="p13_path3158-0"
+               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <g
+               transform="matrix(1.0967762,0,0,1.0967876,129.76619,-127.93931)"
+               id="p13_g9">
+              <g
+                 gorn="0.1.0.1.0.0.0.0.0.0.0.0"
+                 id="p13_rect1358">
+                <path
+                   d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
+                   id="p13_path1362"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                <path
+                   d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
+                   id="p13_path1364"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,334.05512)"
+           id="p13_g31">
+          <g
+             gorn="0.1.1.0"
+             id="p13_g62">
+            <g
+               gorn="0.1.1.0.0"
+               id="p13_g60">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.1.0.0.0"
+                 height="31.9"
+                 id="p13_connector0pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.1.0.0.1"
+                 height="16.415199"
+                 id="p13_rect50"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.1.0.0.2"
+                 id="p13_polygon52"
+                 points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.1.0.0.3"
+                 id="p13_polygon54"
+                 points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.1.0.0.4"
+                 id="p13_polygon56"
+                 points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.1.0.0.5"
+                 id="p13_polygon58"
+                 points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 " />
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,34.05)"
+           id="p13_g41">
+          <g
+             gorn="0.1.2.0"
+             id="p13_g77">
+            <g
+               gorn="0.1.2.0.0"
+               id="p13_g75">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.2.0.0.0"
+                 height="31.9"
+                 id="p13_connector1pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.2.0.0.1"
+                 height="16.415199"
+                 id="p13_rect65"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.2.0.0.2"
+                 id="p13_polygon67"
+                 points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.2.0.0.3"
+                 id="p13_polygon69"
+                 points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.2.0.0.4"
+                 id="p13_polygon71"
+                 points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.2.0.0.5"
+                 id="p13_polygon73"
+                 points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+            </g>
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="127.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0520</text>
+  <text x="127.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×10.16mm</text>
+  <svg id="p14" x="146.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 373.23603 499.99999" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p14_defs84">
+        
+        
+        
+        
+        
+        
+        
+        
+      </defs>
+      
+      <g
+         gorn="0.1"
+         id="p14_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p14_icon">
+          <path
+             d="m 0,0 v 212.49999 a 30.000002,37.5 0 0 1 0,75 V 499.99998 H 373.236 V 0 Z"
+             fill="#1f7a34"
+             stroke="none"
+             stroke-width="0"
+             id="p14_path6" />
+          <g
+             transform="translate(100,144.82)"
+             id="p14_g46">
+            <g
+               id="p14_g44">
+              <g
+                 id="p14_g42">
+                <g
+                   id="p14_g16">
+                  <g
+                     id="p14_g7970"
+                     transform="translate(261.34372)">
+                    <g
+                       id="p14_rect1358"
+                       transform="matrix(1.3920621,0,0,1.3920766,213.37957,-155.86981)">
+                      <path
+                         style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none"
+                         d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                         id="p14_path1362" />
+                      <path
+                         style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none"
+                         d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                         id="p14_path1364" />
+                    </g>
+                    <path
+                       style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+                       d="m -211.89079,-21.606339 h 78.74016"
+                       id="p14_path3158" />
+                    <path
+                       style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+                       d="m -211.89079,246.84823 h 78.74016"
+                       id="p14_path3158-0" />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,434.0551)"
+           id="p14_g62">
+          <g
+             id="p14_g60">
+            <rect
+               fill="#8d8c8c"
+               gorn="0.1.1.0.0"
+               height="31.9"
+               id="p14_connector0pin"
+               width="31.93"
+               x="0"
+               y="0" />
+            <rect
+               fill="#8c8663"
+               height="16.415199"
+               width="16.444201"
+               x="7.7915301"
+               y="7.7354398"
+               id="p14_rect50" />
+            <polygon
+               fill="#b8af82"
+               points="0,0 0,31.9 7.79153,24.1368 7.79153,6.97162 "
+               id="p14_polygon52" />
+            <polygon
+               fill="#80795b"
+               points="31.93,0 24.2079,7.76321 7.90264,7.76321 0,0 "
+               id="p14_polygon54" />
+            <polygon
+               fill="#5e5b43"
+               points="31.93,31.9 24.2079,24.1368 24.2079,7.76321 31.93,0 "
+               id="p14_polygon56" />
+            <polygon
+               fill="#9a916c"
+               points="31.93,31.9 0,31.9 7.87486,24.1368 24.2079,24.1368 "
+               id="p14_polygon58" />
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,34.05)"
+           id="p14_g77">
+          <g
+             id="p14_g75">
+            <rect
+               fill="#8d8c8c"
+               gorn="0.1.2.0.0"
+               height="31.9"
+               id="p14_connector1pin"
+               width="31.93"
+               x="0"
+               y="0" />
+            <rect
+               fill="#8c8663"
+               height="16.415199"
+               width="16.444201"
+               x="7.7915301"
+               y="7.7354398"
+               id="p14_rect65" />
+            <polygon
+               fill="#b8af82"
+               points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 "
+               id="p14_polygon67" />
+            <polygon
+               fill="#80795b"
+               points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 "
+               id="p14_polygon69" />
+            <polygon
+               fill="#5e5b43"
+               points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 "
+               id="p14_polygon71" />
+            <polygon
+               fill="#9a916c"
+               points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 "
+               id="p14_polygon73" />
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="161.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0630</text>
+  <text x="161.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×12.7mm</text>
+  <svg id="p15" x="10.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 522.44097 600.00001" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p15_defs84" />
+      <g
+         gorn="0.1"
+         id="p15_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p15_icon">
+          <path
+             d="m 0,0 v 255 a 41.992812,45.000002 0 0 1 0,90 V 600 H 522.44095 V 0 Z"
+             fill="#1f7a34"
+             gorn="0.1.0.0"
+             id="p15_path6"
+             stroke="none"
+             stroke-width="0" />
+          <g
+             transform="translate(134.07985,209.06916)"
+             id="p15_g20">
+            <g
+               gorn="0.1.0.1.0"
+               id="p15_g46">
+              <g
+                 gorn="0.1.0.1.0.0"
+                 id="p15_g44">
+                <g
+                   gorn="0.1.0.1.0.0.0"
+                   id="p15_g42">
+                  <g
+                     gorn="0.1.0.1.0.0.0.0"
+                     id="p15_g16">
+                    <g
+                       transform="translate(261.34372)"
+                       id="p15_g14">
+                      <g
+                         gorn="0.1.0.1.0.0.0.0.0.0"
+                         id="p15_g7970">
+                        <g
+                           transform="matrix(2.109185,0,0,2.109207,455.24993,-315.85569)"
+                           id="p15_g9">
+                          <g
+                             gorn="0.1.0.1.0.0.0.0.0.0.0.0"
+                             id="p15_rect1358">
+                            <path
+                               d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                               gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
+                               id="p15_path1362"
+                               style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                            <path
+                               d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                               gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
+                               id="p15_path1364"
+                               style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                          </g>
+                        </g>
+                        <path
+                           d="M -227.87265,-120.68332 H -31.02227"
+                           gorn="0.1.0.1.0.0.0.0.0.0.1"
+                           id="p15_path3158"
+                           style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:29.5276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           d="M -227.87266,302.54502 H -31.022268"
+                           gorn="0.1.0.1.0.0.0.0.0.0.2"
+                           id="p15_path3158-0"
+                           style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:29.5276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(245.47244,534.05512)"
+           id="p15_g31">
+          <g
+             gorn="0.1.1.0"
+             id="p15_g62">
+            <g
+               gorn="0.1.1.0.0"
+               id="p15_g60">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.1.0.0.0"
+                 height="31.9"
+                 id="p15_connector0pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.1.0.0.1"
+                 height="16.415199"
+                 id="p15_rect50"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.1.0.0.2"
+                 id="p15_polygon52"
+                 points="0,0 0,31.9 7.79153,24.1368 7.79153,6.97162 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.1.0.0.3"
+                 id="p15_polygon54"
+                 points="31.93,0 24.2079,7.76321 7.90264,7.76321 0,0 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.1.0.0.4"
+                 id="p15_polygon56"
+                 points="31.93,31.9 24.2079,24.1368 24.2079,7.76321 31.93,0 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.1.0.0.5"
+                 id="p15_polygon58"
+                 points="31.93,31.9 0,31.9 7.87486,24.1368 24.2079,24.1368 " />
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(245.47244,34.05)"
+           id="p15_g41">
+          <g
+             gorn="0.1.2.0"
+             id="p15_g77">
+            <g
+               gorn="0.1.2.0.0"
+               id="p15_g75">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.2.0.0.0"
+                 height="31.9"
+                 id="p15_connector1pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.2.0.0.1"
+                 height="16.415199"
+                 id="p15_rect65"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.2.0.0.2"
+                 id="p15_polygon67"
+                 points="7.79153,24.1368 7.79153,6.97162 0,0 0,31.9 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.2.0.0.3"
+                 id="p15_polygon69"
+                 points="7.90264,7.76321 0,0 31.93,0 24.2079,7.76321 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.2.0.0.4"
+                 id="p15_polygon71"
+                 points="24.2079,7.76321 31.93,0 31.93,31.9 24.2079,24.1368 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.2.0.0.5"
+                 id="p15_polygon73"
+                 points="7.87486,24.1368 24.2079,24.1368 31.93,31.9 0,31.9 " />
+            </g>
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="25.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1040</text>
+  <text x="25.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">13.27×15.24mm</text>
+  <svg id="p16" x="44.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p16_defs84" />
+      <g
+         gorn="0.1"
+         id="p16_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p16_icon">
+          <path
+             d="m 0,0 v 339.99999 a 49.998976,60.000001 0 0 1 0,120 V 799.99998 H 622.04723 V 0 Z"
+             fill="#1f7a34"
+             gorn="0.1.0.0"
+             id="p16_path6"
+             stroke="none"
+             stroke-width="0" />
+          <g
+             transform="translate(134.07985,209.06916)"
+             id="p16_g24">
+            <g
+               gorn="0.1.0.1.0"
+               id="p16_g20">
+              <g
+                 gorn="0.1.0.1.0.0"
+                 id="p16_g46">
+                <g
+                   gorn="0.1.0.1.0.0.0"
+                   id="p16_g44">
+                  <g
+                     gorn="0.1.0.1.0.0.0.0"
+                     id="p16_g42">
+                    <g
+                       gorn="0.1.0.1.0.0.0.0.0"
+                       id="p16_g18">
+                      <g
+                         transform="translate(261.34372)"
+                         id="p16_g16">
+                        <g
+                           gorn="0.1.0.1.0.0.0.0.0.0.0"
+                           id="p16_g14">
+                          <g
+                             gorn="0.1.0.1.0.0.0.0.0.0.0.0"
+                             id="p16_g7970">
+                            <g
+                               transform="matrix(2.657573,0,0,2.6576007,658.45232,-321.62017)"
+                               id="p16_g10">
+                              <g
+                                 gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0"
+                                 id="p16_g9">
+                                <g
+                                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0"
+                                   id="p16_rect1358">
+                                  <path
+                                     d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                                     gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0"
+                                     id="p16_path1362"
+                                     style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                  <path
+                                     d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                                     gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.1"
+                                     id="p16_path1364"
+                                     style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                </g>
+                              </g>
+                            </g>
+                            <path
+                               d="M -176.69156,-65.153034 H 20.158824"
+                               gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
+                               id="p16_path3158"
+                               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                            <path
+                               d="M -176.69156,446.84882 H 20.158829"
+                               gorn="0.1.0.1.0.0.0.0.0.0.0.0.2"
+                               id="p16_path3158-0"
+                               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(295.27558,734.0551)"
+           id="p16_g36">
+          <g
+             gorn="0.1.1.0"
+             id="p16_g31">
+            <g
+               gorn="0.1.1.0.0"
+               id="p16_g62">
+              <g
+                 gorn="0.1.1.0.0.0"
+                 id="p16_g60">
+                <rect
+                   fill="#8d8c8c"
+                   gorn="0.1.1.0.0.0.0"
+                   height="31.9"
+                   id="p16_connector0pin"
+                   width="31.93"
+                   x="0"
+                   y="0" />
+                <rect
+                   fill="#8c8663"
+                   gorn="0.1.1.0.0.0.1"
+                   height="16.415199"
+                   id="p16_rect50"
+                   width="16.444201"
+                   x="7.7915301"
+                   y="7.7354398" />
+                <polygon
+                   fill="#b8af82"
+                   gorn="0.1.1.0.0.0.2"
+                   id="p16_polygon52"
+                   points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                <polygon
+                   fill="#80795b"
+                   gorn="0.1.1.0.0.0.3"
+                   id="p16_polygon54"
+                   points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                <polygon
+                   fill="#5e5b43"
+                   gorn="0.1.1.0.0.0.4"
+                   id="p16_polygon56"
+                   points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                <polygon
+                   fill="#9a916c"
+                   gorn="0.1.1.0.0.0.5"
+                   id="p16_polygon58"
+                   points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(295.27558,34.05)"
+           id="p16_g47">
+          <g
+             gorn="0.1.2.0"
+             id="p16_g41">
+            <g
+               gorn="0.1.2.0.0"
+               id="p16_g77">
+              <g
+                 gorn="0.1.2.0.0.0"
+                 id="p16_g75">
+                <rect
+                   fill="#8d8c8c"
+                   gorn="0.1.2.0.0.0.0"
+                   height="31.9"
+                   id="p16_connector1pin"
+                   width="31.93"
+                   x="0"
+                   y="0" />
+                <rect
+                   fill="#8c8663"
+                   gorn="0.1.2.0.0.0.1"
+                   height="16.415199"
+                   id="p16_rect65"
+                   width="16.444201"
+                   x="7.7915301"
+                   y="7.7354398" />
+                <polygon
+                   fill="#b8af82"
+                   gorn="0.1.2.0.0.0.2"
+                   id="p16_polygon67"
+                   points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                <polygon
+                   fill="#80795b"
+                   gorn="0.1.2.0.0.0.3"
+                   id="p16_polygon69"
+                   points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                <polygon
+                   fill="#5e5b43"
+                   gorn="0.1.2.0.0.0.4"
+                   id="p16_polygon71"
+                   points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                <polygon
+                   fill="#9a916c"
+                   gorn="0.1.2.0.0.0.5"
+                   id="p16_polygon73"
+                   points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="59.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1250</text>
+  <text x="59.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
+  <svg id="p17" x="78.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
+    <desc>
+            <referenceFile>SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_icon.svg</referenceFile>
+        </desc>
+        <defs id="p17_defs84" />
+        <g gorn="0.1" id="p17_breadboard" >
+            <g gorn="0.1.0" id="p17_icon" >
+                <path d="m 0,0 v 339.99999 a 49.998976,60.000001 0 0 1 0,120 V 799.99998 H 622.04723 V 0 Z" fill="#1f7a34" gorn="0.1.0.0" id="p17_path6" stroke="none" stroke-width="0" />
+                <g transform="translate(134.07985,209.06916)" >
+                    <g gorn="0.1.0.1.0" id="p17_g24" >
+                        <g gorn="0.1.0.1.0.0" id="p17_g20" >
+                            <g gorn="0.1.0.1.0.0.0" id="p17_g46" >
+                                <g gorn="0.1.0.1.0.0.0.0" id="p17_g44" >
+                                    <g gorn="0.1.0.1.0.0.0.0.0" id="p17_g42" >
+                                        <g gorn="0.1.0.1.0.0.0.0.0.0" id="p17_g18" >
+                                            <g transform="translate(261.34372)" >
+                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0" id="p17_g16" >
+                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0" id="p17_g14" >
+                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0" id="p17_g7970" >
+                                                            <g transform="matrix(2.657573,0,0,2.6576007,658.45232,-321.62017)" >
+                                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0" id="p17_g10" >
+                                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p17_g9" >
+                                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p17_rect1358" >
+                                                                            <path d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p17_path1362" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                                                            <path d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1" id="p17_path1364" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                                                        </g>
+                                                                    </g>
+                                                                </g>
+                                                            </g>
+                                                            <path d="M -176.69156,-65.153034 H 20.158824" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.1" id="p17_path3158" style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                                                            <path d="M -176.69156,446.84882 H 20.158829" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.2" id="p17_path3158-0" style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+            <g transform="translate(295.27558,734.0551)" >
+                <g gorn="0.1.1.0" id="p17_g36" >
+                    <g gorn="0.1.1.0.0" id="p17_g31" >
+                        <g gorn="0.1.1.0.0.0" id="p17_g62" >
+                            <g gorn="0.1.1.0.0.0.0" id="p17_g60" >
+                                <rect fill="#8d8c8c" gorn="0.1.1.0.0.0.0.0" height="31.9" id="p17_connector0pin" width="31.93" x="0"  y="0"/>
+                                <rect fill="#8c8663" gorn="0.1.1.0.0.0.0.1" height="16.415199" id="p17_rect50" width="16.444201" x="7.7915301"  y="7.7354398"/>
+                                <polygon fill="#b8af82" gorn="0.1.1.0.0.0.0.2" id="p17_polygon52" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                                <polygon fill="#80795b" gorn="0.1.1.0.0.0.0.3" id="p17_polygon54" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                                <polygon fill="#5e5b43" gorn="0.1.1.0.0.0.0.4" id="p17_polygon56" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                                <polygon fill="#9a916c" gorn="0.1.1.0.0.0.0.5" id="p17_polygon58" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+            <g transform="translate(295.27558,34.05)" >
+                <g gorn="0.1.2.0" id="p17_g47" >
+                    <g gorn="0.1.2.0.0" id="p17_g41" >
+                        <g gorn="0.1.2.0.0.0" id="p17_g77" >
+                            <g gorn="0.1.2.0.0.0.0" id="p17_g75" >
+                                <rect fill="#8d8c8c" gorn="0.1.2.0.0.0.0.0" height="31.9" id="p17_connector1pin" width="31.93" x="0"  y="0"/>
+                                <rect fill="#8c8663" gorn="0.1.2.0.0.0.0.1" height="16.415199" id="p17_rect65" width="16.444201" x="7.7915301"  y="7.7354398"/>
+                                <polygon fill="#b8af82" gorn="0.1.2.0.0.0.0.2" id="p17_polygon67" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                                <polygon fill="#80795b" gorn="0.1.2.0.0.0.0.3" id="p17_polygon69" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                                <polygon fill="#5e5b43" gorn="0.1.2.0.0.0.0.4" id="p17_polygon71" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                                <polygon fill="#9a916c" gorn="0.1.2.0.0.0.0.5" id="p17_polygon73" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+  </svg>
+  <text x="93.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1265</text>
+  <text x="93.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
+  <text x="8" y="164" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">格内按各自比例缩放（不同格不同比例）；下方数字 = icon 文件自己声明的尺寸</text>
+  <text x="8" y="168" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">本库新做的元件按实物 1:1 画；早年从 fritzing-parts 导入的图标可能是视觉比例</text>
+</svg>
