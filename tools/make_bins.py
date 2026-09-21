@@ -14,6 +14,11 @@
 - ★ **每条 `<instance>` 必须带 `<views/>`**：`modelbase.cpp` 的加载循环里有
   `if (views.isNull() || view.isNull()) { // do not load a part with no views … continue; }`
   —— 少了它，箱是空的。
+- ★ **箱图标要内嵌 SVG 文本**：`icon="…"` 里写的不是文件名，而是**整段 SVG 源码**，
+  而且必须含 `<title>Fritzing Custom Icon</title>`（`partsbinpalettewidget.cpp`：
+  `isCustomSvg(s) = s.startsWith("<?xml") && s.contains("Fritzing Custom Icon")`）——
+  不满足就退回内置图标，**6 个箱全长成 MINE、看不出区别**（踩过）。
+  本工具用每组代表零件**自己的 icon 几何**缩进 64×64 画布当箱图标（不手绘）。
 - `modelIndex` **不写**：那是 Fritzing 保存时的运行时编号，不是箱文件的要求。
 - 箱里存的是**零件引用**（`path` 指到已安装的 `.fzp`），不是拷贝；零件一动，那条就失效。
 
@@ -29,18 +34,34 @@ import re
 import sys
 import pathlib
 import xml.etree.ElementTree as ET
+import xml.sax.saxutils as saxutils
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from make_preview import SHEETS, SVG_DIR          # noqa: E402  分类表的唯一来源
+from make_preview import (SHEETS, SVG_DIR, ROOT_RE, ATTR_RE, find_icon,   # noqa: E402
+                          viewbox_of, strip_shell, namespace, scope_style)
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 HOME = pathlib.Path.home()
 DEF_FRITZING = HOME / "Documents" / "Fritzing"
 BIN_PREFIX = "fzh_"          # 我们生成的箱文件名前缀（别与 my_parts.fzb / 别人的箱混）
-BIN_ICON = "Mine.png"        # 与 my_parts.fzb 同一个内置图标名（保证资源存在）
 HASH_RE = re.compile(r"_[0-9a-f]{16,}_\d+$")
 TRAIL_RE = re.compile(r"_\d+$")
+
+# 箱图标：Fritzing 只认「内嵌在 icon="…" 里的 SVG 文本」，而且该 SVG 里必须含这句 title
+# （`partsbinpalettewidget.cpp`：`isCustomSvg(s) = s.startsWith("<?xml") && s.contains(CustomIconTitle)`，
+#  CustomIconTitle = "Fritzing Custom Icon"）。否则退回内置图标 —— 6 个箱就全长成 MINE。
+ICON_MARKER = "Fritzing Custom Icon"
+ICON_BOX, ICON_PAD = 64.0, 2.0        # 图标画布 64×64（QtSvg 按 viewBox 出图）
+# 每组拿哪个零件当箱图标（要一眼能认出来；顺便选了体积小的 icon）
+BIN_ICON_OF = {
+    "chips": "CH32V203C8T6",        # QFP48 顶视
+    "power": "Li300mAh",            # 电池
+    "modules": "ESP32-S3-WROOM-1",  # 带天线模块
+    "conn": "TypeC16Pin",           # USB-C 座
+    "passive": "Resistor-0603",     # 贴片电阻
+    "discrete": "BAT54S",           # SOT-23 三脚
+}
 
 
 def base(key):
@@ -109,11 +130,33 @@ def match(entry, index):
     return None, f"未装（试过：{'、'.join(keys)}）"
 
 
-def fzb_text(title, members, fritzing_version):
+def bin_icon_svg(sub, key):
+    """一个箱的图标：把该组代表零件**自己的 icon 几何**缩进 64×64 方框（不手绘）。
+
+    用 `transform` 把源 viewBox 映射进方框（不靠嵌套 `<svg>`，少一层渲染器差异）。
+    """
+    icon = find_icon(SVG_DIR / sub)
+    txt = icon.read_text(encoding="utf-8")
+    m = ROOT_RE.search(txt)
+    attrs = dict(ATTR_RE.findall(m.group(1)))
+    vb = [float(v) for v in re.split(r"[\s,]+", viewbox_of(attrs, icon.name).strip())]
+    inner = scope_style(namespace(strip_shell(txt[m.end():].rsplit("</svg>", 1)[0]), key), key)
+    s = min((ICON_BOX - 2 * ICON_PAD) / vb[2], (ICON_BOX - 2 * ICON_PAD) / vb[3])
+    cx, cy = vb[0] + vb[2] / 2, vb[1] + vb[3] / 2
+    return (f'<?xml version="1.0" encoding="UTF-8"?>\n'
+            f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
+            f'width="{ICON_BOX:g}" height="{ICON_BOX:g}" viewBox="0 0 {ICON_BOX:g} {ICON_BOX:g}">\n'
+            f'<title>{ICON_MARKER}</title>\n'
+            f'<g id="{key}" transform="translate({ICON_BOX / 2:g},{ICON_BOX / 2:g}) scale({s:.6g}) '
+            f'translate({-cx:g},{-cy:g})">\n{inner}\n</g>\n</svg>\n')
+
+
+def fzb_text(title, members, fritzing_version, icon_text):
     ver = f' fritzingVersion="{fritzing_version}"' if fritzing_version else ""
+    icon_attr = saxutils.escape(icon_text, {'"': "&quot;"})      # 整段 SVG 进属性
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              f'<!-- 由 fritzing-parts-langhua 的 tools/make_bins.py 生成（勿手改） -->',
-             f'<module{ver} icon="{BIN_ICON}">',
+             f'<module{ver} icon="{icon_attr}">',
              f'    <title>{title}</title>',
              '    <instances>']
     for module_id, path in members:
@@ -143,6 +186,10 @@ def verify(bins_dir, quiet=False):
     bad, total = 0, 0
     for f in sorted(bins_dir.glob(f"{BIN_PREFIX}*.fzb")):
         root = ET.fromstring(f.read_text(encoding="utf-8"))
+        icon = root.get("icon") or ""
+        if not (icon.startswith("<?xml") and ICON_MARKER in icon):
+            bad += 1
+            print(f"  !! 箱图标不是内嵌自定义 SVG（会退回内置 MINE 图标）：{f.name}")
         for it in root.findall("./instances/instance"):
             total += 1
             p = pathlib.Path(it.get("path") or "")
@@ -205,7 +252,10 @@ def main():
         if member_out := members:
             if write:
                 out = bins_dir / f"{BIN_PREFIX}{name}.fzb"
-                out.write_text(fzb_text(title, member_out, version), encoding="utf-8", newline="\n")
+                icon_sub = BIN_ICON_OF.get(name, items[0][0])
+                out.write_text(
+                    fzb_text(title, member_out, version, bin_icon_svg(icon_sub, name)),
+                    encoding="utf-8", newline="\n")
                 total_written += 1
 
     print(f"\n合计：分类表里 {total_parts} 个零件，命中 {total_parts - len(missing_all)}，"
