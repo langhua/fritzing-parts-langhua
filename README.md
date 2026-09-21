@@ -41,12 +41,12 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 **同一个分组也能变成 Fritzing 里的元件箱**（不用在界面上一个个点）：
 
 ```bash
-python tools/make_bins.py            # 写成 <用户目录>/Documents/Fritzing/bins/fzh_*.fzb
+python tools/make_fzb.py             # 写成 <用户目录>/Documents/Fritzing/bins/fzh_*.fzb
 ```
 
 重启 Fritzing 后，元件面板里会多出这 6 个箱（标题与上面的图一致），**每个箱内部还按用途分了小节**
 （如电源箱：DC-DC / LDO / 锂电充电 / 锂电保护 / 电池）。分组表只有一份
-——`tools/make_preview.py` 的 `SHEETS`（箱内小节表在 `tools/make_bins.py` 的 `SECTIONS`，
+——`tools/make_preview.py` 的 `SHEETS`（箱内小节表在 `tools/make_fzb.py` 的 `SECTIONS`，
 两者必须盖住同一批元件，脚本会自检）——所以「README 里的图」与「Fritzing 里的箱」永远同源。
 箱文件写在 `<用户目录>/Documents/Fritzing/bins`（**Fritzing 只读那里** —— 路径写死在 `folderutils.cpp`，
 没有配置项），同时镜像一份到本仓 `fzb/`（同 `fzpz/` 的惯例：那层放 `.fzpz`，这层放 `.fzb` + 箱图标 PNG；

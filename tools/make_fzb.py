@@ -31,12 +31,12 @@
 与别人的箱一律不碰。
 
 用法：
-    python tools/make_bins.py                 # 写进 ~/Documents/Fritzing/bins，并镜像一份到仓库 `fzb/`
-    python tools/make_bins.py --list          # 只报告，不写文件
-    python tools/make_bins.py --verbose       # 逐条报告「哪个零件按什么规则匹配到哪个已装 fzp」
-    python tools/make_bins.py --verify --list # 只自检已有箱（写入后也会自动跑一次）
-    python tools/make_bins.py --no-mirror     # 不写仓库 `fzb/`（只写 Fritzing 目录）
-    python tools/make_bins.py --bins-dir D:\\x --parts-dir D:\\y    # 换目录（别的机器/别的盘）
+    python tools/make_fzb.py                  # 写进 ~/Documents/Fritzing/bins，并镜像一份到仓库 `fzb/`
+    python tools/make_fzb.py --list           # 只报告，不写文件
+    python tools/make_fzb.py --verbose        # 逐条报告「哪个零件按什么规则匹配到哪个已装 fzp」
+    python tools/make_fzb.py --verify --list  # 只自检已有箱（写入后也会自动跑一次）
+    python tools/make_fzb.py --no-mirror      # 不写仓库 `fzb/`（只写 Fritzing 目录）
+    python tools/make_fzb.py --bins-dir D:\\x --parts-dir D:\\y    # 换目录（别的机器/别的盘）
 
 ★ **两个目录的分工别搞反**：
   · 主输出 = `<Documents>/Fritzing/bins` —— **Fritzing 只读这里**（路径写死在 `folderutils.cpp`：
@@ -237,7 +237,7 @@ def fzb_text(title, members, fritzing_version, icon_name):
     """members 里每个元素：`(SPACER_ID, 小节名, None)` 是小节分割栏，否则是 `(moduleId, path, how)`。"""
     ver = f' fritzingVersion="{fritzing_version}"' if fritzing_version else ""
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             f'<!-- 由 fritzing-parts-langhua 的 tools/make_bins.py 生成（勿手改） -->',
+             f'<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->',
              f'<module{ver} icon="{icon_name}">',
              f'    <title>{title}</title>',
              '    <instances>']
