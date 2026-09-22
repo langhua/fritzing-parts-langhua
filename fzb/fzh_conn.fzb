@@ -47,6 +47,9 @@
         <instance moduleIdRef="TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="SMT-SW-PTS-820" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMT-SW-PTS-820.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="按键">
         <views>
             <iconView layer="icon">

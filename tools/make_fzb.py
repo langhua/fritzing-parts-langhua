@@ -104,9 +104,10 @@ SECTIONS = {
     "conn": [
         ("插座 / 连接器", ["TypeC16Pin", "USB-B01", "FPC-05F-12P-H15", "RJ45-8P8C",
                           "RJ45-8P8C rev.1", "SMA-PJ1.7-L9.5"]),
-        ("拨动 / 滑动开关", ["DPDT7x7-6P", "SK-12D02VG3", "DSIC01LS-P", "TS-D014"]),
+        ("拨动 / 滑动开关", ["DPDT7x7-6P", "SK-12D02VG3", "DSIC01LS-P", "TS-D014",
+                            "SMT-SW-PTS-820"]),
         ("按键", ["PB86-A0-BLACK", "PB86-A0-BLUE", "PB86-A0-GRAY", "PB86-A0-GREEN",
-                 "PB86-A0-RED", "PB86-A0-YELLOW", "SMT-SW-PTS-820"]),
+                 "PB86-A0-RED", "PB86-A0-YELLOW"]),
         ("网络标签焊盘", ["NetLabel-Pad"]),
     ],
     "passive": [
