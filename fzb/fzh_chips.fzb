@@ -73,6 +73,16 @@
         <instance moduleIdRef="AT24C02" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/AT24C02.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="安全元件">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="ATECC608B" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/ATECC608B.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="显示 / LED 驱动">
         <views>
             <iconView layer="icon">
