@@ -28,13 +28,13 @@
   <circle cx="100.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
   <circle id="connector4pin" connectorname="SDA" cx="400.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="400.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
-  <text x="35.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 35.0 100.0)">1</text>
-  <text x="465.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 465.0 100.0)">8</text>
-  <text x="35.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 35.0 200.0)">2</text>
-  <text x="465.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 465.0 200.0)">7</text>
-  <text x="35.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 35.0 300.0)">3</text>
-  <text x="465.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 465.0 300.0)">6</text>
-  <text x="35.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 35.0 400.0)">4</text>
-  <text x="465.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(90 465.0 400.0)">5</text>
+  <text x="35.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">1</text>
+  <text x="465.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">8</text>
+  <text x="35.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">2</text>
+  <text x="465.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">7</text>
+  <text x="35.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">3</text>
+  <text x="465.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">6</text>
+  <text x="35.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">4</text>
+  <text x="465.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">5</text>
  </g>
 </svg>

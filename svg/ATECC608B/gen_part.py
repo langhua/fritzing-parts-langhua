@@ -266,18 +266,20 @@ def gen_breadboard_svg():
                      f'cx="{xx:.1f}" cy="{y:.1f}" r="{pad_r:.1f}" '
                      f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
             s.append(f'  <circle cx="{xx:.1f}" cy="{y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 脚号：焊盘**外侧**（照片里就是外侧），字体顺时针旋转 90°（`rotate(90)`）
-    # ⚠ 与 AGENTS §3b 的差别：§3b 写的是 `rotate(-90 x y)`（**逆**时针）；
-    #   用户 2026-09-22 看渲染后指定本件要**顺**时针 ⇒ 以用户观察为准（§3b 那条不动，仅本件从顺）。
+    # 脚号：焊盘**外侧**（照片里就是外侧），**不旋转**（水平正着写）
+    # ⚠ 旋转这事来回改过：§3b 写的是 `rotate(-90 x y)`（逆时针）→ 用户 2026-09-22 说顺时针
+    #   （`rotate(90)`）→ 随即澄清：「文字**不转动**」⇒ 现在**不加 transform**。
+    #   位置/字号仍是外侧 48（1.22mm）。水平写时字宽 ±13、字高 ±17，都还在板内且不压焊盘环
+    #   （数字 x 22..48 与焊盘环 60.6..139.4 不重叠）。
     nx_l, nx_r = x_left - NUM_OFF, x_right + NUM_OFF
     for i in range(per):
         y = y_pins[i]
         s.append(f'  <text x="{nx_l:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
-                 f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(90 {nx_l:.1f} {y:.1f})">{i + 1}</text>\n')
+                 f'text-anchor="middle" dominant-baseline="central" '
+                 f'font-family="DroidSans">{i + 1}</text>\n')
         s.append(f'  <text x="{nx_r:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
-                 f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(90 {nx_r:.1f} {y:.1f})">{per * 2 - i}</text>\n')
+                 f'text-anchor="middle" dominant-baseline="central" '
+                 f'font-family="DroidSans">{per * 2 - i}</text>\n')
     s.append(' </g>\n</svg>\n')
     return "".join(s)
 
