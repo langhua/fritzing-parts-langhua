@@ -285,19 +285,55 @@ def _pcb_pads_48():
 
 
 # ==========================================================================
-# 面包板 —— nanoCH32V203 开发板
+# 面包板 —— nanoCH32V203 开发板：**几何全部来自 byHand_tables.py**
 # ==========================================================================
-BB_SCALE = 7.2 / 100.0          # 0.072
-BW = 2047                       # 52 mm
-BH = 1181                       # 30 mm
-PIN_PITCH = 100
-HDR_TOP_Y = 74
-HDR_BOT_Y = BH - 74
-HDR_X = [74 + i * PIN_PITCH for i in range(20)]
+# 用户 2026-09-22 重新手画了一版（旧程序版**漏了板载蓝色 LED**、按键位置也不对）：
+#   svg/CH32V203C8T6/svg.breadboard.CH32V203C8T6_breadboard_byHand.svg（草稿，不入库）
+#     → tools/byhand_export.py svg\CH32V203C8T6 → byHand_tables.py（纯数据，入库）
+#     → 本文件只负责**照表出图**（换位置请改手工版重跑导出，**不要在这里改坐标**）
+# ★ 焊盘坐标与旧程序版**逐只核对过**：最大偏差 0.36 内部单位（0.01mm）
+#   ⇒ 已有电路图（cstep 两张 .fzz）里的导线仍对得上，不用重接。
+# ★ 板框**也在表里**（本件的板色 `#4d4d4d` 不在导出器的 SKIP_RECT_FILL 里）
+#   ⇒ 这里**不再另画板框**，免得盖掉手工版。
+BB_SCALE = 7.2 / 100.0          # 内部单位（100 = 2.54mm）→ viewBox 单位（pt）
 
-# (排针标签 -> 芯片脚连接器下标见 _HDR2CN；5V/G 在 breadboard 循环内处理)
+from byHand_tables import (PAD_R, PAD_SW, PAD_FILL, PAD_EDGE,        # noqa: E402
+                           DOC_MM_W, DOC_MM_H, DOC_VIEWBOX, DEFS, PADS, ICONS,
+                           TEXTS, SHAPES)
 
 
+def _num(v, default=0.0):
+    """表里的数值字段：可能是数值，也可能是 "None"（那项样式没写）。"""
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return default
+
+
+def _n(v):
+    """数值 → 紧凑字符串（坐标 / 尺寸 / 字号 / 描边宽都走它）。"""
+    s = ("%.4f" % _num(v)).rstrip("0").rstrip(".")
+    return s if s not in ("", "-") else "0"
+
+
+def _attr(name, v):
+    """可选样式属性：值为 None / 空 就整条不写。"""
+    return ' %s="%s"' % (name, v) if v and v != "None" else ''
+
+
+def _pt(v):
+    """内部单位（100 = 2.54mm）→ viewBox 单位（pt）。
+
+    ★ **只用于 rect / circle / pad / line / text 的坐标与字号** —— 表里 path 的 `d` 与
+      `transform` 已经是 viewBox 单位（自带 matrix），用它会缩错（见 gen_breadboard_svg ②）。"""
+    return _n(_num(v) * BB_SCALE)
+
+
+# ==========================================================================
+# ★ 以下子画法（USB / 按键 / SOT23-5 / 晶振 / FPC05 / LQFP48）自 2026-09-22 起
+#   **不再被面包板使用** —— 面包板改成读 `byHand_tables.py`（用户手工版）。
+#   先留在这里备份（需要时可以对照实物位置）；确认新图无误后可以删。
+# ==========================================================================
 # TypeC16Pin 真实 USB-C 座图形（复用 svg/TypeC16Pin 的 icon，剥掉重复 id）
 _TYPEC_PATH = os.path.join(OUT_DIR, "..", "TypeC16Pin",
                            "svg.icon.TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1_icon.svg")
@@ -555,71 +591,91 @@ def _lqfp48_chip_art(cx, cy):
 
 
 def gen_breadboard_svg():
-    """面包板 = nanoCH32V203 开发板。内部 100 单位 = 2.54mm，套 scale(0.072)。"""
-    L = []
-    L.append('<?xml version="1.0" encoding="utf-8"?>\n')
-    L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" viewBox="0 0 %.1f %.1f">\n'
-             % (BW / 100.0 * 2.54, BH / 100.0 * 2.54, BW * BB_SCALE, BH * BB_SCALE))
-    L.append(' <g id="breadboard" transform="scale(%g)">\n' % BB_SCALE)
-    # PCB 板
-    L.append('  <rect x="0" y="0" width="%d" height="%d" fill="#262626" stroke="#000000" stroke-width="6"/>\n'
-             % (BW, BH))
-    # 板名（右下）：底部与 BOOT 底线(1003)对齐；左侧与 A13 标签右侧(~1205)对齐；
-    # 字号 52（比 A13(34) 大两号再大 3 号）
-    L.append('  <text x="1205" y="1003" font-size="52" fill="#7a7a7a" text-anchor="start" '
-             'font-family="DroidSans">nanoCH32V203</text>\n')
-    # USB-C ×2（板左缘，真实 TypeC16Pin 图形，只画不连）
-    L.append(_usb_art(330))       # USB1
-    L.append(_usb_art(850))       # USB2
-    # USB 标签（竖排，从上向下写，字号与 5V 相同=34，紧挨 USB 右缘~300）
-    L.append('  <text x="310" y="330" font-size="34" fill="#aaaaaa" text-anchor="middle" '
-             'font-family="DroidSans" transform="rotate(90 310 330)">USB1D</text>\n')
-    L.append('  <text x="310" y="850" font-size="34" fill="#aaaaaa" text-anchor="middle" '
-             'font-family="DroidSans" transform="rotate(90 310 850)">USB2HD</text>\n')
-    # RST / BOOT 按键（壳左缘对齐 B1/B14 = x 474 → 中心 x=519）
-    # RST 顶边对齐 USB1 顶边(154) → 中心 y = 154+34.8 ≈ 189
-    # BOOT 底边对齐 USB2 底边(1026) → 中心 y = 1026-34.8 ≈ 991
-    L.append(_btn_art(519, 189))
-    L.append(_btn_art(519, 991))
-    # 文字横排在按键右侧（字号与排针标签 5V 一致 = 34；垂直居中对齐按键中心）
-    # 基线 = 按键中心 + 0.35*34 ≈ 中心+12：RST 189+12=201，BOOT 991+12=1003
-    L.append('  <text x="592" y="201" font-size="34" fill="#aaaaaa" text-anchor="start" '
-             'font-family="DroidSans">RST</text>\n')
-    L.append('  <text x="592" y="1003" font-size="34" fill="#aaaaaa" text-anchor="start" '
-             'font-family="DroidSans">BOOT</text>\n')
-    # RST 按钮**正下方**的 SOT23-5（实物 = U1 ME6211C33M5G，顶标 S2YZ）
-    # （2026-09-14 用户指定）：3 脚在左、2 脚在右，丝印 S2YZ 竖排（S 在上）。
-    # 中心 x 与 RST 同 = 519；芯片顶边 = 按钮壳底(189+58*0.6=223.8) 下留 0.6mm 间隙，
-    # 半高 = 1.5mm(=59) → 中心 y = 223.8+23.6+59 = 306.4 ≈ 306
-    L.append(_sot23_5_art(519, 306))
-    # 中央芯片 LQFP48
-    L.append(_lqfp48_chip_art(1024, 590))
-    # 晶振 ×2（右侧，真实 3225/3215 部件 icon 图形，竖放 = 顺时针 90°）
-    # 频率丝印在晶振本体上（8MHz / 32.768K）
-    L.append(_crystal_art(1520, 460, "3225", rot=90, freq="8MHz"))
-    L.append(_crystal_art(1520, 730, "3215", rot=90, freq="32.768K"))
-    # FPC-05F-12P-H15（右缘，竖放，触点朝右，右缘与板右缘对齐，垂直居中于 590）
-    L.append(_fpc05_art(590, BW))
-    # 排针连接器 + 丝印标签（顶排标签在下、底排标签在上 = 内侧朝板心）
-    g_count = 0
-    for row, ys, lst in ((0, HDR_TOP_Y, HEADER_TOP), (1, HDR_BOT_Y, HEADER_BOT)):
-        for i in range(20):
-            lab = lst[i]
-            x = HDR_X[i]
-            if lab in _HDR2CN:
-                cn = _HDR2CN[lab]
-            elif lab == "5V":
-                cn = 48 + row          # 顶部 48 / 底部 49（5V 轨）
-            else:                      # G
-                cn = G_SEQ[g_count] if g_count < 4 else 50
-                g_count += 1
-            L.append('  <circle cx="%d" cy="%d" r="26" fill="#b8b8b8" stroke="#6a6a6a" stroke-width="5" '
-                     'id="connector%dpin"/>\n' % (x, ys, cn))
-            # 标签在内侧且不重叠引脚：顶排偏移≥半径(26)+文字高度(~27)+留白；
-            # 底排偏移 44 更贴排针，且避开 USB2 下端(1026) 与引脚下缘(1081)
-            ly = ys + 60 if row == 0 else ys - 44
-            L.append('  <text x="%d" y="%d" font-size="34" fill="#ffffff" text-anchor="middle" '
-                     'font-family="DroidSans">%s</text>\n' % (x, ly, lab))
+    r"""面包板 = **用户手工对齐版**的几何（全部来自 byHand_tables.py，见文件上方说明）。
+
+    五条口径（与库内其它手工版部件一致）：
+      ① 图元**按手工版文档次序**画（叠放次序 = 画法次序）；
+      ② ★ **不套全局 `scale(0.072)`**：表里 rect/circle/pad/line/text 的坐标是**内部单位**
+         （100 = 2.54mm）⇒ 逐元素 ×BB_SCALE 换成 viewBox 单位；而 **path 自带 matrix**
+         （d 是局部单位、matrix 已经是 viewBox 单位）⇒ **原样写回**。
+         2026-09-22 踩过：套了全局 scale 就会把 path 缩两次 —— 芯片本体与几处"文字转路径"的
+         粗体标注（`nanoCH32V203`/`USB1D`/`USB2HD`/`RST`/`BOOT`）会跑到左上角缩成一小点；
+      ③ rect 的 `rot` 字段**不施加** —— 导出器已把旋转烘进 x/y/w/h（轴对齐 bbox），
+         再转一次就翻了（T-Halow-RJ45 同一口径）；`rx` / `opacity` 是可选字段，按需带上；
+      ④ path 的 `stroke-width` 也是**局部单位**（跟着它自己的 matrix 缩放）⇒ 原值写回；
+      ⑤ 焊盘只写 `connectorNpin`（**不带 connectorname**）—— 与旧程序版一致，免得引出
+         「同名焊盘要不要并总线」那类问题（连接器名以 .fzp 为准）。
+    """
+    if ICONS:
+        raise RuntimeError("本件的表里出现了 ICONS（%r）—— 本脚本还没有烘图标的代码"
+                           % (ICONS[:1],))
+    pad_shapes = [s for s in SHAPES if s[0] == "pad"]
+    if len(pad_shapes) != len(PADS):
+        raise RuntimeError("表里焊盘 %d 个、PADS 名单 %d 个，对不上（手工版改过焊盘就要重导）"
+                           % (len(pad_shapes), len(PADS)))
+    L = ['<?xml version="1.0" encoding="utf-8"?>\n',
+         '<svg xmlns="http://www.w3.org/2000/svg" width="%gmm" height="%gmm" '
+         'viewBox="%g %g %g %g">\n'
+         % (DOC_MM_W, DOC_MM_H, DOC_VIEWBOX[0], DOC_VIEWBOX[1], DOC_VIEWBOX[2], DOC_VIEWBOX[3]),
+         ' <g id="breadboard">\n']
+    if DEFS:                                   # 渐变（不带就会变黑）
+        L.append('  <defs>\n')
+        L += ['   %s\n' % d for d in DEFS]
+        L.append('  </defs>\n')
+    for sh in SHAPES:
+        kind = sh[0]
+        if kind == "rect":
+            _, x, y, w, h, fill, _rot, stroke, sw = sh[:9]
+            rx = sh[9] if len(sh) > 9 else 0
+            op = sh[10] if len(sh) > 10 else 0
+            a = _attr("fill", fill)
+            if _num(stroke) and _num(sw):
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, _pt(sw))
+            if _num(rx):
+                a += ' rx="%s"' % _pt(rx)
+            if _num(op):
+                a += ' opacity="%s"' % _n(op)
+            L.append('  <rect x="%s" y="%s" width="%s" height="%s"%s/>\n'
+                     % (_pt(x), _pt(y), _pt(w), _pt(h), a))
+        elif kind == "circle":
+            _, x, y, r, fill, stroke, sw = sh[:7]
+            a = _attr("fill", fill or "none")
+            if _num(stroke) and _num(sw):
+                a += ' stroke="%s" stroke-width="%s"' % (stroke, _pt(sw))
+            L.append('  <circle cx="%s" cy="%s" r="%s"%s/>\n' % (_pt(x), _pt(y), _pt(r), a))
+        elif kind == "pad":
+            cid, _net, x, y = sh[1:5]
+            if not re.match(r"^connector\d+pin$", cid):
+                raise RuntimeError("焊盘 id 不是 connectorNpin：%r" % (cid,))
+            L.append('  <circle id="%s" cx="%s" cy="%s" r="%s" fill="%s" stroke="%s" '
+                     'stroke-width="%s"/>\n' % (cid, _pt(x), _pt(y), _pt(PAD_R), PAD_FILL,
+                                                PAD_EDGE, _pt(PAD_SW)))
+        elif kind == "line":
+            _, x1, y1, x2, y2, stroke, sw = sh[:7]
+            L.append('  <line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s"/>\n'
+                     % (_pt(x1), _pt(y1), _pt(x2), _pt(y2), stroke, _pt(sw)))
+        elif kind == "path":
+            _, d, mtx, fill, stroke, sw = sh[:6]
+            a = _attr("fill", fill)
+            if _num(stroke):
+                a += ' stroke="%s"' % stroke
+            if _num(sw):                       # ⚠ 局部单位：原值写回，不乘 BB_SCALE
+                a += ' stroke-width="%s"' % sw
+            if mtx and mtx != "None":
+                a += ' transform="%s"' % mtx
+            L.append('  <path d="%s"%s/>\n' % (d, a))
+        else:
+            raise RuntimeError("byHand_tables.py 里出现没见过的图元 %r" % (kind,))
+    for text, x, y, fs, anchor, rot, fill, fw in TEXTS:
+        a = _attr("fill", fill)
+        if anchor and anchor != "None":
+            a += ' text-anchor="%s"' % anchor
+        if fw:
+            a += ' font-weight="%s"' % fw
+        if rot:
+            a += ' transform="rotate(%g %s %s)"' % (rot, _pt(x), _pt(y))
+        L.append('  <text x="%s" y="%s" font-size="%s" font-family="DroidSans"%s>%s</text>\n'
+                 % (_pt(x), _pt(y), _pt(fs), a, esc(text)))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)
