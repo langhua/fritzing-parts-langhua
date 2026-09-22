@@ -106,7 +106,7 @@ SECTIONS = {
                           "RJ45-8P8C rev.1", "SMA-PJ1.7-L9.5"]),
         ("拨动 / 滑动开关", ["DPDT7x7-6P", "SK-12D02VG3", "DSIC01LS-P", "TS-D014"]),
         ("按键", ["PB86-A0-BLACK", "PB86-A0-BLUE", "PB86-A0-GRAY", "PB86-A0-GREEN",
-                 "PB86-A0-RED", "PB86-A0-YELLOW"]),
+                 "PB86-A0-RED", "PB86-A0-YELLOW", "SMT-SW-PTS-820"]),
         ("网络标签焊盘", ["NetLabel-Pad"]),
     ],
     "passive": [

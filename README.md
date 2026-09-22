@@ -122,6 +122,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | WS2812B-5050 | 5.0×5.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-5050.fzpz` |
 | WS2812B-5050-4x4 | 4×4 可寻址 RGB LED 矩阵模块（5050 灯珠，~30×30mm，排针 GND/5V/DIN/GND + 独立 DOUT） | `fzpz/WS2812B-5050-4x4.fzpz` |
 | YC164 | 排阻（YC164，8 脚） | `fzpz/YC164.fzpz` |
+| SMT-SW-PTS-820 | C&K **PTS820** 系列贴片轻触开关（**SPST 常开**、瞬时动作；本体 **3.9×2.9mm**、高 **H=2.0mm**、J 型端子、两端中心距 **4.15mm**；面包板=绿色转接板 7.62×11.43mm、两根 2.54mm 排针在下排内侧标 1/2） | `fzpz/SMT-SW-PTS-820.fzpz` |
 
 另：`svg/NFC-Coil/coil_4x4_array.svg` 为 φ19mm 4×4 阵列铜层 SVG（非独立元件）。
 
