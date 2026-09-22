@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="0.519685in" height="0.145748in" viewBox="-6.60 -2.640 13.20 3.702">
+<svg xmlns="http://www.w3.org/2000/svg" width="0.519685in" height="0.165748in" viewBox="-6.60 -3.148 13.20 4.210">
  <g id="schematic">
   <line class="pin" id="connector0pin" connectorname="1" x1="-6.35" y1="0" x2="-3.81" y2="0" stroke="#787878" stroke-width="0.25" stroke-linecap="round"/>
   <rect class="terminal" id="connector0terminal" x="-6.35" y="0" width="0.0001" height="0.0001" stroke="none" fill="none"/>
@@ -9,7 +9,7 @@
   <text x="5.60" y="-0.40" font-size="2.5" fill="#8C8C8C" font-family="DroidSans" text-anchor="middle">2</text>
   <circle cx="-3.81" cy="-0.76" r="0.76" fill="#FFFFFF" stroke="#000000" stroke-width="0.25"/>
   <circle cx="3.81" cy="-0.76" r="0.76" fill="#FFFFFF" stroke="#000000" stroke-width="0.25"/>
-  <rect x="-3.81" y="-1.778" width="7.62" height="0.254" fill="#000000" stroke="none"/>
-  <rect x="-1.016" y="-2.540" width="2.032" height="0.762" fill="#000000" stroke="none"/>
+  <rect x="-3.81" y="-2.286" width="7.62" height="0.254" fill="#000000" stroke="none"/>
+  <rect x="-1.016" y="-3.048" width="2.032" height="0.762" fill="#000000" stroke="none"/>
  </g>
 </svg>
