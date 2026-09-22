@@ -235,7 +235,7 @@ def gen_breadboard_svg():
       要改回内侧：把 `x_left - NUM_OFF` / `x_right + NUM_OFF` 换成 `+ NUM_OFF` / `- NUM_OFF`
       （会压到芯片边上）。"""
     per = len(PINS) // 2                      # 4
-    x_left, x_right = MARGIN, MARGIN + ROW_U  # 50 / 350
+    x_left, x_right = MARGIN, MARGIN + ROW_U  # 100 / 400（排针中心，MARGIN=100、ROW_U=300）
     y_pins = [MARGIN + i * COL_U for i in range(per)]     # 50,150,250,350
     cx, cy = BOARD_W // 2, BOARD_H // 2                   # 芯片中心 (200, 200)
     pad_r = 1.0 * U                           # 2mm 直径焊盘 → 半径 1mm（AGENTS §3b 约定）
