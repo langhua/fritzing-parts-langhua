@@ -3523,6 +3523,7 @@
         <rect x="1.695" y="-3.00" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
         <rect x="1.695" y="1.95" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
         <circle cx="-1.90" cy="1.33" r="0.28" fill="#c0c0c0" stroke="none"/>
+        <text x="0" y="0.32" font-size="0.9" fill="#ffffff" text-anchor="middle" font-family="DroidSans">CN</text>
       </g>
   </svg>
   <text x="25.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">ATECC608B</text>

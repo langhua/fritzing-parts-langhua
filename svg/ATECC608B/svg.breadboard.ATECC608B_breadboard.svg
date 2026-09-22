@@ -12,6 +12,7 @@
   <rect x="316.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
   <rect x="316.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
   <circle cx="175.20" cy="302.36" r="11.02" fill="#c0c0c0" stroke="none"/>
+  <text x="250.00" y="262.60" font-size="35.43" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">CN</text>
   <circle id="connector0pin" connectorname="NC" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
   <circle id="connector7pin" connectorname="VCC" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>

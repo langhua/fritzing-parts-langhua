@@ -16,7 +16,8 @@ gen_part.py — 生成 Fritzing 自定义元件 ATECC608B（Microchip CryptoAuth
       - ★ **§4 Package Marking Information：加密器件的顶面丝印是「故意模糊」的** ——
         "the part marking ... is intentionally vague. The marking on the top of the package does not
         provide any information as to the actual device type"，且"随装配批号变化"。
-        ⇒ **本元件刻意不在芯片顶面印型号**（印一个型号就是编造）。
+        ⇒ **本元件不印型号**（印一个型号就是编造）；照**用户实物的顶面码**印 `CN`
+          （2026-09-22 用户指定）—— 它就是 §4 说的那种“制造信息码”，**换批号就不同**。
         ⚠ 完整命令集/机械尺寸表在 NDA 版手册里；本 PDF 是矢量图，数值表抽不出文本 ⇒
           D/e/b/跨距取**窄体 SOIC-8 标准值**（与同库 `AT24C02`（SOP-8）一致，保证库里看着一致）：
           本体 3.90(E) × 4.90~5.05(D)、节距 e=1.27、脚宽 b=0.42、含脚跨距 6.00mm。
@@ -60,13 +61,17 @@ PINS = [
     "VCC",  # 8
 ]
 
-# 转接板丝印（**默认不印**，理由两条，别当它是"漏了"）：
-#   ① 芯片顶面按手册 §4 是**故意模糊**的 ⇒ 印型号就是编造（识别靠 Fritzing 的 label/title）；
+# 转接板丝印（**默认不印**，别当它是"漏了"）：
+#   ① 芯片顶面已经印了实物制造码 `CN`（见 `ICON_MARK`）—— 手册 §4 说那串码不是型号、
+#      随批号变 ⇒ 再在板上印个型号反而容易让人把它当“型号丝印”；识别靠 Fritzing 的 label/title。
 #   ② 12.70×12.70mm 的板上**没有不与脚号重叠的地方** —— 实测把 `ATECC608B` 放在芯片下沿时
 #      正好压在脚号 `1`/`4` 上（AGENTS §3b：丝印必须避开焊盘/引脚）。要印就得加大板子尺寸。
 # 想恢复：把下面这行改成 "ATECC608B"，并把 `cy + 95` 那个 y 挪到板外或加高板子（板 = 单源 BOARD_W/H）。
 BOARD_LABEL = ""
 SCHEM_LABEL = "ATECC608B"
+# 芯片顶面丝印（**照用户实物的制造码**，不是型号）：手册 §4 说这串码随装配批号变，
+# 所以它只代表这一批的实物；换成别的批号就得改这里（一处常量）。
+ICON_MARK = "CN"
 
 # .fzp 元数据
 TITLE = "ATECC608B CryptoAuthentication Device (I2C, SOIC-8)"
@@ -325,9 +330,8 @@ def gen_pcb_svg():
 # ----------------------------------------------------------------------- icon
 def gen_icon_svg():
     """SOIC-8（窄体 3.90mm）芯片图标：本体 5.05(D, x) × 3.90(E, y) mm，上下各 4 银引脚
-    （宽 0.42、距 1.27、各伸 1.05 → 含脚总跨距 6.00mm），pin1 左下圆形凹点。
-    ★ **不印型号**：手册 §4 写明加密器件顶面丝印"故意模糊"、随批号变化
-      ⇒ 印任何型号都是编造（识别靠 Fritzing 的 label/title）。
+    （宽 0.42、距 1.27、各伸 1.05 → 含脚总跨距 6.00mm），pin1 左下圆形凹点，
+    顶面丝印 `ICON_MARK`（= 用户实物的制造码 `CN`，**不是型号**，见文件头与 §4）。
     viewBox 对称居中 5.05×6.0。"""
     e, bw, pl = LEAD_E, LEAD_B, LEAD_L
     half_x, half_y = BODY_D / 2, BODY_E / 2
@@ -348,6 +352,10 @@ def gen_icon_svg():
     # pin1 标记（本体左下角内，圆形凹点）
     parts.append(f'    <circle cx="{-half_x + 0.62:.2f}" cy="{half_y - 0.62:.2f}" r="0.28" '
                  f'fill="#c0c0c0" stroke="none"/>\n')
+    # 顶面丝印（实物制造码；字号 0.9mm ⇒ 2 个字符约 1.0mm 宽，本体 5.05mm 装得下）
+    if ICON_MARK:
+        parts.append(f'    <text x="0" y="0.32" font-size="0.9" fill="#ffffff" text-anchor="middle" '
+                     f'font-family="DroidSans">{esc(ICON_MARK)}</text>\n')
     parts.append('  </g>\n</svg>\n')
     return "".join(parts)
 
