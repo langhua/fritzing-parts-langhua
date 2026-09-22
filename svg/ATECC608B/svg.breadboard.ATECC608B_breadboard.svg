@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="12.70mm" height="12.70mm" viewBox="0 0 500 500">
+ <g id="breadboard">
+  <rect x="0" y="0" width="500" height="500" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="150.59" y="173.23" width="198.82" height="153.54" fill="#303030" stroke="none"/>
+  <rect x="166.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="166.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="216.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="216.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="266.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="266.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="316.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="316.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <circle cx="175.20" cy="302.36" r="11.02" fill="#c0c0c0" stroke="none"/>
+  <circle id="connector0pin" connectorname="NC" cx="100.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector7pin" connectorname="VCC" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector1pin" connectorname="NC" cx="200.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector6pin" connectorname="NC" cx="200.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="200.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector2pin" connectorname="NC" cx="300.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector5pin" connectorname="SCL" cx="300.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="300.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector3pin" connectorname="GND" cx="400.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="400.0" r="19.1" fill="#2b2b2b"/>
+  <circle id="connector4pin" connectorname="SDA" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="100.0" r="19.1" fill="#2b2b2b"/>
+  <text x="100.0" y="150" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 150)">8</text>
+  <text x="100.0" y="350" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 100.0 350)">1</text>
+  <text x="200.0" y="150" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 150)">7</text>
+  <text x="200.0" y="350" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 200.0 350)">2</text>
+  <text x="300.0" y="150" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 150)">6</text>
+  <text x="300.0" y="350" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 300.0 350)">3</text>
+  <text x="400.0" y="150" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 150)">5</text>
+  <text x="400.0" y="350" font-size="60" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans" transform="rotate(-90 400.0 350)">4</text>
+ </g>
+</svg>

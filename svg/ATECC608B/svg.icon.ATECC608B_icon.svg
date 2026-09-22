@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ATECC608B CryptoAuthentication (I2C) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="5.05mm" height="6.00mm" viewBox="-2.525 -3.00 5.05 6.00">
+  <g id="icon">
+    <rect x="-2.525" y="-1.95" width="5.05" height="3.9" fill="#303030" stroke="none"/>
+    <rect x="-2.115" y="-3.00" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-2.115" y="1.95" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.845" y="-3.00" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="-0.845" y="1.95" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.425" y="-3.00" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="0.425" y="1.95" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.695" y="-3.00" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <rect x="1.695" y="1.95" width="0.42" height="1.05" fill="#c0c0c0" stroke="none"/>
+    <circle cx="-1.90" cy="1.33" r="0.28" fill="#c0c0c0" stroke="none"/>
+  </g>
+</svg>
