@@ -22,11 +22,19 @@ gen_part.py — 生成 Fritzing 自定义元件 ATECC608B（Microchip CryptoAuth
           本体 3.90(E) × 4.90~5.05(D)、节距 e=1.27、脚宽 b=0.42、含脚跨距 6.00mm。
   · 参考同族件 `svg/AT24C02/`（同为 SOIC-8 上绿转接板），几何约定直接沿用。
 
-★ 用户 2026-09-22 定的接线口径：**转接板两排排针行距 7.62mm（3×2.54）**、8 个脚
-  （含 4 个 NC）**都是可接线的 connector**、四个视图全做。
-⚠ 如实记一条：AGENTS §3b 说"排针行距 ≥ 元件高 + 2mm"（本芯片含脚总高 6.0mm ⇒ 建议 10.16mm），
-  而 7.62mm 是**实物转接板**的行距 ⇒ 按实物画。代价：2mm 金环（画法约定）与芯片脚端
-  在图上**重叠约 0.19mm/侧**（实物是 1mm 孔、内缘 3.31mm > 脚端 3.0mm，并不冲突）。
+★ 面包板几何的**实物依据**（用户 2026-09-22）：
+  · 实物 = 淘宝常见的 **"SOP8 1.27mm 转接板"**（用户提供照片；**照片是第三方素材，不入库**）。
+  · 照照片画出来是：**两排排针在左右两侧**（左列 `1..4` 上→下、右列 `8..5` 上→下 = 逆时针），
+    两列相距 **7.62mm**；同列相邻脚 2.54mm；板 **10.16×10.16mm**（排针到板边 1.27mm）；
+    板中央是 SOIC 的**上下两排**焊盘 ⇒ 芯片引脚朝上下。
+  · 8 个脚（含 4 个 NC）**都是可接线的 connector**；四个视图全做。
+⚠ 如实两条：
+  ① **脚号画在焊盘外侧**（照片里就是外侧）—— 内侧放不下：两列间距被实物定死 7.62mm、
+     芯片本体宽 5.05mm ⇒ 每侧只剩 1.28mm，放不下 1.5mm 字号；AGENTS §3b 给内侧放不下时的
+     办法是"把排针往板边移"，但**本件间距由实物定死**、移不了 ⇒ 照实物画，字号压到 48（1.22mm）。
+  ② AGENTS §3b 说"排针行距 ≥ 元件高 + 2mm"（本芯片含脚总高 6.0mm ⇒ 建议 10.16mm），
+     而 7.62mm 是**实物**尺寸 ⇒ 按实物画。代价：2mm 金环（画法约定）与芯片脚端在图上
+     重叠约 0.19mm/侧（实物是 1mm 孔，内缘 3.31mm > 脚端 3.0mm，并不冲突）。
 
 用法：
   python gen_part.py
@@ -76,11 +84,14 @@ LEAD_E = 1.27      # 引脚节距
 LEAD_B = 0.42      # 引脚宽
 LEAD_L = 1.05      # 引脚伸出长度（⇒ 含脚总跨距 3.90 + 2×1.05 = 6.00mm）
 SPAN = BODY_E + 2 * LEAD_L
-# 面包板视图（100 单位 = 2.54mm）
-ROW_U = 300        # ★ 排针行距 = 3×2.54 = 7.62mm（用户 2026-09-22 给的实物尺寸）
-COL_U = 100        # 列距 = 2.54mm
-BOARD_W = 500      # 板宽 = 12.70mm
-BOARD_H = ROW_U + 200   # 板高 = 焊盘各留 100 单位（2.54mm）边距 = 12.70mm
+# 面包板视图（100 单位 = 2.54mm）—— **照用户 2026-09-22 给的实物照片**（淘宝 SOP8 1.27mm 转接板）
+ROW_U = 300        # ★ 两排排针的间距 = 3×2.54 = **7.62mm**（在左右两侧，不是上下）
+COL_U = 100        # 同一列里相邻脚距 = 2.54mm（4 脚 ⇒ 跨 3×2.54 = 7.62mm）
+MARGIN = 100       # 排针中心到板边（= 2.54mm）—— **不是**照片上那 1.27mm，理由见 gen_breadboard_svg()
+BOARD_W = ROW_U + 2 * MARGIN   # 板宽 = 500 单位 = 12.70mm
+BOARD_H = 3 * COL_U + 2 * MARGIN   # 板高 = 500 单位 = 12.70mm
+NUM_FS = 48        # 脚号字号（1.22mm）
+NUM_OFF = 65       # 脚号中心离焊盘中心 65 单位（= 焊盘半径 39.4 + 字半高 24 + 余量）
 U = 39.37          # 1mm = 100/2.54 单位
 
 
@@ -198,14 +209,30 @@ def _embed_icon(art, cx, cy, s=1.0, icx=0.0, icy=0.0, text_dy=0.0):
 
 
 def gen_breadboard_svg():
-    """面包板 = 绿色 SOIC-8 转接板 + 8 排针（上下各 4）+ 居中 ATECC608B icon（1:1，pin1 左下）。
-    坐标 100 单位 = 2.54mm，排针中心落在 100 整数倍 → 对准面包板孔。
-    ★ 排针行距 300 单位 = **7.62mm**（实物转接板尺寸，用户 2026-09-22 给）；
-    绿板对称包住焊盘，上下各留 100 单位（2.54mm）边距 ⇒ 板 12.70 × 12.70mm。"""
+    """面包板 = 绿色 SOP8→DIP 转接板 + 8 排针 + 居中 ATECC608B icon（1:1，pin1 左下）。
+    ★ 布局**照用户 2026-09-22 给的实物照片**（淘宝 "SOP8 1.27mm 转接板"）：
+      · 两排排针在**左右两侧**：左列 = pin1..4（上→下）、右列 = pin8..5（上→下）
+        —— 也就是逆时针 1(左上)→4(左下)→5(右下)→8(右上)；
+      · 两列相距 **300 单位 = 7.62mm**；同列相邻脚 100 单位 = 2.54mm；
+      · 板 **500×500 单位 = 12.70×12.70mm**（排针中心到板边 2.54mm）。
+        ⚠ 实物板只有 ~10.2mm（照片上排针到板边约 1.27mm），**这里故意画大**：本仓转接板
+        按「2mm 金环 + 0.97mm 孔」画（AGENTS §3b），而 2mm 环半径 1mm ⇒ 7.62mm 间距下
+        每侧只剩 1.27mm，环几乎贴到板边、脚号也没地方放（先按 10.16mm 画过一版，渲染里
+        脚号被压在环上）。反推：脚号中心要离板边 ≥ 字半高 24、又不量压环 ⇒
+        排针中心到板边 ≥ 24 + 39.4 ≈ 90 单位 ⇒ 取 **100**（2.54mm，与同库 AT24C02 同比例）。
+        实物板看着更紧凑是因为它的焊盘只有 ~1.5mm、脚号也只有 ~1mm。
+      · 8 个脚（含 4 个 NC）**都是可接线的 connector**；四个视图全做。
+  · 板中央是 SOIC 的上下两排焊盘（照片里那两排白焊盘）⇒ 芯片按 icon 原样**引脚朝上下**放。
+    ⚠ 脚号画在**焊盘外侧**（照片里就是外侧）—— 与 AGENTS §3b「数字要在内侧」的取舍写清楚：
+      两列间距被实物固定成 7.62mm，而芯片本体宽 5.05mm ⇒ 每侧只剩 (7.62-5.05)/2 = **1.28mm**，
+      放不下 1.5mm（60 单位）的字号；§3b 给内侧放不下时的办法是"把排针往板边移"，但**本件的
+      间距由实物定死**、不能动 ⇒ 照实物照片画在外侧，并把字号压到 48（1.22mm）。
+      要改回内侧：把 `x_left - NUM_OFF` / `x_right + NUM_OFF` 换成 `+ NUM_OFF` / `- NUM_OFF`
+      （会压到芯片边上）。"""
     per = len(PINS) // 2                      # 4
-    x_pins = [COL_U + i * COL_U for i in range(per)]      # 100,200,300,400
-    y_top, y_bot = 100, 100 + ROW_U            # 上排（pin8-5）、下排（pin1-4）
-    cx, cy = BOARD_W // 2, (y_top + y_bot) // 2          # 芯片中心 (250, 250)
+    x_left, x_right = MARGIN, MARGIN + ROW_U  # 50 / 350
+    y_pins = [MARGIN + i * COL_U for i in range(per)]     # 50,150,250,350
+    cx, cy = BOARD_W // 2, BOARD_H // 2                   # 芯片中心 (200, 200)
     pad_r = 1.0 * U                           # 2mm 直径焊盘 → 半径 1mm（AGENTS §3b 约定）
     hole_r = 0.485 * U                        # 0.97mm 直径针孔
     icon = gen_icon_svg()
@@ -227,27 +254,28 @@ def gen_breadboard_svg():
     s.append(f'  <rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     # 芯片 icon（1:1 居中）
     s.append(_embed_icon(art, cx, cy, s=U, icx=icx, icy=icy))
-    # 板上的型号标注（**我们画的板丝印**，不是芯片顶面丝印，见文件头）
+    # 板上的型号标注（**默认不印**，理由见文件头）
     if BOARD_LABEL:
         s.append(f'  <text x="{cx}" y="{cy + 95}" font-size="46" fill="#ffffff" text-anchor="middle" '
                  f'dominant-baseline="central" font-family="DroidSans">{esc(BOARD_LABEL)}</text>\n')
-    # 8 排针：下排 connector0-3（pin1-4 左→右）、上排 connector7-4（pin8-5 左→右）
+    # 8 排针：左列 connector0-3（pin1-4 上→下）、右列 connector7-4（pin8-5 上→下）
     for i in range(per):
-        x = x_pins[i]
-        for yy, cn in ((y_bot, i), (y_top, per * 2 - 1 - i)):
+        y = y_pins[i]
+        for xx, cn in ((x_left, i), (x_right, per * 2 - 1 - i)):
             s.append(f'  <circle id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
-                     f'cx="{x:.1f}" cy="{yy:.1f}" r="{pad_r:.1f}" '
+                     f'cx="{xx:.1f}" cy="{y:.1f}" r="{pad_r:.1f}" '
                      f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
-            s.append(f'  <circle cx="{x:.1f}" cy="{yy:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 引脚数字（绿板上、焊盘与芯片之间 = **内侧**；白字、字号 60、逆时针旋转 90°）
+            s.append(f'  <circle cx="{xx:.1f}" cy="{y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
+    # 脚号：焊盘**外侧**（照片里就是外侧），字号 NUM_FS、逆时针旋转 90°
+    nx_l, nx_r = x_left - NUM_OFF, x_right + NUM_OFF
     for i in range(per):
-        x = x_pins[i]
-        s.append(f'  <text x="{x:.1f}" y="{y_top + 50}" font-size="60" fill="#ffffff" text-anchor="middle" '
-                 f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x:.1f} {y_top + 50})">{per * 2 - i}</text>\n')
-        s.append(f'  <text x="{x:.1f}" y="{y_bot - 50}" font-size="60" fill="#ffffff" text-anchor="middle" '
-                 f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x:.1f} {y_bot - 50})">{i + 1}</text>\n')
+        y = y_pins[i]
+        s.append(f'  <text x="{nx_l:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
+                 f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
+                 f'transform="rotate(-90 {nx_l:.1f} {y:.1f})">{i + 1}</text>\n')
+        s.append(f'  <text x="{nx_r:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
+                 f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
+                 f'transform="rotate(-90 {nx_r:.1f} {y:.1f})">{per * 2 - i}</text>\n')
     s.append(' </g>\n</svg>\n')
     return "".join(s)
 
