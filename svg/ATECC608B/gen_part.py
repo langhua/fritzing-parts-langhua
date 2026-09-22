@@ -266,16 +266,18 @@ def gen_breadboard_svg():
                      f'cx="{xx:.1f}" cy="{y:.1f}" r="{pad_r:.1f}" '
                      f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
             s.append(f'  <circle cx="{xx:.1f}" cy="{y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 脚号：焊盘**外侧**（照片里就是外侧），字号 NUM_FS、逆时针旋转 90°
+    # 脚号：焊盘**外侧**（照片里就是外侧），字体顺时针旋转 90°（`rotate(90)`）
+    # ⚠ 与 AGENTS §3b 的差别：§3b 写的是 `rotate(-90 x y)`（**逆**时针）；
+    #   用户 2026-09-22 看渲染后指定本件要**顺**时针 ⇒ 以用户观察为准（§3b 那条不动，仅本件从顺）。
     nx_l, nx_r = x_left - NUM_OFF, x_right + NUM_OFF
     for i in range(per):
         y = y_pins[i]
         s.append(f'  <text x="{nx_l:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
                  f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {nx_l:.1f} {y:.1f})">{i + 1}</text>\n')
+                 f'transform="rotate(90 {nx_l:.1f} {y:.1f})">{i + 1}</text>\n')
         s.append(f'  <text x="{nx_r:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
                  f'text-anchor="middle" dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {nx_r:.1f} {y:.1f})">{per * 2 - i}</text>\n')
+                 f'transform="rotate(90 {nx_r:.1f} {y:.1f})">{per * 2 - i}</text>\n')
     s.append(' </g>\n</svg>\n')
     return "".join(s)
 
