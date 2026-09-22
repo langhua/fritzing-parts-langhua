@@ -28,7 +28,7 @@
         <instance moduleIdRef="SMA-PJ1.7-L9.5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMA-PJ1.7-L9.5.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="__spacer__" modelIndex="3" path="拨动 / 滑动开关">
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="开关（拨动 / 滑动 / 轻触）">
         <views>
             <iconView layer="icon">
                 <geometry z="-1" x="-1" y="-1"/>
