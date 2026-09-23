@@ -98,9 +98,15 @@ def pcb_svg():
     Fritzing still drills the two vias that take the coil ends down to the
     bottom-layer circuit.
 
+    The spiral is a chain of STROKED <line> elements (stroke-width = TRACE_W),
+    NOT a filled <path>: Fritzing writes one round-aperture stroke per <line>
+    at exactly the given width (gerber '%ADDnnC,0.007874*%' = 0.200 mm), while
+    a filled path cannot be expressed as an aperture and gets rasterised into
+    thousands of 1 mil scan-lines (dirty copper + unusable paste stencil).
+
     viewBox -12 -12 24 24 (24x24 mm), same as breadboard view.
     """
-    d, pts = ribbon_path(OUTER_R)
+    pts = spiral_centerline(OUTER_R)
     p_in = pts[0]      # inner end at r=4 -> connector0
     p_out = pts[-1]    # outer end at r=10 -> connector1
     size = OUTER_R * 2 + 4
@@ -119,10 +125,17 @@ def pcb_svg():
     # copper1 (top layer) carries the spiral; copper0 nested inside it holds
     # only the two end pads (through-hole).
     s += '  <g id="copper1">\n'
-    s += '    <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
+    for i in range(len(pts) - 1):
+        s += ('    <line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" '
+              'stroke="#f7bf13" stroke-width="%.2f" fill="none"/>\n'
+              % (pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], TRACE_W))
     # connection stubs from the coil ends to the displaced pads
-    s += '    <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_in[0], p_in[1], INNER_PAD_R, 0.0)
-    s += '    <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_out[0], p_out[1], OUTER_PAD_R, 0.0)
+    s += ('    <line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" '
+          'stroke="#f7bf13" stroke-width="%.2f" fill="none"/>\n'
+          % (INNER_PAD_R, 0.0, p_in[0], p_in[1], TRACE_W))
+    s += ('    <line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" '
+          'stroke="#f7bf13" stroke-width="%.2f" fill="none"/>\n'
+          % (p_out[0], p_out[1], OUTER_PAD_R, 0.0, TRACE_W))
     # through-hole pads, each id appears ONCE
     s += '    <g id="copper0">\n'
     s += '      <circle cx="%.3f" cy="0.000" r="0.55" id="connector0pin" fill="none" stroke="#f7bf13" stroke-width="0.5"/>\n' % INNER_PAD_R
