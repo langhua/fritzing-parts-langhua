@@ -6,29 +6,29 @@
   <circle cx="-4.400" cy="-3.575" r="0.25" fill="#FFFFFF" stroke="none"/>
  </g>
  <g id="copper1">
-  <rect x="-4.100" y="-3.800" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector16pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="-3.150" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector7pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="-2.500" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector6pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="-1.850" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector5pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="-1.200" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector4pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="-0.550" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector3pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="0.100" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector2pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="0.750" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector1pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="1.400" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector0pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="2.050" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector17pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="2.700" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector18pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="-4.100" y="3.350" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector23pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-3.800" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector22pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-3.150" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector8pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-2.500" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector9pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-1.850" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector10pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-1.200" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector11pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="-0.550" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector12pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="0.100" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector13pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="0.750" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector14pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="1.400" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector15pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="2.050" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector21pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="2.700" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector19pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="1.700" y="3.350" width="2.40" height="0.45" rx="0.05" ry="0.05" id="connector20pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-3.800" width="2.40" height="0.45" id="connector16pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-3.150" width="2.40" height="0.45" id="connector7pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-2.500" width="2.40" height="0.45" id="connector6pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-1.850" width="2.40" height="0.45" id="connector5pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-1.200" width="2.40" height="0.45" id="connector4pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="-0.550" width="2.40" height="0.45" id="connector3pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="0.100" width="2.40" height="0.45" id="connector2pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="0.750" width="2.40" height="0.45" id="connector1pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="1.400" width="2.40" height="0.45" id="connector0pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="2.050" width="2.40" height="0.45" id="connector17pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="2.700" width="2.40" height="0.45" id="connector18pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="-4.100" y="3.350" width="2.40" height="0.45" id="connector23pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-3.800" width="2.40" height="0.45" id="connector22pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-3.150" width="2.40" height="0.45" id="connector8pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-2.500" width="2.40" height="0.45" id="connector9pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-1.850" width="2.40" height="0.45" id="connector10pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-1.200" width="2.40" height="0.45" id="connector11pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="-0.550" width="2.40" height="0.45" id="connector12pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="0.100" width="2.40" height="0.45" id="connector13pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="0.750" width="2.40" height="0.45" id="connector14pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="1.400" width="2.40" height="0.45" id="connector15pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="2.050" width="2.40" height="0.45" id="connector21pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="2.700" width="2.40" height="0.45" id="connector19pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <rect x="1.700" y="3.350" width="2.40" height="0.45" id="connector20pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
  </g>
 </svg>

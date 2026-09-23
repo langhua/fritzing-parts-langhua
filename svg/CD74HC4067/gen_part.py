@@ -284,12 +284,17 @@ def schematic_svg():
 # ------------------------------------------------------------------ PCB
 def pcb_svg():
     """TSSOP-24 SMD LAND PATTERN: 24 pads in 2 columns x 12,
-    pad 2.4 (lengthened for hand soldering; datasheet land is 1.5) x 0.45 mm
-    (R0.05 corners), column centre distance 5.8 mm, pitch 0.65 mm, in mm
-    units. Left column = pads 1..12 (top->bottom) mapped to connectors
+    pad 2.4 (lengthened for hand soldering; datasheet land is 1.5) x 0.45 mm,
+    column centre distance 5.8 mm, pitch 0.65 mm, in mm units.
+    Left column = pads 1..12 (top->bottom) mapped to connectors
     COM,I7..I0,S0,S1,GND; right column = pads 24..13 mapped to
-    VCC,I8..I15,E,S2,S3. SMD pads on copper1 (matches TS3A44159 style)."""
-    PAD_W, PAD_H, PITCH, COL, RR = 2.4, 0.45, 0.65, 5.8, 0.05
+    VCC,I8..I15,E,S2,S3. SMD pads on copper1 (matches TS3A44159 style).
+
+    Corners must stay SQUARE (no rx/ry): Fritzing can only emit a proper rect
+    aperture flash for a plain <rect>; a rounded rect makes it fall back to a
+    scan-line fill (thousands of 1 mil strokes) in copper/mask/paste, which is
+    an unusable paste stencil and a dirty copper layer."""
+    PAD_W, PAD_H, PITCH, COL = 2.4, 0.45, 0.65, 5.8
     y0 = -(11 * PITCH) / 2                       # top pad centre y = -3.575
     xl, xr = -COL / 2 - PAD_W / 2, COL / 2 - PAD_W / 2   # -4.10, 1.70
     L = []
@@ -303,12 +308,12 @@ def pcb_svg():
     L.append(' <g id="copper1">\n')
     for i, (cn, lab, num) in enumerate(SCHEM_LEFT):
         y = y0 + i * PITCH
-        L.append('  <rect x="%.3f" y="%.3f" width="%.2f" height="%.2f" rx="%.2f" ry="%.2f" id="connector%dpin" fill="#f7bf13" fill-opacity="1" stroke="none"/>\n'
-                 % (xl, y - PAD_H / 2, PAD_W, PAD_H, RR, RR, cn))
+        L.append('  <rect x="%.3f" y="%.3f" width="%.2f" height="%.2f" id="connector%dpin" fill="#f7bf13" fill-opacity="1" stroke="none"/>\n'
+                 % (xl, y - PAD_H / 2, PAD_W, PAD_H, cn))
     for i, (cn, lab, num) in enumerate(SCHEM_RIGHT):
         y = y0 + i * PITCH
-        L.append('  <rect x="%.3f" y="%.3f" width="%.2f" height="%.2f" rx="%.2f" ry="%.2f" id="connector%dpin" fill="#f7bf13" fill-opacity="1" stroke="none"/>\n'
-                 % (xr, y - PAD_H / 2, PAD_W, PAD_H, RR, RR, cn))
+        L.append('  <rect x="%.3f" y="%.3f" width="%.2f" height="%.2f" id="connector%dpin" fill="#f7bf13" fill-opacity="1" stroke="none"/>\n'
+                 % (xr, y - PAD_H / 2, PAD_W, PAD_H, cn))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)
