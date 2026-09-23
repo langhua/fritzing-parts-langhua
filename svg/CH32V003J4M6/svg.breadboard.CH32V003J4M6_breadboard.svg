@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="12.70mm" height="12.70mm" viewBox="0 0 500 500">
+ <g id="breadboard">
+  <rect x="0" y="0" width="500" height="500" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="151.57" y="173.23" width="196.85" height="153.54" fill="#303030" stroke="none"/>
+  <rect x="166.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="166.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="216.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="216.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="266.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="266.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="316.73" y="131.89" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <rect x="316.73" y="326.77" width="16.54" height="41.34" fill="#c0c0c0" stroke="none"/>
+  <circle cx="175.20" cy="302.36" r="11.02" fill="#c0c0c0" stroke="none"/>
+  <text x="250.00" y="262.60" font-size="32" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">CH32V003</text>
+  <circle id="connector0pin" connectorname="PD6/PA1" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="35.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">1</text>
+  <circle id="connector1pin" connectorname="VSS" cx="100.0" cy="200.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="200.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="35.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">2</text>
+  <circle id="connector2pin" connectorname="PA2" cx="100.0" cy="300.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="300.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="35.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">3</text>
+  <circle id="connector3pin" connectorname="VDD" cx="100.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="100.0" cy="400.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="35.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">4</text>
+  <circle id="connector7pin" connectorname="PD1/PD4/PD5" cx="400.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="100.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="465.0" y="100.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">8</text>
+  <circle id="connector6pin" connectorname="PC4" cx="400.0" cy="200.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="200.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="465.0" y="200.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">7</text>
+  <circle id="connector5pin" connectorname="PC2" cx="400.0" cy="300.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="300.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="465.0" y="300.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">6</text>
+  <circle id="connector4pin" connectorname="PC1" cx="400.0" cy="400.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle cx="400.0" cy="400.0" r="19.1" fill="#2b2b2b" stroke="none"/>
+  <text x="465.0" y="400.0" font-size="48" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">5</text>
+ </g>
+</svg>

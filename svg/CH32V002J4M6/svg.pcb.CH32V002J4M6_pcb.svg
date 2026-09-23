@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CH32V002J4M6 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="7.02mm" height="8.50mm" viewBox="-3.51 -4.25 7.02 8.50">
+  <g id="copper1">
+<rect id="connector0pad" x="-2.255" y="1.800" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PD6/PA1"/>
+<rect id="connector1pad" x="-0.985" y="1.800" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+<rect id="connector2pad" x="0.285" y="1.800" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PA2"/>
+<rect id="connector3pad" x="1.555" y="1.800" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="VDD"/>
+<rect id="connector7pad" x="-2.255" y="-3.600" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PD1/PD4/PD5"/>
+<rect id="connector6pad" x="-0.985" y="-3.600" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PC4"/>
+<rect id="connector5pad" x="0.285" y="-3.600" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PC2"/>
+<rect id="connector4pad" x="1.555" y="-3.600" width="0.700" height="1.800" fill="#F7BD13" stroke="none" connectorname="PC1"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<line x1="-2.525" y1="-1.95" x2="-2.525" y2="1.95" stroke="#f0f0f0" stroke-width="0.15"/>
+<line x1="2.525" y1="-1.95" x2="2.525" y2="1.95" stroke="#f0f0f0" stroke-width="0.15"/>
+<circle cx="-2.955" cy="2.7" r="0.4" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>
