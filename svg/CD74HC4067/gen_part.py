@@ -283,21 +283,22 @@ def schematic_svg():
 
 # ------------------------------------------------------------------ PCB
 def pcb_svg():
-    """TSSOP-24 SMD LAND PATTERN (datasheet p.21): 24 pads in 2 columns x 12,
-    pad 1.5 x 0.45 mm (R0.05 corners), column centre distance 5.8 mm, pitch
-    0.65 mm, in mm units. Left column = pads 1..12 (top->bottom) mapped to
-    connectors COM,I7..I0,S0,S1,GND; right column = pads 24..13 mapped to
+    """TSSOP-24 SMD LAND PATTERN: 24 pads in 2 columns x 12,
+    pad 2.4 (lengthened for hand soldering; datasheet land is 1.5) x 0.45 mm
+    (R0.05 corners), column centre distance 5.8 mm, pitch 0.65 mm, in mm
+    units. Left column = pads 1..12 (top->bottom) mapped to connectors
+    COM,I7..I0,S0,S1,GND; right column = pads 24..13 mapped to
     VCC,I8..I15,E,S2,S3. SMD pads on copper1 (matches TS3A44159 style)."""
-    PAD_W, PAD_H, PITCH, COL, RR = 1.5, 0.45, 0.65, 5.8, 0.05
+    PAD_W, PAD_H, PITCH, COL, RR = 2.4, 0.45, 0.65, 5.8, 0.05
     y0 = -(11 * PITCH) / 2                       # top pad centre y = -3.575
-    xl, xr = -COL / 2 - PAD_W / 2, COL / 2 - PAD_W / 2   # -3.65, 2.15
+    xl, xr = -COL / 2 - PAD_W / 2, COL / 2 - PAD_W / 2   # -4.10, 1.70
     L = []
     L.append('<?xml version="1.0" encoding="utf-8"?>\n')
-    L.append('<svg xmlns="http://www.w3.org/2000/svg" width="7.9mm" height="8.8mm" viewBox="-3.95 -4.4 7.9 8.8">\n')
+    L.append('<svg xmlns="http://www.w3.org/2000/svg" width="9.6mm" height="8.8mm" viewBox="-4.8 -4.4 9.6 8.8">\n')
     L.append(' <g id="silkscreen">\n')
     L.append('  <line x1="-2.2" y1="4.1" x2="2.2" y2="4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>\n')
     L.append('  <line x1="-2.2" y1="-4.1" x2="2.2" y2="-4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>\n')
-    L.append('  <circle cx="-1.5" cy="-3.35" r="0.25" fill="#FFFFFF" stroke="none"/>\n')
+    L.append('  <circle cx="%.3f" cy="%.3f" r="0.25" fill="#FFFFFF" stroke="none"/>\n' % (xl - 0.30, y0))
     L.append(' </g>\n')
     L.append(' <g id="copper1">\n')
     for i, (cn, lab, num) in enumerate(SCHEM_LEFT):
