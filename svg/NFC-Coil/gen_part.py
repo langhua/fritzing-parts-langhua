@@ -142,9 +142,27 @@ def pcb_svg():
     s += '      <circle cx="%.3f" cy="0.000" r="0.55" id="connector1pin" fill="none" stroke="#f7bf13" stroke-width="0.5"/>\n' % OUTER_PAD_R
     s += '    </g>\n'
     s += '  </g>\n'
-    # silkscreen: a thin outline circle
+    # silkscreen: dashed outline circle, drawn as a chain of <line> arcs.
+    # A stroked <circle stroke-dasharray> is rasterised by Fritzing into 1 mil
+    # scan-lines, while <line> elements come out as round-aperture strokes.
+    # Same pattern as before: r = OUTER_R + 0.8, dash 1.0 mm / gap 0.6 mm.
     s += '  <g id="silkscreen">\n'
-    s += '    <circle cx="0" cy="0" r="%.2f" fill="none" stroke="#ffffff" stroke-width="0.2" stroke-dasharray="1 0.6"/>\n' % (OUTER_R + 0.8)
+    silk_r = OUTER_R + 0.8
+    silk_w = 0.2
+    dash, gap = 1.0, 0.6
+    period = dash + gap
+    circ = 2.0 * math.pi * silk_r
+    for k in range(int(circ / period)):
+        a0 = 2.0 * math.pi * (k * period) / circ
+        a1 = 2.0 * math.pi * (k * period + dash) / circ
+        segs = max(2, int(math.ceil(dash / 0.15)))
+        for j in range(segs):
+            t0 = a0 + (a1 - a0) * j / segs
+            t1 = a0 + (a1 - a0) * (j + 1) / segs
+            s += ('    <line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" '
+                  'stroke="#ffffff" stroke-width="%.1f" fill="none"/>\n'
+                  % (silk_r * math.cos(t0), silk_r * math.sin(t0),
+                     silk_r * math.cos(t1), silk_r * math.sin(t1), silk_w))
     s += '  </g>\n'
     s += "</svg>\n"
     return s
