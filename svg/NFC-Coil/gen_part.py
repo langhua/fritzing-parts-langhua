@@ -81,17 +81,22 @@ def ribbon_path(outer_r=OUTER_R):
 
 # ---------------------------------------------------------------- PCB view
 def pcb_svg():
-    """Spiral coil as a through-hole PCB part.
+    """Spiral coil as a TOP-LAYER (single-sided) PCB part.
 
-    Mirrors the built-in inductor's PCB structure exactly:
-      <g id="copper0">
-        <g id="copper1">
-          ...artwork + connector pins (each id ONCE)...
+    Layer structure:
+      <g id="copper1">            <- top: the sensing spiral ONLY
+        ...spiral + end stubs...
+        <g id="copper0">          <- nested: the two ends are through-hole
+          ...connector pins, each id ONCE...
         </g>
       </g>
-    The nested copper0>copper1 structure tells Fritzing these are
-    through-hole vias connecting both layers - do NOT duplicate
-    connector ids across separate layer groups.
+
+    The spiral must live on copper1 only: the layout plan requires the back
+    side under the coil (phi20 circle) to be copper-free, otherwise it
+    attenuates the 13.56 MHz sensing field.  Only the two END PADS are
+    through-hole (copper0 nested inside copper1, each connector id once) so
+    Fritzing still drills the two vias that take the coil ends down to the
+    bottom-layer circuit.
 
     viewBox -12 -12 24 24 (24x24 mm), same as breadboard view.
     """
@@ -111,14 +116,15 @@ def pcb_svg():
         'width="%dmm" height="%dmm" viewBox="%d %d %d %d">\n'
         % (size, size, -size / 2, -size / 2, size, size)
     )
-    # copper0 wraps copper1 (through-hole convention)
-    s += '  <g id="copper0">\n'
-    s += '    <g id="copper1">\n'
-    s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
+    # copper1 (top layer) carries the spiral; copper0 nested inside it holds
+    # only the two end pads (through-hole).
+    s += '  <g id="copper1">\n'
+    s += '    <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
     # connection stubs from the coil ends to the displaced pads
-    s += '      <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_in[0], p_in[1], INNER_PAD_R, 0.0)
-    s += '      <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_out[0], p_out[1], OUTER_PAD_R, 0.0)
+    s += '    <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_in[0], p_in[1], INNER_PAD_R, 0.0)
+    s += '    <path d="M %.3f %.3f L %.3f %.3f" fill="none" stroke="#f7bf13" stroke-width="0.4"/>\n' % (p_out[0], p_out[1], OUTER_PAD_R, 0.0)
     # through-hole pads, each id appears ONCE
+    s += '    <g id="copper0">\n'
     s += '      <circle cx="%.3f" cy="0.000" r="0.55" id="connector0pin" fill="none" stroke="#f7bf13" stroke-width="0.5"/>\n' % INNER_PAD_R
     s += '      <circle cx="%.3f" cy="0.000" r="0.55" id="connector1pin" fill="none" stroke="#f7bf13" stroke-width="0.5"/>\n' % OUTER_PAD_R
     s += '    </g>\n'
