@@ -164,10 +164,19 @@ python tools/byhand_icon.py svg/MX-1.25-3P-V     # 手工版 → byHand_icon.py�
 python svg/MX-1.25-3P-V/gen_part.py              # 生成器逐字采用你的版本
 ```
 
-生成器**有手工版就用手工版**，所以重跑脚本不会再覆盖你的改动 ✓。下面这张就是照这条路做出来的
-`MX-1.25-3P-V`（1.25mm 3P 立贴母座，俯视图 1:1 抄自厂商图纸后手工修过）：
+生成器**有手工版就用手工版**，所以重跑脚本不会再覆盖你的改动 ✓。
 
-[![MX-1.25-3P-V 的 icon：米黄塑料本体 + 银色针脚/卡脚 + 银灰斜面](svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg)](svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg)
+下面这**三个立贴母座**都是照这条路做出来的 —— 俯视图 1:1 抄自厂商图纸、上色，再在 Inkscape 里手工修
+（米黄塑料本体 + 银色针脚/卡脚 + 银灰斜面）。**三张图同一比例**，所以画面上的大小 = 三者真实大小之比：
+
+| [MX-1.25-3P-V](svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg) | [PH-2.0-3P-V](svg/PH-2.0-3P-V/svg.icon.PH-2.0-3P-V_icon.svg) | [SH-1.0-3P-V](svg/SH-1.0-3P-V/svg.icon.SH-1.0-3P-V_icon.svg) |
+|---|---|---|
+| <a href="svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg"><img src="svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg" alt="MX-1.25-3P-V 的 icon（1.25mm 3P 立贴母座）" width="190"></a> | <a href="svg/PH-2.0-3P-V/svg.icon.PH-2.0-3P-V_icon.svg"><img src="svg/PH-2.0-3P-V/svg.icon.PH-2.0-3P-V_icon.svg" alt="PH-2.0-3P-V 的 icon（2.0mm 3P 立贴母座）" width="219"></a> | <a href="svg/SH-1.0-3P-V/svg.icon.SH-1.0-3P-V_icon.svg"><img src="svg/SH-1.0-3P-V/svg.icon.SH-1.0-3P-V_icon.svg" alt="SH-1.0-3P-V 的 icon（1.0mm 3P 立贴母座）" width="119"></a> |
+| **1.25mm** 3P　icon 8.65×4.12mm | **2.0mm** 3P　icon 9.96×7.45mm | **1.0mm** 3P　icon 5.43×4.00mm |
+
+> 这三个都是**完整四视图**元件（icon / 面包板 / 原理图 / PCB 都已入库）；它们的 **PCB 焊盘尺寸与位置不是按 icon 量的**，
+> 而是照嘉立创（成熟库）同规格封装定的 land pattern（MX ← `MX1.25-8P`、PH ← `CONN-SMD-PH2.0-1X3PW`、
+> SH ← `SH1.0-3P-L`），规则见 [`AGENTS.md`](AGENTS.md) §10 第 16 条（PCB 焊盘 / 丝印的硬规矩）。
 
 工具细节、以及另一条路（手工版导出**结构化表** `byHand_tables.py`，适合"图形由元件拼出来"的模组类）
 见 [`tools/README.md`](tools/README.md)。
