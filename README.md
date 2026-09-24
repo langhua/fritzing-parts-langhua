@@ -8,7 +8,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 100 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`SYB-118`、`LM393-A3144-HALL-3PINS`
+共 111 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`SYB-118`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这三个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 
 **芯片与接口 IC** —— MCU / USB-UART / 理想二极管 / 存储 / LED 驱动 / 网络
@@ -25,7 +25,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 
 **连接器 / 开关 / 按键** —— Type-C、USB、FPC、RJ45、SMA、拨动开关、PB86-A0 六色
 
-[![连接器与开关：TypeC16Pin、USB-B01、FPC-05F-12P-H15、RJ45-8P8C、SMA-PJ1.7-L9.5、DPDT7x7-6P、SK-12D02VG3、PB86-A0 六色等](docs/preview/conn.svg)](docs/preview/conn.svg)
+[![连接器与开关：TypeC16Pin、USB-B01、FPC-05F-12P-H15、RJ45-8P8C、SMA-PJ1.7-L9.5、MX-1.25-3P-V、DPDT7x7-6P、SK-12D02VG3、PB86-A0 六色等](docs/preview/conn.svg)](docs/preview/conn.svg)
 
 **无源件** —— SMD 电阻 11 种尺寸、晶振、模压功率电感
 
@@ -55,7 +55,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（88 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（116 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -84,6 +84,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | Li300mAh-1.25-SMD | 3.7V 300mAh 锂聚合物电池（302050，MX1.25 SMD 座） | `fzpz/Li300mAh-1.25-SMD.fzpz` |
 | MAX40200 | 1A 超低压降理想二极管（SOT23-5） | `fzpz/MAX40200.fzpz` |
 | ME4054 | 锂电充电驱动（20–500mA，SOT23-5） | `fzpz/ME4054.fzpz` |
+| MX-1.25-3P-V | 1.25mm **3P 立贴母座**（板端 SMD 插座；icon = 厂商图纸俯视图 1:1 抄图后手工修，8.65×4.12mm；面包板 = 绿色转接板，3 个 2.54mm 排针） | `fzpz/MX-1.25-3P-V.fzpz` |
 | NetLabel-Pad | 网络标签式接口焊盘：原理图显示信号名、PCB 为大圆通孔焊盘（φ3mm/孔φ1.2mm，可插 2.54 排针） | `fzpz/NetLabel-Pad.fzpz` |
 | NFC Coil | 13.56MHz NFC 感应线圈（PCB 螺旋，20mm、6 匝，通孔） | `fzpz/NFC-Coil.fzpz` |
 | PB86-A0 | PB86-A0 按键（黑/蓝/灰/绿/红/黄 6 色） | `fzpz/PB86-A0-*.fzpz` |
@@ -129,3 +130,19 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 ## 开发指南
 
 做新部件（TS3A44159 等）前必读：[Fritzing 自定义部件开发指南](docs/part-dev-guide.md)
+
+**好看的 icon 最后一手可以自己改**：抄厂商图纸 + 上色做出来的 icon，最后往往要在 Inkscape 里微调
+（形状 / 颜色 / 该留白的地方）。改 `svg/<部件>/svg.icon.<部件>_icon_byHand.svg`（草稿，不入库），再跑
+
+```bash
+python tools/byhand_icon.py svg/MX-1.25-3P-V     # 手工版 → byHand_icon.py（纯数据，入库）
+python svg/MX-1.25-3P-V/gen_part.py              # 生成器逐字采用你的版本
+```
+
+生成器**有手工版就用手工版**，所以重跑脚本不会再覆盖你的改动 ✓。下面这张就是照这条路做出来的
+`MX-1.25-3P-V`（1.25mm 3P 立贴母座，俯视图 1:1 抄自厂商图纸后手工修过）：
+
+[![MX-1.25-3P-V 的 icon：米黄塑料本体 + 银色针脚/卡脚 + 银灰斜面](svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg)](svg/MX-1.25-3P-V/svg.icon.MX-1.25-3P-V_icon.svg)
+
+工具细节、以及另一条路（手工版导出**结构化表** `byHand_tables.py`，适合"图形由元件拼出来"的模组类）
+见 [`tools/README.md`](tools/README.md)。

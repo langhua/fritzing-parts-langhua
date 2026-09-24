@@ -105,7 +105,7 @@ SECTIONS = {
     ],
     "conn": [
         ("插座 / 连接器", ["TypeC16Pin", "USB-B01", "FPC-05F-12P-H15", "RJ45-8P8C",
-                          "RJ45-8P8C rev.1", "SMA-PJ1.7-L9.5"]),
+                          "RJ45-8P8C rev.1", "SMA-PJ1.7-L9.5", "MX-1.25-3P-V"]),
         ("开关（拨动 / 滑动 / 轻触）", ["DPDT7x7-6P", "SK-12D02VG3", "DSIC01LS-P", "TS-D014",
                                      "SMT-SW-PTS-820"]),
         ("按键", ["PB86-A0-BLACK", "PB86-A0-BLUE", "PB86-A0-GRAY", "PB86-A0-GREEN",

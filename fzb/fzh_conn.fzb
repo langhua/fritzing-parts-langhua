@@ -28,6 +28,9 @@
         <instance moduleIdRef="SMA-PJ1.7-L9.5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMA-PJ1.7-L9.5.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="MX-1.25-3P-V" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MX-1.25-3P-V.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="开关（拨动 / 滑动 / 轻触）">
         <views>
             <iconView layer="icon">

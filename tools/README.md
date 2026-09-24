@@ -15,8 +15,19 @@
    → 生成 `svg/<部件>/byHand_tables.py`（纯数据，入库）
    ★ **一个部件两个视图都有手工版时**（TX-AH-R900PNR）：面包板那份另存
    `byHand_tables_breadboard.py`（规则见下面 2026-09-19 那节），icon 表名字不变。
-3. **生成器读表**：`gen_part.py` 里 `from byHand_tables import …`；
-   以后要挪位置 = 改表里的数字（不用再开 Inkscape）
+   ★ **icon 手工版有两条路，按你“改的是什么”选**（2026-09-24 定，MX-1.25-3P-V 起）：
+   · 改的是**版式/位置**（图形由元件拼出来的，如模组顶视图）→ 就用上面的
+     `byhand_export.py … icon`：导出**结构化表**，位置变成数字，以后不开 Inkscape 也能挪 ✓
+   · 改的是**形状/颜色**（icon 本身是抄厂商图纸 + 手工上色那种）→ 用
+     `tools/byhand_icon.py svg\<部件>`：把图层**逐字**搬进 `svg/<部件>/byHand_icon.py`
+     （`WIDTH_MM/HEIGHT_MM/VIEWBOX/INNER`），`gen_part.py` 原样搬进 `<g id="icon">`，
+     **一笔不加工** —— 结构化重构会把手工调好的形状/颜色改掉 ✗
+3. **生成器读表**：`gen_part.py` 里 `from byHand_tables import …`（icon 逐字版则是
+   `from byHand_icon import INNER`）；以后要挪位置 = 改表里的数字（不用再开 Inkscape）
+
+★ **手工版里常有嵌套 `group` + `transform`**（你在 Inkscape 里挪过元素）⇒ 取 `id="icon"`
+图层时必须**按 `<g>` 标签配平扫描**；“非贪婪正则”只会截到第一个 `</g>` ✗
+（面包板里嵌的那份也会跟着截断）。
 
 之后这个部件就是**完全程序生成**的：`gen_part.py` 一跑，四视图 + `.fzp` + `.fzpz` 全部产出。
 
@@ -26,7 +37,10 @@
 flowchart LR
   P["实物照片<br/>（第三方素材）"] --> H["手工对齐版<br/>*_byHand.svg<br/>（草稿，不入库）"]
   H -->|"byhand_export.py<br/>只逐字照搬"| T["byHand_tables.py<br/>纯数据，入库"]
-  T --> G["gen_part.py<br/>读表出图"] --> O["四视图 + .fzp<br/>→ fzpz/部件.fzpz"]
+  H -->|"byhand_icon.py<br/>只逐字照搬（抄图/上色那种 icon）"| T2["byHand_icon.py<br/>纯数据，入库"]
+  T --> G["gen_part.py<br/>读表出图（有手工版就用手工版）"]
+  T2 --> G
+  G --> O["四视图 + .fzp<br/>→ fzpz/部件.fzpz"]
   H -.->|"byhand_check.py"| C(["核对：只报告，不改图"])
   O -.->|"schem_check.py<br/>fzp_check.py"| C
 ```
@@ -41,6 +55,7 @@ flowchart LR
 |---|---|
 | `byhand_export.py <部件目录> [breadboard\|icon]` | 手工版 → `byHand_tables.py`：嵌套 transform 累乘展开、单位统一成**内部单位**（100 = 2.54mm，**跟着文档的 width/height 走**，见下）、**`style=` 优先于同名属性**（CSS 规则）、**`SHAPES` 按文档次序**（保叠放）、按尺寸自动认图标（可用 `ICON_MATCH_BY_PART` 关）、丢掉照片与 Inkscape 壳、**隐藏图层整棵跳过**、多行文字按行拆、丝印统一字号（`FS_UNIFORM` / 大字规则 / 按部件关掉）、字重照搬、行距压紧（`LINE_PITCH`）、**`<path>` 照搬**（d + 累乘 matrix + 被引用的渐变）、焊盘（含**画成组**与**方形**）、圆角矩形的 `rx`（可选第 10 字段）、rect 的 `opacity`（可选第 11 字段）、导出 `PAD_R`/`PAD_SW`/`PAD_FILL`/`PAD_EDGE`/`DEFS`；**祖先组的 fill/stroke/stroke-width 会下发给缺失的后代**（2026-09-18）；目录名 ≠ 元件 id 时（如 `svg/TX-AH-R900PNR` 里文件都带 `_1`）按“本目录下该视图的手工版”兑底找 |
 | `byhand_check.py <部件目录> [--png]` | 核对：元素计数（`text` 按**行**计）+ **加粗条数** + 每条文字的有效字号（能一眼看出整体缩放错）；`--png` 另出像素差与"左程序版 / 右手工版"对比图 |
+| `byhand_icon.py <部件目录>` | **icon 专用的“逐字照搬”**（给“抄厂商图纸 + 手工上色”那种 icon 用，2026-09-24，MX-1.25-3P-V）：取 `<g id="icon">…</g>` 的**全部内容**（嵌套 group / transform / style 原样）+ `width/height/viewBox`，写成 `svg/<部件>/byHand_icon.py`（纯数据，入库）；Inkscape 的 `defs`/`sodipodi` 壳不带走。`gen_part.py` **有它就用它**（手工版优先，重跑不会覆盖你的改动）；与 `byhand_export.py … icon`（结构化表）的区别见上面「为什么有这套东西」 |
 | `schem_check.py <部件目录> [--png] [--no-ccw]` | 核对**矩形符号原理图**（AGENTS §5）：① svg 头 width/height 齐不齐、viewBox 装不装得下 ② 每个脚 `connectorNpin`+`connectorNterminal` 齐不齐、端点是否落在引线末端 ③ 每脚一个编号（框外）+ 一个名（框内）、同字号 ④ **脚号逆时针连续**（沿 左→下→右→上 走一圈应是所有脚号的循环移位，且递增） |
 | `fzp_check.py <部件目录> [--fzpz 包]` | 核对 `.fzp` ↔ 四个视图 svg：① 视图 `image=` 用**子目录路径** ② 每条 `svgId`/`terminalId` 在对应 svg 里真存在 ③ svg 里的 connector id 都被 .fzp 声明 ④ **svg 内 id 不重复** ⑤ `<buses>` 引用存在且不重复入总线 ⑥ **裸露焊盘（EPAD/EP）不许进任何总线**（独立成网、布线时特意接 GND，AGENTS §5）⑦ 面包板里同名焊盘必须在同一条总线里（NC/DNP 除外）⑧ `--fzpz` 包内**平铺**且成员齐全 |
 | `svg_lines.py` | `tools/` 内部共用小工具：把 `<text>` 拆成**行**（Inkscape 多行 = 同个 `<text>` 里多个 `role="line"` 的 tspan）；导出与核对**共用这一份口径**，否则一个按行、一个按整段，核对表会冒假差异 |

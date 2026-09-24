@@ -258,6 +258,15 @@ icon 里的引脚伸出长度也要对得上（本例引脚伸 1.05mm → 端点
 - 建议用**面包板视图的图形缩小版**，让部件库里的图标和实际外观一致。
 - 图标通常不需要 connector 定义。
 - 贴片芯片可在图标上画出丝印标记（如 `KL4`，银色）和脚1 圆点，贴近实物。
+- **手工微调版（2026-09-24，MX-1.25-3P-V 起）**：抄厂商图纸 + 上色做出来的 icon，最后
+  一手往往要在 Inkscape 里自己修（形状 / 颜色 / 该留白的地方）。做法：改
+  `svg/<部件>/svg.icon.<部件>_icon_byHand.svg`（草稿、`.gitignore` 已忽略），跑
+  `py -3.13 tools/byhand_icon.py svg\<部件>` 导出 `byHand_icon.py`（纯数据），
+  `gen_part.py` **逐字**采用它（整段原样搬进 `<g id="icon">`）——
+  **重跑生成器不会覆盖手工改动** ✓。
+  （手工版里挪过元素的话会有**嵌套 group + transform**，取图层必须按 `<g>` 标签配平扫描，
+  否则非贪婪正则会只截到第一个 `</g>` ✗）；改“版式/位置”的 icon 手工版走另一条：
+  `byhand_export.py … icon` → `byHand_tables.py`，见 `tools/README.md`。）
 
 ---
 
