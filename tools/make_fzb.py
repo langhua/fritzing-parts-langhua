@@ -77,7 +77,8 @@ SPACER_VIEW = ('        <views>\n            <iconView layer="icon">\n'
 # 每个箱内部的小节：**本表必须恰好盖住该组全部条目**（自检会拦漏/重/写错名字）
 SECTIONS = {
     "chips": [
-        ("MCU", ["CH32V203C8T6"]),
+        ("MCU", ["CH32V203C8T6", "CH32V002J4M6", "CH32V003J4M6",
+                 "CH32V002F4U6", "CH32V003F4U6", "CH32V002D4U6"]),
         ("USB 接口芯片", ["CH340C", "CH340E", "CH340K", "CH340N", "CH340X", "CH347F", "CH347T"]),
         ("开关机 / 电源路径", ["CH213K", "MAX40200", "SAM8108", "EC190708"]),
         ("存储", ["W25Q16JV", "AT24C02"]),
@@ -98,7 +99,8 @@ SECTIONS = {
         ("无线 SoC / 模组", ["TXW8301", "ESP32-S3-WROOM-1", "ESP-12F"]),
         ("开发板", ["ESP32-S3-DevKitC-1", "ESP8266+CH340+SSD1306", "TX-AH-R900PNR"]),
         ("显示", ["TFTSPI1.9in", "UART1.9inIPS"]),
-        ("LED / 指示", ["WS2812B-5050", "WS2812B-2020", "WS2812B-5050-4x4", "3Pin-LED"]),
+        ("LED / 指示", ["WS2812B-5050", "WS2812B-2020", "WS2812B-1010",
+                       "WS2812B-5050-4x4", "3Pin-LED"]),
         ("感应 / 天线", ["NFC Coil"]),
     ],
     "conn": [
@@ -118,7 +120,7 @@ SECTIONS = {
     ],
     "discrete": [
         ("二极管（肖特基 / TVS）", ["SOD-123", "SOD-123FL", "SOD-323", "SOD-523",
-                                   "BAT54S", "SS34"]),
+                                   "BAT54S", "SS34", "BAS70BRW", "BAS70DW-04"]),
         ("MOSFET", ["8205HA", "8205S"]),
         ("排阻", ["YC164"]),
     ],

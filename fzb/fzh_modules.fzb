@@ -61,6 +61,9 @@
         <instance moduleIdRef="WS2812B_2020_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_2020_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="WS2812B_1010_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_1010_1.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="WS2812B_5050_4x4_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_5050_4x4_1.fzp">
             <views/>
         </instance>

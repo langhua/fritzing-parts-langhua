@@ -7,7 +7,7 @@
  <date>2026-09-23</date>
  <tags><tag>IC</tag><tag>MCU</tag><tag>RISC-V</tag><tag>CH32V002</tag><tag>CH32V003</tag></tags>
  <properties>
-  <property name="family">MCU</property>
+  <property name="family">WCH RISC-V MCU</property>
   <property name="chip">CH32V002</property>
   <property name="pins">8</property>
   <property name="part number">CH32V002J4M6</property>

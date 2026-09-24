@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 由 tools/make_preview.py 生成（勿手改）：分立器件（二极管 / MOS / 排阻） -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="186mm" height="105mm" viewBox="0 0 186 105">
-  <rect x="0" y="0" width="186" height="105" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="186mm" height="139mm" viewBox="0 0 186 139">
+  <rect x="0" y="0" width="186" height="139" fill="#ffffff"/>
   <text x="8" y="14" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="5.0" fill="#202020">分立器件（二极管 / MOS / 排阻）</text>
   <svg id="p0" x="10.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet">
     <defs
@@ -225,32 +225,60 @@
   </svg>
   <text x="25.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SS34</text>
   <text x="25.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">6×2.54mm</text>
-  <svg id="p6" x="44.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet">
+  <svg id="p6" x="44.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet">
+    <g id="p6_breadboard">
+        <rect x="10.67" y="12.67" width="10.66" height="6.66" rx="0.8" ry="0.8" fill="#303030" stroke="none"/>
+        <rect x="11.42" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="14.88" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="18.35" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="18.35" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="14.88" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="11.42" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <circle cx="12.27" cy="18.13" r="0.8" fill="#c0c0c0" stroke="none"/>
+        <text x="16.80" y="16.00" font-family="DroidSans" font-size="3.4" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">K75</text>
+      </g>
+  </svg>
+  <text x="59.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">BAS70BRW</text>
+  <svg id="p7" x="78.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet">
+    <g id="p7_breadboard">
+        <rect x="10.67" y="12.67" width="10.66" height="6.66" rx="0.8" ry="0.8" fill="#303030" stroke="none"/>
+        <rect x="11.42" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="14.88" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="18.35" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="18.35" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="14.88" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <rect x="11.42" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+        <circle cx="12.27" cy="18.13" r="0.8" fill="#c0c0c0" stroke="none"/>
+        <text x="16.80" y="16.00" font-family="DroidSans" font-size="3.4" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">K74</text>
+      </g>
+  </svg>
+  <text x="93.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">BAS70DW-04</text>
+  <svg id="p8" x="112.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p6_defs197" />
+         id="p8_defs197" />
       
       <g
          gorn="0.1"
-         id="p6_breadboard">
+         id="p8_breadboard">
         <g
            gorn="0.1.0"
-           id="p6_icon">
+           id="p8_icon">
           <path
              d="M0,0L0,170A30,30 0 0 1 0,230L0,400L300,400L300,0L0,0z"
              fill="#1F7A34"
              stroke="none"
              stroke-width="0"
-             id="p6_path6" />
+             id="p8_path6" />
           <g
              transform="translate(90,125.193)"
-             id="p6_g38">
+             id="p8_g38">
             <g
-               id="p6_g36">
+               id="p8_g36">
               <g
                  transform="matrix(0.5, 0, 0, 0.5, 30, 37.4035)"
-                 id="p6_g34">
+                 id="p8_g34">
                 <g
-                   id="p6_g32">
+                   id="p8_g32">
                   <rect
                      connectorname="3"
                      fill="#8c8c8c"
@@ -261,7 +289,7 @@
                      width="21.6535"
                      x="11.7717"
                      y="102.37"
-                     id="p6_rect8" />
+                     id="p8_rect8" />
                   <rect
                      connectorname="2"
                      fill="#8c8c8c"
@@ -272,7 +300,7 @@
                      width="21.6535"
                      x="49.1732"
                      y="102.37"
-                     id="p6_rect10" />
+                     id="p8_rect10" />
                   <rect
                      connectorname="1"
                      fill="#8c8c8c"
@@ -283,7 +311,7 @@
                      width="21.6535"
                      x="86.5748"
                      y="102.37"
-                     id="p6_rect12" />
+                     id="p8_rect12" />
                   <rect
                      connectorname="6"
                      fill="#8c8c8c"
@@ -294,7 +322,7 @@
                      width="21.6535"
                      x="86.5748"
                      y="0"
-                     id="p6_rect14" />
+                     id="p8_rect14" />
                   <rect
                      connectorname="4"
                      fill="#8c8c8c"
@@ -305,7 +333,7 @@
                      width="21.6535"
                      x="11.7717"
                      y="0"
-                     id="p6_rect16" />
+                     id="p8_rect16" />
                   <rect
                      connectorname="5"
                      fill="#8c8c8c"
@@ -316,7 +344,7 @@
                      width="21.6535"
                      x="49.1732"
                      y="0"
-                     id="p6_rect18" />
+                     id="p8_rect18" />
                   <rect
                      fill="#303030"
                      height="71.811"
@@ -325,23 +353,23 @@
                      width="120"
                      x="0"
                      y="38.9016"
-                     id="p6_rect20" />
+                     id="p8_rect20" />
                   <polygon
                      fill="#1f1f1f"
                      points="0,38.9016 120,38.9016 110,48.9016 10,48.9016"
-                     id="p6_polygon22" />
+                     id="p8_polygon22" />
                   <polygon
                      fill="#1f1f1f"
                      points="0,110.713 120,110.713 110,100.713 10,100.713"
-                     id="p6_polygon24" />
+                     id="p8_polygon24" />
                   <polygon
                      fill="#000000"
                      points="0,38.9016 0,110.713 10,100.713 10,48.9016"
-                     id="p6_polygon26" />
+                     id="p8_polygon26" />
                   <polygon
                      fill="#3d3d3d"
                      points="120,38.9016 120,110.713 110,100.713 110,48.9016"
-                     id="p6_polygon28" />
+                     id="p8_polygon28" />
                   <circle
                      cx="30"
                      cy="80.7126"
@@ -349,44 +377,44 @@
                      r="10"
                      stroke="none"
                      stroke-width="0"
-                     id="p6_circle30" />
+                     id="p8_circle30" />
                 </g>
               </g>
             </g>
           </g>
           <g
              aria-label="8205HA"
-             id="p6_label"
+             id="p8_label"
              style="font-size:65px;font-family:OCRA;fill:#ffffff;stroke-width:0">
             <path
                d="m 68.366459,211.98257 q 0,6.12549 -4.792481,10.18799 -4.760742,4.0625 -11.99707,4.0625 -7.680664,0 -12.250976,-3.96728 -4.538575,-3.96729 -4.538575,-10.15625 0,-3.93555 2.285157,-7.10938 2.285156,-3.20556 6.442871,-5.07812 v -0.19043 q -3.808594,-2.03125 -5.649414,-4.44336 -1.809082,-2.41211 -1.809082,-6.03027 0,-5.33204 4.379882,-8.88672 4.379883,-3.55469 11.140137,-3.55469 7.077637,0 11.298828,3.39599 4.221192,3.396 4.221192,8.63282 0,3.20556 -1.999512,6.31592 -1.999512,3.07861 -5.871582,4.82421 v 0.19043 q 4.443359,1.9043 6.791992,4.69727 2.348633,2.79297 2.348633,7.10937 z m -7.521973,-23.07373 q 0,-3.39599 -2.634277,-5.3955 -2.602539,-2.03125 -6.665039,-2.03125 -3.999024,0 -6.569824,1.90429 -2.539063,1.9043 -2.539063,5.1416 0,2.28516 1.269531,3.96729 1.30127,1.65039 3.903809,2.95166 1.174316,0.57129 3.364258,1.4917 2.221679,0.92041 4.316406,1.52344 3.14209,-2.09473 4.348145,-4.34815 1.206054,-2.25342 1.206054,-5.20508 z m 0.983887,23.67676 q 0,-2.91992 -1.30127,-4.66553 -1.269531,-1.77734 -5.014648,-3.55468 -1.491699,-0.69825 -3.269043,-1.30127 -1.777344,-0.60303 -4.729004,-1.68213 -2.856445,1.55517 -4.602051,4.22119 -1.713867,2.66602 -1.713867,6.03027 0,4.28467 2.95166,7.07764 2.95166,2.79297 7.490235,2.79297 4.633789,0 7.395019,-2.38037 2.792969,-2.38037 2.792969,-6.53809 z"
-               id="p6_path384" />
+               id="p8_path384" />
             <path
                d="M 109.34058,225.15396 H 77.348392 v -6.6333 q 3.33252,-2.85644 6.66504,-5.71289 3.364257,-2.85645 6.252441,-5.68115 6.09375,-5.90332 8.347168,-9.3628 2.253419,-3.49121 2.253419,-7.52197 0,-3.68164 -2.443849,-5.74463 -2.412109,-2.09472 -6.760254,-2.09472 -2.888183,0 -6.252441,1.01562 -3.364258,1.01563 -6.569824,3.11035 h -0.317383 v -6.66504 q 2.253418,-1.11084 5.998535,-2.03125 3.776856,-0.92041 7.299805,-0.92041 7.268066,0 11.394041,3.52295 4.12598,3.49121 4.12598,9.48975 0,2.69775 -0.69824,5.04639 -0.66651,2.31689 -1.99952,4.41162 -1.23779,1.96777 -2.91992,3.87207 -1.65039,1.90429 -4.030759,4.22119 -3.395996,3.33252 -7.01416,6.47461 -3.618164,3.11035 -6.760254,5.77637 h 25.422363 z"
-               id="p6_path386" />
+               id="p8_path386" />
             <path
                d="m 150.60035,201.50894 q 0,12.72705 -3.99903,18.69385 -3.96728,5.93506 -12.34619,5.93506 -8.50586,0 -12.44141,-6.03028 -3.9038,-6.03027 -3.9038,-18.53515 0,-12.6001 3.96728,-18.59863 3.96729,-6.03028 12.37793,-6.03028 8.50586,0 12.40967,6.12549 3.93555,6.09375 3.93555,18.43994 z m -8.34717,14.40918 q 1.11084,-2.5708 1.4917,-6.03027 0.41259,-3.49121 0.41259,-8.37891 0,-4.82422 -0.41259,-8.3789 -0.38086,-3.55469 -1.52344,-6.03028 -1.11084,-2.44385 -3.04688,-3.68164 -1.90429,-1.23779 -4.91943,-1.23779 -2.9834,0 -4.95117,1.23779 -1.93604,1.23779 -3.07861,3.74512 -1.07911,2.34863 -1.4917,6.12549 -0.38086,3.77685 -0.38086,8.28369 0,4.95117 0.34912,8.28369 0.34912,3.33252 1.4917,5.9668 1.04736,2.47558 2.95166,3.77685 1.93603,1.30127 5.10986,1.30127 2.9834,0 4.95117,-1.23779 1.96778,-1.23779 3.04688,-3.74512 z"
-               id="p6_path388" />
+               id="p8_path388" />
             <path
                d="m 191.6062,210.14175 q 0,3.30079 -1.20605,6.31592 -1.20605,3.01514 -3.30078,5.07813 -2.28516,2.22168 -5.45899,3.42773 -3.14209,1.17432 -7.2998,1.17432 -3.87207,0 -7.4585,-0.8252 -3.58642,-0.79345 -6.06201,-1.93603 v -6.69678 h 0.44434 q 2.60254,1.65039 6.09375,2.82471 3.49121,1.14258 6.85547,1.14258 2.25341,0 4.34814,-0.63477 2.12647,-0.63477 3.77686,-2.22168 1.39648,-1.36475 2.09472,-3.26904 0.72998,-1.9043 0.72998,-4.41162 0,-2.44385 -0.85693,-4.12598 -0.8252,-1.68213 -2.31689,-2.69775 -1.65039,-1.20606 -4.03077,-1.68213 -2.34863,-0.50782 -5.26855,-0.50782 -2.79297,0 -5.39551,0.38086 -2.5708,0.38086 -4.44336,0.76172 v -24.34326 h 28.4375 v 5.5542 h -22.31201 v 12.56836 q 1.36475,-0.12695 2.79297,-0.19043 1.42822,-0.0635 2.47559,-0.0635 3.84033,0 6.72851,0.66651 2.88818,0.63476 5.30029,2.28515 2.53907,1.74561 3.93555,4.50684 1.39648,2.76123 1.39648,6.91894 z"
-               id="p6_path390" />
+               id="p8_path390" />
             <path
                d="m 238.70581,225.15396 h -6.28418 v -23.13721 h -23.58154 v 23.13721 h -6.28418 v -47.2583 h 6.28418 v 18.53516 h 23.58154 v -18.53516 h 6.28418 z"
-               id="p6_path392" />
+               id="p8_path392" />
             <path
                d="m 288.66187,225.15396 h -6.69678 l -4.63379,-13.17139 h -20.43945 l -4.63379,13.17139 h -6.37939 l 17.20214,-47.2583 h 8.37891 z m -13.2666,-18.56689 -8.28369,-23.20069 -8.31543,23.20069 z"
-               id="p6_path394" />
+               id="p8_path394" />
           </g>
           <g
              transform="translate(63.5,326.05)"
-             id="p6_g49">
+             id="p8_g49">
             <g
-               id="p6_g47">
+               id="p8_g47">
               <g
                  transform="rotate(-90)"
-                 id="p6_g45">
+                 id="p8_g45">
                 <g
-                   id="p6_g43">
+                   id="p8_g43">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -396,21 +424,21 @@
                      text-anchor="start"
                      x="0"
                      y="0"
-                     id="p6_text41">1</text>
+                     id="p8_text41">1</text>
                 </g>
               </g>
             </g>
           </g>
           <g
              transform="translate(63.5,73.95)"
-             id="p6_g59">
+             id="p8_g59">
             <g
-               id="p6_g57">
+               id="p8_g57">
               <g
                  transform="rotate(-90)"
-                 id="p6_g55">
+                 id="p8_g55">
                 <g
-                   id="p6_g53">
+                   id="p8_g53">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -420,21 +448,21 @@
                      text-anchor="end"
                      x="0"
                      y="0"
-                     id="p6_text51">6</text>
+                     id="p8_text51">6</text>
                 </g>
               </g>
             </g>
           </g>
           <g
              transform="translate(163.5,326.05)"
-             id="p6_g69">
+             id="p8_g69">
             <g
-               id="p6_g67">
+               id="p8_g67">
               <g
                  transform="rotate(-90)"
-                 id="p6_g65">
+                 id="p8_g65">
                 <g
-                   id="p6_g63">
+                   id="p8_g63">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -444,21 +472,21 @@
                      text-anchor="start"
                      x="0"
                      y="0"
-                     id="p6_text61">2</text>
+                     id="p8_text61">2</text>
                 </g>
               </g>
             </g>
           </g>
           <g
              transform="translate(163.5,73.95)"
-             id="p6_g79">
+             id="p8_g79">
             <g
-               id="p6_g77">
+               id="p8_g77">
               <g
                  transform="rotate(-90)"
-                 id="p6_g75">
+                 id="p8_g75">
                 <g
-                   id="p6_g73">
+                   id="p8_g73">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -468,21 +496,21 @@
                      text-anchor="end"
                      x="0"
                      y="0"
-                     id="p6_text71">5</text>
+                     id="p8_text71">5</text>
                 </g>
               </g>
             </g>
           </g>
           <g
              transform="translate(263.5,326.05)"
-             id="p6_g89">
+             id="p8_g89">
             <g
-               id="p6_g87">
+               id="p8_g87">
               <g
                  transform="rotate(-90)"
-                 id="p6_g85">
+                 id="p8_g85">
                 <g
-                   id="p6_g83">
+                   id="p8_g83">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -492,21 +520,21 @@
                      text-anchor="start"
                      x="0"
                      y="0"
-                     id="p6_text81">3</text>
+                     id="p8_text81">3</text>
                 </g>
               </g>
             </g>
           </g>
           <g
              transform="translate(263.5,73.95)"
-             id="p6_g99">
+             id="p8_g99">
             <g
-               id="p6_g97">
+               id="p8_g97">
               <g
                  transform="rotate(-90)"
-                 id="p6_g95">
+                 id="p8_g95">
                 <g
-                   id="p6_g93">
+                   id="p8_g93">
                   <text
                      fill="white"
                      font-family="OCRA"
@@ -516,7 +544,7 @@
                      text-anchor="end"
                      x="0"
                      y="0"
-                     id="p6_text91">4</text>
+                     id="p8_text91">4</text>
                 </g>
               </g>
             </g>
@@ -524,14 +552,14 @@
         </g>
         <g
            transform="translate(34.035,334.05)"
-           id="p6_g115">
+           id="p8_g115">
           <g
-             id="p6_g113">
+             id="p8_g113">
             <rect
                fill="#8D8C8C"
                gorn="0.1.1.0.0"
                height="31.9"
-               id="p6_connector0pin"
+               id="p8_connector0pin"
                width="31.93"
                x="0"
                y="0" />
@@ -541,35 +569,35 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect103" />
+               id="p8_rect103" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon105" />
+               id="p8_polygon105" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon107" />
+               id="p8_polygon107" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon109" />
+               id="p8_polygon109" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon111" />
+               id="p8_polygon111" />
           </g>
         </g>
         <g
            transform="translate(34.035,34.05)"
-           id="p6_g130">
+           id="p8_g130">
           <g
-             id="p6_g128">
+             id="p8_g128">
             <rect
                fill="#8D8C8C"
                gorn="0.1.2.0.0"
                height="31.9"
-               id="p6_connector5pin"
+               id="p8_connector5pin"
                width="31.93"
                x="0"
                y="0" />
@@ -579,35 +607,35 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect118" />
+               id="p8_rect118" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon120" />
+               id="p8_polygon120" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon122" />
+               id="p8_polygon122" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon124" />
+               id="p8_polygon124" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon126" />
+               id="p8_polygon126" />
           </g>
         </g>
         <g
            transform="translate(134.035,334.05)"
-           id="p6_g145">
+           id="p8_g145">
           <g
-             id="p6_g143">
+             id="p8_g143">
             <rect
                fill="#8D8C8C"
                gorn="0.1.3.0.0"
                height="31.9"
-               id="p6_connector1pin"
+               id="p8_connector1pin"
                width="31.93"
                x="0"
                y="0" />
@@ -617,35 +645,35 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect133" />
+               id="p8_rect133" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon135" />
+               id="p8_polygon135" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon137" />
+               id="p8_polygon137" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon139" />
+               id="p8_polygon139" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon141" />
+               id="p8_polygon141" />
           </g>
         </g>
         <g
            transform="translate(134.035,34.05)"
-           id="p6_g160">
+           id="p8_g160">
           <g
-             id="p6_g158">
+             id="p8_g158">
             <rect
                fill="#8D8C8C"
                gorn="0.1.4.0.0"
                height="31.9"
-               id="p6_connector4pin"
+               id="p8_connector4pin"
                width="31.93"
                x="0"
                y="0" />
@@ -655,35 +683,35 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect148" />
+               id="p8_rect148" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon150" />
+               id="p8_polygon150" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon152" />
+               id="p8_polygon152" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon154" />
+               id="p8_polygon154" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon156" />
+               id="p8_polygon156" />
           </g>
         </g>
         <g
            transform="translate(234.035,334.05)"
-           id="p6_g175">
+           id="p8_g175">
           <g
-             id="p6_g173">
+             id="p8_g173">
             <rect
                fill="#8D8C8C"
                gorn="0.1.5.0.0"
                height="31.9"
-               id="p6_connector2pin"
+               id="p8_connector2pin"
                width="31.93"
                x="0"
                y="0" />
@@ -693,35 +721,35 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect163" />
+               id="p8_rect163" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon165" />
+               id="p8_polygon165" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon167" />
+               id="p8_polygon167" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon169" />
+               id="p8_polygon169" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon171" />
+               id="p8_polygon171" />
           </g>
         </g>
         <g
            transform="translate(234.035,34.05)"
-           id="p6_g190">
+           id="p8_g190">
           <g
-             id="p6_g188">
+             id="p8_g188">
             <rect
                fill="#8D8C8C"
                gorn="0.1.6.0.0"
                height="31.9"
-               id="p6_connector3pin"
+               id="p8_connector3pin"
                width="31.93"
                x="0"
                y="0" />
@@ -731,32 +759,32 @@
                width="16.4442"
                x="7.79153"
                y="7.73544"
-               id="p6_rect178" />
+               id="p8_rect178" />
             <polygon
                fill="#B8AF82"
                points="0,31.9,7.79153,24.1368,7.79153,6.97162,0,0"
-               id="p6_polygon180" />
+               id="p8_polygon180" />
             <polygon
                fill="#80795B"
                points="24.2079,7.76321,7.90264,7.76321,0,0,31.93,0"
-               id="p6_polygon182" />
+               id="p8_polygon182" />
             <polygon
                fill="#5E5B43"
                points="24.2079,24.1368,24.2079,7.76321,31.93,0,31.93,31.9"
-               id="p6_polygon184" />
+               id="p8_polygon184" />
             <polygon
                fill="#9A916C"
                points="0,31.9,7.87486,24.1368,24.2079,24.1368,31.93,31.9"
-               id="p6_polygon186" />
+               id="p8_polygon186" />
           </g>
         </g>
       </g>
   </svg>
-  <text x="59.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">8205HA</text>
-  <text x="59.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">7.62×10.16mm</text>
-  <svg id="p7" x="78.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 25.6469 10.414" preserveAspectRatio="xMidYMid meet">
+  <text x="127.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">8205HA</text>
+  <text x="127.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">7.62×10.16mm</text>
+  <svg id="p9" x="146.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 25.6469 10.414" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p7_defs56">
+         id="p9_defs56">
         
         
         
@@ -768,13 +796,13 @@
       </defs>
       <g
          gorn="0.2"
-         id="p7_schematic">
+         id="p9_schematic">
         <rect
            class="interior rect"
            fill="#ffffff"
            gorn="0.2.0"
            height="10.16"
-           id="p7_rect4"
+           id="p9_rect4"
            stroke="none"
            stroke-width="0"
            width="15.24"
@@ -784,62 +812,62 @@
            aria-label="8205HA"
            class="text"
            gorn="0.2.1"
-           id="p7_label"
+           id="p9_label"
            style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;stroke-width:0"
            transform="translate(0,8.3451242)">
           <path
              d="m 11.234379,1.4577008 q 0,0.1412924 -0.110545,0.2349993 -0.109813,0.093707 -0.276728,0.093707 -0.177165,0 -0.282585,-0.091511 -0.104688,-0.091511 -0.104688,-0.2342672 0,-0.090778 0.05271,-0.163987 0.05271,-0.073941 0.148613,-0.1171336 v -0.00439 q -0.08785,-0.046853 -0.130311,-0.1024919 -0.04173,-0.055638 -0.04173,-0.13909608 0,-0.1229903 0.101028,-0.2049838 0.101028,-0.081994 0.256962,-0.081994 0.163255,0 0.260622,0.078333 0.09737,0.078333 0.09737,0.1991272 0,0.07394 -0.04612,0.14568488 -0.04612,0.071012 -0.135436,0.1112769 v 0.00439 q 0.102492,0.043925 0.156667,0.1083486 0.05417,0.064423 0.05417,0.1639877 z M 11.060875,0.92547502 q 0,-0.078333 -0.06076,-0.1244544 -0.06003,-0.046854 -0.153738,-0.046854 -0.09224,0 -0.151542,0.043925 -0.05857,0.043925 -0.05857,0.1185978 0,0.05271 0.02928,0.091511 0.03002,0.038068 0.09005,0.068084 0.02709,0.013178 0.0776,0.034408 0.05125,0.02123 0.09956,0.03514 0.07248,-0.048318 0.100295,-0.1002956 0.02782,-0.051978 0.02782,-0.12006188 z m 0.02269,0.54613538 q 0,-0.067352 -0.03001,-0.1076165 -0.02928,-0.040997 -0.11567,-0.081994 -0.03441,-0.016106 -0.0754,-0.030016 -0.041,-0.01391 -0.109081,-0.0388 -0.06589,0.035872 -0.106152,0.097367 -0.03953,0.061495 -0.03953,0.1390962 0,0.098831 0.06808,0.1632549 0.06808,0.064423 0.172772,0.064423 0.106884,0 0.170576,-0.054906 0.06442,-0.054906 0.06442,-0.1508095 z"
              gorn="0.2.1.0"
-             id="p7_path318" />
+             id="p9_path318" />
           <path
              d="M 12.179501,1.7615161 H 11.441559 V 1.6085103 q 0.07687,-0.065888 0.153738,-0.1317753 0.0776,-0.065888 0.14422,-0.1310432 0.140561,-0.1361678 0.192539,-0.2159651 0.05198,-0.080529 0.05198,-0.17350408 0,-0.084922 -0.05637,-0.1325074 -0.05564,-0.048318 -0.155934,-0.048318 -0.06662,0 -0.144221,0.023427 -0.0776,0.023427 -0.151541,0.071744 h -0.0073 v -0.1537374 q 0.05198,-0.025623 0.138364,-0.046853 0.08712,-0.02123 0.16838,-0.02123 0.167647,0 0.262818,0.081261 0.09517,0.080529 0.09517,0.2188934 0,0.062227 -0.01611,0.11640158 -0.01537,0.053442 -0.04612,0.1017598 -0.02855,0.045389 -0.06735,0.089314 -0.03807,0.043925 -0.09298,0.097367 -0.07833,0.076869 -0.16179,0.1493454 -0.08346,0.071744 -0.155935,0.1332394 h 0.586401 z"
              gorn="0.2.1.1"
-             id="p7_path320" />
+             id="p9_path320" />
           <path
              d="m 13.131211,1.2161128 q 0,0.293566 -0.09224,0.431198 -0.09151,0.1368999 -0.284781,0.1368999 -0.196199,0 -0.286977,-0.1390961 -0.09005,-0.1390962 -0.09005,-0.4275377 0,-0.29063768 0.09151,-0.42900178 0.09151,-0.1390961 0.285513,-0.1390961 0.196199,0 0.286245,0.1412924 0.09078,0.1405603 0.09078,0.42534138 z m -0.192538,0.3323665 q 0.02562,-0.059299 0.03441,-0.1390961 0.0095,-0.080529 0.0095,-0.1932704 0,-0.111277 -0.0095,-0.1932705 -0.0088,-0.081993 -0.03514,-0.13909608 -0.02562,-0.056371 -0.07028,-0.084922 -0.04392,-0.028551 -0.113473,-0.028551 -0.06882,0 -0.114205,0.028551 -0.04466,0.028551 -0.07101,0.086386 -0.02489,0.054174 -0.03441,0.14129238 -0.0088,0.087118 -0.0088,0.1910741 0,0.1142053 0.0081,0.1910742 0.0081,0.076869 0.03441,0.137632 0.02416,0.057103 0.06808,0.087118 0.04466,0.030016 0.117865,0.030016 0.06882,0 0.114206,-0.028551 0.04539,-0.028551 0.07028,-0.086386 z"
              gorn="0.2.1.2"
-             id="p7_path322" />
+             id="p9_path322" />
           <path
              d="m 14.077065,1.4152399 q 0,0.076137 -0.02782,0.1456849 -0.02782,0.069548 -0.07614,0.1171336 -0.05271,0.051246 -0.125919,0.079065 -0.07248,0.027087 -0.168379,0.027087 -0.08932,0 -0.17204,-0.019034 -0.08273,-0.018302 -0.139829,-0.044657 v -0.15447 h 0.01025 q 0.06003,0.038068 0.14056,0.065156 0.08053,0.026355 0.15813,0.026355 0.05198,0 0.100296,-0.014642 0.04905,-0.014642 0.08712,-0.051246 0.03221,-0.03148 0.04832,-0.075405 0.01684,-0.043925 0.01684,-0.1017598 0,-0.056371 -0.01977,-0.095171 -0.01903,-0.0388 -0.05344,-0.062227 -0.03807,-0.027819 -0.09298,-0.038801 -0.05417,-0.011713 -0.121526,-0.011713 -0.06442,0 -0.124454,0.00879 -0.0593,0.00879 -0.102492,0.01757 V 0.67144152 h 0.655948 v 0.1281149 H 13.555084 V 1.0894621 q 0.03148,-0.00293 0.06442,-0.00439 0.03294,-0.00146 0.0571,-0.00146 0.08858,0 0.155202,0.015374 0.06662,0.014642 0.122259,0.05271 0.05857,0.040265 0.09078,0.103956 0.03221,0.063691 0.03221,0.1595946 z"
              gorn="0.2.1.3"
-             id="p7_path324" />
+             id="p9_path324" />
           <path
              d="m 15.108372,1.4338363 q 0,0.062812 -0.02768,0.124179 -0.027,0.061368 -0.07628,0.1039641 -0.05401,0.046205 -0.126241,0.072196 -0.07156,0.025991 -0.172822,0.025991 -0.108688,0 -0.195774,-0.021659 -0.08641,-0.021659 -0.176197,-0.064255 V 1.4952039 h 0.0095 q 0.07628,0.067865 0.176196,0.1046858 0.09991,0.036821 0.187674,0.036821 0.124215,0 0.193074,-0.049816 0.06954,-0.049816 0.06954,-0.1328428 0,-0.071475 -0.03308,-0.1054078 -0.03241,-0.033933 -0.09924,-0.052704 -0.05064,-0.01444 -0.110038,-0.023825 -0.05874,-0.00939 -0.124891,-0.023825 -0.133666,-0.030323 -0.198475,-0.1032417 -0.06413,-0.073641 -0.06413,-0.19132248 0,-0.1350086 0.106663,-0.2209232 0.106663,-0.086636 0.270709,-0.086636 0.105988,0 0.194425,0.021659 0.08844,0.021659 0.156619,0.053426 v 0.1689413 h -0.0095 q -0.05738,-0.051981 -0.151219,-0.085914 -0.09316,-0.034655 -0.191048,-0.034655 -0.107339,0 -0.172822,0.04765 -0.06481,0.04765 -0.06481,0.1227351 0,0.067144 0.03241,0.10540788 0.03241,0.038264 0.114089,0.05848 0.04321,0.010108 0.122866,0.024546 0.07966,0.01444 0.135016,0.0296 0.112065,0.031767 0.168771,0.096023 0.0567,0.064255 0.0567,0.1797708 z"
-             id="p7_path407"
+             id="p9_path407"
              style="stroke-width:0" />
         </g>
         <g
-           id="p7_g12933"
+           id="p9_g12933"
            transform="matrix(1.8363154,0,0,1.9026895,-10.699373,-4.1354747)">
           <rect
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_rect1339"
+             id="p9_rect1339"
              width="0.082201578"
              height="0.30140579"
              x="13.115699"
              y="3.5051851" />
           <rect
              style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_rect1339-6"
+             id="p9_rect1339-6"
              width="0.082201578"
              height="0.30140579"
              x="13.115699"
              y="4.2860999" />
           <rect
              style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_rect1339-3"
+             id="p9_rect1339-3"
              width="0.082201578"
              height="0.30140579"
              x="13.115699"
              y="3.8956425" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.254;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_path1480"
+             id="p9_path1480"
              d="M 7.80915,-4.5484872 7.4803437,-4.3586508 V -4.7383236 Z"
              transform="translate(5.3005854,8.6040993)" />
           <rect
              style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.229717;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_rect1339-3-0"
+             id="p9_rect1339-3-0"
              width="0.082201578"
              height="0.38100007"
              x="4.1971374"
@@ -847,53 +875,53 @@
              transform="rotate(90)" />
           <path
              style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.254;stroke-linejoin:round;stroke-miterlimit:3.9"
-             id="p7_path1480-9"
+             id="p9_path1480-9"
              d="M 7.80915,-4.5484872 7.4803437,-4.3586508 V -4.7383236 Z"
              transform="rotate(90,5.6332003,2.0152247)" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 12.534992,3.0353526 V 4.0670147"
-             id="p7_path1835" />
+             id="p9_path1835" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.517102,4.0431612 h 0.286242"
-             id="p7_path2401" />
+             id="p9_path2401" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.540956,3.041316 h -1.11515"
-             id="p7_path4690" />
+             id="p9_path4690" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 13.316193,3.4766416 V 4.5858273"
-             id="p7_path4692" />
+             id="p9_path4692" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 12.529029,3.5303118 H 12.195081"
-             id="p7_path6199" />
+             id="p9_path6199" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.183154,3.5124218 0.006,0.3697285"
-             id="p7_path6203" />
+             id="p9_path6203" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 13.322156,3.4945317 h 0.506886"
-             id="p7_path7712" />
+             id="p9_path7712" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0517556;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 13.829042,3.5004949 V 3.0114991"
-             id="p7_path7716" />
+             id="p9_path7716" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0350553;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 13.840969,3.0234259 h 0.238535"
-             id="p7_path7718" />
+             id="p9_path7718" />
           <circle
-             id="p7_path8504"
+             id="p9_path8504"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="11.41388"
              cy="3.0532427"
              r="0.076200016" />
           <circle
-             id="p7_path8506"
+             id="p9_path8506"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="14.103357"
              cy="3.0293891"
@@ -901,21 +929,21 @@
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0527818;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.552882,3.6615058 h 0.56652"
-             id="p7_path9294" />
+             id="p9_path9294" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0527818;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.554291,4.44867 h 0.56652"
-             id="p7_path9294-7" />
+             id="p9_path9294-7" />
           <g
              aria-label="8205HA"
              class="text"
              gorn="0.2.1"
-             id="p7_label-2"
+             id="p9_label-2"
              style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;stroke-width:0"
              transform="translate(-3.6184136,-4.1553843)">
             <rect
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_rect1339-68"
+               id="p9_rect1339-68"
                width="0.082201578"
                height="0.30140579"
                x="16.754272"
@@ -923,7 +951,7 @@
                transform="scale(1,-1)" />
             <rect
                style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_rect1339-6-3"
+               id="p9_rect1339-6-3"
                width="0.082201578"
                height="0.30140579"
                x="16.754272"
@@ -931,7 +959,7 @@
                transform="scale(1,-1)" />
             <rect
                style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.204318;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_rect1339-3-1"
+               id="p9_rect1339-3-1"
                width="0.082201578"
                height="0.30140579"
                x="16.754272"
@@ -939,12 +967,12 @@
                transform="scale(1,-1)" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke-width:0.254;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_path1480-99"
+               id="p9_path1480-99"
                d="M 7.80915,-4.5484872 7.4803437,-4.3586508 V -4.7383236 Z"
                transform="matrix(1,0,0,-1,8.939156,5.3641211)" />
             <rect
                style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.229717;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_rect1339-3-0-3"
+               id="p9_rect1339-3-0-3"
                width="0.082201578"
                height="0.38100007"
                x="-9.7710838"
@@ -952,55 +980,55 @@
                transform="matrix(0,-1,-1,0,0,0)" />
             <path
                style="font-size:1.49931px;font-family:'Droid Sans';text-anchor:middle;fill:#000000;fill-rule:evenodd;stroke-width:0.254;stroke-linejoin:round;stroke-miterlimit:3.9"
-               id="p7_path1480-9-0"
+               id="p9_path1480-9-0"
                d="M 7.80915,-4.5484872 7.4803437,-4.3586508 V -4.7383236 Z"
                transform="matrix(0,-1,-1,0,11.286996,17.586199)" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="M 16.173564,10.932868 V 9.9012062"
-               id="p7_path1835-4" />
+               id="p9_path1835-4" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="m 16.155674,9.9250592 h 0.286242"
-               id="p7_path2401-3" />
+               id="p9_path2401-3" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="m 16.179528,10.926905 h -1.11515"
-               id="p7_path4690-1" />
+               id="p9_path4690-1" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="M 16.954765,10.491579 V 9.3823932"
-               id="p7_path4692-6" />
+               id="p9_path4692-6" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="M 16.167601,10.437909 H 15.833653"
-               id="p7_path6199-2" />
+               id="p9_path6199-2" />
             <path
                style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
                d="m 15.821726,10.455799 0.006,-0.369729"
-               id="p7_path6203-1" />
+               id="p9_path6203-1" />
           </g>
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 13.342314,6.3183044 H 13.8492"
-             id="p7_path7712-8" />
+             id="p9_path7712-8" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 13.8492,6.3242679 V 6.7953737"
-             id="p7_path7716-7" />
+             id="p9_path7716-7" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0350553;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 13.861127,6.7894102 h 0.238535"
-             id="p7_path7718-9" />
+             id="p9_path7718-9" />
           <circle
-             id="p7_path8504-3"
+             id="p9_path8504-3"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="11.43404"
              cy="-6.7595925"
              r="0.076200016"
              transform="scale(1,-1)" />
           <circle
-             id="p7_path8506-0"
+             id="p9_path8506-0"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="14.123517"
              cy="-6.7834463"
@@ -1009,23 +1037,23 @@
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0527818;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.57304,6.1513303 h 0.56652"
-             id="p7_path9294-0" />
+             id="p9_path9294-0" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0527818;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.574449,5.364166 h 0.56652"
-             id="p7_path9294-7-9" />
+             id="p9_path9294-7-9" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0499877;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 11.468597,4.9138175 2.688405,-0.011937"
-             id="p7_path11853" />
+             id="p9_path11853" />
           <circle
-             id="p7_path11857"
+             id="p9_path11857"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="11.448689"
              cy="4.9018855"
              r="0.076200016" />
           <circle
-             id="p7_path11859"
+             id="p9_path11859"
              style="fill:#000000;stroke:none;stroke-width:0.264583"
              cx="14.134157"
              cy="4.8899593"
@@ -1033,28 +1061,28 @@
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.052466;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 12.564809,4.4307798 V 5.3849182"
-             id="p7_path11861" />
+             id="p9_path11861" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.195081,4.2816959 v 0.345875"
-             id="p7_path12679" />
+             id="p9_path12679" />
           <path
              style="opacity:1;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.183154,4.6275709 0.375692,-0.00596"
-             id="p7_path12681" />
+             id="p9_path12681" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="M 12.218423,5.5316286 V 5.1857536"
-             id="p7_path12679-4" />
+             id="p9_path12679-4" />
           <path
              style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.0508;stroke-linejoin:round;stroke-miterlimit:3.9;stroke-dasharray:none"
              d="m 12.206496,5.1857536 0.375692,0.00596"
-             id="p7_path12681-0" />
+             id="p9_path12681-0" />
         </g>
         <line
            class="other"
            gorn="0.2.2"
-           id="p7_line7"
+           id="p9_line7"
            stroke="#000000"
            stroke-linecap="round"
            stroke-width="0.3175"
@@ -1065,7 +1093,7 @@
         <line
            class="other"
            gorn="0.2.3"
-           id="p7_line9"
+           id="p9_line9"
            stroke="#000000"
            stroke-linecap="round"
            stroke-width="0.3175"
@@ -1076,7 +1104,7 @@
         <line
            class="other"
            gorn="0.2.4"
-           id="p7_line11"
+           id="p9_line11"
            stroke="#000000"
            stroke-linecap="round"
            stroke-width="0.3175"
@@ -1087,7 +1115,7 @@
         <line
            class="other"
            gorn="0.2.5"
-           id="p7_line13"
+           id="p9_line13"
            stroke="#000000"
            stroke-linecap="round"
            stroke-width="0.3175"
@@ -1099,7 +1127,7 @@
            class="pin"
            connectorname="VOUT"
            gorn="0.2.6"
-           id="p7_connector0pin"
+           id="p9_connector0pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1112,7 +1140,7 @@
            fill="none"
            gorn="0.2.7"
            height="0.0001"
-           id="p7_connector0terminal"
+           id="p9_connector0terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1124,7 +1152,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.8"
-           id="p7_text17"
+           id="p9_text17"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1136,7 +1164,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.9"
-           id="p7_text19"
+           id="p9_text19"
            stroke="none"
            stroke-width="0"
            text-anchor="start"
@@ -1146,7 +1174,7 @@
            class="pin"
            connectorname="VSS"
            gorn="0.2.10"
-           id="p7_connector1pin"
+           id="p9_connector1pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1159,7 +1187,7 @@
            fill="none"
            gorn="0.2.11"
            height="0.0001"
-           id="p7_connector1terminal"
+           id="p9_connector1terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1171,7 +1199,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.12"
-           id="p7_text23"
+           id="p9_text23"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1183,7 +1211,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.13"
-           id="p7_text25"
+           id="p9_text25"
            stroke="none"
            stroke-width="0"
            text-anchor="start"
@@ -1193,7 +1221,7 @@
            class="pin"
            connectorname="VDD"
            gorn="0.2.14"
-           id="p7_connector2pin"
+           id="p9_connector2pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1206,7 +1234,7 @@
            fill="none"
            gorn="0.2.15"
            height="0.0001"
-           id="p7_connector2terminal"
+           id="p9_connector2terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1218,7 +1246,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.16"
-           id="p7_text29"
+           id="p9_text29"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1230,7 +1258,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.17"
-           id="p7_text31"
+           id="p9_text31"
            stroke="none"
            stroke-width="0"
            text-anchor="start"
@@ -1240,7 +1268,7 @@
            class="pin"
            connectorname="AO"
            gorn="0.2.18"
-           id="p7_connector5pin"
+           id="p9_connector5pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1253,7 +1281,7 @@
            fill="none"
            gorn="0.2.19"
            height="0.0001"
-           id="p7_connector5terminal"
+           id="p9_connector5terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1265,7 +1293,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.20"
-           id="p7_text35"
+           id="p9_text35"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1277,7 +1305,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.21"
-           id="p7_text37"
+           id="p9_text37"
            stroke="none"
            stroke-width="0"
            text-anchor="end"
@@ -1287,7 +1315,7 @@
            class="pin"
            connectorname="SCL"
            gorn="0.2.22"
-           id="p7_connector4pin"
+           id="p9_connector4pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1300,7 +1328,7 @@
            fill="none"
            gorn="0.2.23"
            height="0.0001"
-           id="p7_connector4terminal"
+           id="p9_connector4terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1312,7 +1340,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.24"
-           id="p7_text41"
+           id="p9_text41"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1324,7 +1352,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.25"
-           id="p7_text43"
+           id="p9_text43"
            stroke="none"
            stroke-width="0"
            text-anchor="end"
@@ -1334,7 +1362,7 @@
            class="pin"
            connectorname="SDA"
            gorn="0.2.26"
-           id="p7_connector3pin"
+           id="p9_connector3pin"
            stroke="#787878"
            stroke-linecap="round"
            stroke-width="0.246944"
@@ -1347,7 +1375,7 @@
            fill="none"
            gorn="0.2.27"
            height="0.0001"
-           id="p7_connector3terminal"
+           id="p9_connector3terminal"
            stroke="none"
            stroke-width="0"
            width="0.0001"
@@ -1359,7 +1387,7 @@
            font-family="'Droid Sans'"
            font-size="0.881944"
            gorn="0.2.28"
-           id="p7_text47"
+           id="p9_text47"
            stroke="none"
            stroke-width="0"
            text-anchor="middle"
@@ -1371,7 +1399,7 @@
            font-family="'Droid Sans'"
            font-size="1.23472"
            gorn="0.2.29"
-           id="p7_text49"
+           id="p9_text49"
            stroke="none"
            stroke-width="0"
            text-anchor="end"
@@ -1379,11 +1407,11 @@
            y="7.99394">G2</text>
       </g>
   </svg>
-  <text x="93.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">8205S</text>
-  <text x="93.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">25.65×10.41mm</text>
-  <svg id="p8" x="112.00" y="60.50" width="30.00" height="22.00" viewBox="0 0 13.493755 22.225" preserveAspectRatio="xMidYMid meet">
+  <text x="161.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">8205S</text>
+  <text x="161.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">25.65×10.41mm</text>
+  <svg id="p10" x="10.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 13.493755 22.225" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p8_defs72" />
+         id="p10_defs72" />
       <g
          c_origin="400,310"
          puuid="18e66f6e71ad40a5a59358cdc3770d87"
@@ -1393,10 +1421,10 @@
          pdatastrid=""
          utime="1638783681"
          add_into_bom=""
-         id="p8_schematic"
+         id="p10_schematic"
          transform="matrix(0.26458339,0,0,0.26458339,-97.763563,-70.908349)">
         <rect
-           id="p8_gge3"
+           id="p10_gge3"
            locked="0"
            c_etype=""
            x="370"
@@ -1411,7 +1439,7 @@
            c_shapetype="line"
            style="shape-rendering:crispEdges" />
         <rect
-           id="p8_gge4"
+           id="p10_gge4"
            locked="0"
            c_etype=""
            x="377"
@@ -1424,7 +1452,7 @@
            c_shapetype="line"
            style="shape-rendering:crispEdges" />
         <rect
-           id="p8_gge5"
+           id="p10_gge5"
            locked="0"
            c_etype=""
            x="387"
@@ -1439,7 +1467,7 @@
         <polyline
            points="380 298 380 290"
            stroke="#000000"
-           id="p8_gge6"
+           id="p10_gge6"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1449,7 +1477,7 @@
         <polyline
            points="390 298 390 290"
            stroke="#000000"
-           id="p8_gge7"
+           id="p10_gge7"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1459,7 +1487,7 @@
         <polyline
            points="380 322 380 330"
            stroke="#000000"
-           id="p8_gge8"
+           id="p10_gge8"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1469,7 +1497,7 @@
         <polyline
            points="390 322 390 330"
            stroke="#000000"
-           id="p8_gge9"
+           id="p10_gge9"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1477,7 +1505,7 @@
            stroke-linecap="round"
            style="stroke-linejoin:round;shape-rendering:crispEdges" />
         <rect
-           id="p8_gge10"
+           id="p10_gge10"
            locked="0"
            c_etype=""
            x="397"
@@ -1490,7 +1518,7 @@
            c_shapetype="line"
            style="shape-rendering:crispEdges" />
         <rect
-           id="p8_gge11"
+           id="p10_gge11"
            locked="0"
            c_etype=""
            x="407"
@@ -1505,7 +1533,7 @@
         <polyline
            points="400 298 400 290"
            stroke="#000000"
-           id="p8_gge12"
+           id="p10_gge12"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1515,7 +1543,7 @@
         <polyline
            points="410 298 410 290"
            stroke="#000000"
-           id="p8_gge13"
+           id="p10_gge13"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1525,7 +1553,7 @@
         <polyline
            points="400 322 400 330"
            stroke="#000000"
-           id="p8_gge14"
+           id="p10_gge14"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1535,7 +1563,7 @@
         <polyline
            points="410 322 410 330"
            stroke="#000000"
-           id="p8_gge15"
+           id="p10_gge15"
            locked="0"
            stroke-width="1"
            c_shapetype="line"
@@ -1550,7 +1578,7 @@
            c_elec="0"
            c_spicepin="1"
            c_origin="380,350"
-           id="p8_gge16"
+           id="p10_gge16"
            locked="0"
            c_rotation="270">
           <text
@@ -1563,7 +1591,7 @@
              c_pinname="1"
              display="none"
              transform="rotate(-90,383,328)"
-             id="p8_text476">1</text>
+             id="p10_text476">1</text>
           <text
              x="379"
              y="335"
@@ -1573,13 +1601,13 @@
              text-anchor="end"
              c_pinnumber="1"
              transform="rotate(-90,379,335)"
-             id="p8_text478">1</text>
+             id="p10_text478">1</text>
           <path
              d="M 380,350 V 330"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector0pin"
+             id="p10_connector0pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="380"
@@ -1589,7 +1617,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle484"
+             id="p10_circle484"
              style="shape-rendering:crispEdges" />
           <path
              d="m 383,330 -3,-3 -3,3"
@@ -1597,7 +1625,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path486"
+             id="p10_path486"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1608,7 +1636,7 @@
            c_elec="0"
            c_spicepin="2"
            c_origin="390,350"
-           id="p8_gge23"
+           id="p10_gge23"
            locked="0"
            c_rotation="270">
           <text
@@ -1621,7 +1649,7 @@
              c_pinname="2"
              display="none"
              transform="rotate(-90,393,328)"
-             id="p8_text489">2</text>
+             id="p10_text489">2</text>
           <text
              x="389"
              y="335"
@@ -1631,7 +1659,7 @@
              text-anchor="end"
              c_pinnumber="2"
              transform="rotate(-90,389,335)"
-             id="p8_text491">2</text>
+             id="p10_text491">2</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -1640,14 +1668,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle493"
+             id="p10_circle493"
              style="shape-rendering:crispEdges" />
           <path
              d="M 390,350 V 330"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector1pin"
+             id="p10_connector1pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="390"
@@ -1657,7 +1685,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle497"
+             id="p10_circle497"
              style="shape-rendering:crispEdges" />
           <path
              d="m 393,330 -3,-3 -3,3"
@@ -1665,7 +1693,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path499"
+             id="p10_path499"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1676,7 +1704,7 @@
            c_elec="0"
            c_spicepin="3"
            c_origin="400,350"
-           id="p8_gge30"
+           id="p10_gge30"
            locked="0"
            c_rotation="270">
           <text
@@ -1689,7 +1717,7 @@
              c_pinname="3"
              display="none"
              transform="rotate(-90,403,328)"
-             id="p8_text502">3</text>
+             id="p10_text502">3</text>
           <text
              x="399"
              y="335"
@@ -1699,13 +1727,13 @@
              text-anchor="end"
              c_pinnumber="3"
              transform="rotate(-90,399,335)"
-             id="p8_text504">3</text>
+             id="p10_text504">3</text>
           <path
              d="M 400,350 V 330"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector2pin"
+             id="p10_connector2pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="400"
@@ -1715,7 +1743,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle510"
+             id="p10_circle510"
              style="shape-rendering:crispEdges" />
           <path
              d="m 403,330 -3,-3 -3,3"
@@ -1723,7 +1751,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path512"
+             id="p10_path512"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1734,7 +1762,7 @@
            c_elec="0"
            c_spicepin="4"
            c_origin="410,350"
-           id="p8_gge37"
+           id="p10_gge37"
            locked="0"
            c_rotation="270">
           <text
@@ -1747,7 +1775,7 @@
              c_pinname="4"
              display="none"
              transform="rotate(-90,413,328)"
-             id="p8_text515">4</text>
+             id="p10_text515">4</text>
           <text
              x="409"
              y="335"
@@ -1757,7 +1785,7 @@
              text-anchor="end"
              c_pinnumber="4"
              transform="rotate(-90,409,335)"
-             id="p8_text517">4</text>
+             id="p10_text517">4</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -1766,14 +1794,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle519"
+             id="p10_circle519"
              style="shape-rendering:crispEdges" />
           <path
              d="M 410,350 V 330"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector3pin"
+             id="p10_connector3pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="410"
@@ -1783,7 +1811,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle523"
+             id="p10_circle523"
              style="shape-rendering:crispEdges" />
           <path
              d="m 413,330 -3,-3 -3,3"
@@ -1791,7 +1819,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path525"
+             id="p10_path525"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1802,7 +1830,7 @@
            c_elec="0"
            c_spicepin="5"
            c_origin="410,270"
-           id="p8_gge44"
+           id="p10_gge44"
            locked="0"
            c_rotation="90">
           <text
@@ -1815,7 +1843,7 @@
              c_pinname="5"
              display="none"
              transform="rotate(-90,413,292)"
-             id="p8_text528">5</text>
+             id="p10_text528">5</text>
           <text
              x="409"
              y="285"
@@ -1825,7 +1853,7 @@
              text-anchor="start"
              c_pinnumber="5"
              transform="rotate(-90,409,285)"
-             id="p8_text530">5</text>
+             id="p10_text530">5</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -1834,14 +1862,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle532"
+             id="p10_circle532"
              style="shape-rendering:crispEdges" />
           <path
              d="m 410,270 v 20"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector4pin"
+             id="p10_connector4pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="410"
@@ -1851,7 +1879,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle536"
+             id="p10_circle536"
              style="shape-rendering:crispEdges" />
           <path
              d="m 407,290 3,3 3,-3"
@@ -1859,7 +1887,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path538"
+             id="p10_path538"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1870,7 +1898,7 @@
            c_elec="0"
            c_spicepin="6"
            c_origin="400,270"
-           id="p8_gge51"
+           id="p10_gge51"
            locked="0"
            c_rotation="90">
           <text
@@ -1883,7 +1911,7 @@
              c_pinname="6"
              display="none"
              transform="rotate(-90,403,292)"
-             id="p8_text541">6</text>
+             id="p10_text541">6</text>
           <text
              x="399"
              y="285"
@@ -1893,7 +1921,7 @@
              text-anchor="start"
              c_pinnumber="6"
              transform="rotate(-90,399,285)"
-             id="p8_text543">6</text>
+             id="p10_text543">6</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -1902,14 +1930,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle545"
+             id="p10_circle545"
              style="shape-rendering:crispEdges" />
           <path
              d="m 400,270 v 20"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector5pin"
+             id="p10_connector5pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="400"
@@ -1919,7 +1947,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle549"
+             id="p10_circle549"
              style="shape-rendering:crispEdges" />
           <path
              d="m 397,290 3,3 3,-3"
@@ -1927,7 +1955,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path551"
+             id="p10_path551"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -1938,7 +1966,7 @@
            c_elec="0"
            c_spicepin="7"
            c_origin="390,270"
-           id="p8_gge58"
+           id="p10_gge58"
            locked="0"
            c_rotation="90">
           <text
@@ -1951,7 +1979,7 @@
              c_pinname="7"
              display="none"
              transform="rotate(-90,393,292)"
-             id="p8_text554">7</text>
+             id="p10_text554">7</text>
           <text
              x="389"
              y="285"
@@ -1961,7 +1989,7 @@
              text-anchor="start"
              c_pinnumber="7"
              transform="rotate(-90,389,285)"
-             id="p8_text556">7</text>
+             id="p10_text556">7</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -1970,14 +1998,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle558"
+             id="p10_circle558"
              style="shape-rendering:crispEdges" />
           <path
              d="m 390,270 v 20"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector6pin"
+             id="p10_connector6pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="390"
@@ -1987,7 +2015,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle562"
+             id="p10_circle562"
              style="shape-rendering:crispEdges" />
           <path
              d="m 387,290 3,3 3,-3"
@@ -1995,7 +2023,7 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path564"
+             id="p10_path564"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
         <g
@@ -2006,7 +2034,7 @@
            c_elec="0"
            c_spicepin="8"
            c_origin="380,270"
-           id="p8_gge65"
+           id="p10_gge65"
            locked="0"
            c_rotation="90">
           <text
@@ -2019,7 +2047,7 @@
              c_pinname="8"
              display="none"
              transform="rotate(-90,383,292)"
-             id="p8_text567">8</text>
+             id="p10_text567">8</text>
           <text
              x="379"
              y="285"
@@ -2029,7 +2057,7 @@
              text-anchor="start"
              c_pinnumber="8"
              transform="rotate(-90,379,285)"
-             id="p8_text569">8</text>
+             id="p10_text569">8</text>
           <circle
              c_pindot="true"
              class="pindot"
@@ -2038,14 +2066,14 @@
              r="2"
              fill="none"
              stroke="none"
-             id="p8_circle571"
+             id="p10_circle571"
              style="shape-rendering:crispEdges" />
           <path
              d="m 380,270 v 20"
              fill="none"
              stroke="#880000"
              stroke-width="1"
-             id="p8_connector7pin"
+             id="p10_connector7pin"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
           <circle
              cx="380"
@@ -2055,7 +2083,7 @@
              fill="none"
              stroke-width="1"
              display="none"
-             id="p8_circle575"
+             id="p10_circle575"
              style="shape-rendering:crispEdges" />
           <path
              d="m 377,290 3,3 3,-3"
@@ -2063,13 +2091,13 @@
              stroke="#880000"
              stroke-width="1"
              display="none"
-             id="p8_path577"
+             id="p10_path577"
              style="stroke-linejoin:round;shape-rendering:crispEdges" />
         </g>
       </g>
   </svg>
-  <text x="127.00" y="87.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">YC164</text>
-  <text x="127.00" y="90.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">13.49×22.22mm</text>
-  <text x="8" y="96" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">格内按各自比例缩放（不同格不同比例）；下方数字 = icon 文件自己声明的尺寸</text>
-  <text x="8" y="100" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">本库新做的元件按实物 1:1 画；早年从 fritzing-parts 导入的图标可能是视觉比例</text>
+  <text x="25.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">YC164</text>
+  <text x="25.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">13.49×22.22mm</text>
+  <text x="8" y="130" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">格内按各自比例缩放（不同格不同比例）；下方数字 = icon 文件自己声明的尺寸</text>
+  <text x="8" y="134" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">本库新做的元件按实物 1:1 画；早年从 fritzing-parts 导入的图标可能是视觉比例</text>
 </svg>

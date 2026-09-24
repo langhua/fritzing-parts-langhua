@@ -13,6 +13,21 @@
         <instance moduleIdRef="CH32V203C8T6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V203C8T6.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="CH32V002J4M6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V002J4M6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH32V003J4M6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V003J4M6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH32V002F4U6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V002F4U6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH32V003F4U6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V003F4U6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="CH32V002D4U6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V002D4U6.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="USB 接口芯片">
         <views>
             <iconView layer="icon">

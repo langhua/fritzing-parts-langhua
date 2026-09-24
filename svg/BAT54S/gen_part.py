@@ -234,7 +234,7 @@ def fzp_xml():
         ' <date>2026-08-24</date>\n'
         ' <tags><tag>diode</tag><tag>schottky</tag><tag>BAT54S</tag><tag>SOT-23</tag></tags>\n'
         ' <properties>\n'
-        '  <property name="family">diode</property>\n'
+        '  <property name="family">Diode</property>\n'
         '  <property name="type">Schottky</property>\n'
         '  <property name="part number">BAT54S</property>\n'
         '  <property name="package">SOT23-3</property>\n'

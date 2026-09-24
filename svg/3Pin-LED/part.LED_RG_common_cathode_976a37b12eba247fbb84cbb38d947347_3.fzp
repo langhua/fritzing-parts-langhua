@@ -12,7 +12,7 @@
   <tag>fritzing parts of Langhua</tag>
  </tags>
  <properties>
-  <property name="family">led</property>
+  <property name="family">LED</property>
   <property name="package">3 mm [THT]</property>
   <property name="pin order">rg</property>
   <property name="part number"></property>

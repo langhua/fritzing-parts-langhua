@@ -266,7 +266,7 @@ def fzp_xml():
         ' <date>2026-09-23</date>\n'
         ' <tags><tag>IC</tag><tag>MCU</tag><tag>RISC-V</tag><tag>CH32V002</tag><tag>CH32V003</tag></tags>\n'
         ' <properties>\n'
-        '  <property name="family">MCU</property>\n'
+        '  <property name="family">WCH RISC-V MCU</property>\n'
         '  <property name="chip">CH32V002</property>\n'
         '  <property name="pins">8</property>\n'
         '  <property name="part number">CH32V002J4M6</property>\n'

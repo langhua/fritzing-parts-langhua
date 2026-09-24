@@ -46,7 +46,11 @@ SHEETS = {
     "chips": ("芯片与接口 IC", 5, [
         ("CH340C", "CH340C"), ("CH340E", "CH340E"), ("CH340K", "CH340K"),
         ("CH340N", "CH340N"), ("CH340X", "CH340X"),
-        ("CH32V203C8T6", "CH32V203C8T6"), ("CH347F", "CH347F"), ("CH347T", "CH347T"),
+        ("CH32V203C8T6", "CH32V203C8T6"),
+        ("CH32V002J4M6", "CH32V002J4M6"), ("CH32V003J4M6", "CH32V003J4M6"),
+        ("CH32V002F4U6", "CH32V002F4U6"), ("CH32V003F4U6", "CH32V003F4U6"),
+        ("CH32V002D4U6", "CH32V002D4U6"),
+        ("CH347F", "CH347F"), ("CH347T", "CH347T"),
         ("CH213K", "CH213K"), ("MAX40200", "MAX40200"),
         ("PC817_SOP4", "PC817_SOP4"), ("TS3A44159PWR", "TS3A44159PWR"),
         ("CD74HC4067", "CD74HC4067"), ("W25Q16JV", "W25Q16JV"), ("AT24C02", "AT24C02"),
@@ -75,7 +79,8 @@ SHEETS = {
         # 不收 `TX-AH-R900PNR_rev_1`（icon 与正版逐字节相同，摆两遍是噪声）、
         # 也不收 `T-Halow-RJ45`（那是 T-Halow-RJ45 仓的参考件，不属本库交付物）。
         ("NFC-Coil", "NFC Coil"), ("WS2812B/5050", "WS2812B-5050"),
-        ("WS2812B/2020", "WS2812B-2020"), ("WS2812B/5050_4x4", "WS2812B-5050-4x4"),
+        ("WS2812B/2020", "WS2812B-2020"), ("WS2812B/1010", "WS2812B-1010"),
+        ("WS2812B/5050_4x4", "WS2812B-5050-4x4"),
         ("TFTSPI1.9in", "TFTSPI1.9in"), ("UART1.9inIPS", "UART1.9inIPS"),
         ("3Pin-LED", "3Pin-LED"),
         # 两个从 fritzing-parts 导入的旧件没收录（icon 视图复用 breadboard），
@@ -114,6 +119,7 @@ SHEETS = {
         ("SOD-123", "SOD-123"), ("SOD-123FL", "SOD-123FL"),
         ("SOD-323", "SOD-323"), ("SOD-523", "SOD-523"),
         ("BAT54S", "BAT54S"), ("SS34", "SS34"),
+        ("BAS70BRW", "BAS70BRW"), ("BAS70DW-04", "BAS70DW-04"),
         ("8205HA", "8205HA"), ("8205S", "8205S"), ("YC164", "YC164"),
     ]),
 }

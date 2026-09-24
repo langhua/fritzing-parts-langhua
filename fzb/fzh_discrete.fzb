@@ -28,6 +28,12 @@
         <instance moduleIdRef="SS34" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SS34.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="BAS70BRW_SOT363_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/BAS70BRW_SOT363_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="BAS70DW_04_SOT363_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/BAS70DW_04_SOT363_1.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="MOSFET">
         <views>
             <iconView layer="icon">

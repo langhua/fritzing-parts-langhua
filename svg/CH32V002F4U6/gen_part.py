@@ -427,7 +427,7 @@ def fzp_xml():
         ' <date>2026-09-24</date>\n'
         ' <tags>%s</tags>\n'
         ' <properties>\n'
-        '  <property name="family">MCU</property>\n'
+        '  <property name="family">WCH RISC-V MCU</property>\n'
         '  <property name="chip">%s</property>\n'
         '  <property name="pins">%d</property>\n'
         '  <property name="part number">%s</property>\n'

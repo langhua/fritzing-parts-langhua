@@ -7,7 +7,7 @@
  <date>2026-08-24</date>
  <tags><tag>diode</tag><tag>schottky</tag><tag>BAT54S</tag><tag>SOT-23</tag></tags>
  <properties>
-  <property name="family">diode</property>
+  <property name="family">Diode</property>
   <property name="type">Schottky</property>
   <property name="part number">BAT54S</property>
   <property name="package">SOT23-3</property>
