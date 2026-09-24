@@ -350,3 +350,21 @@
    剩下的透明块就是**意外漏色**（缺口那种故意留的不算，它跟图外连通、不会被报出来）；
    想逐点核对就用 `_scratch/icon_probe.py`（按 mm 坐标打印该点颜色）。
 
+## 11. 新件入库清单（2026-09-24 用户定 —— 这几步一步都不能少）
+
+新建 / 改完一个元件，**逐项过一遍**；漏了不会报错，但仓库就跟 Fritzing 里对不上 ✗：
+
+1. `svg/<部件>/`：`part.<id>.fzp` + 4 个视图 svg + 生成脚本（`gen_part.py` 等）；
+2. `.fzpz` 出到**顶层 `fzpz/`**；按需部署到 Fritzing 的 MINE 目录（`parts/user` + `parts/svg/user/{icon,breadboard,schematic,pcb}`，部署后核对 SHA1）；
+3. **登记 `README.md` 的「已有部件」表** —— 一行「部件 | 说明 | 交付物」；
+   该件所在分组有预览图时，**图的 caption 里也要点名**；
+4. **入元件箱**：`tools/make_preview.py` 的 `SHEETS` **和** `tools/make_fzb.py` 的 `SECTIONS`
+   都要加（两处必须盖住同一批件，脚本会自检）→ 重跑两个脚本（出预览 SVG + 6 个 `fzh_*.fzb`，并镜像到 `fzb/`）；
+5. **改数量**：README 里「共 N 个元件」（预览拼版实测数）与「N 个 `.fzpz`」都要跟着改；
+6. 核对：`tools/fzp_check.py <部件目录>`（原理图件再加 `schem_check.py`）—— **全过才提交**；
+7. 提交：**显式列路径**、`git show --stat` 核清单（§8）。
+
+★ 教训（2026-09-24）：`WS2812B-1010`、`BAS70BRW`、`BAS70DW-04`、`CH32V00x`×5 这 8 件
+**已进 `fzpz/`、也已进元件箱，却漏登 README 元件表** ✗ —— 根因就是"第 3 步"没写进清单；
+后来查 README 时才发现（元件表的数量也对不上：预览 111 / `fzpz/` 116）。
+

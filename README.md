@@ -61,14 +61,24 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 |---|---|---|
 | 3Pin-LED | 3 脚直插 LED（3mm） | `fzpz/3Pin-LED.fzpz` |
 | 8205HA | 20V N 沟道 MOSFET（SOT23-6） | `fzpz/8205HA.fzpz` |
-| 8205S | 双 N 沟道 MOSFET（SOT23-6） | `fzpz/8205S.fzpz` |
-| BAT54S | SOT-23 双肖特基二极管（3 脚） | `fzpz/BAT54S.fzpz` |
+| 8205S | 双 N 沟道 MOSFET（SOT23-6） | `fzpz/8205S.fzpz` || AT24C02 | I2C 串行 EEPROM（2Kbit，SOP-8，A0~A2/WP） | `fzpz/AT24C02.fzpz` |
+| BAS70BRW | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K75） | `fzpz/BAS70BRW.fzpz` |
+| BAS70DW-04 | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K74） | `fzpz/BAS70DW-04.fzpz` || BAT54S | SOT-23 双肖特基二极管（3 脚） | `fzpz/BAT54S.fzpz` |
 | CH213K | 低压差理想二极管芯片，带限流（SOT23-3） | `fzpz/CH213K.fzpz` |
+| CH32V002D4U6 | CH32V002 主控（QingKe RISC-V MCU，QFN12，12 脚 + EPAD 散热焊盘） | `fzpz/CH32V002D4U6.fzpz` |
+| CH32V002F4U6 | CH32V002 主控（QFN20，20 脚 + EPAD） | `fzpz/CH32V002F4U6.fzpz` |
+| CH32V002J4M6 | CH32V002 主控（SOP8，8 脚） | `fzpz/CH32V002J4M6.fzpz` |
+| CH32V003F4U6 | CH32V003 主控（QFN20，20 脚 + EPAD） | `fzpz/CH32V003F4U6.fzpz` |
+| CH32V003J4M6 | CH32V003 主控（SOP8，8 脚） | `fzpz/CH32V003J4M6.fzpz` |
 | CH32V203C8T6 | CH32V203C8T6 主控（QingKe RISC-V MCU，LQFP48，48 脚，与 STM32F103C8T6 兼容排布） | `fzpz/CH32V203C8T6.fzpz` |
 | CH340C | USB 转串口芯片（SOP-16，TXW8301 模拟器 USB-UART 桥） | `fzpz/CH340C.fzpz` |
 | CH340E | USB 转串口芯片（MSOP-10，内置时钟） | `fzpz/CH340E.fzpz` |
 | CH340K | USB 转串口芯片（essop-10） | `fzpz/CH340K.fzpz` |
+| CH340N | WCH USB 转串口（SOP-8，外围最简） | `fzpz/CH340N.fzpz` |
 | CH340X | USB 转串口芯片（msop-10） | `fzpz/CH340X.fzpz` |
+| CH347F | WCH USB 桥接（QFN28：USB ↔ JTAG/SPI/I2C/UART 等；EPAD 独立成网） | `fzpz/CH347F.fzpz` |
+| CH347T | WCH USB 桥接（TSSOP20；板上有 IO 跳线配置区） | `fzpz/CH347T.fzpz` |
+| CN3165 | 锂电充电管理 IC（DFN-8） | `fzpz/CN3165.fzpz` |
 | DW01A / DW03 / DW06D | 单节锂电保护 IC（SOT23-5/6） | `fzpz/DW01A.fzpz`、`DW03.fzpz`、`DW06D.fzpz` |
 | EC190708 | 按键开关机控制器（SOT23-6） | `fzpz/EC190708.fzpz` |
 | ETA3425S2F | 1µA 静态电流 0.6A 同步降压 DC-DC（ETA3425，SOT23-5 型） | `fzpz/ETA3425S2F.fzpz` |
@@ -78,6 +88,9 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | ESP8266-CH340-SSD1306 | ESP8266 + SSD1306 组合板 | `fzpz/ESP8266-CH340-SSD1306.fzpz` |
 | FPC05-2H10PX | SMD FPC 连接器（10 脚 0.5mm） | `fzpz/FPC05-2H10PX.fzpz` |
 | FPC-05F-12P-H15 | FFC/FPC 连接器 0.5mm/12P，翻盖式/前翻、下接，H1.5 | `fzpz/FPC-05F-12P-H15.fzpz` |
+| H1102NLT | Pulse 网络隔离变压器（16 脚 SOIC；4/5/12/13 = NC） | `fzpz/H1102NLT.fzpz` |
+| IP101GR | 单口快速以太网 PHY（IC+，QFN-32 + EPAD） | `fzpz/IP101GR.fzpz` |
+| LD1117 | 三端 LDO 稳压器（SOT-223，可调/固定） | `fzpz/LD1117.fzpz` |
 | LM393-A3144-HALL-3PINS | LM393 + A3144 霍尔传感器模块（3 脚） | `fzpz/LM393-A3144-HALL-3PINS.fzpz` |
 | Li300mAh | 3.7V 300mAh 锂聚合物电池（302050，XH2.54 座） | `fzpz/Li300mAh.fzpz` |
 | Li300mAh-1.25 | 3.7V 300mAh 锂聚合物电池（302050，MX1.25 座） | `fzpz/Li300mAh-1.25.fzpz` |
@@ -89,18 +102,24 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | NFC Coil | 13.56MHz NFC 感应线圈（PCB 螺旋，20mm、6 匝，通孔） | `fzpz/NFC-Coil.fzpz` |
 | PB86-A0 | PB86-A0 按键（黑/蓝/灰/绿/红/黄 6 色） | `fzpz/PB86-A0-*.fzpz` |
 | PC817_SOP4 | Sharp PC817 光耦（SMD） | `fzpz/PC817_SOP4.fzpz` |
+| RJ45-8P8C | RJ45 网口（8P8C 直插，本体 11.63×27.00mm；面包板 = 绿色转接板） | `fzpz/RJ45-8P8C.fzpz` |
+| RJ45-8P8C rev.1 | RJ45 网口修订版（模块本体改 11.63×22.00mm；moduleId=`RJ45-8P8C_rev_1`） | `fzpz/RJ45-8P8C_rev_1.fzpz` |
 | RT6150AGQW | 电流模式降压-升压 DC/DC（WDFN-10L 3×3） | `fzpz/RT6150AGQW.fzpz` |
 | RT6150AGQW rev.1 | 电流模式降压-升压 DC/DC（WDFN-10L 3×3，写实工业风修订版；moduleId=`RT6150AGQW_rev_1`，EP 散热焊盘独立编号 11） | `fzpz/RT6150AGQW_rev_1.fzpz` |
 | RT9013 / RT9193 | 低压差 LDO（SOT-23-5） | `fzpz/RT9013.fzpz`、`RT9193.fzpz` |
 | Resistor-01005~2512 | SMD 电阻（11 种尺寸：01005/0201/0402/0603/0805/1206/1210/1812/2010/2512） | `fzpz/Resistor-*.fzpz` |
 | SAM8108 | 开关机 IC（SOT23-6） | `fzpz/SAM8108.fzpz` |
 | SHC0420~SHC1265 | 模压功率电感（0420/0520/0630/1040/1250/1265） | `fzpz/SHC*.fzpz` |
+| SK-12D02VG3 | 滑动开关（SPDT，5 脚 = 3+2；本体 8.6×4.4×4.7mm） | `fzpz/SK-12D02VG3.fzpz` |
 | SM5206 | 锂电充电驱动（esop8） | `fzpz/SM5206.fzpz` |
 | SM5701 | DC-DC（0.9–6.5V 输入，3.3V 输出，SOT23-3） | `fzpz/SM5701.fzpz` |
 | SMA-PJ1.7-L9.5 | SMA 天线母座连接器（直插，L9.5，SIG+GND×4；面包板=绿色转接板） | `fzpz/SMA-PJ1.7-L9.5.fzpz` |
+| SS34 | 梃基整流二极管（DO-214AC / SMA） | `fzpz/SS34.fzpz` |
 | SOD-123 / SOD-323 / SOD-523 | 肖特基整流二极管（1N5819，SMD） | `fzpz/SOD-*.fzpz` |
 | SOD-123FL | 瞬态电压抑制 TVS 二极管（SMD） | `fzpz/SOD-123FL.fzpz` |
+| SY8089 | Silergy 同步降压 DC-DC（SOT-23-5） | `fzpz/SY8089.fzpz` |
 | SYB-118 | 面包板（简易搭电路用） | `fzpz/SYB-118.fzpz` |
+| T-Halow-RJ45 | 泰芯 HaLow + RJ45 参考板（T-Halow-RJ45 仓的参考件；不进本库预览图/元件箱） | `fzpz/T-Halow-RJ45.fzpz` |
 | TFTSPI1.9in | 8 脚 1.9 寸 TFT LCD（SPI） | `fzpz/TFTSPI1.9in.fzpz` |
 | TM1637 / TM1638 | LED 驱动控制 IC（带键盘扫描，sop20/sop28） | `fzpz/TM1637.fzpz`、`TM1638.fzpz` |
 | TP4056 / TP4057 | 锂电充电 IC（sop8/SOT23-6） | `fzpz/TP4056.fzpz`、`TP4057.fzpz` |
@@ -109,16 +128,20 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | TS-D014 | 卧式拨动开关 | `fzpz/TS-D014.fzpz` |
 | TS3A44159PWR | 四路 SPDT / 双 DPDT 双向模拟开关（1.65–4.3V，TSSOP-16/PW） | `fzpz/TS3A44159PWR.fzpz` |
 | TX-AH-R900PNR | 泰芯 802.11ah EVB 开发板（70×55mm：TXW8301 模组 + CON1/CON2/CON3/DEBUG-PORT + 左 microSD 卡板 + 右侧 USB-A；三排针同格可插面包板） | `fzpz/TX-AH-R900PNR.fzpz` |
+| TX-AH-R900PNR rev.1 | 泰芯 802.11ah EVB 开发板修订版（38 脚；moduleId=`TX-AH-R900PNR_rev_1`） | `fzpz/TX-AH-R900PNR_rev_1.fzpz` |
 | TXW8301 | 泰芯 802.11ah SoC（WiFi HaLow，QFN48，49 脚含 EPAD；面包板=绿色转接板，pin1 左下） | `fzpz/TXW8301.fzpz` |
 | CD74HC4067 | 16 通道模拟多路选择器（TSSOP-24/PW，端子 C0~C15/SIG/S0~S3/EN/VCC/GND） | `fzpz/CD74HC4067.fzpz` |
 | Crystal-3215 | 32.768KHz 石英晶振（3.2×1.5mm SMD，4 焊盘） | `fzpz/Crystal-3215.fzpz` |
 | Crystal-3225 | 8MHz 石英晶振（3.2×2.5mm SMD，4 焊盘） | `fzpz/Crystal-3225.fzpz` |
+| DSIC01LS-P | 直插拨码开关（SPST、2 脚；本体 4.06×6.20mm） | `fzpz/DSIC01LS-P.fzpz` |
 | DPDT7x7-6P | 7.0×7.0 自锁按键开关（DPDT 双刀，6 脚：左右各 3 排针 2.0mm 针距，1 脚左下） | `fzpz/DPDT7x7-6P.fzpz` |
 | TypeC16Pin | USB Type-C 连接器（16 脚） | `fzpz/TypeC16Pin.fzpz` |
 | UART1.9inIPS | 1.9 寸 IPS TFT LCD（4 脚） | `fzpz/UART1.9inIPS.fzpz` |
+| USB-B01 | USB-B 母座（直角直插） | `fzpz/USB-B01.fzpz` |
 | ATECC608B | Microchip CryptoAuthentication 安全元件（I2C，SOIC-8；4 个功能脚 GND/SDA/SCL/VCC + 4 个 NC；面包板=绿色转接板，排针行距 7.62mm，pin1 左下） | `fzpz/ATECC608B.fzpz` |
 | W25Q16JV | 16M-bit SPI NOR Flash（Winbond，SOIC-8 208-mil） | `fzpz/W25Q16JV.fzpz` |
 | XC6206P332MR | 3.3V 低压差线性稳压器 LDO（Torex XC6206 系列，SOT-23-3，200mA；面包板=淘宝式转接板，排针 2/3/1=VOUT/VIN/GND） | `fzpz/XC6206P332MR.fzpz` |
+| WS2812B-1010 | 1.0×1.0mm 可寻址 RGB LED（内置驱动，4 个底面焊盘、0.40mm 网格） | `fzpz/WS2812B-1010.fzpz` |
 | WS2812B-2020 | 2.0×2.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-2020.fzpz` |
 | WS2812B-5050 | 5.0×5.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-5050.fzpz` |
 | WS2812B-5050-4x4 | 4×4 可寻址 RGB LED 矩阵模块（5050 灯珠，~30×30mm，排针 GND/5V/DIN/GND + 独立 DOUT） | `fzpz/WS2812B-5050-4x4.fzpz` |
