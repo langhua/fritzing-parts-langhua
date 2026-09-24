@@ -9,6 +9,11 @@
 
 ★ 只做「逐字照搬」，**不动用户的图**：
   · 取 `<g id="icon">…</g>` 的**全部内容**（嵌套 group / transform / 样式原样保留）；
+
+★ **图层标签自带的 transform 也要保留**（2026-09-25 踩到，SH-1.0-3P-V）：
+  用户在 Inkscape 里挪过整个图层时，Inkscape 把位移写在 `<g id="icon" transform="…">`
+  这个**标签**上 —— 只取“内容”会把它丢掉 ⇒ 图标整体偏移 ✗（SH 那次偏了 0.066mm，小；
+  但同样会发生在偏很多的情况）。所以有这个属性时，用 `<g transform="…">` 把内容包一层。
   · 取 `<svg>` 的 width / height / viewBox；
   · Inkscape 的 `defs` / `sodipodi` / 命名空间等外包装不带走（与手绘版无关）。
 
@@ -70,6 +75,11 @@ def main():
     if inner is None:
         print(f"✗ {name.name} 里没有 <g id=\"icon\"> 图层 —— Fritzing 的 icon 必须有这个图层")
         return 1
+    mtag = re.search(r'<g\b[^>]*\bid="icon"[^>]*>', text, re.S)
+    mtf = re.search(r'\btransform\s*=\s*"([^"]+)"', mtag.group(0)) if mtag else None
+    if mtf:                                  # ★ 图层自己的位移不能丢（否则整体偏移）
+        print(f"  ★ 图层自带 transform={mtf.group(1)!r} —— 用 <g> 包一层保留")
+        inner = f'<g transform="{mtf.group(1)}">' + inner + "</g>"
     w = float(re.sub(r"[^\d.]", "", svg_attr(text, "width")))
     h = float(re.sub(r"[^\d.]", "", svg_attr(text, "height")))
     vb = [float(v) for v in svg_attr(text, "viewBox").replace(",", " ").split()]
