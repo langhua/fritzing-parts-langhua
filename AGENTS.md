@@ -361,10 +361,13 @@
 4. **入元件箱**：`tools/make_preview.py` 的 `SHEETS` **和** `tools/make_fzb.py` 的 `SECTIONS`
    都要加（两处必须盖住同一批件，脚本会自检）→ 重跑两个脚本（出预览 SVG + 6 个 `fzh_*.fzb`，并镜像到 `fzb/`）；
 5. **改数量**：README 里「共 N 个元件」（预览拼版实测数）与「N 个 `.fzpz`」都要跟着改；
-6. 核对：`tools/fzp_check.py <部件目录>`（原理图件再加 `schem_check.py`）—— **全过才提交**；
+6. 核对：`py -3.13 tools/check_readme_table.py` —— 一条命令查「**漏登**（`fzpz/` 里有的、README 表里没写）/ **名字写错** / **两个数量对不上**」，**退出码非 0 就是不合格**；
+   再 `tools/fzp_check.py <部件目录>`（原理图件加 `schem_check.py`）—— **全过才提交**；
 7. 提交：**显式列路径**、`git show --stat` 核清单（§8）。
 
 ★ 教训（2026-09-24）：`WS2812B-1010`、`BAS70BRW`、`BAS70DW-04`、`CH32V00x`×5 这 8 件
 **已进 `fzpz/`、也已进元件箱，却漏登 README 元件表** ✗ —— 根因就是"第 3 步"没写进清单；
 后来查 README 时才发现（元件表的数量也对不上：预览 111 / `fzpz/` 116）。
+★ 机器守（2026-09-24 补）：`tools/check_readme_table.py` 就是为这条教训写的 ——
+第 6 步跑一下，「漏登 / 名字写错 / 数量不符」三类问题一次全报，不用再靠肉眼核对。
 
