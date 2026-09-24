@@ -27,6 +27,7 @@ import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 PART_ID = "WS2812B_5050_1"
+ICON_LABEL = "5050"     # 印在 icon 上的型号小字（1010/2020/5050 的 icon 图形相同，靠这行字区分）
 
 PCB_SVG = "svg.pcb.%s_pcb.svg" % PART_ID
 SCHEM_SVG = "svg.schematic.%s_schematic.svg" % PART_ID
@@ -233,6 +234,9 @@ def icon_svg():
         s += '  <circle cx="16" cy="16" r="8" fill="#c8d8ec" stroke="#9aa8bc" stroke-width="0.6"/>\n'
     for px, py in ((1.5, 1.5), (26.0, 1.5), (1.5, 26.0), (26.0, 26.0)):
         s += '  <rect x="%.1f" y="%.1f" width="4.5" height="4.5" rx="0.5" fill="#8D8C8C"/>\n' % (px, py)
+    # 型号小字：印在板上方的空白处（图形之上、两只角焊盘之间）
+    s += ('  <text x="16" y="5.6" text-anchor="middle" fill="#FFFFFF" '
+          'font-family="DroidSans" font-size="3.6">%s</text>\n' % ICON_LABEL)
     s += ' </g>\n'
     s += '</svg>\n'
     return s

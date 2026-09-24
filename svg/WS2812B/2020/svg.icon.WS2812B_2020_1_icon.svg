@@ -205,5 +205,6 @@
   <rect x="26.0" y="1.5" width="4.5" height="4.5" rx="0.5" fill="#8D8C8C"/>
   <rect x="1.5" y="26.0" width="4.5" height="4.5" rx="0.5" fill="#8D8C8C"/>
   <rect x="26.0" y="26.0" width="4.5" height="4.5" rx="0.5" fill="#8D8C8C"/>
+  <text x="16" y="5.6" text-anchor="middle" fill="#FFFFFF" font-family="DroidSans" font-size="3.6">2020</text>
  </g>
 </svg>
