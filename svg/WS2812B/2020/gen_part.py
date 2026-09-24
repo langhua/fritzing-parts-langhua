@@ -124,7 +124,7 @@ def schematic_svg():
         # DOUT (connector0, pin1) - right
         '  <line class="pin" id="connector0pin" connectorname="1" x1="34" y1="13" x2="45" y2="13" stroke="#787878" stroke-width="0.75"/>\n'
         '  <rect class="terminal" id="connector0terminal" x="45" y="13" width="0.0001" height="0.0001" fill="none"/>\n'
-        '  <text transform="matrix(1 0 0 1 34.8 11.9)" fill="#8C8C8C" font-family="DroidSans" font-size="2.6">DO</text>\n'
+        '  <text transform="matrix(1 0 0 1 40.5 11.9)" fill="#8C8C8C" font-family="DroidSans" font-size="2.6">DO</text>\n'
         # VDD (connector3, pin4) - top
         '  <line class="pin" id="connector3pin" connectorname="4" x1="24" y1="8" x2="24" y2="2" stroke="#787878" stroke-width="0.75"/>\n'
         '  <rect class="terminal" id="connector3terminal" x="24" y="2" width="0.0001" height="0.0001" fill="none"/>\n'
