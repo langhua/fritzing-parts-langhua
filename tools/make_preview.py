@@ -94,6 +94,7 @@ SHEETS = {
         ("RJ45-8P8C", "RJ45-8P8C"), ("RJ45-8P8C_rev_1", "RJ45-8P8C rev.1"),
         ("SMA-PJ1.7-L9.5", "SMA-PJ1.7-L9.5"),
         ("MX-1.25-3P-V", "MX-1.25-3P-V"),
+        ("PH-2.0-3P-V", "PH-2.0-3P-V"),
         ("DPDT7x7-6P", "DPDT7x7-6P"), ("SK-12D02VG3", "SK-12D02VG3"),
         ("DSIC01LS-P", "DSIC01LS-P"), ("TS-D014", "TS-D014"),
         ("SMT-SW-PTS-820", "SMT-SW-PTS-820"),

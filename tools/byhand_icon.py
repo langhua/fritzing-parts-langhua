@@ -11,11 +11,28 @@
   · 取 `<g id="icon">…</g>` 的**全部内容**（嵌套 group / transform / 样式原样保留）；
   · 取 `<svg>` 的 width / height / viewBox；
   · Inkscape 的 `defs` / `sodipodi` / 命名空间等外包装不带走（与手绘版无关）。
+
+★ **图层里面**的 Inkscape 命名空间也要清（2026-09-25 踩到，PH-2.0-3P-V）：
+  手工版里一个 `<path>` 带着 `sodipodi:nodetypes="cccc"` ⇒ 生成的 icon 是**非法 XML**
+  （`unbound prefix`）⇒ cairosvg / `make_preview.py` 整张炸（与 make_preview 里那个坑同理）。
+  所以：删掉所有 `前缀:名字` 的**属性**与**元素标签**（内容保留），再用 ET 自检一遍。
 （与 `tools/byhand_export.py`（面包板）同一路子；那个管面包板，这个管 icon。）
 """
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
+
+NS_ATTR = re.compile(r'\s+[A-Za-z_][\w.-]*:[A-Za-z_][\w.-]*\s*=\s*"[^"]*"')
+NS_ELEM_SELF = re.compile(r"<[A-Za-z_][\w.-]*:[A-Za-z_][\w.-]*\b[^>]*?/>")
+NS_ELEM_PAIR = re.compile(r"</?[A-Za-z_][\w.-]*:[A-Za-z_][\w.-]*\b[^>]*?>")
+
+
+def strip_ns(inner):
+    """清掉图层内的命名空间属性/元素（Inkscape 壳），否则生成的 svg 不是合法 XML。"""
+    inner = NS_ELEM_SELF.sub("", inner)          # 自闭合的 <inkscape:xxx .../>
+    inner = NS_ELEM_PAIR.sub("", inner)          # 成对标签：只去标签、内容留下
+    return NS_ATTR.sub("", inner)
 
 
 def svg_attr(text, name):
@@ -56,7 +73,12 @@ def main():
     w = float(re.sub(r"[^\d.]", "", svg_attr(text, "width")))
     h = float(re.sub(r"[^\d.]", "", svg_attr(text, "height")))
     vb = [float(v) for v in svg_attr(text, "viewBox").replace(",", " ").split()]
-    inner = inner.strip("\n")
+    inner = strip_ns(inner).strip("\n")
+    try:                                     # ★ 自检：非法的 svg 会让 Fritzing/cairosvg 整张炸
+        ET.fromstring('<svg xmlns="http://www.w3.org/2000/svg">' + inner + "</svg>")
+    except ET.ParseError as e:
+        print(f"✗ 图层内容不是合法 XML：{e}\n  看是不是还有没清干净的 Inkscape 命名空间")
+        return 1
     out = part / "byHand_icon.py"
     out.write_text(
         "# -*- coding: utf-8 -*-\n"
