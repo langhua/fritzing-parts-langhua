@@ -1,0 +1,655 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+r"""gen_part.py — MX-1.25-2P-H：1.25mm 2P **卧贴母座**（板端卧式插座，125 系列）。
+
+数据来源（外部图纸，不入库）：`D:\Downloads\1.25 卧贴.PDF`（**125 系列卧贴 = ZL-125-nAWB**）。
+  · 规格表（DIM A 内跨 / DIM B 后部宽 / DIM C 总宽，随脚数每 +1.25）：
+      2P → **A=1.25  B=3.10  C=7.40**（脚距 1.25±0.1）
+  · 矢量图实测（**两个已知量互校**：脚距 34.41pt、且 8 个脚位跨距 240.9pt = 7×34.41
+      ⇒ 比例 **27.53 pt/mm**，与立贴图纸同一标定）：
+      俯视图（图纸左上那张，含 8 个脚位）**15.021 × 7.657mm** —— 横向 = 规格表
+      **DIM C(8P) 14.90**（差 0.12 = 图纸自身 0.8%，不凑数）。
+      剪成 2P（剪 6 个脚位宽 = 6×1.25 = 7.50）后：**7.522 × 5.171mm**，
+      与 DIM C(2P) 7.40 差同样的 0.12 ✓。
+  · icon 内部量距：本体前缘 **y=0.870**（出脚从 y=0 到 1.12 ⇒ 外伸 0.87）、本体 4.352×3.200
+      （3.20 / 4.30 = 图纸剖视图标注 ✓）、卡耳外缘 ±3.761、后部带宽 3.101 = DIM B(2P) ✓。
+  · 坐标系沿用图纸：y 向下，出脚在 y=0 那一侧；y=0 = 出脚尖端。
+
+视图模型（AGENTS §3b / 房规）：
+  · icon      = **厂商图纸俯视图的原样矢量**（1:1；只剪掉多余脚位宽，**不加焊盘/不加底色、不改尺寸**）
+  · breadboard= 绿色转接板（直角 #00aa44）+ 2 个 2.54mm 排针（落孔距网格）+ 本体 1:1 居中
+  · schematic = 2 脚连接器符号（灰引线 + 极小 terminal）
+  · PCB       = 焊盘（**嘉立创 CONN-SMD-MX1.25-2P-WT land pattern**：信号 0.80×1.60 @ x=±0.625、
+                固定 2.10×3.00 @ x=±3.175；丝印外包 7.25×4.30）+ 本体丝印轮廓（凡焊盘跨过的边挖缺口）；
+                不画 1 脚圆点
+
+★ 本文件是 `svg/MX-1.25-3P-V/gen_part.py` 的**分叉**：脚数用 `NP` 参数化。
+  立贴那份把 `range(3)` 写死在 6 处，改成 NP 会动到 PH/SH 共用的文件，
+  按 AGENTS §0（不扩大工作范围）**不动它**，另存一份。
+"""
+import os
+import math
+import re
+import sys
+import zipfile
+
+OUT_DIR = os.path.dirname(os.path.abspath(__file__))
+FZPZ_DIR = os.path.normpath(os.path.join(OUT_DIR, "..", "..", "fzpz"))
+if OUT_DIR not in sys.path:
+    sys.path.insert(0, OUT_DIR)
+import icon_art          # noqa: E402  顶视图矢量（tools/copy_top.py 从厂商图纸抄出）
+try:                     # ★ 手工版 icon（用户亲手改的 = 权威，逐字照搬；见 tools/byhand_icon.py）
+    from byHand_icon import (WIDTH_MM as _HAND_W, HEIGHT_MM as _HAND_H,
+                             VIEWBOX as _HAND_VB, INNER as _HAND_INNER)
+except ImportError:      # 没有手工版就用生成版
+    _HAND_INNER = None
+
+# ------------------------------------------------------------------ 身份（包装脚本覆盖）
+PART_ID = "MX-1.25-2P-H"
+FZPZ = "MX-1.25-2P-H.fzpz"
+TITLE = "1.25mm 2P horizontal SMD socket (ZL-125-2AWB)"
+SERIES = "MX1.25"          # 丝印/图标上的系列名（= 市场通用叫法）
+MODEL = "ZL-125-2AWB"      # 图纸型号（= 125 系列卧贴，W=卧）
+NP = 2                      # 脚数
+LABEL = "J"
+DATE = "2026-09-25"
+
+# ------------------------------------------------------------------ 几何（mm，KiCad 坐标）
+PITCH = 1.25                    # 脚距（图纸 1.25±0.1）
+BODY_W = 7.25                   # **丝印轮廓宽** = 嘉立创 CONN-SMD-MX1.25-2P-WT 的丝印外包
+                                #  （28.543 单位 = 7.25mm）；icon 里本体（含卡耳）实测 7.522，
+                                #  JLC 略窄 0.27 —— 按 AGENTS §10.16「以成熟库为准」用 JLC 的
+PAD_W, PAD_H = 0.80, 1.60       # 信号**焊盘**（land，不是图纸上的端子原宽）：嘉立创
+                                #  CONN-SMD-MX1.25-2P-WT（0.254mm 单位：3.1496×6.2992）
+PAD_OVER = 0.870                # ★ 本体前缘距出脚尖端（抄图实测；只给 PCB/丝印用）
+BODY_D = icon_art.H_MM - PAD_OVER       # 本体深（同上）4.301 —— 与 JLC 丝印深 4.30 ✓ 互相印证
+MP_PAD_W, MP_PAD_H = 2.10, 3.00  # 固定（锚定）焊盘：同上封装（8.2677×11.811）
+MP_PAD_X = 3.175                # 固定焊盘中心 x（JLC：离中线 12.500 单位 = 3.175mm，正在卡耳
+                                #  列 2.176..3.761 底下 ✓）
+MP_PAD_Y = 0.600                # 固定焊盘**靠前缘那一侧**距信号焊盘**内端**（JLC：
+                                #  3003.595−3001.233 = 2.362 单位 = 0.600mm）
+
+GOLD, GOLD_EDGE = "#f7bf13", "#b98900"
+
+# 上色（用户 2026-09-24：照实物照片上色）—— 颜色只在这里定，`icon_art.py` 里存的是**角色**
+ROLE_FILL = {
+    "body": "#f0e9d8",         # 本体：米白色塑料（顶面 / 腔壁 / 腔底）
+    "cavity": "#e2d8c0",       # 开口腔体内部（比顶面略深一点，看得出“看进去”）
+    "metal": "#c9c9c9",        # 针脚 / 焊盘 / 触点：银色金属
+    "bevel": "#a3a3a3",        # 斜的金属面：银灰
+}
+SILK = "#f0f0f0"                # PCB 丝印色（房规）
+BB_GREEN, BB_EDGE = "#00aa44", "#00772f"
+
+U = 39.37                       # 100 单位 = 2.54mm（面包板坐标系）
+ICON_MARGIN = 0.0               # icon 画布裁到内容 ⇒ 尺寸就是真实尺寸（7.522 × 5.171）
+
+
+def esc(s):
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def pad_x(i):
+    """第 i 个脚位（0..NP-1 → 脚 1..NP）的 x —— **按脚数居中**（NP=2 时 ±0.625）。"""
+    return (i - (NP - 1) / 2.0) * PITCH
+
+
+# ------------------------------------------------------------------ 内容范围
+def icon_bbox():
+    """icon/面包板/PCB 共用的内容范围（y=0 = 针脚尖端）；有手工版就用它的 viewBox。"""
+    if _HAND_INNER is not None:
+        return (_HAND_VB[0], _HAND_VB[1],
+                _HAND_VB[0] + _HAND_VB[2], _HAND_VB[1] + _HAND_VB[3])
+    return (-icon_art.W_MM / 2.0, 0.0, icon_art.W_MM / 2.0, icon_art.H_MM)
+
+
+# ------------------------------------------------------------------ 面上色（用户 2026-09-24）
+def _poly_area(ps):
+    return sum(p[0] * q[1] - q[0] * p[1] for p, q in zip(ps, ps[1:] + ps[:1])) / 2.0
+
+
+def _icon_segments():
+    """把 icon_art.PATHS 的 `<path d="M.. L..">` 拆成线段（mm）。"""
+    segs = []
+    for p in icon_art.PATHS:
+        ps = [(float(a), float(b)) for a, b in re.findall(r"[ML]\s*(-?[\d.]+)\s+(-?[\d.]+)", p)]
+        for a, b in zip(ps, ps[1:]):
+            segs.append((a, b))
+        if p.rstrip().endswith("Z") and len(ps) > 2:
+            segs.append((ps[-1], ps[0]))
+    return segs
+
+
+def _on_seg(p, a, b, tol=0.006):
+    """点 p 是否落在线段 a-b 的**内部**（不含两端）—— 用来平面化 T 型接点。"""
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    L2 = dx * dx + dy * dy
+    if L2 < 1e-12:
+        return False
+    t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2
+    if not 0.02 < t < 0.98:
+        return False
+    return (a[0] + t * dx - p[0]) ** 2 + (a[1] + t * dy - p[1]) ** 2 <= tol * tol
+
+
+def _planar_faces(grid=0.02):
+    """把抄图的线段当作**平面图**，用「左侧规则」遍历取面 —— 面来自图纸自己的线，不是另画的形状。
+
+    返回 [(点列, 面积)]；负面积 = 顺时针（同向的孔/外轮廓），最外层那个负面积面会被丢掉。
+    """
+    def key(p):
+        return (round(p[0] / grid), round(p[1] / grid))
+
+    nodes = {}
+    for a, b in _icon_segments():
+        for p in (a, b):
+            nodes.setdefault(key(p), p)
+    # ★ 平面化：把「端点落在别人线段内部」的地方切开（T 型接点），
+    #   否则卡耳这种接到本休边线中段上的区域永远围不成面。
+    raw = [(nodes[key(a)], nodes[key(b)]) for a, b in _icon_segments()]
+    raw = [(a, b) for a, b in raw if key(a) != key(b)]
+    allpts = list({key(p): p for a, b in raw for p in (a, b)}.values())
+    segs = []
+    for a, b in raw:
+        cuts = sorted(((p[0] - a[0]) ** 2 + (p[1] - a[1]) ** 2, p)
+                      for p in allpts if _on_seg(p, a, b))
+        chain = [a] + [p for _, p in cuts] + [b]
+        segs += [(p, q) for p, q in zip(chain, chain[1:]) if key(p) != key(q)]
+    out = {}
+    for i, (a, b) in enumerate(segs):
+        out.setdefault(key(a), []).append(i)
+        out.setdefault(key(b), []).append(i)
+
+    def other(i, k):
+        return segs[i][1] if key(segs[i][0]) == k else segs[i][0]
+
+    for k, lst in out.items():                       # 每节点按角度排序（逆时针）
+        lst.sort(key=lambda i: math.atan2(other(i, k)[1] - nodes[k][1],
+                                         other(i, k)[0] - nodes[k][0]))
+    nxt = {}
+    for k, lst in out.items():
+        for i in lst:
+            d = key(other(i, k))                     # 走到对面节点…
+            dl = out[d]                              # …再取那里的「顺时针邻居」
+            nxt[(k, i)] = (d, dl[(dl.index(i) - 1) % len(dl)])
+    seen, faces = set(), []
+    for i0 in range(len(segs)):
+        for k0 in (key(segs[i0][0]), key(segs[i0][1])):
+            if (k0, i0) in seen:
+                continue
+            path, k, i = [], k0, i0
+            while (k, i) not in seen:
+                seen.add((k, i))
+                path.append(nodes[k])
+                k, i = nxt[(k, i)]
+                if (k, i) == (k0, i0):
+                    break
+            if len(path) >= 3:
+                faces.append((path, _poly_area(path)))
+    faces = [f for f in faces if abs(f[1]) > 0.008]   # 太小的（线毛）不要
+    if faces and max(faces, key=lambda f: abs(f[1]))[1] < 0:
+        faces.remove(max(faces, key=lambda f: abs(f[1])))    # 去掉最外层那个「无限面」
+    return faces
+
+
+def _poly_d(ps):
+    return "M " + " L ".join(f"{p[0]:.3f} {p[1]:.3f}" for p in ps) + " Z"
+
+
+def _w_h(ps):
+    xs = [p[0] for p in ps]
+    ys = [p[1] for p in ps]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def _diag(ps):
+    """面里有没有斜边（两个方向都有分量）——斜边的面 = 斜的金属面。"""
+    return any(abs(q[0] - p[0]) > 0.02 and abs(q[1] - p[1]) > 0.02
+               for p, q in zip(ps, ps[1:] + ps[:1]))
+
+
+def _fill_ratio(ps):
+    """面积占 bbox 的比例：≈1 = 实心面，明显 <1 = 环/壁。"""
+    x0, y0, x1, y1 = _w_h(ps)
+    return abs(_poly_area(ps)) / max(1e-9, (x1 - x0) * (y1 - y0))
+
+
+def _body_rect():
+    """本体轮廓（x0,y0,x1,y1）—— 取那个「环状」大面（顶面）的 bbox。"""
+    ring = None
+    for ps, a in _planar_faces():
+        x0, y0, x1, y1 = _w_h(ps)
+        if x1 - x0 > 3.0 and y1 - y0 > 1.0 and _fill_ratio(ps) < 0.55:
+            if ring is None or abs(a) > abs(ring[1]):
+                ring = (ps, a)
+    return _w_h(ring[0]) if ring else (-icon_art.W_MM / 2.0, 0.0,
+                                       icon_art.W_MM / 2.0, icon_art.H_MM)
+
+
+def _ear_columns():
+    """卡耳竖列 → 两张表（左/右）：[(x0, x1, y0, y1, role)]。
+
+    列边界取抄图里的**竖线**；纵向范围取两条边界竖线的**交集**（不会盖到倒角外面）；
+    角色按用户 2026-09-24 指定：最外列 = 米黄（塑料）、次列 = 银（金属卡脚）、
+    再列 = 银灰（斜的金属面）。
+    """
+    bx0, by0, bx1, by1 = _body_rect()
+    segs = _icon_segments()
+    V = [(p[0], min(s[0][1], s[1][1]), max(s[0][1], s[1][1]))
+         for s in segs for p in s if abs(s[0][0] - s[1][0]) < 1e-6]
+    out = {}
+    for sgn, edge in ((-1, bx0), (1, bx1)):
+        xs = sorted({round(x, 3) for x, _, _ in V if sgn * x >= abs(edge) - 1e-9},
+                    key=lambda x: -sgn * x)
+        cols = []
+        for i in range(len(xs) - 1):
+            a, b = xs[i], xs[i + 1]
+            ys = [(lo, hi) for x, lo, hi in V if abs(x - a) < 1e-6 or abs(x - b) < 1e-6]
+            y0 = max(lo for lo, _ in ys) if ys else by0
+            y1 = min(hi for _, hi in ys) if ys else by1
+            cols.append((min(a, b), max(a, b), y0, y1,
+                         ("body", "metal", "bevel")[min(i, 2)]))
+        out[sgn] = cols
+    return out
+
+
+def _face_role(ps):
+    """按位置给面定角色；None = 不用单独画（米白底面已铺过）。
+
+    坐标 = 抄图自己的坐标系（x 居中、y=0 = 针脚尖端）：
+      · 金属 = 三个针脚（y 小）/ 腔内三个触点（y 大）；
+      · 金属面里**带斜边的** = 斜的金属面（银灰）；
+      · 本体内的宽面 = 腔体（比顶面略深，看得出“看进去”）；
+      · **卡耳**里的面按竖列分：最外米黄 / 次列银 / 再列银灰。
+    """
+    x0, y0, x1, y1 = _w_h(ps)
+    w, h = x1 - x0, y1 - y0
+    cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+    bx0, by0, bx1, by1 = _body_rect()
+    if cx < bx0 - 0.001 or cx > bx1 + 0.001:                 # 在卡耳里
+        if w > 0.9:
+            return None                                      # 横跨整卡的横带 = 塑料
+        if _diag(ps):
+            return "bevel"                                   # 卡耳里的斜的金属面
+        for c0, c1, cy0, cy1, role in _ear_columns()[-1 if cx < 0 else 1]:
+            if c0 - 1e-6 <= cx <= c1 + 1e-6:
+                return None if role == "body" else role
+        return None
+    near_pin = min(abs(cx - pad_x(i)) for i in range(NP)) <= 0.25
+    # 金属 = 针脚 / 腔内触点 / 靠近本体两端的小面（焊板卡脚与它的内机）
+    if (near_pin and not (w > 3.0 and h > 1.0)) or 1.9 <= abs(cx) <= 3.0:
+        return "bevel" if _diag(ps) and max(w, h) <= 1.4 else "metal"
+    if w > 3.0 and h > 1.0 and _fill_ratio(ps) >= 0.55:
+        return "cavity"
+    return None
+
+
+def _icon_base():
+    """米白底面 = 本体 + 左右卡耳（三段矩形，全部从抄图的极值推出来，不另编尺寸）。"""
+    bx0, by0, bx1, by1 = _body_rect()
+    out = [(bx0, by0, bx1, by1)]
+    segs = _icon_segments()
+    for pts, inner in (([p for s in segs for p in s if p[0] <= bx0 - 0.001], bx0),
+                       ([p for s in segs for p in s if p[0] >= bx1 + 0.001], bx1)):
+        if not pts:
+            continue
+        xs = [p[0] for p in pts] + [inner]
+        ys = [p[1] for p in pts]
+        out.append((min(xs), min(ys), max(xs), max(ys)))
+    return out
+
+
+def _pin_blocks():
+    """每个针脚块（x0, x1, 斜切线 y, 与本体相接的 y）—— 四个数全从抄图的线里读。"""
+    out = []
+    for i in range(NP):
+        px = pad_x(i)
+        segs = [s for s in _icon_segments()
+                if max(abs(s[0][0] - px), abs(s[1][0] - px)) <= 0.45
+                and max(s[0][1], s[1][1]) <= 1.20]
+        if not segs:
+            continue
+        xs = [p[0] for s in segs for p in s]
+        ys = [p[1] for s in segs for p in s]
+        hor = [p[1] for s in segs for p in s
+               if abs(s[0][1] - s[1][1]) < 1e-6 and p[1] > 0.01]     # 斜切线 = 最靠尖端的那条横线
+        out.append((min(xs), max(xs), min(hor), max(ys)))
+    return out
+
+
+def _icon_fills():
+    """图纸自己的面（`<path fill-rule="evenodd">`）：大面积先铺底，小面随后叠上去。
+
+    ★ 只画**正面积**的面：负面积的是「洞/互补」面，同一块地方往往已经有正面在画，
+      再叠一层就会把整块涂错色（用户 2026-09-24：中间那个触点被涂成深灰色）。
+    """
+    faces = sorted(_planar_faces(), key=lambda f: abs(f[1]), reverse=True)
+    out = []
+    for ps, a in faces:
+        if a <= 0:
+            continue
+        role = _face_role(ps)
+        if role:
+            out.append((role, _poly_d(ps)))
+    return out
+
+
+def icon_svg():
+    """icon = **厂商图纸俯视图的原样矢量**（`tools/copy_top.py` 从 `1.25 立贴.PDF` 抄出，剪掉 3 个脚位宽）。
+
+    用户 2026-09-24 定（已写进 AGENTS §10）：
+      · **严格按图纸** ⇒ 不自作主张加焊盘、加底色、改尺寸；就是这个俯视图的线条，
+        尺寸 = 图纸实测（见 `icon_art.W_MM / H_MM`）；
+      · 剪脚位只剪**中间 3 个脚位的宽度**（3×1.25mm），**两侧卡耳整块保留**，
+        跟在剪窗右侧的图形一起左移 —— 界面上就变成一只 3P 的插座。
+    """
+    x0, y0, x1, y1 = icon_bbox()
+    vw, vh = x1 - x0, y1 - y0
+    if _HAND_INNER is not None:
+        # ★ 手工版优先：内容**逐字照搬**，不加工（用户 2026-09-24：手工版是权威）
+        return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+                f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw:.2f}mm" '
+                f'height="{vh:.2f}mm" viewBox="{x0:.2f} {y0:.2f} {vw:.2f} {vh:.2f}">\n'
+                ' <g id="icon">\n' + _HAND_INNER + '\n </g>\n</svg>\n')
+    L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
+         f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw:.2f}mm" height="{vh:.2f}mm" '
+         f'viewBox="{x0:.2f} {y0:.2f} {vw:.2f} {vh:.2f}">\n',
+         ' <g id="icon">\n']
+    # 上色（用户 2026-09-24）：① 米白底面（本体 + 卡耳）→ ② 图纸自己的面（腔体/金属/斜面）
+    #   → ③ 卡耳竖列矩形兜底 + 针脚块（**针尖浅色 + 针尖下面深灰斜面**）→ ④ 图纸的线压在最上面
+    for bx0, by0, bx1, by1 in _icon_base():
+        L.append(f'  <rect x="{bx0:.3f}" y="{by0:.3f}" width="{bx1 - bx0:.3f}" '
+                 f'height="{by1 - by0:.3f}" fill="{ROLE_FILL["body"]}" stroke="none"/>\n')
+    for role, d in _icon_fills():
+        L.append(f'  <path d="{d}" fill="{ROLE_FILL[role]}" fill-rule="evenodd" stroke="none"/>\n')
+    # 卡耳竖列：除了由「面」上色，再用**矩形兜底**一遍（不依赖面的剖分，换渲染器也不会丢）
+    for cols in _ear_columns().values():
+        for c0, c1, cy0, cy1, role in cols:
+            if role == "body":
+                continue
+            L.append(f'  <rect x="{c0:.3f}" y="{cy0:.3f}" width="{c1 - c0:.3f}" '
+                     f'height="{cy1 - cy0:.3f}" fill="{ROLE_FILL[role]}" stroke="none"/>\n')
+    for x0, x1, yc, yb in _pin_blocks():
+        L.append(f'  <rect x="{x0:.3f}" y="0.000" width="{x1 - x0:.3f}" height="{yb:.3f}" '
+                 f'fill="{ROLE_FILL["metal"]}" stroke="none"/>\n')
+        L.append(f'  <rect x="{x0:.3f}" y="0.000" width="{x1 - x0:.3f}" height="{yc:.3f}" '
+                 f'fill="{ROLE_FILL["bevel"]}" stroke="none"/>\n')
+    L += [f'  {p}\n' for p in icon_art.PATHS]
+    L.append(' </g>\n</svg>\n')
+    return "".join(L)
+
+
+def _icon_inner():
+    """取 icon 图层整段（手工版里可能**嵌套 group**，所以按标签配平扫描，不能非贪心一把括）。"""
+    s = icon_svg()
+    m = re.search(r'<g\b[^>]*\bid="icon"[^>]*>', s, re.S)
+    if not m:
+        return ""
+    depth, i = 1, m.end()
+    for t in re.finditer(r"</?g\b", s[i:]):
+        depth += -1 if t.group(0) == "</g" else 1
+        if depth == 0:
+            return s[m.start():i + t.start()] + "</g>"
+    return ""
+
+
+def _embed(cx, cy):
+    """把 icon 内容按 1:1（mm → 单位）嵌到面包板坐标 (cx, cy)。"""
+    x0, y0, x1, y1 = icon_bbox()
+    icx, icy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+    return (f'  <g transform="translate({cx:.1f} {cy:.1f}) scale({U}) '
+            f'translate({-icx:.3f} {-icy:.3f})">\n' + _icon_inner() + '  </g>\n')
+
+
+def breadboard_svg():
+    """面包板 = 绿色转接板（AGENTS §3b）：本体 1:1 居中在上，下方一排 2 个 2.54mm 排针。
+
+    单位：100 单位 = 2.54mm。**排针中心必须落在 100 的整数倍上**（否则插不进面包板孔）；
+    2 个针取 `bw//2 ∓ 50`（相距 100 单位 = 2.54mm ✓）—— 要求 `bw//2` 是 **50 的奇数倍**，
+    即板宽取 **100 的奇数倍**（如 500）⇒ `bw//2 ∓ 50` 都是 100 的整数倍 ✓，
+    且两针与本体都**对称于板中线**（用户 2026-09-25："面包板最好改成对称的"）。
+    引脚号白色、逆时针 90°、居中于焊盘上方 80 单位（朝板心一侧）。
+    """
+    x0, y0, x1, y1 = icon_bbox()
+    h_u = (y1 - y0) * U                      # 本体高（单位）
+    margin = 40
+    cy_socket = margin + h_u / 2.0           # 本体中心 y
+    socket_bot = margin + h_u
+    pin_y = 100 * max(3, int((socket_bot + 140) / 100.0 + 0.9999))   # 落 100 的整数倍
+    # 板宽取 100 的**奇数倍**（`| 1` 强制奇数），并容下本体（两侧各留 ≥55 单位）
+    w_u = (x1 - x0) * U
+    bw = 100 * max(5, int((w_u + 110) / 100.0 + 0.9999) | 1)
+    pin_x = (bw // 2 - 50, bw // 2 + 50)
+    bh = pin_y + 100
+    pad_s, hole_r = 78.0, 0.485 * U          # 2mm 焊盘 + 0.97mm 针孔
+    L = ['<?xml version="1.0" encoding="utf-8"?>\n',
+         f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
+         f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
+         ' <g id="breadboard">\n',
+         f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="{BB_GREEN}" stroke="{BB_EDGE}" stroke-width="5"/>\n']
+    # 本体（1:1，居中于板中线 —— 两个排针也对称于它）
+    L.append(_embed(bw / 2.0, cy_socket))
+    # 2 个排针焊盘 + 中央针孔
+    for i, px in enumerate(pin_x):
+        L.append(f'  <rect id="connector{i}pin" connectorname="{i + 1}" '
+                 f'x="{px - pad_s / 2:.1f}" y="{pin_y - pad_s / 2:.1f}" width="{pad_s:.1f}" '
+                 f'height="{pad_s:.1f}" fill="{GOLD}" stroke="{GOLD_EDGE}" stroke-width="4" rx="6"/>\n')
+        L.append(f'  <circle cx="{px:.1f}" cy="{pin_y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
+    # 引脚号（逆时针 90°、居中、朝板心一侧、与焊盘留 0.3mm）
+    for i, px in enumerate(pin_x):
+        ty = pin_y - 80
+        L.append(f'  <text x="{px:.1f}" y="{ty:.1f}" font-size="60" fill="#ffffff" text-anchor="middle" '
+                 f'dominant-baseline="central" font-family="DroidSans" '
+                 f'transform="rotate(-90 {px:.1f} {ty:.1f})">{i + 1}</text>\n')
+    L.append(' </g>\n</svg>\n')
+    return "".join(L)
+
+
+def schematic_svg():
+    """原理图 = 3 脚连接器符号。
+
+    房规：**连接器不画芯片那种矩形符号框**（库里 SMA-PJ1.7-L9.5 / FPC-05F-12P-H15 /
+    TypeC16Pin / NetLabel-Pad 都是这种非矩形符号，`tools/schem_check.py` 判「不适用」）。
+    这里左列 3 条灰引线（`class="pin"` + terminal）+ 引线上方脚号 + 右侧插座外壳轮廓。
+    """
+    WIRE, P, DEPTH = 2.54, 2.54, 1.80      # 引线长 / 脚距 / 外壳示意深度（mm）
+    FN = 1.30                              # 脚号字号
+    top = 0.80
+    ys = [top + P / 2.0 + i * P for i in range(NP)]    # 各脚引线的 y
+    hx0, hx1 = WIRE, WIRE + DEPTH                      # 外壳 x 范围（左缘贴引线末端）
+    hy0, hy1 = ys[0] - 1.10, ys[-1] + 1.10
+    vx, vy = 0.0, top - 1.30
+    # 画布要同时容下：引线上的脚号（上）、外壳（右）、下方系列名（下）
+    vw = max(hx1 + 0.50, 5.60)
+    vh = (hy1 - hy0) + 3.00
+    L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
+         f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw:.2f}mm" height="{vh:.2f}mm" '
+         f'viewBox="{vx:.2f} {vy:.2f} {vw:.2f} {vh:.2f}">\n',
+         ' <g id="schematic">\n']
+    # 外壳轮廓（polyline 直角外形；不用 <rect>，别让它被当成芯片符号框）
+    L.append(f'  <polyline points="{hx0:.2f},{hy0:.2f} {hx1:.2f},{hy0:.2f} {hx1:.2f},{hy1:.2f} '
+             f'{hx0:.2f},{hy1:.2f} {hx0:.2f},{hy0:.2f}" fill="none" stroke="#000000" '
+             f'stroke-width="0.30" stroke-linejoin="round"/>\n')
+    for i, y in enumerate(ys):
+        # 引线（可连线；末端吸附靠 terminal）
+        L.append(f'  <line class="pin" id="connector{i}pin" connectorname="{i + 1}" '
+                 f'x1="0" y1="{y:.2f}" x2="{hx0:.2f}" y2="{y:.2f}" stroke="#787878" '
+                 f'stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>\n')
+        # terminal：极小不可见矩形，贴在引线末端（房规：不画大黑点）
+        L.append(f'  <rect id="connector{i}terminal" x="0" y="{y:.4f}" width="0.0001" height="0.0001" '
+                 f'stroke="none" fill="none"/>\n')
+        # 脚号（引线上方、居中）
+        L.append(f'  <text x="{WIRE / 2.0:.2f}" y="{y - 0.28:.2f}" font-size="{FN:.2f}" fill="#8C8C8C" '
+                 f'text-anchor="middle" font-family="DroidSans">{i + 1}</text>\n')
+    # 系列名（外壳下方居中，灰色小字）
+    L.append(f'  <text x="{(hx0 + hx1) / 2.0:.2f}" y="{hy1 + 1.15:.2f}" font-size="1.00" '
+             f'fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">{esc(SERIES)}</text>\n')
+    L.append(' </g>\n</svg>\n')
+    return "".join(L)
+
+
+def pcb_svg():
+    """PCB = 焊盘（信号可连线 + 2 个固定）+ 本体丝印轮廓。
+
+    ★ 按 AGENTS §10.16（用户 2026-09-25）：焊盘尺寸与相对位置**一律以嘉立创同规格封装为准**
+      —— 本件用 **CONN-SMD-MX1.25-2P-WT**（0.254mm 单位，÷3.937 = mm）：
+      · 信号 0.80×1.60 @ x=±0.625（脚距 4.921 单位 = 1.250 ✓；内端 = 本体前缘，外端伸出到出脚尖端之外）
+      · 固定 2.10×3.00 @ x = ±3.175（离中线 12.500 单位），正在卡耳列 2.176..3.761 底下 ✓
+      · 固定焊盘靠信号焊盘一侧距信号焊盘内端 0.600（3003.595−3001.233 = 2.362 单位）
+      · 丝印外包 7.25×4.30（28.543×16.925 单位）—— 其中 **深 4.30 与 icon 里本体深 4.301 一致** ✓
+      ⚠ JLC 那份丝印前缘是**阶梯形**（中间 ±2.125 那段比两侧前 0.494），无法唯一对应 icon 的
+        本体前缘 ⇒ 按房规第 2 条把**信号焊盘内端对齐本体前缘**，其余（尺寸/脚距/相对距离）全照 JLC。
+      · 丝印画**本体轮廓**（±BODY_W/2 × BODY_D）；
+      · **丝印不许压焊盘** —— 四条边按「焊盘 + 两侧各 clr(0.23mm) 余量」挖缺口：
+        前缘被 2 个信号焊盘穿过；侧边被 2 个固定焊盘穿过（焊盘外缘 4.225 > 本体半宽 3.625）；
+        后缘不被穿 ⇒ 画整条。与 SH-1.0-3P-V 那份同一个规则（用户 2026-09-25：丝印漂亮）；
+      · **不画 1 脚圆点**（★ JLC 这份其实有（圆心 3992.761/2997.571），但用户 2026-09-25 定不画）；
+      · 方向与 icon 一致：icon 是图纸原样（y=0 = 出脚尖端，本体往 +y 长）。
+    """
+    x0, y0, x1, y1 = icon_bbox()
+    body_f = y0 + PAD_OVER                  # 本体前缘 = 信号焊盘内端
+    body_b = body_f + BODY_D                # 本体后缘
+    lw, m, clr = 0.12, 0.35, 0.23           # 丝印线宽 / 画布余量 / 缺口余量
+    hw = (MP_PAD_X + MP_PAD_W / 2.0) if MP_PAD_W > 0 else BODY_W / 2.0   # 固定焊盘比本体宽
+    sx = BODY_W / 2.0                       # 丝印按本体轮廓（半宽）
+    pad_y = body_f - PAD_H                  # 信号焊盘外端（伸出到出脚尖端之外）
+    mech_f = body_f + MP_PAD_Y              # 固定焊盘靠前缘那一侧
+    mech_b = mech_f + MP_PAD_H
+    vx = min(x0, -hw) - m
+    vy = min(y0, pad_y) - m
+    vw = max(x1, hw) + m - vx
+    vh = max(y1, mech_b if MP_PAD_W > 0 else y1) + m - vy
+
+    pads = []                               # 全部焊盘（信号 + 固定）的矩形 (x0, y0, x1, y1)
+    if MP_PAD_W > 0:
+        for cx in (-MP_PAD_X, MP_PAD_X):
+            pads.append((cx - MP_PAD_W / 2.0, mech_f, cx + MP_PAD_W / 2.0, mech_b))
+    for i in range(NP):
+        pads.append((pad_x(i) - PAD_W / 2.0, pad_y, pad_x(i) + PAD_W / 2.0, pad_y + PAD_H))
+
+    def keep(a, b, holes):
+        """把 [a,b] 去掉 holes = [(lo,hi), …] 后剩下的段（缺口挖掉）。"""
+        out, cur = [], a
+        for lo, hi in sorted(holes):
+            if hi <= cur or lo >= b:
+                continue
+            if lo > cur:
+                out.append((cur, min(lo, b)))
+            cur = max(cur, hi)
+        if cur < b:
+            out.append((cur, b))
+        return out
+
+    def holes_h(y, a, b):
+        """横边 y 上被焊盘（含 `clr` 余量）遮住的 x 区间。"""
+        return [(px0 - clr, px1 + clr) for px0, py0, px1, py1 in pads
+                if py0 - clr <= y <= py1 + clr and px0 - clr < b and px1 + clr > a]
+
+    def holes_v(x, a, b):
+        """竖边 x 上被焊盘（含 `clr` 余量）遮住的 y 区间。"""
+        return [(py0 - clr, py1 + clr) for px0, py0, px1, py1 in pads
+                if px0 - clr <= x <= px1 + clr and py0 - clr < b and py1 + clr > a]
+
+    def line(a, b, c, d):
+        return (f'   <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
+                f'stroke="{SILK}" stroke-width="{lw}" stroke-linecap="round"/>\n')
+
+    L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
+         f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw:.2f}mm" height="{vh:.2f}mm" '
+         f'viewBox="{vx:.2f} {vy:.2f} {vw:.2f} {vh:.2f}">\n',
+         ' <g id="copper1">\n']
+    # 固定（锚定）焊盘（机械；不加 id ⇒ 不产生连接器）
+    for cx in ((-MP_PAD_X, MP_PAD_X) if MP_PAD_W > 0 else ()):
+        L.append(f'  <rect x="{cx - MP_PAD_W / 2:.3f}" y="{mech_f:.3f}" '
+                 f'width="{MP_PAD_W:.2f}" height="{MP_PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
+    # 信号焊盘 = 连接器（copper1）
+    for i in range(NP):
+        L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
+                 f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y:.3f}" '
+                 f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
+    # 丝印：本体轮廓；每条边都按「焊盘 + clr 余量」挖缺口（同 SH-1.0-3P-V 那份的画法）
+    L.append('  <g id="silkscreen">\n')
+    for a, b in keep(-sx, sx, holes_h(body_f, -sx, sx)):              # 前缘（2 个信号焊盘）
+        L.append(line(a, body_f, b, body_f))
+    for a, b in keep(-sx, sx, holes_h(body_b, -sx, sx)):              # 后缘（焊盘够不到 ⇒ 整条）
+        L.append(line(a, body_b, b, body_b))
+    for a, b in keep(body_f, body_b, holes_v(-sx, body_f, body_b)):   # 左侧边（固定焊盘穿过）
+        L.append(line(-sx, a, -sx, b))
+    for a, b in keep(body_f, body_b, holes_v(sx, body_f, body_b)):    # 右侧边
+        L.append(line(sx, a, sx, b))
+    L.append('  </g>\n </g>\n</svg>\n')
+    return "".join(L)
+
+
+def fzp_xml():
+    conns = []
+    for cn in range(NP):
+        conns.append(f'  <connector id="connector{cn}" name="{cn + 1}" type="female">\n')
+        conns.append(f'   <description>pin {cn + 1}</description>\n')
+        conns.append('   <views>\n')
+        conns.append(f'    <breadboardView><p layer="breadboard" svgId="connector{cn}pin"/></breadboardView>\n')
+        conns.append(f'    <schematicView><p layer="schematic" svgId="connector{cn}pin" '
+                     f'terminalId="connector{cn}terminal"/></schematicView>\n')
+        conns.append(f'    <pcbView><p layer="copper1" svgId="connector{cn}pad"/></pcbView>\n')
+        conns.append('   </views>\n  </connector>\n')
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
+        ' <version>1</version>\n'
+        f' <author>Shi Jinghai</author>\n <title>{TITLE}</title>\n'
+        f' <label>{LABEL}</label>\n <date>{DATE}</date>\n'
+        f' <tags><tag>connector</tag><tag>{esc(SERIES)}</tag><tag>PicoBlade</tag>'
+        f'<tag>socket</tag><tag>{NP}P</tag><tag>horizontal</tag><tag>SMD</tag></tags>\n'
+        ' <properties>\n'
+        '  <property name="family">connector</property>\n'
+        f'  <property name="series">{esc(SERIES)}</property>\n'
+        f'  <property name="part number">{esc(MODEL)}</property>\n'
+        f'  <property name="pitch">{PITCH:g}mm</property>\n'
+        f'  <property name="pins">{NP}</property>\n'
+        '  <property name="mounting">SMD horizontal</property>\n'
+        ' </properties>\n'
+        f' <description>{esc(SERIES)} 1.25mm {NP}P horizontal SMD socket ({esc(MODEL)}), '
+        'board side. Breadboard view = green adapter board with 2 header pins on the 2.54mm grid '
+        '(the SMD socket itself cannot plug into a breadboard). Pads follow the manufacturer land pattern.</description>\n'
+        ' <views>\n'
+        f'  <iconView><layers image="icon/{PART_ID}_icon.svg"><layer layerId="icon"/></layers></iconView>\n'
+        f'  <breadboardView><layers image="breadboard/{PART_ID}_breadboard.svg">'
+        '<layer layerId="breadboard"/></layers></breadboardView>\n'
+        f'  <schematicView><layers image="schematic/{PART_ID}_schematic.svg">'
+        '<layer layerId="schematic"/></layers></schematicView>\n'
+        f'  <pcbView><layers image="pcb/{PART_ID}_pcb.svg">'
+        '<layer layerId="copper1"/><layer layerId="silkscreen"/></layers></pcbView>\n'
+        f' </views>\n <connectors>\n{"".join(conns)}</connectors>\n</module>\n'
+    )
+
+
+def build(out_dir, part_id, fzpz_name):
+    svgs = {
+        "icon": icon_svg(),
+        "breadboard": breadboard_svg(),
+        "schematic": schematic_svg(),
+        "pcb": pcb_svg(),
+    }
+    files = {}
+    for view, text in svgs.items():
+        name = f"svg.{view}.{part_id}_{view}.svg"
+        files[name] = text
+    files[f"part.{part_id}.fzp"] = fzp_xml().replace(PART_ID, part_id)
+    for name, text in files.items():
+        with open(os.path.join(out_dir, name), "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+        print(f"wrote {name:<52} {len(text.encode()):>7} bytes")
+    os.makedirs(FZPZ_DIR, exist_ok=True)
+    dst = os.path.join(FZPZ_DIR, fzpz_name)
+    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as z:
+        for name, text in files.items():
+            z.writestr(name, text)
+    print(f"wrote {dst}  ({os.path.getsize(dst)} bytes)")
+
+
+def main():
+    build(OUT_DIR, PART_ID, FZPZ)
+
+
+if __name__ == "__main__":
+    main()

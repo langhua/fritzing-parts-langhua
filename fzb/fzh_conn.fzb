@@ -37,6 +37,9 @@
         <instance moduleIdRef="SH-1.0-3P-V" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SH-1.0-3P-V.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="MX-1.25-2P-H" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MX-1.25-2P-H.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="开关（拨动 / 滑动 / 轻触）">
         <views>
             <iconView layer="icon">
