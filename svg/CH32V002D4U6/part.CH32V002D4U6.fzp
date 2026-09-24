@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.9b" moduleId="CH32V002D4U6">
+ <version>1</version>
+ <author>Shi Jinghai</author>
+ <title>CH32V002D4U6</title>
+ <label>U</label>
+ <date>2026-09-24</date>
+ <tags><tag>IC</tag><tag>MCU</tag><tag>RISC-V</tag><tag>CH32V002</tag><tag>QFN12</tag></tags>
+ <properties>
+  <property name="family">MCU</property>
+  <property name="chip">CH32V002</property>
+  <property name="pins">12</property>
+  <property name="part number">CH32V002D4U6</property>
+  <property name="package">QFN12</property>
+ </properties>
+ <description>WCH CH32V002D4U6 RISC-V MCU, QFN12 2x2 mm / 0.4 mm pitch, 2.5-5 V, 12-bit ADC, 11 I/O. The exposed pad is VSS (the QFN12 has no separate VSS pin) - route it to ground.</description>
+ <views>
+  <iconView><layers image="icon/CH32V002D4U6_icon.svg"><layer layerId="icon"/></layers></iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true"><layers image="breadboard/CH32V002D4U6_breadboard.svg"><layer layerId="breadboard"/></layers></breadboardView>
+  <schematicView fliphorizontal="true" flipvertical="true"><layers image="schematic/CH32V002D4U6_schematic.svg"><layer layerId="schematic"/></layers></schematicView>
+  <pcbView><layers image="pcb/CH32V002D4U6_pcb.svg"><layer layerId="silkscreen"/><layer layerId="copper1"/></layers></pcbView>
+ </views>
+ <connectors>
+  <connector id="connector0" name="PA1" type="male">
+   <description>pin 1 - PA1 (ADC_IN1)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector0pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector0pin" terminalId="connector0terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector0pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector1" name="PA2" type="male">
+   <description>pin 2 - PA2 (ADC_IN0)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector1pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector1pin" terminalId="connector1terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector1pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector2" name="PD0" type="male">
+   <description>pin 3 - PD0 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector2pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector2pin" terminalId="connector2terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector2pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector3" name="VDD" type="male">
+   <description>pin 4 - supply 2.5 / 3.3 / 5 V</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector3pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector3pin" terminalId="connector3terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector3pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector4" name="PC0" type="male">
+   <description>pin 5 - PC0 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector4pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector4pin" terminalId="connector4terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector4pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector5" name="PC3" type="male">
+   <description>pin 6 - PC3 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector5pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector5pin" terminalId="connector5terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector5pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector6" name="PC4" type="male">
+   <description>pin 7 - PC4 (ADC_IN2)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector6pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector6pin" terminalId="connector6terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector6pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector7" name="PC6" type="male">
+   <description>pin 8 - PC6 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector7pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector7pin" terminalId="connector7terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector7pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector8" name="PC7" type="male">
+   <description>pin 9 - PC7 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector8pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector8pin" terminalId="connector8terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector8pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector9" name="PD1" type="male">
+   <description>pin 10 - PD1 (SWIO debug)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector9pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector9pin" terminalId="connector9terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector9pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector10" name="PD4" type="male">
+   <description>pin 11 - PD4 (ADC_IN7)</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector10pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector10pin" terminalId="connector10terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector10pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector11" name="PD7" type="male">
+   <description>pin 12 - PD7 digital I/O</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector11pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector11pin" terminalId="connector11terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector11pad"/></pcbView>
+   </views>
+  </connector>
+  <connector id="connector12" name="VSS" type="male">
+   <description>exposed pad (datasheet pin 0) - VSS, connect to GND</description>
+   <views>
+    <breadboardView><p layer="breadboard" svgId="connector12pin"/></breadboardView>
+    <schematicView><p layer="schematic" svgId="connector12pin" terminalId="connector12terminal"/></schematicView>
+    <pcbView><p layer="copper1" svgId="connector12pad"/></pcbView>
+   </views>
+  </connector>
+</connectors>
+</module>

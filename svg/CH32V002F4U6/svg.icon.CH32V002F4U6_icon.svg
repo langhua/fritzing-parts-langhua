@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+ <g id="icon">
+  <rect x="5.50" y="5.50" width="21.00" height="21.00" rx="0.3" ry="0.3" fill="#303030" stroke="none"/>
+  <rect x="1.82" y="9.70" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="1.82" y="12.50" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="1.82" y="15.30" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="1.82" y="18.10" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="1.82" y="20.90" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="9.70" y="26.32" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="12.50" y="26.32" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="15.30" y="26.32" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="18.10" y="26.32" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="20.90" y="26.32" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="26.32" y="20.90" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="26.32" y="18.10" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="26.32" y="15.30" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="26.32" y="12.50" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="26.32" y="9.70" width="3.85" height="1.40" fill="#f7bf13" stroke="none"/>
+  <rect x="20.90" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="18.10" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="15.30" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="12.50" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <rect x="9.70" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
+  <circle cx="6.90" cy="6.90" r="0.7" fill="#c0c0c0" stroke="none"/>
+  <text x="16" y="16" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">V002</text>
+ </g>
+</svg>

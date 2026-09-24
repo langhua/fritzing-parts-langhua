@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CH32V002D4U6 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="4.20mm" height="4.20mm" viewBox="-2.10 -2.10 4.20 4.20">
+  <g id="copper1">
+<rect id="connector0pad" x="-1.550" y="-0.500" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA1"/>
+<rect id="connector1pad" x="-1.550" y="-0.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA2"/>
+<rect id="connector2pad" x="-1.550" y="0.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PD0"/>
+<rect id="connector3pad" x="-0.500" y="0.950" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="VDD"/>
+<rect id="connector4pad" x="-0.100" y="0.950" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PC0"/>
+<rect id="connector5pad" x="0.300" y="0.950" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PC3"/>
+<rect id="connector6pad" x="0.950" y="0.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PC4"/>
+<rect id="connector7pad" x="0.950" y="-0.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PC6"/>
+<rect id="connector8pad" x="0.950" y="-0.500" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PC7"/>
+<rect id="connector9pad" x="0.300" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD1"/>
+<rect id="connector10pad" x="-0.100" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD4"/>
+<rect id="connector11pad" x="-0.500" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD7"/>
+<rect id="connector12pad" x="-0.525" y="-0.525" width="1.050" height="1.050" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<rect x="-1.000" y="-1.000" width="2.000" height="2.000" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>
+<circle cx="-1.250" cy="-0.400" r="0.22" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>

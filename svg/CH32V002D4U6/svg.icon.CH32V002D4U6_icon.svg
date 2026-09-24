@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+ <g id="icon">
+  <rect x="7.50" y="7.50" width="17.00" height="17.00" rx="0.3" ry="0.3" fill="#303030" stroke="none"/>
+  <rect x="3.04" y="11.75" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="3.04" y="15.15" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="3.04" y="18.55" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="11.75" y="24.29" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="15.15" y="24.29" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="18.55" y="24.29" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="24.29" y="18.55" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.29" y="15.15" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.29" y="11.75" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="18.55" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="15.15" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="11.75" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <circle cx="8.90" cy="8.90" r="0.7" fill="#c0c0c0" stroke="none"/>
+  <text x="16" y="16" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">V002</text>
+ </g>
+</svg>
