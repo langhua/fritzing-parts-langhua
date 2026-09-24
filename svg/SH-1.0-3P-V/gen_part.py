@@ -473,7 +473,7 @@ def schematic_svg():
         # 引线（可连线；末端吸附靠 terminal）
         L.append(f'  <line class="pin" id="connector{i}pin" connectorname="{i + 1}" '
                  f'x1="0" y1="{y:.2f}" x2="{hx0:.2f}" y2="{y:.2f}" stroke="#787878" '
-                 f'stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>\n')
+                 f'stroke-width="0.246944" stroke-linecap="round" stroke-linejoin="round"/>\n')
         # terminal：极小不可见矩形，贴在引线末端（房规：不画大黑点）
         L.append(f'  <rect id="connector{i}terminal" x="0" y="{y:.4f}" width="0.0001" height="0.0001" '
                  f'stroke="none" fill="none"/>\n')

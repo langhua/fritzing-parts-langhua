@@ -2,13 +2,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="5.60mm" height="10.28mm" viewBox="0.00 -0.50 5.60 10.28">
  <g id="schematic">
   <polyline points="2.54,0.97 4.34,0.97 4.34,8.25 2.54,8.25 2.54,0.97" fill="none" stroke="#000000" stroke-width="0.30" stroke-linejoin="round"/>
-  <line class="pin" id="connector0pin" connectorname="1" x1="0" y1="2.07" x2="2.54" y2="2.07" stroke="#787878" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+  <line class="pin" id="connector0pin" connectorname="1" x1="0" y1="2.07" x2="2.54" y2="2.07" stroke="#787878" stroke-width="0.246944" stroke-linecap="round" stroke-linejoin="round"/>
   <rect id="connector0terminal" x="0" y="2.0700" width="0.0001" height="0.0001" stroke="none" fill="none"/>
   <text x="1.27" y="1.79" font-size="1.30" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">1</text>
-  <line class="pin" id="connector1pin" connectorname="2" x1="0" y1="4.61" x2="2.54" y2="4.61" stroke="#787878" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+  <line class="pin" id="connector1pin" connectorname="2" x1="0" y1="4.61" x2="2.54" y2="4.61" stroke="#787878" stroke-width="0.246944" stroke-linecap="round" stroke-linejoin="round"/>
   <rect id="connector1terminal" x="0" y="4.6100" width="0.0001" height="0.0001" stroke="none" fill="none"/>
   <text x="1.27" y="4.33" font-size="1.30" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">2</text>
-  <line class="pin" id="connector2pin" connectorname="3" x1="0" y1="7.15" x2="2.54" y2="7.15" stroke="#787878" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+  <line class="pin" id="connector2pin" connectorname="3" x1="0" y1="7.15" x2="2.54" y2="7.15" stroke="#787878" stroke-width="0.246944" stroke-linecap="round" stroke-linejoin="round"/>
   <rect id="connector2terminal" x="0" y="7.1500" width="0.0001" height="0.0001" stroke="none" fill="none"/>
   <text x="1.27" y="6.87" font-size="1.30" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">3</text>
   <text x="3.44" y="9.40" font-size="1.00" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">MX1.25</text>
