@@ -26,7 +26,14 @@
 <g id="copper0"/>
   </g>
   <g id="silkscreen">
-<rect x="-1.500" y="-1.500" width="3.000" height="3.000" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>
-<circle cx="-1.750" cy="-0.800" r="0.22" fill="#f0f0f0" stroke="none"/>
+<line x1="-1.500" y1="-1.500" x2="-1.500" y2="-1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="-1.500" x2="-1.280" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="1.500" x2="-1.500" y2="1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="1.500" x2="-1.280" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="-1.500" x2="1.500" y2="-1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="-1.500" x2="1.280" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="1.500" x2="1.500" y2="1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="1.500" x2="1.280" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<circle cx="-1.830" cy="-1.200" r="0.22" fill="#f0f0f0" stroke="none"/>
   </g>
 </svg>

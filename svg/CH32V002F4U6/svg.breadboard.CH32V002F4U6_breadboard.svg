@@ -23,7 +23,7 @@
   <rect x="246.06" y="470.28" width="7.87" height="21.65" fill="#c0c0c0" stroke="none"/>
   <rect x="230.31" y="470.28" width="7.87" height="21.65" fill="#c0c0c0" stroke="none"/>
   <rect x="214.57" y="470.28" width="7.87" height="21.65" fill="#c0c0c0" stroke="none"/>
-  <circle cx="196.94" cy="496.94" r="3.5" fill="#c0c0c0" stroke="none"/>
+  <circle cx="200.94" cy="518.50" r="5.0" fill="#c0c0c0" stroke="none"/>
   <text x="250" y="550.00" font-size="14" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">V002</text>
   <circle id="connector0pin" connectorname="PD7" cx="100.0" cy="100.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="100.0" cy="100.0" r="19.1" fill="#2b2b2b" stroke="none"/>

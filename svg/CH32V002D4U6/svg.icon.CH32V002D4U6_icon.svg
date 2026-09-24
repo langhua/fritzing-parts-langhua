@@ -14,7 +14,7 @@
   <rect x="18.55" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
   <rect x="15.15" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
   <rect x="11.75" y="3.04" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
-  <circle cx="8.90" cy="8.90" r="0.7" fill="#c0c0c0" stroke="none"/>
+  <circle cx="9.60" cy="12.60" r="1.0" fill="#c0c0c0" stroke="none"/>
   <text x="16" y="16" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">V002</text>
  </g>
 </svg>

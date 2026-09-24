@@ -303,7 +303,8 @@ def pcb_svg():
     L.append(' <g id="silkscreen">\n')
     L.append('  <line x1="-2.2" y1="4.1" x2="2.2" y2="4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>\n')
     L.append('  <line x1="-2.2" y1="-4.1" x2="2.2" y2="-4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>\n')
-    L.append('  <circle cx="%.3f" cy="%.3f" r="0.25" fill="#FFFFFF" stroke="none"/>\n' % (xl - 0.30, y0))
+    L.append('  <circle cx="%.3f" cy="%.3f" r="0.25" fill="#FFFFFF" stroke="none"/>\n'
+             % (xl + 0.25, y0 - PAD_H / 2.0 - 0.05 - 0.25))   # 1-脚圆点：焊盘上方、左对齐
     L.append(' </g>\n')
     L.append(' <g id="copper1">\n')
     for i, (cn, lab, num) in enumerate(SCHEM_LEFT):

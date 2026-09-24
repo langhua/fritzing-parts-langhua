@@ -60,6 +60,12 @@ PAD_L_MM = 0.60          # pad length (radially)
 PAD_R_MM = BODY_MM / 2.0 + 0.25     # pad centre distance from the centre = 1.75
 EPAD_MM = 1.65           # exposed pad, square
 ICON_S = 7.0             # icon units per mm  (3 mm body + pads -> 28.7 units of 32)
+# 1-pin dot: centred on pin 1's pad row, just inside the body's left edge.
+# Kept in view units so every package looks the same (2026-09-24 user's spec).
+ICON_DOT_R = 1.0         # icon: dot radius
+ICON_DOT_INSET = 2.10    # icon: dot centre, distance from the body's left edge
+BB_DOT_R = 5.0           # breadboard: dot radius
+BB_DOT_INSET = 10.0      # breadboard: dot centre from the body's left edge
 GND_PINS = [4]           # die pins that are VSS (tied to the exposed pad by a bus)
 PAD_NAME = "VSS"
 
@@ -76,6 +82,22 @@ PIN_DESC = {
 BB_PIN_X = (100.0, 400.0)
 BB_PITCH = 100.0
 BB_PAD_R, BB_HOLE_R = 39.4, 19.1
+# PCB silkscreen (2026-09-24 user's spec, all CH32V00x packages):
+#   PCB_SILK_CORNERS  - only four corner brackets, so no silk line runs across a pad
+#   PCB_DOT_ABOVE_PAD - pin-1 dot sits just above pin 1's pad, left-aligned with it
+PCB_SILK_CORNERS = True
+PCB_DOT_ABOVE_PAD = True
+PCB_SILK_ARM = 0.22        # corner-bracket arm length (mm)
+PCB_DOT_R = 0.22           # pin-1 dot radius (mm)
+PCB_DOT_CLEAR = 0.08       # gap between the dot and pin 1's pad (mm)
+# schematic symbol options (2026-09-24 user's spec, all CH32V00x packages):
+#   PAD_PIN_TOP_LEFT  - the exposed pad (pin 0) is drawn on the TOP edge, one
+#                       pitch left of the top side's last pin
+#   SCHEM_NUM_LEFT    - top/bottom pin numbers go on the LEFT of the pin line
+#   SCHEM_NAME_CENTER - top/bottom pin names are centred across the pin line
+PAD_PIN_TOP_LEFT = True
+SCHEM_NUM_LEFT = True
+SCHEM_NAME_CENTER = True
 
 
 def pad_counts():
@@ -134,8 +156,9 @@ def icon_svg():
         else:                                      # top / bottom
             L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#f7bf13" stroke="none"/>\n'
                      % (cx - w / 2, cy - pl / 2, w, pl))
-    L.append('  <circle cx="%.2f" cy="%.2f" r="0.7" fill="#c0c0c0" stroke="none"/>\n'
-             % (bx + 1.4, by + 1.4))
+    p1 = pad_xy_mm(1)
+    L.append('  <circle cx="%.2f" cy="%.2f" r="%.1f" fill="#c0c0c0" stroke="none"/>\n'
+             % (bx + ICON_DOT_INSET, 16 + p1[1] * S, ICON_DOT_R))
     L.append('  <text x="16" y="16" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" '
              'text-anchor="middle" dominant-baseline="central">%s</text>\n' % TOP_MARK)
     L.append(' </g>\n')
@@ -173,9 +196,10 @@ def breadboard_svg():
         else:
             L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#c0c0c0" stroke="none"/>\n'
                      % (cx - pw / 2, cyy - 0.55 * S / 2, pw, 0.55 * S))
-    # pin-1 dot inside the body; top mark (horizontal, small)
-    L.append('  <circle cx="%.2f" cy="%.2f" r="3.5" fill="#c0c0c0" stroke="none"/>\n'
-             % (250 - half + 6, cy - half + 6))
+    # pin-1 dot inside the body, centred on pin 1's pad row; top mark (horizontal, small)
+    p1 = pad_xy_mm(1)
+    L.append('  <circle cx="%.2f" cy="%.2f" r="%.1f" fill="#c0c0c0" stroke="none"/>\n'
+             % (250 - half + BB_DOT_INSET, cy + p1[1] * S, BB_DOT_R))
     L.append('  <text x="250" y="%.2f" font-size="14" fill="#c0c0c0" text-anchor="middle" '
              'dominant-baseline="central" font-family="DroidSans">%s</text>\n' % (cy, TOP_MARK))
     # pins: left column = 1..n_col top->bottom, right = n..n_col+1 top->bottom
@@ -257,6 +281,10 @@ def schematic_svg():
         """inward offset for a rotated (top/bottom) label, from the precedent"""
         return 65 + max(0, len(txt) - 4) * int(FN * 0.34)
 
+    # cross-axis offsets of the rotated (top/bottom) number / name texts
+    dx_num = -24 if SCHEM_NUM_LEFT else 35          # 脚号：引线左侧，间距同左右脚的 24
+    dx_nam = 12 if SCHEM_NAME_CENTER else 35        # 脚名：以引线为中心
+
     # left: pins 1..PER_SIDE top -> bottom
     for k in range(PER_SIDE):
         pno = 1 + k
@@ -271,8 +299,8 @@ def schematic_svg():
         x = CORNER + P // 2 + k * P
         cn, s = pin(pno, x, BOX, x, BOX + STUB)
         L.append(s)
-        L.append(num(cn, str(pno), x + 35, BOX + 55, True))
-        L.append(name(cn, pin_name(pno), x + 35, BOX - off(pin_name(pno)), "middle", True))
+        L.append(num(cn, str(pno), x + dx_num, BOX + 55, True))
+        L.append(name(cn, pin_name(pno), x + dx_nam, BOX - off(pin_name(pno)), "middle", True))
     # right: next block, bottom -> top
     for k in range(PER_SIDE):
         pno = 1 + 2 * PER_SIDE + k
@@ -287,14 +315,22 @@ def schematic_svg():
         x = BOX - (CORNER + P // 2 + k * P)
         cn, s = pin(pno, x, 0, x, -STUB)
         L.append(s)
-        L.append(num(cn, str(pno), x + 35, -50, True))
-        L.append(name(cn, pin_name(pno), x + 35, off(pin_name(pno)), "middle", True))
-    # exposed pad (pin 0) on the bottom side, right of the last pin
-    px = BOX - 30
-    cn, s = pin(0, px, BOX, px, BOX + STUB)
-    L.append(s)
-    L.append(num(cn, "0", px + 35, BOX + 55, True))
-    L.append(name(cn, PAD_NAME, px + 35, BOX - off(PAD_NAME), "middle", True))
+        L.append(num(cn, str(pno), x + dx_num, -50, True))
+        L.append(name(cn, pin_name(pno), x + dx_nam, off(pin_name(pno)), "middle", True))
+    # exposed pad (pin 0): top-left (one pitch left of the top side's last pin)
+    # or - default - on the bottom side, right of the last pin
+    if PAD_PIN_TOP_LEFT:
+        px = CORNER + P // 2 - P
+        cn, s = pin(0, px, 0, px, -STUB)
+        L.append(s)
+        L.append(num(cn, "0", px + dx_num, -50, True))
+        L.append(name(cn, PAD_NAME, px + dx_nam, off(PAD_NAME), "middle", True))
+    else:
+        px = BOX - 30
+        cn, s = pin(0, px, BOX, px, BOX + STUB)
+        L.append(s)
+        L.append(num(cn, "0", px + dx_num, BOX + 55, True))
+        L.append(name(cn, PAD_NAME, px + dx_nam, BOX - off(PAD_NAME), "middle", True))
     # circuit name in the middle
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
              'font-family="DroidSans">%s</text>\n' % (BOX // 2, BOX // 2 + 12, FN, SCHEM_NAME))
@@ -327,10 +363,26 @@ def pcb_svg():
     L.append('  </g>\n')
     L.append('  <g id="silkscreen">\n')
     b = BODY_MM / 2.0
-    L.append('<rect x="%.3f" y="%.3f" width="%.3f" height="%.3f" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>\n'
-             % (-b, -b, BODY_MM, BODY_MM))
-    L.append('<circle cx="%.3f" cy="%.3f" r="0.22" fill="#f0f0f0" stroke="none"/>\n'
-             % (pad_xy_mm(1)[0] + 0.0, pad_xy_mm(1)[1] + 0.0))
+    if PCB_SILK_CORNERS:
+        # four corner brackets only: every arm stops short of the pads, so no
+        # silkscreen line crosses a pad (pads start at PAD_R_MM - PAD_L_MM/2)
+        a = PCB_SILK_ARM
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                L.append('<line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" stroke="#f0f0f0" '
+                         'stroke-width="0.12"/>\n' % (sx * b, sy * b, sx * b, sy * (b - a)))
+                L.append('<line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" stroke="#f0f0f0" '
+                         'stroke-width="0.12"/>\n' % (sx * b, sy * b, sx * (b - a), sy * b))
+    else:
+        L.append('<rect x="%.3f" y="%.3f" width="%.3f" height="%.3f" fill="none" '
+                 'stroke="#f0f0f0" stroke-width="0.12"/>\n' % (-b, -b, BODY_MM, BODY_MM))
+    if PCB_DOT_ABOVE_PAD:
+        px, py = pad_rect_mm(1)[0], pad_rect_mm(1)[1]
+        L.append('<circle cx="%.3f" cy="%.3f" r="%.2f" fill="#f0f0f0" stroke="none"/>\n'
+                 % (px + PCB_DOT_R, py - PCB_DOT_CLEAR - PCB_DOT_R, PCB_DOT_R))
+    else:
+        L.append('<circle cx="%.3f" cy="%.3f" r="%.2f" fill="#f0f0f0" stroke="none"/>\n'
+                 % (pad_xy_mm(1)[0], pad_xy_mm(1)[1], PCB_DOT_R))
     L.append('  </g>\n')
     L.append('</svg>\n')
     return "".join(L)

@@ -3,7 +3,7 @@
  <g id="silkscreen">
   <line x1="-2.2" y1="4.1" x2="2.2" y2="4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>
   <line x1="-2.2" y1="-4.1" x2="2.2" y2="-4.1" stroke="#FFFFFF" stroke-width="0.15" fill="none"/>
-  <circle cx="-4.400" cy="-3.575" r="0.25" fill="#FFFFFF" stroke="none"/>
+  <circle cx="-3.850" cy="-4.100" r="0.25" fill="#FFFFFF" stroke="none"/>
  </g>
  <g id="copper1">
   <rect x="-4.100" y="-3.800" width="2.40" height="0.45" id="connector16pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>

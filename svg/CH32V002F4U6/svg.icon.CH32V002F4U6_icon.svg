@@ -22,7 +22,7 @@
   <rect x="15.30" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
   <rect x="12.50" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
   <rect x="9.70" y="1.82" width="1.40" height="3.85" fill="#f7bf13" stroke="none"/>
-  <circle cx="6.90" cy="6.90" r="0.7" fill="#c0c0c0" stroke="none"/>
+  <circle cx="7.60" cy="10.40" r="1.0" fill="#c0c0c0" stroke="none"/>
   <text x="16" y="16" font-size="3.0" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">V002</text>
  </g>
 </svg>
