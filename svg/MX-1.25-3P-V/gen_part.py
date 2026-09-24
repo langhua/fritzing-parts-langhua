@@ -16,7 +16,8 @@ r"""gen_part.py — MX-1.25-3P-V：1.25mm 3P **立贴母座**（板端插座，1
                 —— 用户 2026-09-24：先严格按图纸，不要加戏）
   · breadboard= 绿色转接板（直角 #00aa44）+ 3 个 2.54mm 排针（落孔距网格）+ 本体 1:1 居中
   · schematic = 3 脚连接器符号（灰引线 + 极小 terminal + 插线方向箭头）
-  · PCB       = 官方焊盘 + 本体丝印角标 + 1 脚圆点（在一脚焊盘上方、左对齐）
+  · PCB       = 焊盘（**嘉立创 land pattern**：信号 0.80×1.80、固定 1.80×3.10 @ x=±3.875）
+                + 本体丝印轮廓（凡焊盘跨过的边挖缺口，不压焊盘）；不画 1 脚圆点
 
 本文件同时是**共享生成器**：`SH1.0-3P` / `PH2.0-3P` 用 importlib 载入本文件并覆盖
 `PART_ID / FZPZ / TITLE / SERIES + 几何常量`（同 CH32V00x 家族的包装写法）。
@@ -50,11 +51,14 @@ DATE = "2026-09-24"
 # ------------------------------------------------------------------ 几何（mm，KiCad 坐标）
 PITCH = 1.25                    # 脚距（图纸 1.25±0.1）
 BODY_W = 8.65                   # **DIM C：3P 总宽（含左右固定耳）**
-PAD_W, PAD_H = 0.50, 1.25       # 信号焊盘（宽 0.51 为顶视图实测；长 1.25 按图纸）——只给 **PCB** 视图用，icon 不画
-PAD_OVER = 0.45                 # ★ 只给 **PCB/丝印**用：本体前缘距焊盘尖端（icon 是图纸原样，不引用它）
+PAD_W, PAD_H = 0.80, 1.80       # 信号**焊盘**（land，不是图纸上的端子原宽）：取自嘉立创
+                                #  MX1.25-8P 封装（0.254mm 单位：3.1496×7.0866）——只给 **PCB** 用
+PAD_OVER = 0.45                 # ★ 本体前缘距端子尖端（图纸实测；只给 PC B/丝印用）
 BODY_D = icon_art.H_MM - PAD_OVER       # 本体深（同上，只给 PCB 丝印）
-MP_PAD_W, MP_PAD_H = 1.50, 2.10  # 左右固定焊盘（只给 PCB 用；实测宽 × 高，**在本体 8.65 之内**）
-MP_PAD_X = BODY_W / 2 - MP_PAD_W / 2   # 固定焊盘中心 x（外缘 = DIM C/2）
+MP_PAD_W, MP_PAD_H = 1.80, 3.10  # 固定（锚定）焊盘：取自嘉立创 8P 封装（7.0866×12.2047）
+MP_PAD_X = 3.875                # 固定焊盘中心 x —— 嘉立创 8P 是 ±7.000 = **C/2 − 0.45**，
+                                #  换成 3P（C=8.65）即 4.325 − 0.45 = 3.875（卡片卡耳底下）
+MP_PAD_Y = 0.850                # 固定焊盘**靠前缘那一侧**距本体前缘（嘉立创 8P 实测 0.850）
 
 GOLD, GOLD_EDGE = "#f7bf13", "#b98900"
 
@@ -473,41 +477,68 @@ def schematic_svg():
 
 
 def pcb_svg():
-    """PCB = 官方焊盘（信号可连线）+ 本体丝印角标 + 1 脚圆点（一脚焊盘上方、左对齐）。"""
+    """PCB = 焊盘（信号可连线 + 2 个固定）+ 本体丝印轮廓（照嘉立创：压到焊盘的边留缺口）。
+
+    ★ 2026-09-25 按 AGENTS §10.16 重做（用户要求）：
+      · 焊盘改用**嘉立创 MX1.25-8P 封装**换算的 land pattern —— 信号 0.80×1.80、
+        固定 1.80×3.10 @ x = ±3.875（= C(3P)/2 − 0.45，正是卡耳底下）；
+      · 丝印画**本体轮廓**，凡有焊盘跨过的边挖缺口（缺口 = 焊盘 + 两侧各 0.23mm）；
+      · **不画 1 脚圆点**（嘉立创也没有）；
+      · 方向与 icon 一致：icon 是图纸原样（y=0 = 端子尖端，本体往 +y 长）。
+    """
     x0, y0, x1, y1 = icon_bbox()
-    vx, vy = x0 - 0.35, y0 - 0.95          # 顶部多留出 1 脚圆点
-    vw, vh = (x1 - x0) + 0.70, (y1 - y0) + 1.30
-    arm, dot_r, clear = 0.50, 0.22, 0.08
-    inset = 0.15                            # 丝印往本体里收，避开固定焊盘
-    hx = BODY_W / 2.0 - inset
-    hy0, hy1 = PAD_OVER + inset, PAD_OVER + BODY_D - inset
+    body_f = y0 + PAD_OVER                  # 本体前缘 = 信号焊盘内端
+    body_b = body_f + BODY_D                # 本体后缘
+    lw, m, clr = 0.12, 0.35, 0.23           # 丝印线宽 / 画布余量 / 缺口余量
+    hw = (MP_PAD_X + MP_PAD_W / 2.0) if MP_PAD_W > 0 else BODY_W / 2.0   # 固定焊盘比本体宽
+    sx = BODY_W / 2.0                       # 丝印按本体轮廓（半宽）
+    pad_y = body_f - PAD_H                  # 信号焊盘外端（伸出到端子尖端之外）
+    mech_f = body_f + MP_PAD_Y              # 固定焊盘靠前缘那一侧
+    mech_b = mech_f + MP_PAD_H
+    vx = min(x0, -hw) - m
+    vy = min(y0, pad_y) - m
+    vw = max(x1, hw) + m - vx
+    vh = max(y1, mech_b if MP_PAD_W > 0 else y1) + m - vy
+
+    def cut(a, b, holes):
+        """把 [a,b] 按 holes = [(中心, 宽), …] 切成若干段（缺口挖掉）。"""
+        out, cur = [], a
+        for hc, hwid in sorted(holes):
+            g0, g1 = hc - hwid / 2.0, hc + hwid / 2.0
+            if g0 > cur:
+                out.append((cur, min(g0, b)))
+            cur = max(cur, g1)
+        if cur < b:
+            out.append((cur, b))
+        return out
+
+    def line(a, b, c, d):
+        return (f'   <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
+                f'stroke="{SILK}" stroke-width="{lw}" stroke-linecap="round"/>\n')
+
     L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw:.2f}mm" height="{vh:.2f}mm" '
          f'viewBox="{vx:.2f} {vy:.2f} {vw:.2f} {vh:.2f}">\n',
          ' <g id="copper1">\n']
-    # 固定焊盘（机械；不加 id ⇒ 不产生连接器）
-    for sx in (-MP_PAD_X, MP_PAD_X):
-        L.append(f'  <rect x="{sx - MP_PAD_W / 2:.2f}" y="{PAD_OVER + 0.55:.2f}" '
+    # 固定（锚定）焊盘（机械；不加 id ⇒ 不产生连接器）
+    for cx in ((-MP_PAD_X, MP_PAD_X) if MP_PAD_W > 0 else ()):
+        L.append(f'  <rect x="{cx - MP_PAD_W / 2:.3f}" y="{mech_f:.3f}" '
                  f'width="{MP_PAD_W:.2f}" height="{MP_PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
     # 信号焊盘 = 连接器（copper1）
     for i in range(3):
         L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
-                 f'x="{pad_x(i) - PAD_W / 2:.2f}" y="{y0:.2f}" '
+                 f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
-    # 丝印：本体**后两角**角标（前两角/两侧被焊盘占住，不画）
+    # 丝印：本体轮廓，压到焊盘的边挖缺口
     L.append('  <g id="silkscreen">\n')
-    for sx in (-hx, hx):
-        for sy in (hy1,):
-            dx = arm if sx > 0 else -arm
-            dy = arm if sy > 0 else -arm
-            L.append(f'   <line x1="{sx:.2f}" y1="{sy:.2f}" x2="{sx + dx:.2f}" y2="{sy:.2f}" '
-                     f'stroke="{SILK}" stroke-width="0.12" stroke-linecap="round"/>\n')
-            L.append(f'   <line x1="{sx:.2f}" y1="{sy:.2f}" x2="{sx:.2f}" y2="{sy + dy:.2f}" '
-                     f'stroke="{SILK}" stroke-width="0.12" stroke-linecap="round"/>\n')
-    # 1 脚圆点：在一脚焊盘上方、左缘与焊盘左缘对齐
-    L.append(f'   <circle cx="{pad_x(0) - PAD_W / 2 + dot_r:.2f}" '
-             f'cy="{y0 - clear - dot_r:.2f}" r="{dot_r:.2f}" '
-             f'fill="{SILK}" stroke="none"/>\n')
+    pad_holes = [(pad_x(i), PAD_W + 2 * clr) for i in range(3)]
+    mech_holes = ([(mech_f + MP_PAD_H / 2.0, MP_PAD_H + 2 * clr)] if MP_PAD_W > 0 else [])
+    for a, b in cut(-sx, sx, pad_holes):                 # 前缘（被 3 个信号焊盘穿过）
+        L.append(line(a, body_f, b, body_f))
+    for a, b in cut(body_f, body_b, mech_holes):         # 两条侧边（被固定焊盘穿过）
+        L.append(line(-sx, a, -sx, b))
+        L.append(line(sx, a, sx, b))
+    L.append(line(-sx, body_b, sx, body_b))              # 后缘（无焊盘）
     L.append('  </g>\n </g>\n</svg>\n')
     return "".join(L)
 
