@@ -10,15 +10,25 @@ r"""gen_part.py — SH-1.0-3P-V：1.0mm 3P **立贴母座**（板端插座，SH1
       顶视图**画的是 7P**（脚距 5.625pt），剪掉 4 个脚位宽（4×1.00mm）⇒ 3P：
       **5.303 × 6.073mm**（宽 = 图纸外廓 7P 9.30 − 4.00；图纸外廓比 DIM B(7P)=9.00 大 3%，
       属图纸自身差异，**不凑数**）。
-  · 焊盘：宽 = 图纸 **0.20**（顶视图端子实测 0.20 ✓）、长 = 图纸 **1.10**。
-  · 坐标系沿用图纸：y 向下，端子（出脚）朝 −y；y=0 = 端子尖端。
-  · ⚠ 本图纸**没有** SUGGESTED PCB LAYOUT ⇒ **不编固定焊盘**；PCB 只用 3 个信号焊盘。
+  · 坐标系沿用图纸：y 向下，端子（出脚）朝 +y；y=0 = 本体后缘（画布上缘）。
+
+★ 焊盘（land）来源 = **嘉立创封装 `SH1.0-3P-L`**（用户 2026-09-25：
+  「不要以图标为准，请以嘉立创的pcb文件为准」）—— 本图纸没有 SUGGESTED PCB LAYOUT，
+  成熟库的封装才是焊盘/丝印尺寸与相对位置的权威（对照表见 `docs/part-dev-guide.md`）。
+  嘉立创单位 **0.254mm**（÷3.937 = mm），`pad_hole r=0` ⇒ SMD：
+    · 信号焊盘 `c_width×c_height = 1.9685×4.7244` ⇒ **0.50 × 1.20mm**，脚距 3.937 ⇒ 1.000 ✓
+    · 固定焊盘（4/5 脚）`3.1496×5.9055` ⇒ **0.80 × 1.50mm**，`c_origin` x 391.606/408.928
+      （中线 400.267）⇒ 离中线 8.661 单位 = **±2.200mm**
+    · 信号焊盘内端 293.799 − 丝印前缘 292.949 = 0.850 ⇒ 内端越进本体 **0.216mm**
+    · 固定焊盘靠信号焊盘一侧 300.294 − 信号焊盘内端 293.799 = 6.495 ⇒ **1.650mm**
+    · 固定焊盘外端 306.200 − 丝印后缘 305.449 = 0.751 ⇒ 伸出本体 **0.191mm**
+    · 丝印本体轮廓 21.000×12.500 单位 ⇒ **5.334 × 3.175mm**
 
 视图模型（AGENTS §3b / 房规）：
   · icon      = **厂商图纸俯视图的原样矢量**（1:1；不加焊盘/不加底色、不改尺寸）
   · breadboard= 绿色转接板（直角 #00aa44）+ 3 个 2.54mm 排针（落孔距网格）+ 本体 1:1 居中
   · schematic = 3 脚连接器符号（灰引线 + 极小 terminal + 插线方向箭头）
-  · PCB       = 信号焊盘 + 本体丝印角标 + 1 脚圆点
+  · PCB       = 3 个信号焊盘 + 2 个固定焊盘 + 本体丝印轮廓（**不画 1 脚圆点**）
 """
 import os
 import math
@@ -47,19 +57,19 @@ LABEL = "J"
 DATE = "2026-09-24"
 
 # ------------------------------------------------------------------ 几何（mm，KiCad 坐标）
-PITCH = 1.00                    # 脚距（图纸 1.00）
+PITCH = 1.00                    # 脚距（图纸 1.00；嘉立创封装实测 3.937 单位 = 1.000 ✓）
 BODY_W = 5.00                   # **DIM B(3P)：3P 总宽（= 外廓）**（图纸 B = n+1.00：3P→5.00）
-PAD_W, PAD_H = 0.50, 1.60       # 信号**焊盘**（land，不是图纸上的端子原宽）：取自嘉立创
-                                #  CONN-SMD-SH1.0X3 封装（0.254mm 单位：1.969×6.299）
-PAD_IN = 0.50                   # 焊盘**内端**比本体前缘再往里 0.50mm（嘉立创取值）
+# ↓↓↓ 焊盘 / 丝印 全部取自嘉立创 **SH1.0-3P-L** 封装（★ 用户 2026-09-25 定）
+PAD_W, PAD_H = 0.50, 1.20       # 信号**焊盘**（land，不是图纸上的端子原宽）：`1.9685×4.7244`
+PAD_IN = 0.216                  # 信号焊盘**内端**越进本体前缘的量（293.799−292.949 = 0.850 单位）
 BODY_F = 2.60                   # 本体前缘在 icon 坐标里的位置（从手工版图标量出：本体 0..2.60；
-                                #  抄图实测本体深 2.70，相差 0.1 属读图误差）
+                                #  抄图实测本体深 2.70，相差 0.1 属读图误差）——**只作画布锚点**
 BODY_D = BODY_F                         # 本体深（只给 PCB 丝印用）
-MP_PAD_W, MP_PAD_H = 0.80, 1.80  # 固定（锚定）焊盘：取自嘉立创 SH1.0X3 封装（3.150×7.087）
-MP_PAD_X = 2.10                 # 固定焊盘中心 x（嘉立创：离中线 8.268 单位 = 2.100mm）
-MP_PAD_GAP = 1.195              # 固定焊盘靠信号焊盘那一侧，距信号焊盘**内端**（嘉立创：
-                                #  3000.375−2995.669 = 4.706 单位；★ 用户 2026-09-25：以嘉立创为准）
-SILK_W, SILK_D = 5.20, 3.20     # 丝印 = 嘉立创那份的**本体轮廓**（20.472×12.598 单位 = 5.20×3.20mm）
+MP_PAD_W, MP_PAD_H = 0.80, 1.50  # 固定（锚定）焊盘：`3.1496×5.9055`
+MP_PAD_X = 2.200                # 固定焊盘中心 x（离中线 8.661 单位 = 2.200mm）
+MP_PAD_GAP = 1.650              # 固定焊盘靠信号焊盘那一侧，距信号焊盘**内端**
+                                #  （300.294−293.799 = 6.495 单位 = 1.650mm）
+SILK_W, SILK_D = 5.334, 3.175   # 丝印 = 嘉立创那份的**本体轮廓**（21.000×12.500 单位）
 
 GOLD, GOLD_EDGE = "#f7bf13", "#b98900"
 
@@ -478,13 +488,16 @@ def schematic_svg():
 
 
 def pcb_svg():
-    """PCB = 焊盘（信号可连线 + 2 个固定）+ 本体丝印轮廓（照 AGENTS §10.16：压到焊盘的边留缺口）。
+    """PCB = 焊盘（3 信号 + 2 固定）+ 本体丝印轮廓。
 
-    · 信号焊盘 0.50×1.60：内端比本体前缘往里 `PAD_IN`，往外伸（嘉立创 CONN-SMD-SH1.0X3）
-    · 固定焊盘 0.80×1.80 @ x=±2.10：位置取嘉立创的 `MP_PAD_GAP`（距信号焊盘内端 1.195）
-    · 丝印 = 嘉立创那份的**本体轮廓**（`SILK_W × SILK_D` = 5.20×3.20），压到焊盘的边挖缺口
+    · 信号焊盘 0.50×1.20：内端越进本体前缘 `PAD_IN`，往外伸 0.984（嘉立创 SH1.0-3P-L）
+    · 固定（锚定）焊盘 0.80×1.50 @ x=±2.200：位置取嘉立创的 `MP_PAD_GAP`（内端间距 1.650）
+    · 丝印 = 嘉立创那份的**本体轮廓**（`SILK_W × SILK_D` = 5.334×3.175）
+    · **丝印不许压焊盘**（AGENTS §10.16）：四条边都按「焊盘 + 两侧各 `clr`(0.23) 余量」挖缺口
+      —— 与嘉立创一致（它那份丝印：前缘被 3 信号焊盘挖 3 个口、后缘被 2 固定焊盘挖 2 个口、
+      侧边在固定焊盘那段断开 ⇒ 把该挡的丝印删干净），避免丝印压焊盘
     · **不画 1 脚圆点**（用户 2026-09-25 要求）
-    · 方向与 icon 一致（icon 是图纸原样：本体在上、端子朝下）
+    · 方向与 icon 一致（icon 是图纸原样：本体在上、端子朝 +y）
 
     ★ 用户 2026-09-25 定：**以嘉立创那份 PCB 文件为准**（不要以图标为准）。
     """
@@ -492,8 +505,8 @@ def pcb_svg():
     lw, m, clr = 0.12, 0.35, 0.23
     hw = (MP_PAD_X + MP_PAD_W / 2.0) if MP_PAD_W > 0 else SILK_W / 2.0
     sx = SILK_W / 2.0                        # 丝印按嘉立创那份的轮廓半宽
-    pad_y0 = BODY_F - PAD_IN                 # 信号焊盘内端（往本体里 0.5）
-    pad_y1 = pad_y0 + PAD_H
+    pad_y0 = BODY_F - PAD_IN                 # 信号焊盘内端（往本体里 0.216）
+    pad_y1 = pad_y0 + PAD_H                  # 信号焊盘外端
     mech_y1 = pad_y0 - MP_PAD_GAP            # 固定焊盘靠信号焊盘那一侧
     mech_y0 = mech_y1 - MP_PAD_H
     silk_b = BODY_F - SILK_D                 # 丝印后缘（往本体里）
@@ -502,17 +515,35 @@ def pcb_svg():
     vw = max(x1, hw) + m - vx
     vh = max(y1, pad_y1) + m - vy
 
-    def cut(a, b, holes):
-        """把 [a,b] 按 holes = [(中心, 宽), …] 切成若干段（缺口挖掉）。"""
+    pads = []                                # 全部焊盘（信号 + 固定）的矩形 (x0, y0, x1, y1)
+    if MP_PAD_W > 0:
+        for cx in (-MP_PAD_X, MP_PAD_X):
+            pads.append((cx - MP_PAD_W / 2.0, mech_y0, cx + MP_PAD_W / 2.0, mech_y1))
+    for i in range(3):
+        pads.append((pad_x(i) - PAD_W / 2.0, pad_y0, pad_x(i) + PAD_W / 2.0, pad_y1))
+
+    def keep(a, b, holes):
+        """把 [a,b] 去掉 holes = [(lo,hi), …] 后剩下的段（缺口挖掉）。"""
         out, cur = [], a
-        for hc, hwid in sorted(holes):
-            g0, g1 = hc - hwid / 2.0, hc + hwid / 2.0
-            if g0 > cur:
-                out.append((cur, min(g0, b)))
-            cur = max(cur, g1)
+        for lo, hi in sorted(holes):
+            if hi <= cur or lo >= b:
+                continue
+            if lo > cur:
+                out.append((cur, min(lo, b)))
+            cur = max(cur, hi)
         if cur < b:
             out.append((cur, b))
         return out
+
+    def holes_h(y, a, b):
+        """横边 y 上被焊盘（含 `clr` 余量）遮住的 x 区间。"""
+        return [(px0 - clr, px1 + clr) for px0, py0, px1, py1 in pads
+                if py0 - clr <= y <= py1 + clr and px0 - clr < b and px1 + clr > a]
+
+    def holes_v(x, a, b):
+        """竖边 x 上被焊盘（含 `clr` 余量）遮住的 y 区间。"""
+        return [(py0 - clr, py1 + clr) for px0, py0, px1, py1 in pads
+                if px0 - clr <= x <= px1 + clr and py0 - clr < b and py1 + clr > a]
 
     def line(a, b, c, d):
         return (f'   <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
@@ -531,16 +562,16 @@ def pcb_svg():
         L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
                  f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y0:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
-    # 丝印：本体轮廓，压到焊盘的边挖缺口
+    # 丝印：本体轮廓；每条边都按「焊盘 + clr 余量」挖缺口（同嘉立创那份的画法）
     L.append('  <g id="silkscreen">\n')
-    pad_holes = [(pad_x(i), PAD_W + 2 * clr) for i in range(3)]
-    mech_holes = ([(mech_y0 + MP_PAD_H / 2.0, MP_PAD_H + 2 * clr)] if MP_PAD_W > 0 else [])
-    for a, b in cut(-sx, sx, pad_holes):                 # 前缘（被 3 个信号焊盘穿过）
+    for a, b in keep(-sx, sx, holes_h(BODY_F, -sx, sx)):         # 前缘（3 个信号焊盘）
         L.append(line(a, BODY_F, b, BODY_F))
-    for a, b in cut(silk_b, BODY_F, mech_holes):         # 两条侧边（被固定焊盘穿过）
+    for a, b in keep(-sx, sx, holes_h(silk_b, -sx, sx)):         # 后缘（2 个固定焊盘）
+        L.append(line(a, silk_b, b, silk_b))
+    for a, b in keep(silk_b, BODY_F, holes_v(-sx, silk_b, BODY_F)):   # 左侧边
         L.append(line(-sx, a, -sx, b))
+    for a, b in keep(silk_b, BODY_F, holes_v(sx, silk_b, BODY_F)):    # 右侧边
         L.append(line(sx, a, sx, b))
-    L.append(line(-sx, silk_b, sx, silk_b))              # 后缘（无焊盘）
     L.append('  </g>\n </g>\n</svg>\n')
     return "".join(L)
 
