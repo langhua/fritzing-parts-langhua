@@ -200,7 +200,12 @@
   - `connectorNterminal` 用**极小不可见 rect**（`x/y = 引脚线末端`，`width/height="0.0001"`，
     `stroke="none" fill="none"`）——靠引脚灰线末端吸附连线；**禁止画大黑圆/夸张端点**
     （SMA-PJ1.7 反例：加 r≈1.8 实心黑点被用户要求撤回）。
-  - 引脚线 `connectorNpin`：`stroke="#787878"`、`stroke-width="0.75"`、round cap、`class="pin"`；
+  - 引脚线 `connectorNpin`：`stroke="#787878"`、`stroke-width="0.246944"`（**= Fritzing 官方核心库
+    默认值**；★ 本库 2026-09-25 从 0.75 改过来 —— 0.75 **比核心库粗 3 倍**，画到原理图里明显突兀）、
+    round cap、`class="pin"`；
+    ★ **线宽是「当前 svg 单位」下的数，不是 mm**：非 mm 单位的件（如 `width="66px"` 或
+    `width="14.1mm" viewBox="0 0 40 54"`）要按自己的 mm/单位换算 ⇒ 换前先算**真实 mm**
+    （`_scratch/sw_mm.py`），别照抄数字 ✗。
     引脚编号文字灰 `#8C8C8C`、DroidSans、字号 2.5、放引线上方（不写名称文字时按用户要求标号）。
 - **元件内多焊盘同网络 = 每 pad 独立 connector + `<buses>` 互联（2026-09-06 用户定，SMA 4×GND 踩坑）**：
   - PCB 上多个物理 pad 若同网络（如同地外壳的多个 GND 焊盘），**每个 pad 必须是一个独立
