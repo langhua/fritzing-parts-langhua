@@ -9,22 +9,22 @@
 		<path fill="#1F7A34" d="M0.001,0v12.24c1.191,0,2.16,0.967,2.16,2.16c0,1.193-0.969,2.16-2.16,2.16v12.24H21.6V0H0.001z"/>
 		<g transform="translate(63.5,320.647)">
 			<g transform="rotate(-90)">
-				<text transform="matrix(1 0 0 1 297.17 -58.9319)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">DOUT</text>
+				<text transform="matrix(1 0 0 1 297.17 -58.9319)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">GND</text>
 			</g>
 		</g>
 		<g transform="translate(263.5,320.647)">
 			<g transform="rotate(-90)">
-				<text transform="matrix(1 0 0 1 297.17 -244.532)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">VDD</text>
+				<text transform="matrix(1 0 0 1 297.17 -244.532)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">DI</text>
 			</g>
 		</g>
 		<g transform="translate(263.5,73.95)">
 			<g transform="rotate(-90)">
-				<text transform="matrix(1 0 0 1 62.5355 -244.407)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">GND</text>
+				<text transform="matrix(1 0 0 1 61.5355 -244.407)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">VDD</text>
 			</g>
 		</g>
 		<g transform="translate(163.5,73.95)">
 			<g transform="rotate(-90)">
-				<text transform="matrix(1 0 0 1 62.5355 -158.8074)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">DI</text>
+				<text transform="matrix(1 0 0 1 62.5355 -158.8074)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">DO</text>
 			</g>
 		</g>
 <g transform="translate(10.8000,11.7270) scale(0.3056,0.2750) translate(-10.8000,-11.7270)">
@@ -229,7 +229,7 @@
 	</g>
 </g>
 	<g transform="translate(34.035,319.648)">
-		<rect id="connector0pin" x="-31.584" y="-295.596" fill="#8D8C8C" width="2.299" height="2.297"/>
+		<rect id="connector1pin" x="-31.584" y="-295.596" fill="#8D8C8C" width="2.299" height="2.297"/>
 		<rect x="-31.022" y="-295.041" fill="#8C8663" width="1.184" height="1.182"/>
 		<polygon fill="#B8AF82" points="-31.584,-293.299 -31.022,-293.86 -31.022,-295.094 -31.584,-295.596 		"/>
 		<polygon fill="#80795B" points="-29.84,-295.039 -31.014,-295.039 -31.584,-295.596 -29.285,-295.596 		"/>
@@ -237,7 +237,7 @@
 		<polygon fill="#9A916C" points="-31.584,-293.299 -31.016,-293.86 -29.84,-293.86 -29.285,-293.299 		"/>
 	</g>
 	<g transform="translate(134.035,34.05)">
-		<rect id="connector2pin" x="-131.585" y="-31.598" fill="#8D8C8C" width="2.299" height="2.297"/>
+		<rect id="connector0pin" x="-131.585" y="-31.598" fill="#8D8C8C" width="2.299" height="2.297"/>
 		<rect x="-131.024" y="-31.041" fill="#8C8663" width="1.186" height="1.182"/>
 		<polygon fill="#B8AF82" points="-131.585,-29.301 -131.024,-29.861 -131.024,-31.096 -131.585,-31.598 		"/>
 		<polygon fill="#80795B" points="-129.841,-31.039 -131.015,-31.039 -131.585,-31.598 -129.286,-31.598 		"/>
@@ -245,7 +245,7 @@
 		<polygon fill="#9A916C" points="-131.585,-29.301 -131.018,-29.861 -129.841,-29.861 -129.286,-29.301 		"/>
 	</g>
 	<g transform="translate(234.035,319.648)">
-		<rect id="connector3pin" x="-217.184" y="-295.596" fill="#8D8C8C" width="2.299" height="2.297"/>
+		<rect id="connector2pin" x="-217.184" y="-295.596" fill="#8D8C8C" width="2.299" height="2.297"/>
 		<rect x="-216.624" y="-295.041" fill="#8C8663" width="1.185" height="1.182"/>
 		<polygon fill="#B8AF82" points="-217.184,-293.299 -216.624,-293.86 -216.624,-295.094 -217.184,-295.596 		"/>
 		<polygon fill="#80795B" points="-215.442,-295.039 -216.616,-295.039 -217.184,-295.596 -214.885,-295.596 		"/>
@@ -253,7 +253,7 @@
 		<polygon fill="#9A916C" points="-217.184,-293.299 -216.618,-293.86 -215.442,-293.86 -214.885,-293.299 		"/>
 	</g>
 	<g transform="translate(234.035,34.05)">
-		<rect id="connector1pin" x="-217.184" y="-31.598" fill="#8D8C8C" width="2.299" height="2.297"/>
+		<rect id="connector3pin" x="-217.184" y="-31.598" fill="#8D8C8C" width="2.299" height="2.297"/>
 		<rect x="-216.624" y="-31.041" fill="#8C8663" width="1.185" height="1.182"/>
 		<polygon fill="#B8AF82" points="-217.184,-29.301 -216.624,-29.861 -216.624,-31.096 -217.184,-31.598 		"/>
 		<polygon fill="#80795B" points="-215.442,-31.039 -216.616,-31.039 -217.184,-31.598 -214.885,-31.598 		"/>

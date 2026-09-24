@@ -4,12 +4,20 @@
 WS2812B-1010 is a 1.0 x 1.0 x 0.8 mm SMD addressable RGB LED with integrated
 driver IC, 4 bottom pads (2 x 2 grid), 0.28 mm side step.
 
-Pinout (from the XL-1010RGBC-WS2812B datasheet, 外形尺寸/引脚图, top view with the
-pin-1 corner notch at the LOWER-LEFT; numbering is counter-clockwise):
-    ① DOUT (bottom-left)   ② VDD (bottom-right)
-    ③ GND  (top-right)     ④ DI  (top-left)
+Pinout (from the XL-1010RGBC-WS2812B datasheet, 引脚功能表 "Serial No / Symbol / Pin name"):
+    1 = DOUT (data output)   2 = VDD (power supply)
+    3 = GND                  4 = DIN (data input)
+Pad positions are taken from the 嘉立创EDA (LCSC C5349953) footprint + symbol the user
+exported on 2026-09-24 - both agree:
+    footprint pad c_origin (layer 1 = top view):  1 = top-left    2 = top-right
+                                                 3 = bottom-left 4 = bottom-right
+    footprint silk pin-1 dot: outside the TOP-LEFT corner (3993.39, 3015.417)
+    symbol pins: 1 DOUT / 3 GND on the LEFT, 2 VDD / 4 DIN on the RIGHT
+    (i.e. 1,2 = upper edge, 3,4 = lower edge - NOT a ring: in a 2x2 grid a circular
+     numbering would always make pins 1 and 4 neighbours, but here they are on a
+     diagonal together with 2/3 on the other diagonal)
 So on the PCB (top view, svg y grows downward):
-    DOUT = bottom-left, VDD = bottom-right, GND = top-right, DI = top-left
+    DO = top-left, VDD = top-right, GND = bottom-left, DI = bottom-right
 
 Footprint (建议焊盘尺寸):
     pad 0.45 x 0.45 mm, edge-to-edge gap between neighbouring pads 0.40 mm
@@ -66,12 +74,13 @@ PY = PITCH_Y / 2.0
 FIELD = PITCH_X / 2.0 + PAD_W / 2.0     # 0.65 mm, pad field half size
 SILK = FIELD + SILK_CLEAR               # 0.78 mm, silkscreen half size
 
-# top view: DOUT BL / VDD BR / GND TR / DI TL
+# top view: DO top-left / VDD top-right / GND bottom-left / DI bottom-right
+# (= 嘉立创EDA footprint: 1 TL, 2 TR, 3 BL, 4 BR; DO/DI on a diagonal)
 PCB_PADS = {
-    "connector0pin": (-PX, +PY),    # DO  (DOUT) bottom-left
-    "connector3pin": (+PX, +PY),    # VDD        bottom-right
-    "connector1pin": (+PX, -PY),    # GND        top-right
-    "connector2pin": (-PX, -PY),    # DI (DIN)   top-left
+    "connector0pin": (-PX, -PY),    # pin 1  DO   top-left
+    "connector3pin": (+PX, -PY),    # pin 2  VDD  top-right
+    "connector1pin": (-PX, +PY),    # pin 3  GND  bottom-left
+    "connector2pin": (+PX, +PY),    # pin 4  DI   bottom-right
 }
 
 # Fritzing 官方 core 的 ws2812b 面包板 svg（仓库内资产副本，见 svg/_assets/）
@@ -140,10 +149,11 @@ def pcb_svg():
                  % (-seg, -s, seg, -s))
     lines.append('  <line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="#FFFFFF" stroke-width="0.06"/>\n'
                  % (-seg, s, seg, s))
-    # pin-1 (DOUT) marker: dot outside the lower-left corner, like the datasheet notch
+    # pin-1 (DO) marker: dot outside the TOP-LEFT corner, same corner as the
+    # 嘉立创EDA footprint's own marker circle (r 0.07 -> 0.11 per user 2026-09-24)
     dot = s + 0.12
-    lines.append('  <circle cx="%.2f" cy="%.2f" r="0.07" fill="#FFFFFF" stroke="none"/>\n'
-                 % (-dot, dot))
+    lines.append('  <circle cx="%.2f" cy="%.2f" r="0.11" fill="#FFFFFF" stroke="none"/>\n'
+                 % (-dot, -dot))
     lines.append(' </g>\n')
     lines.append('</svg>\n')
     return "".join(lines)
@@ -186,18 +196,27 @@ def schematic_svg():
 # for THIS part. Core pin positions (verified from the file):
 #   connector0pin@BL, connector1pin@BR, connector2pin@TR, connector3pin@TL
 # Core labels:            BL=VDD,      BR=DOUT,     TR=VSS,        TL=DIN
-# 1010 wants (datasheet top view): BL=DOUT, BR=VDD, TR=GND, TL=DI
+# 1010 wants (嘉立创EDA top view): TL=DO, TR=VDD, BL=GND, BR=DI
+# -> that is the core's own arrangement flipped vertically, i.e. every id moves to
+#    the pad above/below it: 0@BL->GND, 1@BR->DI, 2@TR->VDD, 3@TL->DO
 BB_PIN_RENAME = {
-    "connector1pin": "connector3pin",   # BR -> VDD
-    "connector2pin": "connector1pin",   # TR -> GND
-    "connector3pin": "connector2pin",   # TL -> DI
+    "connector0pin": "connector1pin",   # BL -> GND (pin 3)
+    "connector1pin": "connector2pin",   # BR -> DI  (pin 4)
+    "connector2pin": "connector3pin",   # TR -> VDD (pin 2)
+    "connector3pin": "connector0pin",   # TL -> DO  (pin 1)
 }
 BB_LABEL_RENAME = {
-    ">VDD</text>": ">DOUT</text>",      # BL -> DOUT
-    ">DOUT</text>": ">VDD</text>",      # BR -> VDD
-    ">VSS</text>": ">GND</text>",       # TR -> GND
-    ">DIN</text>": ">DI</text>",        # TL -> DI
+    ">VDD</text>": ">GND</text>",       # BL -> GND
+    ">DOUT</text>": ">DI</text>",       # BR -> DI
+    ">VSS</text>": ">VDD</text>",       # TR -> VDD
+    ">DIN</text>": ">DO</text>",        # TL -> DO
 }
+
+# 丝印 VDD 下移一点（用户 2026-09-24：「GND 向下一些，不跟针脚重叠」——现在三字标签
+# 轮到了上面那排的 VDD）：三个字会顶到上面的焊盘，把 text 的 x_local 减 1
+# （rotate(-90) 下、x_local 减 1 = 图上 y 加 1）；两字的 DO 不用动。
+BB_TOP_LABEL_SHIFT = ("matrix(1 0 0 1 62.5355 -244.407)",
+                      "matrix(1 0 0 1 61.5355 -244.407)")
 
 # LED artwork scale on the breadboard carrier: the 2020 part uses 0.55 for a
 # 2.0 mm body, so a 1.0 mm body is half of that.
@@ -255,6 +274,8 @@ def core_breadboard():
         return None
     content = safe_replace(content, BB_PIN_RENAME)
     content = safe_replace(content, BB_LABEL_RENAME)
+    # 上面那排的三字标签（VDD）下移，避免最后一个字压到焊盘
+    content = content.replace(*BB_TOP_LABEL_SHIFT)
     # label font: standard 3.5 (same as the other WS2812B parts)
     content = content.replace('font-size="2.75"', 'font-size="3.5"')
     # shrink the centre LED artwork (1.0 mm part -> half the 2020's scale) and
