@@ -6,7 +6,14 @@
 用法：copy_top.py <pdf> <out.svg> <部件目录>/icon_art.py
       [--region x0,y0,x1,y1]   只抄这个区域内的图元（★ 必须把整套图**完全包住**，
                                否则线条会被边界静默截掉 —— 本工具会逐条报出被裁掉的图元）
-      [--pitch 34.41] [--pad1 679.245] [--norig 6] [--nnew 3]
+      [--clip]                 跨出区域的长线**按区域边界裁断后保留**（而不是整条丢掉）。
+                               ※ 图纸里「卡耳外缘 = DIM 延长线」常是**同一条线**（PH2.0 立贴）：
+                                 整条丢 ⇒ 卡耳没了（AGENTS §10.11「两侧的耳不许裁」）；
+                                 整条留 ⇒ 尺寸线跟进来。裁断才是正解。
+      [--drop x0,y0,x1,y1]     删掉**完全落在这个矩形内**的图元（可给多次）。
+                               ※ 专删夹在图形中间、区域真不掉也裁不掉的尺寸线
+                                 （SH1.0 立贴的 1.10 / 0.20 尺寸线就在脚位中间）。
+      [--pitch 34.41] [--pad1 679.245] [--pitch-mm 1.25] [--norig 6] [--nnew 3]
       [--nocut]                原样照搬（不剪脚位、不改尺寸）—— 用户 2026-09-24「先照抄，别改动」
 坐标输出为 mm，原点 = 内容中心 / 前缘（与 PCB 焊盘对齐：焊盘尖端在前缘）。
 """
@@ -21,10 +28,12 @@ def opt(name, dflt):
     return float(sys.argv[sys.argv.index(name) + 1]) if name in sys.argv else dflt
 
 
-PITCH_PT = opt("--pitch", 34.41)      # 图纸上 1.25mm 的长度（实测）
+PITCH_PT = opt("--pitch", 34.41)      # 图纸上一个**脚距**的长度（pt，实测）
+PITCH_MM = opt("--pitch-mm", 1.25)    # 这个脚距是多少 mm —— ★ 各系列不一样（1.0 / 1.25 / 2.0 …），
+                                       #   写死 1.25 会把 2.0mm 的图纸尺寸报错（2026-09-24 PH2.0 踩到）
 N_ORIG = int(opt("--norig", 6))
 N_NEW = int(opt("--nnew", 3))
-SCALE = PITCH_PT / 1.25               # pt per mm
+SCALE = PITCH_PT / PITCH_MM           # pt per mm
 
 # ★ 线宽：图纸是 CAD 导出的细线（0.705pt ≈ **0.026mm 实物**，印在大图上才看得见），
 #   缩到 icon 尺寸（几十像素）就没了 ⇒ 必须重新定线宽（用户 2026-09-24：icon 打开什么都没有）。
@@ -42,7 +51,9 @@ def region_opt(name, dflt):
 REGION = region_opt("--region", (590, 765, 940, 890))  # 默认 = 立贴顶视图（左列第二张）的紧包围盒
 PAD_X0 = opt("--pad1", 679.245)       # 脚 1 中心（实测）
 NO_CUT = "--nocut" in sys.argv         # 原样照搬：一个脚位都不剪（用户 2026-09-24：先照抄，别改动）
-
+DROPS = [tuple(float(v) for v in sys.argv[i + 1].split(","))
+         for i, a in enumerate(sys.argv) if a == "--drop"]     # 显式删掉的矩形（可多个）
+CLIP = "--clip" in sys.argv            # 跨区域的长线：按边界裁断保留（不只丢掉）
 PAD_XS = [PAD_X0 + i * PITCH_PT for i in range(N_ORIG)]
 CUT0 = PAD_XS[N_NEW - 1] + PITCH_PT / 2          # 保留 pad 1..N_NEW
 CUT1 = PAD_XS[-1] + PITCH_PT / 2                 # 一直到最后一个 pad 右缘
@@ -63,15 +74,30 @@ def annot_like(d):
     return False
 
 
+def _inside(r, box):
+    return r.x0 >= box[0] and r.y0 >= box[1] and r.x1 <= box[2] and r.y1 <= box[3]
+
+
+def _hits(r, box):
+    return r.x1 >= box[0] and r.x0 <= box[2] and r.y1 >= box[1] and r.y0 <= box[3]
+
+
 page = pymupdf.open(PDF)[0]
-items, clipped = [], []
+items, clipped, dropped, pend_clip = [], [], [], []
 for d in page.get_drawings():
     r = d["rect"]
-    if not (r.x0 >= REGION[0] and r.y0 >= REGION[1] and r.x1 <= REGION[2] and r.y1 <= REGION[3]):
+    if any(_inside(r, box) for box in DROPS):
+        dropped.append(d)                         # --drop：显式指定的尺寸线，整条删
+        continue
+    if not _inside(r, REGION):
         # 只记「与本区域相交但没被完全包住」的：这些是被区域边界**静默裁掉**的图元
         # （多为尺寸线/延长线/引出线；若真是图形线条，就是区域框错了 —— 必须报出来）
-        if r.x1 >= REGION[0] and r.x0 <= REGION[2] and r.y1 >= REGION[1] and r.y0 <= REGION[3]:
-            clipped.append(d)
+        if not _hits(r, REGION):
+            continue
+        if CLIP and d.get("fill") is None and not d.get("closePath"):
+            pend_clip.append(d)                   # --clip：能裁（开放的线）⇒ 稍后按边界裁断保留
+        else:
+            clipped.append(d)                     # 闭合/填充图元裁不动 ⇒ 只能整条丢，必须报出来
         continue
     if reddish(d.get("color")) or reddish(d.get("fill")):
         continue                                  # 尺寸线/红色中心线（pin 虚线）
@@ -80,17 +106,25 @@ for d in page.get_drawings():
     if max(r.width, r.height) < 2.5 and abs(r.width - r.height) < 1.0:
         continue                                  # × 记号
     items.append(d)
-print(f"# 黑色图元 {len(items)}；脚位 x = {[round(v, 1) for v in PAD_XS]}")
+print(f"# 黑色图元 {len(items)}；脚位 x = {[round(v, 1) for v in PAD_XS]}（脚距 {PITCH_PT:.3f}pt = {PITCH_MM:g}mm ⇒ {SCALE:.3f}pt/mm）")
 if NO_CUT:
     print("# 原样照搬（--nocut）：不剪脚位、不改尺寸")
 else:
     print(f"# 剪窗 x = [{CUT0:.2f}, {CUT1:.2f}]（宽 {SHIFT:.2f}pt = {SHIFT / SCALE:.2f}mm）")
-if clipped:
-    print(f"# ★ 被区域边界裁掉 {len(clipped)} 个图元（本工具只收「完全落在区域内」的）——逐一列出：")
-    for d in clipped:
+def _dump(seq, title):
+    """逐条报出被裁/被删的图元 —— 核对「裁掉的确实全是尺寸线」（AGENTS §10.11）。"""
+    if not seq:
+        return
+    print(f"# ★ {title} {len(seq)} 个 —— 逐一列出：")
+    for d in seq:
         r = d["rect"]
         print(f"#    → bbox=({r.x0:8.2f},{r.y0:8.2f})-({r.x1:8.2f},{r.y1:8.2f}) "
               f"w={r.width:7.2f} h={r.height:7.2f} segs={len(d['items'])}")
+
+
+_dump(clipped, "被区域边界整条丢掉（本工具只收「完全落在区域内」的）")
+_dump(dropped, "按 --drop 删掉（完全落在指定矩形内）")
+_dump(pend_clip, "跨出区域、将按边界裁断保留（--clip）")
 
 
 def pts_of(d):
@@ -108,6 +142,43 @@ def pts_of(d):
             q = it[1]
             out += [(q.ul.x, q.ul.y), (q.lr.x, q.lr.y)]
     return out
+
+
+def _clip_seg(p, q, box):
+    """Liang-Barsky：把线段 p→q 裁到矩形 box 内，返回 (a, b)；整段在框外则 None。
+
+    --clip 用它把「跨出区域的长线」裁断保留：图纸里「卡耳外缘」与「DIM 延长线」
+    常常是**同一条线**，整条丢掉就会把卡耳一起丢掉（AGENTS §10.11）。
+    """
+    x0, y0, x1, y1 = box
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    t0, t1 = 0.0, 1.0
+    for pp, qq in ((-dx, p[0] - x0), (dx, x1 - p[0]), (-dy, p[1] - y0), (dy, y1 - p[1])):
+        if pp == 0:
+            if qq < 0:
+                return None
+            continue
+        t = qq / pp
+        if pp < 0:
+            if t > t1:
+                return None
+            t0 = max(t0, t)
+        else:
+            if t < t0:
+                return None
+            t1 = min(t1, t)
+    if t0 > t1:
+        return None
+    return ((p[0] + t0 * dx, p[1] + t0 * dy), (p[0] + t1 * dx, p[1] + t1 * dy))
+
+
+def _seg_item(a, b, src):
+    """把裁断出来的一段包成与 get_drawings() 同形状的图元，供后面统一处理。"""
+    return {"rect": pymupdf.Rect(min(a[0], b[0]), min(a[1], b[1]),
+                                  max(a[0], b[0]), max(a[1], b[1])),
+            "items": [("l", pymupdf.Point(*a), pymupdf.Point(*b))],
+            "fill": None, "color": src.get("color"), "width": src.get("width"),
+            "closePath": False}
 
 
 def _split_seg(p, q):
@@ -143,6 +214,24 @@ def clip_open(pts):
                 out.append([(a[0] - SHIFT, a[1]), (b[0] - SHIFT, b[1])])
     return out
 
+
+# --clip：跨出区域的长线按边界裁断 ⇒ 保住卡耳这类「与尺寸延长线同一条」的边（AGENTS §10.11）
+kept = 0
+for d in pend_clip:
+    pts = pts_of(d)
+    for p, q in zip(pts, pts[1:]):
+        seg = _clip_seg(p, q, REGION)
+        if seg and seg[0] != seg[1]:
+            items.append(_seg_item(seg[0], seg[1], d))
+            kept += 1
+if pend_clip:
+    print(f"# --clip：{len(pend_clip)} 个跨区域图元裁断后保留 {kept} 段（框外部分扔掉）")
+
+# --drop 也删「裁断后」的碎片：尺寸延长线常跨出区域 ⇒ 先按边界裁、再按矩形删
+_before = len(items)
+items = [d for d in items if not any(_inside(d["rect"], box) for box in DROPS)]
+if _before != len(items):
+    print(f"# --drop：裁断后再删掉 {_before - len(items)} 段碎片")
 
 pieces = []      # 每段 = (点列, 是否闭合, fill, color, width)
 for d in items:
