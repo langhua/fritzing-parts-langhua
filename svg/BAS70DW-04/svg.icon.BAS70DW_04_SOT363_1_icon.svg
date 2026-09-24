@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="breadboard">
+    <rect x="10.67" y="12.67" width="10.66" height="6.66" rx="0.8" ry="0.8" fill="#303030" stroke="none"/>
+    <rect x="11.42" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <rect x="14.88" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <rect x="18.35" y="19.46" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <rect x="18.35" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <rect x="14.88" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <rect x="11.42" y="9.34" width="2.24" height="3.20" fill="#8d8c8c" stroke="none"/>
+    <circle cx="12.27" cy="18.13" r="0.8" fill="#c0c0c0" stroke="none"/>
+    <text x="16.80" y="16.00" font-family="DroidSans" font-size="3.4" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">K74</text>
+  </g>
+</svg>
