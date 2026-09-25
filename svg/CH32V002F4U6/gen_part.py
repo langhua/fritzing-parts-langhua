@@ -6,9 +6,11 @@ Datasheet: D:\\Downloads\\CH32V002DS0.PDF (V1.7), pin table 2-1 (QFN20 column),
            CH32V003DS0.PDF (V1.8) has the SAME QFN20 pin numbering -- so the
            CH32V003F4U6 part reuses this generator (see ../CH32V003F4U6).
 
-!! The exposed pad (datasheet "pin 0") IS VSS:  QFN20 has pin 4 = VSS *and* the
-   pad = VSS (tied together with a <bus>); on the QFN12 (CH32V002D4U6) VSS
-   exists ONLY as the exposed pad.
+!! The exposed pad (datasheet "pin 0") IS VSS electrically:  QFN20 has pin 4 = VSS
+   *and* the pad = VSS (internally tied).  BUT per the repo rule (AGENTS §5) the
+   pad is a SEPARATE connector named **EPAD** and is NOT put in any <bus> - it
+   must be routed to GND deliberately (2026-09-25: it used to be named "VSS" and
+   sat inside <bus id="VSS"> together with pin 4 - that hid the routing duty).
 
 Pin numbering is counterclockwise, pin 1 = top-left, going DOWN the left side.
 Per side: pins 1-5 left (top->bottom), 6-10 bottom (left->right),
@@ -49,7 +51,7 @@ TOP_MARK = "V002"
 TAGS = "<tag>IC</tag><tag>MCU</tag><tag>RISC-V</tag><tag>CH32V002</tag>"
 DESC = ("WCH CH32V002F4U6 RISC-V MCU, QFN20 3x3 mm / 0.4 mm pitch, 2.5-5 V, "
         "12-bit ADC (8 channels), 18 I/O. Pin compatible with CH32V003F4U6 "
-        "(10-bit ADC + OPA). The exposed pad is VSS and is tied to pin 4.")
+        "(10-bit ADC + OPA). Exposed pad EPAD (internally VSS) - route to GND.")
 
 # ---------------------------------------------------------------- package config
 BODY_MM = 3.0            # square body edge
@@ -66,8 +68,8 @@ ICON_DOT_R = 1.0         # icon: dot radius
 ICON_DOT_INSET = 2.10    # icon: dot centre, distance from the body's left edge
 BB_DOT_R = 5.0           # breadboard: dot radius
 BB_DOT_INSET = 10.0      # breadboard: dot centre from the body's left edge
-GND_PINS = [4]           # die pins that are VSS (tied to the exposed pad by a bus)
-PAD_NAME = "VSS"
+GND_PINS = []            # 如果有多个**同网络的 GND 脚**才建总线；裸露焊盘永不入总线
+PAD_NAME = "EPAD"        # 裸露焊盘（datasheet pin 0）：必须叫 EPAD/EP 且独立成网（AGENTS §5）
 
 PIN_NAMES = ["PD7", "PA1", "PA2", "VSS", "PD0", "VDD", "PC0", "PC1", "PC2", "PC3",
              "PC4", "PC5", "PC6", "PC7", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6"]
@@ -405,18 +407,19 @@ def fzp_xml():
             '  </connector>\n' % (cn, name, i, PIN_DESC.get(name, name + " digital I/O"), cn, cn, cn, cn))
     conns.append(
         '  <connector id="connector%d" name="%s" type="male">\n'
-        '   <description>exposed pad (datasheet pin 0) - %s, connect to GND</description>\n'
+        '   <description>exposed pad (datasheet pin 0, internally VSS) - %s, route to GND</description>\n'
         '   <views>\n'
         '    <breadboardView><p layer="breadboard" svgId="connector%dpin"/></breadboardView>\n'
         '    <schematicView><p layer="schematic" svgId="connector%dpin" terminalId="connector%dterminal"/></schematicView>\n'
         '    <pcbView><p layer="copper1" svgId="connector%dpad"/></pcbView>\n'
         '   </views>\n'
         '  </connector>\n' % (n, PAD_NAME, PAD_NAME, n, n, n, n))
+    # 裸露焊盘**不并进总线**（AGENTS §5，2026-09-25）：它要布线时特意接到 GND。
+    # GND_PINS 里若有多个脚（同网络），它们之间才用总线互联。
     bus = ""
-    if GND_PINS:
+    if len(GND_PINS) > 1:
         members = "".join('   <nodeMember connectorId="connector%d"/>\n' % (p - 1) for p in GND_PINS)
-        members += '   <nodeMember connectorId="connector%d"/>\n' % n
-        bus = ' <buses>\n  <bus id="%s">\n%s  </bus>\n </buses>\n' % (PAD_NAME, members)
+        bus = ' <buses>\n  <bus id="GND">\n%s  </bus>\n </buses>\n' % members
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<module fritzingVersion="0.9.9b" moduleId="%s">\n'

@@ -85,7 +85,7 @@
   <circle id="connector10pin" connectorname="PC4" cx="400.0" cy="1000.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="400.0" cy="1000.0" r="19.1" fill="#2b2b2b" stroke="none"/>
   <text x="465.0" y="1000.0" font-size="40" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">11</text>
-  <circle id="connector20pin" connectorname="VSS" cx="250.0" cy="1050.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
+  <circle id="connector20pin" connectorname="EPAD" cx="250.0" cy="1050.0" r="39.4" fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>
   <circle cx="250.0" cy="1050.0" r="19.1" fill="#2b2b2b" stroke="none"/>
   <text x="250.0" y="970.0" font-size="40" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-family="DroidSans">0</text>
  </g>

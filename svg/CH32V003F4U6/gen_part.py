@@ -30,8 +30,8 @@ SCHEM_NAME = "CH32V003"
 TAGS = "<tag>IC</tag><tag>MCU</tag><tag>RISC-V</tag><tag>CH32V003</tag>"
 DESC = ("WCH CH32V003F4U6 RISC-V MCU, QFN20 3x3 mm / 0.4 mm pitch, 3.3-5 V, "
         "10-bit ADC (6 channels + 2) and one internal OPA, 18 I/O. Pin compatible "
-        "with CH32V002F4U6 (12-bit ADC, no OPA) - drop-in. The exposed pad is VSS "
-        "and is tied to pin 4.")
+        "with CH32V002F4U6 (12-bit ADC, no OPA) - drop-in. Exposed pad EPAD "
+        "(internally VSS) - route to GND.")
 
 
 def main():
