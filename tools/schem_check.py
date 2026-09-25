@@ -247,17 +247,43 @@ def main(argv):
             numbers.setdefault(side, []).append((c, fs, s))
     num_fs = {fs for v in numbers.values() for _, fs, _ in v}
     ref_fs = max(num_fs) if num_fs else max(fs for _, _, _, fs in texts)
+    names, names_old = {}, {}      # names_old = 老判据（最近边），只当新判据找不到时的兜底
     for s, x, y, fs in texts:
         # 只认"框内、贴着自己的边、且**不比脚号大多少**"的文字为引脚名：
         #   芯片名/图例（79 vs 35）比脚号大得多，若不排除，它会落在框中间，
         #   稍一凑巧就把某个脚的"名"配成两条（W25Q16JV 踩过）。
         if fs <= 0 or fs > 1.3 * ref_fs or not (BX0 < x < BX1 and BY0 < y < BY1):
             continue
-        side = nearest_side(x, y)
-        c, dep = cross_and_depth(side, x, y)
-        if abs(dep) <= len(s) * 0.58 * fs + 1.2 * fs:   # 名贴着框（深度 ≤ 自身字宽 + 一个字符）
-            names.setdefault(side, []).append((c, fs, s))
-    name_fs = {fs for v in names.values() for _, fs, _ in v}
+        s_old = nearest_side(x, y)
+        c_old, dep_old = cross_and_depth(s_old, x, y)
+        if abs(dep_old) <= len(s) * 0.58 * fs + 1.2 * fs:
+            names_old.setdefault(s_old, []).append((c_old, fs, s))
+        # 归侧（2026-09-25 修，用户：「是识别错误」）：以前按"最近边"定侧 ——
+        #   画在框上边最左的 EPAD，它的名字离**左边**比离上边更近 ✗ ⇒ 名字被算成
+        #   left，上边的脚反而报"找不到名"（CH32V002D4U6 [12] / CH32V002F4U6 [20] /
+        #   CH32V003F4U6 [20] 三件，全是假报 ✗）。
+        #   现在：候选 =「深度在贴身带内」**且**「横轴对得上该边某个脚」的边，
+        #   再按（横轴距离, 深度）取**唯一的**最近边 ⇒ 每个名字只归一条边 ✓。
+        #   ★ 试过两种错法：①"满足条件的边都登记一次" ⇒ SOP8 的 J4M6 撞成"找到多个" ✗；
+        #   ②"只按横轴兜底" ⇒ 左边的 VSS 名被算进上边 ✗ ⇒ 都回退了。
+        cand = []
+        for side in ("left", "right", "bottom", "top"):
+            c, dep = cross_and_depth(side, x, y)
+            if abs(dep) > len(s) * 0.58 * fs + 1.2 * fs:      # 名要贴着自己的边
+                continue
+            dx = min([abs(c - cc) for cc, _n in sides.get(side, [])] or [1e9])
+            if dx > 1.2 * ref_fs:                            # 横轴得对得上这条边的某个脚
+                continue
+            cand.append((dx, abs(dep), side, c))
+        if not cand:
+            continue
+        near = nearest_side(x, y)          # 原判据：最近边 —— 先信它（保住老行为 ✓）
+        pick = next((t for t in cand if t[2] == near), None)
+        if pick is None:                   # 只有"最近边底下根本没有这个脚"时才换边 ✓
+            pick = min(cand)               # （角上的名字就是这种情况 ✗）
+        _dx, _dp, side, c = pick
+        names.setdefault(side, []).append((c, fs, s))
+    name_fs = {fs for v in list(names.values()) + list(names_old.values()) for _, fs, _ in v}
 
     side_of = {n: s for s in sides for _, n in sides[s]}
     no_num, no_name = [], []
@@ -269,7 +295,14 @@ def main(argv):
         on_axis = ax if side in ("bottom", "top") else ay
         if len([1 for c, _, _ in numbers.get(side, []) if abs(c - on_axis) <= 1.2 * ref_fs]) != 1:
             no_num.append(n)
-        if len([1 for c, _, _ in names.get(side, []) if abs(c - on_axis) <= 1.2 * ref_fs]) != 1:
+        got = len([1 for c, _, _ in names.get(side, []) if abs(c - on_axis) <= 1.2 * ref_fs])
+        if got != 1:
+            # 新判据不是"正好 1 条"时，退回**老判据（最近边）** ✓ —— 小符号（SOP8 的
+            # J4M6）的名字紧贴角上，新判据会归错边（0 条或 2 条 ✗），老判据能对上 ✓；
+            # 这样改完**不会新增任何误报**（老判据能过的仍过 ✓），只是多修掉角上的假报 ✓。
+            got = len([1 for c, _, _ in names_old.get(side, [])
+                       if abs(c - on_axis) <= 1.2 * ref_fs])
+        if got != 1:
             no_name.append(n)
     if no_num:
         fails.append("FAIL 这些脚找不到（或找到多个）**编号**（应贴在框外引线边）：%s"

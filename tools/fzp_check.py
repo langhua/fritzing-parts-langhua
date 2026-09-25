@@ -15,9 +15,9 @@ fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对�
   ③ 反过来：svgs 里每个 `id="connector…"` 都得在 .fzp 里声明过（否则是没主的图形）
   ④ 每个 svg 内部 **id 不能重复**（踩过：Inkscape Ctrl+D 复制排针 → 两个 `connector32pin`）
   ⑤ `<buses>` 引用的 connector 必须存在，且**每个 connector 最多进一条总线**
-  ⑥ **裸露焊盘（`EPAD` / `EP`）不许进任何 `<bus>`**，且**描述里写了 exposed pad / 散热盘
-    的 connector 名字必须是 `EPAD` / `EP`**（用户 2026-09-15 定、2026-09-25 补名字检查，
-    AGENTS §5）：
+  ⑥ **裸露焊盘不许进任何 `<bus>`**（用户 2026-09-15 定，AGENTS §5）；
+    名字**尊重原厂命名**（用户 2026-09-25 定）：不叫 `EPAD` / `EP` 时只**提示**，不判 FAIL ——
+    原厂叫 `VSS` 就保留 `VSS` ✓（如 `CH32V002D4U6` 的裸焊盘 ✓）：
      它是独立网络，必须**布线时特意接到 GND** —— 并进总线＝看着连上其实没连
   ⑦ **面包板里同名（connectorname）的焊盘必须在同一条总线里**（NC/DNP 除外）
   ⑧ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
@@ -140,20 +140,21 @@ def main(argv):
     print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))
                                 for b in root.iter("bus")))
 
-    # ⑥ 裸露焊盘（EPAD/EP）**不许进任何总线**，且**名字必须叫 EPAD / EP**
-    #    （用户 2026-09-15 定，AGENTS §5：它要布线时特意接到 GND，自动并进 GND 总线
-    #     会让人以为已经接好了；叫 GND 又不在 GND 总线里 = 看着连上其实没连）
-    #    判据 = connector 名匹配 EPAD / EP（大小写不敏感，允许 EPAD1/EP2 这种编号后缀）。
-    #    2026-09-25 补：名字判据只看 `EP...` 会**漏掉叫 VSS/GND 的裸露焊盘**（CH32V003F4U6
-    #    就漏了 ✗）⇒ 再用**描述文字**（exposed pad / 散热盘 / datasheet pin 0）反查名字。
+    # ⑥ 裸露焊盘 **不许进任何总线**（判 FAIL）；名字不叫 EPAD/EP 只**提示**
+    #    （用户 2026-09-15 定、2026-09-25 补充，AGENTS §5：
+    #     ①硬规则 = 它要布线时特意接到 GND，自动并进 GND 总线会让人以为已经接好了 ✗；
+    #     ②名字**尊重原厂命名** —— 原厂叫 VSS 就保留 VSS（CH32V002D4U6 就是）✓，
+    #       不强求改成 EPAD/EP（那会变成替原厂改名 ✗）。）
+    #    判据：裸焊盘 = connector 名匹配 EPAD / EP（允许 EPAD1/EP2 后缀），
+    #    或者**描述文字**里写了 exposed pad / 散热盘 / datasheet pin 0。
     EPAD_NAME = re.compile(r"^(EPAD\d*|EP\d*)$", re.I)
     EPAD_HINT = re.compile(r"exposed\s*pad|thermal\s*pad|裸露焊盘|散热盘|datasheet\s*pin\s*0", re.I)
     for c in root.iter("connector"):
         cid, nm = c.get("id"), (c.get("name") or "")
         desc = " ".join((d.text or "") for d in c.iter("description"))
         if EPAD_HINT.search(desc) and not EPAD_NAME.match(nm):
-            fails.append("FAIL 裸露焊盘 %s 的名字是「%s」—— 必须叫 EPAD / EP（AGENTS §5）"
-                         % (cid, nm))
+            print("注: 裸露焊盘 %s 叫「%s」（不是 EPAD/EP）—— 原厂命名就保留 ✓，"
+                  "只要它独立成网、description 写清要接 GND 即可（AGENTS §5）" % (cid, nm))
         if cid in in_bus and (EPAD_NAME.match(nm) or EPAD_HINT.search(desc)):
             fails.append("FAIL 裸露焊盘 %s（name=%s）不该进总线 %s —— 它要独立成网、"
                          "布线时特意接 GND（AGENTS §5）" % (cid, nm, in_bus[cid]))
