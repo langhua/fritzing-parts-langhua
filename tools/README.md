@@ -94,8 +94,41 @@ flowchart LR
 | **svg 单位 → sketch** | `px` → ×1 ✓、`mm` → ×3.5433 ✓、`in` → ×90 ✓ | 同上（`px` 就是按 `SVGDPI` 算的 ✓）|
 | **元件位置** | `<XView><geometry x y z/></geometry>` 里的 `x,y` = 元件的 `loc` ✓ | `ItemBase::saveInstanceLocation` |
 | **导线** | `<XView><geometry x y x1 y1 x2 y2 wireFlags/>` —— `x,y` 是**导线自己的 loc**，`x1..y2` 是**局部线段** ✗；**绝对端点 = loc + (x1,y1) / loc + (x2,y2)** ✓。Fritzing 自己写的是 `loc = 一端` ＋ `局部 = (0,0)→Δ` ✓ | `src/items/wire.cpp` `Wire::saveInstanceLocation`（约 846 行）|
+| **连接** | 存在**连接器级** ✓：`<XView><connectors><connector connectorId="…"><connects><connect connectorId="对方的脚" modelIndex="对方实例" layer="…"/></connects></connector></connectors>`；**视图级 `<connects>` 是旧格式、Fritzing 1.0 不读** ✗ —— 只写它 = **看着连上其实没连** ✗（现象：点网络不高亮 ✗ + 线端空心圆 ✗）。`layer` = **对方**的层次 ✓：`schematic`（元件/网标签 ✓）、`schematicTrace`（原理图导线 ✓）、`breadboardbreadboard`（面包板孔位 ✓，正常写法、与原理图无关 ✓）。连接**两端各记一份** ✓ | 实测取证：用户自己的 `single-channel.fzz` + `NetLabel-Pad` 实例（2026-09-26 ✓）|
 
 ★ 教训：**与其从数据里"反推"格式，不如直接读源码** ✓ —— 反推容易"越试越乱" ✗（正是 `AGENTS §0` 说的过拟合信号 ✓）。
+
+### Fritzing 命令行导出 SVG（`-svg`，2026-09-26 研究 ✓）
+
+**参数是「工作目录」，不是输出文件** ✓ —— 而且**要导出的 `.fzz` 必须放在那个目录里** ✗✓
+（名字 `m_outputFolder` 是误导 ✗）：
+
+```powershell
+# 把 sketch 放进 $work，然后只给目录
+& "$env:LOCALAPPDATA\Programs\Fritzing\Fritzing.exe" -svg $work
+# ⇒ 目录里出现 <名字>_breadboard.svg / _schematic.svg / _pcb.svg
+```
+
+出处：`src/fapplication.cpp` —— `-svg`（字符串参数）置 `ServiceType::SvgService` 且
+`m_outputFolder = m_arguments[i + 1]`（约 487 行）；`runServiceAux()`（993 行）起手就是
+`QDir dir(m_outputFolder); … dir.entryList(filters, QDir::Files)` ⇒ **sketch 从该目录里找** ✓；
+`runDRCService` / `runGedaService`（1158、1187 行）同为这个写法 ✓。
+
+⚠️ **实测：本机这个构建不产出** ✗（`exit 0`、目录里只有原来的 `.fzz` ✗）——
+换成**已知完好**的 sketch 也一样 ✗ ⇒ **不是输入文件的问题** ✗，是服务在这个环境里静默失败 ✗
+（要拿 SVG 当"眼睛"看渲染结果时，仍走**手工**：Fritzing 里 `File ▸ Export ▸ as Image ▸ SVG` ✓）。
+⇒ 记在这里，免得以后再花一轮去研究它 ✗。
+
+### 量元件 / 量引脚（两个取证小工具，2026-09-26 入库 ✓）
+
+| 工具 | 干什么 |
+|---|---|
+| `part_measure.py <sketch.fzz> [-o 报告.txt]` | 量每个元件的**原理图尺寸**：`part.<moduleIdRef>.fzp` → `schematicView/layers/@image` → 元件 svg 的 `width/height/viewBox` ✓；再与 sketch 里的"线端 − 锚点"相除 = **比例**（各轴、各对引脚都该得同一个数 ✓，对不上就是量错了 ✗） |
+| `pin_ruler.py <sketch.fzz> <Fritzing导出的.svg>` | 拿 Fritzing **自己导出**的 SVG 当尺子 ⇒ 累乘 `<g>` 的 `transform` 算出每个实例坐标 → 导出坐标的映射 ✓，再用**同一型号的两个实例**联立解全局比例、用**其余实例校验** ✓（实测比例 **1.25**、离散度 **0.0000%** ✓）；脚位置 = `loc + 1.25×(脚导出 − 绘图原点导出)` ✓ |
+
+两个都**只量、不改** ✓，也不写死本机路径 ✓（元件 svg 靠 sketch 里的 `path=` 属性找 ✓，找不到就报 "?" ✗ 不猜 ✓）。
+它们是「按坐标画线」那类脚本的地基 ✓ —— 例：本项目里生成 `pixel_wired.fzz` 的 `wire_build.py` ✓
+（已知局限：库里的**旧式符号**（如 1010）量出来与 core 不同 ✗ ⇒ 只有 core 量得准 ✓）。
 
 ## 约定（踩过的坑，别重复踩）
 
