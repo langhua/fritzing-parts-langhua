@@ -579,7 +579,9 @@ def pcb_svg():
 def fzp_xml():
     conns = []
     for cn in range(3):
-        conns.append(f'  <connector id="connector{cn}" name="{cn + 1}" type="female">\n')
+        # 面包板视图上装的是**朝下插进面包板孔的排针** ⇒ type 必须 male（公）✓
+        # 写 female（母）时 Fritzing **根本不许它插进面包板孔** ✗（2026-09-25 用户实测）
+        conns.append(f'  <connector id="connector{cn}" name="{cn + 1}" type="male">\n')
         conns.append(f'   <description>pin {cn + 1}</description>\n')
         conns.append('   <views>\n')
         conns.append(f'    <breadboardView><p layer="breadboard" svgId="connector{cn}pin"/></breadboardView>\n')
