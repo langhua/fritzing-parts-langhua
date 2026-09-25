@@ -1,0 +1,86 @@
+# 原理图 / 电路作图规则（跨项目通用）
+
+> **为什么放在元件库仓**（2026-09-26 用户定）：这套规则**跨项目共用**，而且机器守的
+> `tools/sch_style_check.py` 必须和 `fzp_check.py` / `schem_check.py` 同目录才能一起跑 ✓。
+> **项目仓只放一行指针** ✓ —— 别把正文抄过去 ✗（否则改一处忘三处 ✗，违反「单一出处」）。
+>
+> 分工（别混 ✗）：
+> | 层次 | 管什么 | 工具 |
+> |---|---|---|
+> | **元件层** | 一个**元件**画得对不对（`.fzp` ↔ 四视图、连接器、总线、EPAD、丝印…）| `links[ 元件层](#元件层：fzp_checkpy)`：`tools/fzp_check.py` + `schem_check.py` |
+> | **电路层**（本文）| 一张 **sketch** 摆得对不对（网格、连线、位号、命名…）| `tools/sch_style_check.py` |
+
+## 0. 两类规则，归属不同
+
+| 类别 | 例子 | 归属 |
+|---|---|---|
+| **元件规则** | 矩形符号引脚排布、丝印不压焊盘、EPAD 独立成网 | `AGENTS.md §5` + `docs/part-dev-guide.md` ✓ |
+| **作图规则**（本文）| 网格对齐、位号排号、标签命名、字体 | 本文 A/B 两节 ✓ |
+
+---
+
+## A. 可机器校验（工程规则）
+
+> 出处以 **KiCad 8 手册**为主（`docs.kicad.org/8.0/en/eeschema/eeschema.html`，文档
+> GPL-3.0+ / CC-BY-3.0 ✓ 引用注明出处 ✓）。**能写成检查的就不靠人眼** ✓。
+
+| # | 规则 | 出处（KiCad） | 我们的机器守 |
+|---|---|---|---|
+| A1 | **坐标落在网格上** —— 引脚/线端不落网格 ⇒ **看着连上其实没连** ✗ | KiCad："推荐 50 mil；用别的网格会导致**连通不正确**"；ERC `Symbol pin or wire end off connection grid` | ⚠ **这条在 Fritzing 里不适用** ✗（2026-09-26 实测）：Fritzing 存的是**连续坐标**、网格只是编辑辅助、**相位由画布决定** ⇒ 绝对坐标不必是整数倍 ✓；而且 Fritzing 的连接记在 `<connects>` 里 ⇒ **不会"看着连上其实没连"** ✓　⇒ `sch_style_check.py` 只把网格当**参考**打印（相位 + 偏离点）✓ |
+| A2 | **连线只用 0 / 45 / 90°** | KiCad 三种线模式：90° / 45° / 自由角度（后者是特例 ✗）| 见 C 节（TODO）✓ |
+| A3 | **交叉 ≠ 连接**（KiCad 靠线端 + junction，**Fritzing 靠 `<connects>`** ✓）| ERC `Label not connected` / `Wires not connected to anything` ✓ | **Fritzing 侧不需要这条检查** ✓ —— 连接是**显式**记的，不会出现 KiCad 那种假连接 ✓（所以 `sch_style_check.py` 不查它 ✓）|
+| A4 | **一个网只能有一个名字** | ERC `More than one name given to this net`（warning）| `fzp_check.py` 第 ⑦ 条同精神（同名必同总线）✓ |
+| A5 | **只差大小写的两个名字 = 疑似拼错** | ERC `Labels are similar (lower/upper case difference only)` | `sch_style_check.py` ③ ✓（`DATA_in` vs `DATA_IN` ✓）|
+| A6 | **位号唯一 + 按位置排号 + 前缀按类型** | Annotate 按 X（左→右）/ Y（上→下）排序 ✓；`Duplicate reference designators` = **Error**；Symbol Checker：前缀**不许以数字或 `?` 结尾** | `sch_style_check.py` ② ✓（＋本仓既有的"**先左后右、先上后下**"✓）|
+| A7 | **没用到的引脚要有交代** | 留空 ⇒ `Pin not connected`（Error）；故意不接要打 no-connect 标记 ✓ | 网表里写明"留测试点 / 悬空"✓（人守，本库已这么做 ✓）|
+| A8 | **电源网必须有"驱动源"** | `PWR_FLAG`：不驱动 ⇒ ERC 报 "not driven by any Output Power pins" | 同精神：**EPAD 独立成网、必须特意接线** ✓（`fzp_check.py` ⑥ ✓）|
+| A9 | **只用核心字体** | "自定义字体**不随工程走**，换机器会被替换" ⇒ 建议用 KiCad 自带字体 ✓ | 本仓：**只用 DroidSans** ✓（`AGENTS §5` ✓）|
+| A10 | **值写法统一**（RKM）| 模拟器值记法：`4k7` / `100n` / `10R` ✓ | 文档规则：**不许** `4.7k` 与 `4700` 混写 ✗ |
+| A11 | **元件符号自检** | Symbol Checker：引脚离网 / 重复引脚 / **零尺寸图形** / 位号前缀非法 ✓ | 本仓 `fzp_check.py` + `schem_check.py` ✓ |
+
+### 元件层：`fzp_check.py`
+
+（这一节是给上一张表里的"分工"做锚点用 —— 元件层的清单见 `AGENTS.md` 末尾那份"逐项过一遍"✓）
+
+```powershell
+py -3.13 tools\fzp_check.py svg\<部件>            # 元件层
+py -3.13 tools\sch_style_check.py <sketch.fzz>    # 电路层（本文 A 节）
+```
+
+---
+
+## B. 审美 = 信息层次（人眼守）
+
+> 一句话：**"好看" = 读者能在 3 秒内看出电从哪来、往哪去** ✓。
+> 所以每条都能说出**它替读者省了什么** ✓ —— 说不出理由的装饰一律不加 ✗（`AGENTS §1` 工业风）。
+
+| # | 规则 | 替读者省了什么 | 我们这么做的证据 |
+|---|---|---|---|
+| B1 | **信号流左 → 右** | 不用追线头找方向 ✓ | `hardware/pixel/pixel-netlist.md`：`L1 → D1 → R1/C1 → U1 → LED1` ✓ |
+| B2 | **电源在上、地在下的固定位置感** | 一眼分出电源网络 ✓ | KiCad 用 power symbol 干这件事 ✓ |
+| B3 | **能用 label 就别拉长线** | 少交叉、少绕路 ✓ | KiCad 明说：labels 的作用就是"**不必画直连**"✓ |
+| B4 | **按功能分块、块间留白** | 一眼看出"这是前级、那是 MCU" ✓ | KiCad：层次化"**提升可读性**"✓ |
+| B5 | **线宽/颜色按网络类别分**（电源粗、信号细）| 层次，不是装饰 ✓ | KiCad 的 netclass 线宽/颜色 ✓ |
+| B6 | **文字不压焊盘、不压线、不互相重叠** | 名字可读 ✓ | KiCad 有 label offset / 字段自动摆放 ✓；本仓 `AGENTS §5` 的"丝印不压焊盘"✓ |
+| B7 | **不加阴影/高光/黑点等装饰** | 少干扰 ✓ | `AGENTS §1`（工业风，用户 2026-08-30 定）✓ |
+
+---
+
+## C. 记账（看见但没做 / 不做，别当没看见 ✗）
+
+| 项 | 状态 |
+|---|---|
+| A2 线角度检查 | **TODO** —— 需先从真实 `.fz` 取证"bendpoint / 曲线"的存法（本仓已有 `tools/svg_lines.py`，思路可复用 ✓）|
+| ~~A3 悬空线端 / 未接引脚检查~~ | **不做** ✓ —— 已查明：Fritzing 的连接显式记在 `<connects>` 里，**没有 KiCad 那种"线靠着引脚但没连"** ✓ |
+| **IEEE 315 / ANSI Y32.2** 等现行标准原文 | **不引** ✗ —— 属**收费标准**，不抄原文 ✓（只用通用工程惯例 ✓，与本仓 §8 版权纪律一致 ✓）|
+| **KLC**（klc.kicad.org，KiCad 库规范）| 2026-09-26 抓取 **403** ✗ ⇒ 以后再取 ✓。它管的是**符号/封装层**（引脚分组、命名、50 mil）—— 和 `fzp_check.py` 同一层，值得对照 ✓ |
+| **嘉立创 EDA 公开文档** | 抓到的全是**下单/制造**规范（打样、工艺参数、DRC）✗ —— **没有作图规范** ✓（人家公开的是"怎么造"，不是"怎么画" ✓）|
+
+---
+
+## 出处与许可
+
+- **KiCad 8 手册**：<https://docs.kicad.org/8.0/en/eeschema/eeschema.html>
+  （文档声明 **GPL-3.0+ 或 CC-BY-3.0** ✓，本文引用其规则并注明出处 ✓）
+- **本仓自己的实践**：`AGENTS.md`、`docs/part-dev-guide.md`、`tools/README.md` ✓
+- 本文由本仓维护（2026-09-26 起）✓ —— 新踩到的作图坑，**先加进 A 节并尽量写成检查** ✓
