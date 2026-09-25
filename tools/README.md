@@ -82,6 +82,21 @@ flowchart LR
 | `make_fzb.py` | 把 `make_preview.py` 的**同一份分组**写成 **Fritzing 元件箱**（`<用户目录>/Documents/Fritzing/bins/fzh_*.fzb`）—— 重启 Fritzing 即多出这 6 个箱，不用在界面上一个个点。机制（已核对 1.0.3b 源码）：Fritzing 启动时**扫该目录全部 `*.fzb`**、每个文件一个箱（`binmanager.cpp` 的 `findBins(userBinsDir,…)`）；格式照 `my_parts.fzb`，但**每条 `<instance>` 必须带 `<views/>`**（`modelbase.cpp`：`do not load a part with no views` —— 少了它箱是空的）、`modelIndex` 不写（那是保存时的运行时编号）。**箱图标是最容易踩的一处**（踩了两次，两次现象不同）：`icon=` 有两条分支 —— ① 内嵌 SVG 文本（`isCustomSvg()`：以 `<?xml` 开头且含 `<title>Fritzing Custom Icon</title>`）：能显示，但 `m_monoIcon` 被**写死**成内置 `Custom1-mono.png`（黑六边形），而标签栏画的正是 mono 图标 → **未选中的箱全变黑六边形**；② 文件名：Fritzing 先在**箱文件同目录**找 `<名字>.png`，再找同名 `<名字>-mono.png`（`path.insert(ix, "-mono")`）。所以本工具走 ②：给每组渲 `fzh_<组>.png` + `fzh_<组>-mono.png`（同一张彩图 —— Fritzing 只要求文件名带 `-mono`，没要求真·单色）。图标内容 = 每组代表零件**自己的 icon 几何**缩进 64×64（改哪组用哪个零件看脚本里的 `BIN_ICON_OF`），渲染用 cairosvg（与 `byhand_check.py` 同一套依赖）。**箱内能分小节**（像自带 CORE 的「基本/输入/输出」）：插一条 `moduleIdRef="__spacer__"` 实例，**文字就是它的 `path`**，spacer 也要带 `<views>`（`modelbase.cpp` 把它建成 `ModelPart::Space`，`setInstanceText(path)`）—— 小节表在脚本的 `SECTIONS`，**必须恰好盖住该组全部条目**（漏/重/写错名字就报错，不静默丢）。匹配已装零件按 moduleId→去 hash→去尾号→归一化名级联，命中规则用 `--verbose` 逐条看；`--list` 只报告不写；`--verify` 单独自检已有箱（写完也会自动自检一次：`<views/>` 齐不齐、`path` 真存在、`moduleIdRef` 与 `.fzp` 声明一致 —— 这三条都是“不报错但箱是空的”那种失效）。**只写自己的 `fzh_*.fzb`**，不动 `my_parts.fzb`/别人的箱。默认还会**镜像一份到仓库 `fzb/`**（`--no-mirror` 关掉）：主输出必须在 `<Documents>/Fritzing/bins`（Fritzing 只读那里），仓库那份仅归档/审阅，整目录拷回 Fritzing 目录即可恢复（里面是本机绝对路径，换机无效） |
 | `../svg/<部件>/trace_photo.py` | 把实物照片按卡尺比例叠到我们图上，用来判断"哪块偏了多少"（照片不进仓库） |
 
+## Fritzing sketch 坐标语义（2026-09-26 从源码取证 ✓）
+
+写/读 `.fz` 时**必须**知道这四条 —— 踩过的坑：**把导线的局部坐标当成绝对坐标** ✗，
+于是四套单位假设全都自相矛盾 ✗，白试了好几轮 ✗（用户提示"源码在 `F:\build-fritzing`"后，
+**两处源码 + 一次实测**就全通了 ✓）。
+
+| 量 | 事实 | 出处 |
+|---|---|---|
+| **坐标单位** | **1 单位 = 1/90 英寸 = 11.111 mil = 0.2822 mm** ⇒ 网格 `0.1in` = **9 单位**（2.54 mm = 9 单位 ✓）| `src/utils/graphicsutils.h`：`SVGDPI = 90`、`StandardFritzingDPI = 1000`、`IllustratorDPI = 72`；`pixels2mils(p, dpi) = p*1000/dpi` |
+| **svg 单位 → sketch** | `px` → ×1 ✓、`mm` → ×3.5433 ✓、`in` → ×90 ✓ | 同上（`px` 就是按 `SVGDPI` 算的 ✓）|
+| **元件位置** | `<XView><geometry x y z/></geometry>` 里的 `x,y` = 元件的 `loc` ✓ | `ItemBase::saveInstanceLocation` |
+| **导线** | `<XView><geometry x y x1 y1 x2 y2 wireFlags/>` —— `x,y` 是**导线自己的 loc**，`x1..y2` 是**局部线段** ✗；**绝对端点 = loc + (x1,y1) / loc + (x2,y2)** ✓。Fritzing 自己写的是 `loc = 一端` ＋ `局部 = (0,0)→Δ` ✓ | `src/items/wire.cpp` `Wire::saveInstanceLocation`（约 846 行）|
+
+★ 教训：**与其从数据里"反推"格式，不如直接读源码** ✓ —— 反推容易"越试越乱" ✗（正是 `AGENTS §0` 说的过拟合信号 ✓）。
+
 ## 约定（踩过的坑，别重复踩）
 
 - **单位只有一种**：数据表里一律**内部单位**（100 单位 = 2.54mm）。位置/尺寸/字号/描边宽
