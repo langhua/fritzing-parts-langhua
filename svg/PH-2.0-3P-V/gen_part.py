@@ -410,14 +410,19 @@ def breadboard_svg():
     bw = 100 * max(4, 2 * int((w_u / 2 + 55) / 100.0 + 0.9999))
     pin_x = (bw // 2 - 100, bw // 2, bw // 2 + 100)
     bh = pin_y + 100
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   旧做法把板框画成整张画布 ✗ ⇒ 四条边到针脚都是 100 的整数倍 ✗ ⇒ 板边压在孔线上 ✗。
+    #   四周各让 50（半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；针脚坐标一个不动 ✓。
+    INSET = 50
     pad_s, hole_r = 78.0, 0.485 * U          # 2mm 焊盘 + 0.97mm 针孔
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
          f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
          ' <g id="breadboard">\n',
-         f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="{BB_GREEN}" stroke="{BB_EDGE}" stroke-width="5"/>\n']
-    # 本体（1:1，居中于板宽，位于上部）
-    L.append(_embed(bw / 2.0, cy_socket))
+         f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{pin_y}" '
+         f'fill="{BB_GREEN}" stroke="{BB_EDGE}" stroke-width="5"/>\n']
+    # 本体（1:1，居中于板宽，位于上部）——也往下让 INSET ✓（否则会超出板框上边 ✗）
+    L.append(_embed(bw / 2.0, INSET + h_u / 2.0))
     # 3 个排针焊盘 + 中央针孔
     for i, px in enumerate(pin_x):
         L.append(f'  <rect id="connector{i}pin" connectorname="{i + 1}" '
