@@ -123,7 +123,11 @@ def gen_breadboard_svg():
              f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n')
     L.append(' <g id="breadboard">\n')
     # 绿板（直角）
-    L.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   焊盘在 x=100/200/300 ✓、y=500 ✓ ⇒ 旧框 (0,0,bw,bh) ✗
+    #   ⇒ 左/右/上是 0.00 ✗、下边是 60 单位（相位 3.60 ✗）
+    #   新：x=50 宽 bw-100 ✓（左右各 50）、y=50 高 bh-60 ✓（上边让 50 ✓、下边 560→550 ✓）。
+    L.append(f'  <rect x="50" y="50" width="{bw - 100}" height="{bh - 60}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     # 芯片 icon（转 180°，1 脚 GND 落右上；垂直居中于板）
     L.append('  <g transform="translate(%.1f %.1f) rotate(180) scale(%.3f)">\n' % (chip_cx, chip_cy, U))
     L.append(_icon_inner())

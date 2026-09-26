@@ -113,8 +113,12 @@ def gen_breadboard_svg():
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
          'viewBox="0 0 %d %d">\n' % (bx1 / 100 * 2.54, by1 / 100 * 2.54, bx1, by1),
          ' <g id="breadboard">\n',
-         '  <rect x="0" y="0" width="%d" height="%d" fill="#00aa44" stroke="#00772f" '
-         'stroke-width="5"/>\n' % (bx1, by1)]
+         # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+         #   针脚在 x=100/200/300 ✓、y=500 ✓ ⇒ 旧框 (0,0,bx1,by1) ✗
+         #   ⇒ 四条边离针脚都是 100 的整数倍 ⇒ 全压在孔线上 ✗
+         #   新：四周各让 50 ✓（宽 bx1-100、高 by1-100）⇒ 板边落在两排孔正中 ✓；针脚不动 ✓。
+         '  <rect x="50" y="50" width="%d" height="%d" fill="#00aa44" stroke="#00772f" '
+         'stroke-width="5"/>\n' % (bx1 - 100, by1 - 100)]
     # 芯片（居中；icon 的 (0,0) = 芯片左上角 → 平移到 (cx-3.25mm, cy-3.65mm)）
     s += _icon_shapes(U, cx - BODY_W / 2 * U, cy - (BODY_H / 2 + LEAD_L) * U)
     # 下排三脚 + 数字（散热片不引出：见函数说明）
