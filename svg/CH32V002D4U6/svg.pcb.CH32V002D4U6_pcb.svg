@@ -14,7 +14,7 @@
 <rect id="connector9pad" x="0.300" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD1"/>
 <rect id="connector10pad" x="-0.100" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD4"/>
 <rect id="connector11pad" x="-0.500" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD7"/>
-<rect id="connector12pad" x="-0.525" y="-0.525" width="1.050" height="1.050" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+<rect id="connector12pad" x="-0.525" y="-0.525" width="1.050" height="1.050" fill="#F7BD13" stroke="none" connectorname="EPAD"/>
 <g id="copper0"/>
   </g>
   <g id="silkscreen">

@@ -117,8 +117,8 @@
     <pcbView><p layer="copper1" svgId="connector11pad"/></pcbView>
    </views>
   </connector>
-  <connector id="connector12" name="VSS" type="male">
-   <description>exposed pad (datasheet pin 0) - VSS, connect to GND</description>
+  <connector id="connector12" name="EPAD" type="male">
+   <description>exposed pad (datasheet pin 0, internally VSS) - EPAD, route to GND</description>
    <views>
     <breadboardView><p layer="breadboard" svgId="connector12pin"/></breadboardView>
     <schematicView><p layer="schematic" svgId="connector12pin" terminalId="connector12terminal"/></schematicView>

@@ -184,7 +184,14 @@ def breadboard_svg():
     L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
              'viewBox="0 0 500 %.0f">\n' % (500 * 0.0254, bh * 0.0254, bh))
     L.append(' <g id="breadboard">\n')
-    L.append('  <rect x="0" y="0" width="500" height="%.0f" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n' % bh)
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   ★ 本文件是 CH32V00x **一族共用**的生成器 ✓（`CH32V002D4U6` / `CH32V003F4U6` /
+    #     `CH32V003J4M6` 都用 importlib 加载它 ✓）⇒ 改这里**一族全好** ✓。
+    #   旧板框：宽固定 500 ✗、顶边在 y=0 ✗ ⇒ 左/右/上三条边都压在孔线上 ✗
+    #   （下边本来就是 4.50 ✓，不动 ✓）。针脚一个不动 ✓。
+    #   新：x 让 50、宽 400（左右各 50 ✓）、y 让 50（上 50 ✓）、高少 50（下边不变 ✓）。
+    L.append('  <rect x="50" y="50" width="400" height="%.0f" fill="#00aa44" stroke="#00772f" '
+             'stroke-width="5"/>\n' % (bh - 50))
     # chip body + edge pads (top view, 1:1)
     L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#303030" stroke="none"/>\n'
              % (250 - half, cy - half, 2 * half, 2 * half))
