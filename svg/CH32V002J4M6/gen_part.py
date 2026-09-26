@@ -100,8 +100,13 @@ def breadboard_svg():
     L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
              'viewBox="0 0 %.0f %.0f">\n' % (BB_W * 0.0254, BB_H * 0.0254, BB_W, BB_H))
     L.append(' <g id="breadboard">\n')
-    L.append('  <rect x="0" y="0" width="%.0f" height="%.0f" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n'
-             % (BB_W, BB_H))
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   ★ 本件是 **CH32V003J4M6 共用的生成器** ✓（那边用 importlib 加载它 ✓）。
+    #   旧框 (0,0,BB_W,BB_H) ✗ ⇒ 四条边都压在孔线上 ✗（针脚列/行都在 100 的整数倍上 ✓）；
+    #   新：四周各让 50 ✓ ⇒ 板边落在两排孔正中 ✓；针脚一个不动 ✓。
+    L.append('  <rect x="50" y="50" width="%.0f" height="%.0f" fill="#00aa44" stroke="#00772f" '
+             'stroke-width="5"/>\n'
+             % (BB_W - 100, BB_H - 100))
     # chip body (landscape) + 4+4 gull-wing leads pointing up / down
     L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#303030" stroke="none"/>\n'
              % (BODY_X, BODY_Y, BODY_W, BODY_H))

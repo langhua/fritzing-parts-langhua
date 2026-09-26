@@ -245,8 +245,13 @@ def breadboard_svg():
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
          'viewBox="0 0 500 %.0f">\n' % (500 * 0.0254, bh * 0.0254, bh),
          ' <g id="breadboard">\n',
-         '  <rect x="0" y="0" width="500" height="%.0f" fill="#00aa44" stroke="#00772f" '
-         'stroke-width="5"/>\n' % bh,
+         # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+         #   ★ 本件是 **BAS70DW-04 共用的生成器** ✓（那边用 importlib 加载它 ✓）。
+         #   旧框 500×bh、顶边 y=0 ✗ ⇒ 四条边都压在孔线上 ✗
+         #   （针脚列 x=100/400 ✓、行 y=100/300 ✓ ⇒ 四边到针脚都是 100 的整数倍 ✗）；
+         #   新：x=50 宽 400 ✓、y=50 高 bh-100 ✓ ⇒ 四边离最近孔心都是半格 ✓；针脚一个不动 ✓。
+         '  <rect x="50" y="50" width="400" height="%.0f" fill="#00aa44" stroke="#00772f" '
+         'stroke-width="5"/>\n' % (bh - 100),
          '  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#303030" stroke="none"/>\n'
          % (250 - hb_l, cy - hb_w, 2 * hb_l, 2 * hb_w)]
     for i in range(1, 7):
