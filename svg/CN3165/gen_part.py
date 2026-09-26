@@ -31,6 +31,13 @@ gen_part.py — 生成 Fritzing 自定义元件 CN3165 (如韵电子 单节锂�
 
 用法：python gen_part.py
 """
+
+# ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+#   板框四周各让 50（内部单位 = 半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；
+#   针脚坐标一个不动 ✓ ⇒ 已有 sketch 不用改 ✓。
+#   （本行由 tools/bb_inset.py 写入 ✓；改完必跑 audit_green_board.py +
+#     check_inside_board.py ✓）
+INSET = 50
 import os
 import re
 import zipfile
@@ -211,7 +218,7 @@ def gen_breadboard_svg():
     s.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" height="{bh / 100 * 2.54:.2f}mm" '
              f'viewBox="0 0 {bw} {bh}">\n')
     s.append(' <g id="breadboard">\n')
-    s.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
+    s.append(f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     s.append(_embed_icon(art, cx, cy, s=U, icx=icx, icy=icy))
 
     def pad(cn, x, y):

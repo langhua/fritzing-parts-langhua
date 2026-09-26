@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="27.94mm" height="22.86mm" viewBox="0 0 1100 900">
  <g id="breadboard">
-  <rect x="0" y="0" width="1100" height="900" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="50" y="50" width="1000" height="800" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
   <g transform="translate(550 550) scale(39.37)"><g id="icon">
     <path d="M -8.7 -5.8 L -3.8 -5.8 L -3.8 -4.9 L 6.2 -4.9 L 6.2 -5.8 L 11.0 -5.8 L 11.0 5.8 L 6.2 5.8 L 6.2 4.9 L -3.8 4.9 L -3.8 5.8 L -8.7 5.8 L -11.0 4.5 L -11.0 -4.5 Z" fill="#2b2b2b" stroke="none"/>
     <path d="M -4.800 -3.795 L -9.575 -3.795 A 0.225 0.225 0 0 0 -9.575 -3.345 L -4.800 -3.345 Z" fill="#d8b45a" stroke="none"/>
