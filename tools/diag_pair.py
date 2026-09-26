@@ -173,6 +173,9 @@ def main(argv):
         print("   box %-5s x %7.1f..%7.1f  y %7.1f..%7.1f" % (ttl, b[0], b[2], b[1], b[3]))
     p, q = BC.hole_xy(ha), BC.hole_xy(hb)
     print("孔对 %s(%.0f,%.0f) → %s(%.0f,%.0f)" % (ha, p[0], p[1], hb, q[0], q[1]))
+    # ★ 这两个孔现在**是谁在用** ✓（"插了元件脚" ✗ 的孔不能当引线端点 ✓）
+    print("   孔占用：%s = %s | %s = %s"
+          % (ha, plugged.get(ha, "空"), hb, plugged.get(hb, "空")))
 
     rows = []
     for pts in candidates(p, q, boxes):
