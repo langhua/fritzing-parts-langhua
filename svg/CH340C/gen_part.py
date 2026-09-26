@@ -193,7 +193,12 @@ def gen_breadboard_svg():
              f'viewBox="0 {gy0} {bw} {gbh}">\n')
     s.append(' <g id="breadboard">\n')
     # 绿色转接板（直角）
-    s.append(f'  <rect x="0" y="{gy0}" width="{bw}" height="{gbh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   针脚在 x=100..800（8 个，100 间隔 ✓）、y=100 / 700 ✓
+    #   ⇒ 旧板框 (0, gy0, 900, gbh) ✗：左右是 0.00 ✗、上下相位 3.65 ✗（40.6 / 759.4 都不是半格 ✓）
+    #   新：x=50 宽 800 ✓（左右各 50 ✓）、y=50 高 700 ✓（上 50 ✓、下 750 ✓）。
+    #   ★ 画布/viewBox **不动** ✓（bw=900、gy0/gbh 保持）⇒ 针脚坐标一个不动 ✓。
+    s.append(f'  <rect x="50" y="50" width="{bw - 100}" height="700" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     # 芯片 icon（横放，1:1，垂直居中 cy=400）；丝印上移至芯片正中（用户 Inkscape 调整）
     s.append(_embed_icon(art, 450, 400, s=U, icx=icx, icy=icy, text_dy=-20.83))
     # 16 排针：上排 connector8-15（y=100，反向：左 16→右 9）、下排 connector0-7（y=700，正向：左 1→右 8），x=100..800
