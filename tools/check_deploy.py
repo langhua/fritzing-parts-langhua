@@ -27,13 +27,15 @@ Fritzing 的真实口径（本工具**不假设**，而是从 fzp 自己声明�
     py -3.13 tools/check_deploy.py FPC05-2H10PX CH340C   # 只查这几件（名字或路径都行）
     py -3.13 tools/check_deploy.py --mine <目录>       # 指定 MINE（默认 %USERPROFILE%/Documents/Fritzing/parts）
     py -3.13 tools/check_deploy.py --stray            # 顺带列出 MINE 里 .fzpz 内部名的残留文件
-    py -3.13 tools/check_deploy.py <件> --fix          # 不一致就照仓库覆盖到**正确路径**（只增改，不删）
+    py -3.13 tools/check_deploy.py <件> --diff         # 把「旧」的实际差异打出来（覆盖前先看清 ✗）
+    py -3.13 tools/check_deploy.py <件> --fix          # 不一致就照仓库覆盖到**正确路径**（覆盖前自动备份 ✓，不删 ✗）
     py -3.13 tools/check_deploy.py --clean-stray       # 把 .fzpz 内部名的残留**移到** parts 之外的备份目录（不删 ✗）
 
 退出码：0 = 全部一致 ✓；1 = 有 ✗（缺文件 / 内容旧 / 名字不符）。
 """
 import argparse
 import datetime
+import difflib
 import hashlib
 import os
 import re
@@ -127,13 +129,37 @@ def find_alias(view_dir, basename):
     return hits
 
 
+def print_diff(repo_path, mine_path, label, limit):
+    """把仓库 / MINE 两份的**实际差异**打出来（`--diff`）——覆盖前先看自己会不会冲掉别人的改动 ✓。"""
+    try:
+        a = read_text(repo_path).splitlines()
+        b = read_text(mine_path).splitlines()
+    except OSError as e:
+        print(f"        （diff 读文件失败：{e}）")
+        return
+    d = list(difflib.unified_diff(b, a, fromfile=f"MINE/{label}", tofile=f"仓库/{label}", lineterm="", n=1))
+    if not d:
+        print("        （逐行内容相同 —— 差异只在行尾/空白或编码 ✗）")
+        return
+    shown = 0
+    for line in d:
+        if shown >= limit:
+            print(f"        …（其余 {len(d) - shown} 行略，调大 --diff-lines 可看全）")
+            break
+        print("        " + line[:200])
+        shown += 1
+
+
 def main():
     ap = argparse.ArgumentParser(description="核对仓库元件与 Fritzing MINE 是否一致（只读，可选 --fix）")
     ap.add_argument("parts", nargs="*", help="元件目录名或路径（缺省 = 扫全仓）")
     ap.add_argument("--mine", default=default_mine(), help="MINE 的 parts 目录")
-    ap.add_argument("--fix", action="store_true", help="不一致就照仓库覆盖到正确路径（只增改，不删）")
+    ap.add_argument("--fix", action="store_true", help="不一致就照仓库覆盖到正确路径（覆盖前自动备份 ✓，不删 ✗）")
+    ap.add_argument("--no-backup", action="store_true", help="--fix 时不要备份（默认会备 ✓）")
     ap.add_argument("--stray", action="store_true", help="列出 .fzpz 内部名的残留文件")
     ap.add_argument("--clean-stray", action="store_true", help="把残留文件移到 parts 之外的备份目录")
+    ap.add_argument("--diff", action="store_true", help="把「旧」的文件差异打出来（覆盖前先看清 ✗）")
+    ap.add_argument("--diff-lines", type=int, default=20, help="--diff 每处最多打多少行（默认 20）")
     args = ap.parse_args()
 
     mine = os.path.abspath(args.mine)
@@ -149,6 +175,11 @@ def main():
     mine_idx = build_mine_fzp_index(user_dir)
     parts = find_parts(args.parts)
     print(f"待核元件：{len(parts)} 个\n")
+
+    # --fix 覆盖前先备份被覆盖的那份（MINE 是用户的 Fritzing 目录 ⇒ 必须留后路 ✓）
+    backup_root = os.path.join(os.path.dirname(mine),
+                               "_deploy_backup_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    n_backup = [0]
 
     bad, fixed, no_repo_fzp = [], [], []
     n_ok = 0
@@ -222,10 +253,17 @@ def main():
             print(f"  ✗ {name}/{fzp_name}  (moduleId={mid})")
             for what, kind, detail, target, src in problems:
                 print(f"      {what}: {kind}  {detail}")
+                if args.diff and kind == "旧":
+                    print_diff(src, target, os.path.basename(target), args.diff_lines)
                 if args.fix:
                     # 不论「旧 / 缺 / 名字不符」，做法都一样：把仓库那份写到**正确路径** ✓
                     # （残留的旧名字文件不在这里删 ✗ —— 交给 --clean-stray ✓）
                     os.makedirs(os.path.dirname(target), exist_ok=True)
+                    if not args.no_backup and os.path.isfile(target):
+                        dst = os.path.join(backup_root, os.path.relpath(target, mine))
+                        os.makedirs(os.path.dirname(dst), exist_ok=True)
+                        shutil.copyfile(target, dst)
+                        n_backup[0] += 1
                     shutil.copyfile(src, target)
                     print(f"      ⇒ 已写入 {target}")
 
@@ -239,6 +277,8 @@ def main():
     print(f"结果：一致 ✓ {n_ok} 个 fzp；有问题 ✗ {len(bad)} 个")
     for b in bad:
         print("    ✗ " + b)
+    if args.fix and n_backup[0]:
+        print(f"\n备份：被覆盖的 {n_backup[0]} 个文件已存到 {backup_root}（没删 ✓，确认没问题再自己删）")
 
     if args.stray or args.clean_stray:
         strays = []
