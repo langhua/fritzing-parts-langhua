@@ -15,21 +15,38 @@ import re
 import os
 import sys
 
-KNOWN = [
-    # ① f-string 版（SS34 / DSIC01LS-P / CN3165 那类：板框 = 整张画布）
-    ('<rect x="0" y="0" width="{bw}" height="{bh}"',
-     '<rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}"'),
-    # ② 板框**本来就从画布内缩**（AT24C02 / ATECC608B / CH340E/N / W25Q16JV / H1102NLT …
-    #    那类芯片转接板：`x="{bx0}" y="{by0}" width="{bw}" height="{bh}"` 带 `#00aa44`）
-    #    ⇒ 四边各再让 50 ✓（这些件四条边的相位都是 0.00 ✗ = 全压在孔线上 ✓，正好一次全修 ✓）
-    ('<rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" fill="#00aa44"',
-     '<rect x="{bx0 + INSET}" y="{by0 + INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}"'
-     ' fill="#00aa44"'),
-    # ✗ 曾经有 ③ `%` 版（`x="0" y="0" width="%d" height="%d"`）—— **已删除** ✗：
-    #   实测 LD1117 踩雷 ✗：几何改成 4 个 `%d` 了，可它的参数表写法不是 `% (bw, bh)` ✗
-    #   ⇒ 生成器当场 `TypeError: not enough arguments for format string` ✗（件直接崩 ✗）。
-    #   ⇒ 这类件**人工改** ✓（少而稳 ✓：USB-B01 已手工做完 ✓）。
+# 认得的板框写法：`start` 是要匹配的开头 ✓，`bx0/by0` = 板框左上角的表达式（用来算新几何 ✓）
+PATTERNS = [
+    # ① 板框 = 整张画布（SS34 / DSIC01LS-P / CN3165 / Crystal-3xxx 那类）
+    {"start": '<rect x="0" y="0" width="{bw}" height="{bh}"', "bx0": "0", "by0": "0"},
+    # ② 板框本来就从画布内缩（AT24C02 / CH340E/N / W25Q16JV / H1102NLT / RT6150AGQW_rev_1 …）
+    {"start": '<rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}"',
+     "bx0": "bx0", "by0": "by0"},
 ]
+
+
+def build(start, bx0, by0, edges):
+    """按"要动哪几条边"拼出新的 rect 开头 ✓（edges ∈ {l,r,t,b} 的子集 ✓）。
+    ★ 为什么要按边 ✓：`Crystal-3215` / `IP101GR` 的**左右边已经是半格** ✓ ——
+      再让一次就变成 0.00 ✗（当场把好的边弄坏 ✗）；所以只能动必要的边 ✓。
+    """
+    def one(base, size, near, far):
+        """base/size = 原 x,width（或 y,height）✓；near = 起点要不要让 ✓；far = 终点要不要让 ✓"""
+        if near and far:
+            b = "INSET" if base == "0" else "%s + INSET" % base
+            return b, "%s - 2 * INSET" % size
+        if near:
+            b = "INSET" if base == "0" else "%s + INSET" % base
+            return b, "%s - INSET" % size
+        if far:
+            return base, "%s - INSET" % size
+        return base, size
+    nx, nw = one(bx0, "bw", "l" in edges, "r" in edges)
+    ny, nh = one(by0, "bh", "t" in edges, "b" in edges)
+    return ('<rect x="%s" y="%s" width="%s" height="%s"'
+            % (("{%s}" % nx) if nx != "0" else "0",
+               ("{%s}" % ny) if ny != "0" else "0",
+               "{%s}" % nw, "{%s}" % nh))
 MODULE_INSET = ("\n# ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：\n"
                 "#   板框四周各让 50（内部单位 = 半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；\n"
                 "#   针脚坐标一个不动 ✓ ⇒ 已有 sketch 不用改 ✓。\n"
@@ -49,22 +66,18 @@ def main(argv):
     if "INSET = 50" in txt:
         print("· %s 已经有 INSET ✓，跳过" % os.path.basename(d))
         return 0
-    hits = []
-    for old, new in KNOWN:
-        if old in txt:
-            hits.append((old, new))
+    edges = "lrtb"                                     # 默认四条边都让（= 半格）✓
+    for a in argv:
+        if a.startswith("--edges="):
+            edges = a.split("=", 1)[1]                 # 如 --edges=tb（只让上下）✓
+    hits = [p for p in PATTERNS if p["start"] in txt]
     if not hits:
         print("✗ %s：认不出板框写法 ✗（一个字没动 ✓）—— 需要人工看" % os.path.basename(d))
-        print("   线索：文件里有没有 '00aa44' / 'BB_GREEN' 的 rect 行？")
         return 2
-    if len(hits) > 1:
-        print("✗ %s：同时匹配到多种写法 ✗（一个字没动 ✓）" % os.path.basename(d))
-        return 3
-    old, new = hits[0]
+    p = hits[0]
+    new = build(p["start"], p["bx0"], p["by0"], edges)
+    old = p["start"]
     txt2 = txt.replace(old, new, 1)
-    # % 版的参数表也要跟着改（`% (bw, bh)` ⇒ 四个值 ✓）
-    if "%d" in new and "% (bw, bh)" in txt2:
-        txt2 = txt2.replace("% (bw, bh)", "% (INSET, INSET, bw - 2 * INSET, bh - 2 * INSET)", 1)
     # 模块级定义：插在**模块 docstring 之后** ✓
     #   ★ 教训：第一版插在"第一个空行"之后 ✗ —— 那多半是 docstring **里面**的空行 ✗
     #     ⇒ 定义会被塞进字符串里 ⇒ 运行到板框那行直接 NameError ✗（生成器不报错才怪 ✗）。

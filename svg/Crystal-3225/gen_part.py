@@ -11,6 +11,13 @@
   - PCB = 3225 焊盘 footprint（2×2，1/3 有效、2/4 NC）
 坐标单位 mm；icon/面包板画布裁到内容。
 """
+
+# ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+#   板框四周各让 50（内部单位 = 半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；
+#   针脚坐标一个不动 ✓ ⇒ 已有 sketch 不用改 ✓。
+#   （本行由 tools/bb_inset.py 写入 ✓；改完必跑 audit_green_board.py +
+#     check_inside_board.py ✓）
+INSET = 50
 import os
 import re
 import zipfile
@@ -115,7 +122,7 @@ def gen_breadboard_svg():
              f'viewBox="0 0 {bw} {bh}">\n')
     s.append(' <g id="breadboard">\n')
     # 绿色转接板（直角）
-    s.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" '
+    s.append(f'  <rect x="0" y="{INSET}" width="{bw}" height="{bh - 2 * INSET}" '
              f'fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     # 自身 icon（1:1 竖放居中，mm→单位 ×39.37）
     s.append(_rot_embed(art, cx, cy, s=U))
