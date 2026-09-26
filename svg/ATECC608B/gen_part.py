@@ -40,6 +40,13 @@ gen_part.py — 生成 Fritzing 自定义元件 ATECC608B（Microchip CryptoAuth
 用法：
   python gen_part.py
 """
+
+# ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+#   板框四周各让 50（内部单位 = 半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；
+#   针脚坐标一个不动 ✓ ⇒ 已有 sketch 不用改 ✓。
+#   （本行由 tools/bb_inset.py 写入 ✓；改完必跑 audit_green_board.py +
+#     check_inside_board.py ✓）
+INSET = 50
 import os
 import re
 import zipfile
@@ -256,7 +263,7 @@ def gen_breadboard_svg():
              f'viewBox="{bx0} {by0} {bw} {bh}">\n')
     s.append(' <g id="breadboard">\n')
     # 绿色转接板（直角）
-    s.append(f'  <rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
+    s.append(f'  <rect x="{bx0 + INSET}" y="{by0 + INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     # 芯片 icon（1:1 居中）
     s.append(_embed_icon(art, cx, cy, s=U, icx=icx, icy=icy))
     # 板上的型号标注（**默认不印**，理由见文件头）

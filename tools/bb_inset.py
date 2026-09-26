@@ -16,10 +16,16 @@ import os
 import sys
 
 KNOWN = [
-    # ① f-string 版（SS34 / DSIC01LS-P / CN3165 那类）
+    # ① f-string 版（SS34 / DSIC01LS-P / CN3165 那类：板框 = 整张画布）
     ('<rect x="0" y="0" width="{bw}" height="{bh}"',
      '<rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}"'),
-    # ✗ 曾经有 ② `%` 版（`x="0" y="0" width="%d" height="%d"`）—— **已删除** ✗：
+    # ② 板框**本来就从画布内缩**（AT24C02 / ATECC608B / CH340E/N / W25Q16JV / H1102NLT …
+    #    那类芯片转接板：`x="{bx0}" y="{by0}" width="{bw}" height="{bh}"` 带 `#00aa44`）
+    #    ⇒ 四边各再让 50 ✓（这些件四条边的相位都是 0.00 ✗ = 全压在孔线上 ✓，正好一次全修 ✓）
+    ('<rect x="{bx0}" y="{by0}" width="{bw}" height="{bh}" fill="#00aa44"',
+     '<rect x="{bx0 + INSET}" y="{by0 + INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}"'
+     ' fill="#00aa44"'),
+    # ✗ 曾经有 ③ `%` 版（`x="0" y="0" width="%d" height="%d"`）—— **已删除** ✗：
     #   实测 LD1117 踩雷 ✗：几何改成 4 个 `%d` 了，可它的参数表写法不是 `% (bw, bh)` ✗
     #   ⇒ 生成器当场 `TypeError: not enough arguments for format string` ✗（件直接崩 ✗）。
     #   ⇒ 这类件**人工改** ✓（少而稳 ✓：USB-B01 已手工做完 ✓）。
