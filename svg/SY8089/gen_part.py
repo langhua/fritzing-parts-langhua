@@ -100,6 +100,10 @@ def gen_breadboard_svg():
     """
     U = 39.37
     bw, bh = 400, 500
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   四周各让 50（半格）⇒ 板边落在两排孔正中 ✓；针脚一个不动 ✓；
+    #   板心仍为 (200,250) ✓ ⇒ 内嵌图标不用挪 ✓。
+    INSET = 50
     pad_r = 1.0 * U
     hole_r = 0.485 * U
     L = []
@@ -107,7 +111,7 @@ def gen_breadboard_svg():
     L.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
              f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n')
     L.append(' <g id="breadboard">\n')
-    L.append(f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
+    L.append(f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" fill="#00aa44" stroke="#00772f" stroke-width="5"/>\n')
     L.append('  <g transform="translate(200 250) scale(%.3f)">\n' % U)
     L.append(_icon_inner())
     L.append('  </g>\n')

@@ -168,7 +168,12 @@ def gen_breadboard_svg():
     U = 39.37                       # 1mm = 39.37 内部单位（100 单位 = 2.54mm）
     pad_r, hole_r = 1.0 * U, 0.485 * U
     bw, bh = 700, 900
-    cx, cy = 350, 330
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   四周各让 50（半格）⇒ 板边落在两排孔正中 ✓；针脚一个不动 ✓。
+    #   ⚠ 注意：本件的顶视图形靠**上边**（顶视图形中心只比上边低 330 单位 ✗），
+    #     所以让完要把图形**一起往下让 INSET** ✓（否则会超出板框 ✗）。
+    INSET = 50
+    cx, cy = 350, 330 + INSET
     y_row = 800
     xs = [200 + i * 100 for i in range(4)]
     names = ("VCC", "D-", "D+", "GND")
@@ -176,8 +181,8 @@ def gen_breadboard_svg():
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
          'viewBox="0 0 %d %d">\n' % (bw / 100 * 2.54, bh / 100 * 2.54, bw, bh),
          ' <g id="breadboard">\n',
-         '  <rect x="0" y="0" width="%d" height="%d" fill="#00aa44" stroke="#00772f" '
-         'stroke-width="5"/>\n' % (bw, bh)]
+         '  <rect x="%d" y="%d" width="%d" height="%d" fill="#00aa44" stroke="#00772f" '
+         'stroke-width="5"/>\n' % (INSET, INSET, bw - 2 * INSET, bh - 2 * INSET)]
     # 顶视图形 1:1（几何 → 绝对坐标烘入：x 中心=cx、y 原点=插口面）
     s += _plate_shapes(U, cx, cy - TOTAL_D / 2.0 * U)
     for i, px in enumerate(xs):

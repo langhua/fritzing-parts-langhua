@@ -103,6 +103,10 @@ def gen_breadboard_svg():
     """
     U = 39.37
     bw, bh = 400, 1000
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   四周各让 50（半格）⇒ 板边落在两排孔正中 ✓；针脚一个不动 ✓；
+    #   板心仍为 (200,500) ✓ ⇒ 本体不用挪 ✓。
+    INSET = 50
     cx, cy = 200, 500
     pad_r, hole_r = 1.0 * U, 0.485 * U
     y_pins = [100, 900]
@@ -110,7 +114,8 @@ def gen_breadboard_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
          f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
          ' <g id="breadboard">\n',
-         f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
+         f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" '
+         f'fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
     # 元件（1:1）：两端焊盘各一条 + 本体 + 拨柄槽/拨柄
     for sy in (-1, 1):

@@ -90,6 +90,11 @@ def gen_breadboard_svg():
     """
     U = 39.37
     bw, bh = 600, 400
+    # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
+    #   旧做法把板框画成整张画布 ✗ ⇒ 板边到针脚都是 100 的整数倍 ✗ ⇒ 压在孔线上 ✗。
+    #   四周各让 50（半格 = 1.27mm）⇒ 板边落在两排孔正中 ✓；针脚一个不动 ✓；
+    #   板心仍为 (300,200) ✓ ⇒ 本体不用挪 ✓。
+    INSET = 50
     cx, cy = 300, 200
     pad_r, hole_r = 1.0 * U, 0.485 * U
     xs = [100, 500]
@@ -97,7 +102,8 @@ def gen_breadboard_svg():
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
          f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
          ' <g id="breadboard">\n',
-         f'  <rect x="0" y="0" width="{bw}" height="{bh}" fill="#00aa44" stroke="#00772f" '
+         f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" '
+         f'fill="#00aa44" stroke="#00772f" '
          f'stroke-width="5"/>\n']
     # 本体（1:1，含焊盘 6.63 × 2.54mm）
     m = U
