@@ -93,7 +93,7 @@ def breadboard_svg():
     """Green breakout board following svg/ATECC608B/svg.breadboard.ATECC608B_breadboard.svg:
     chip laid HORIZONTAL with its 4+4 leads pointing UP / DOWN, header pins in two
     vertical columns (left = pins 1..4 top->bottom, right = pins 8..5 top->bottom,
-    i.e. counter clockwise), pin NUMBERS horizontal and OUTSIDE the pads (x = 35 / 465),
+    i.e. counter clockwise), pin NUMBERS horizontal and INSIDE the pads (see below),
     top mark horizontal and centred, pin-1 dot at the lower-left of the body."""
     L = []
     L.append('<?xml version="1.0" encoding="utf-8"?>\n')
@@ -121,8 +121,16 @@ def breadboard_svg():
     # top mark: horizontal, centred in the body
     L.append('  <text x="%.2f" y="262.60" font-size="32" fill="#ffffff" text-anchor="middle" '
              'dominant-baseline="central" font-family="DroidSans">CH32V002</text>\n' % (BB_W / 2))
-    # header pads (gold) + horizontal numbers OUTSIDE the pads
-    for col, order, tx in ((0, (0, 1, 2, 3), 35.0), (1, (7, 6, 5, 4), 465.0)):
+    # 脚号：焊盘**内侧** ✓（AGENTS §3b「数字必须落在焊盘内侧」✓；用户 2026-09-27 定：
+    #   「内侧放不下就把字缩小」✓）
+    #   ★ 内侧净空 = 本体左缘 BODY_X − 焊盘右缘 (PIN_X[0] + PAD_R) ≈ **12.6 单位**（0.32mm ✓）
+    #     ⇒ 原字号 48（✓ 1 位数就要 28.8 宽 ✗）根本放不下 ✗ ⇒ 按净空**自适应缩字**（≈0.4mm ✓，
+    #     把数字**居中**在净空里 ✓）。代价：数字很小 ✗（用户已看过这个代价并选了它 ✓）。
+    #   ★ 2026-09-27 前置：板边"让半格"后原位置（x=35/465）漂到板外了 ✗。
+    gut_in = BODY_X - (PIN_X[0] + PAD_R)
+    num_fs = max(10.0, (gut_in - 2.0) / 0.60)
+    nx = (PIN_X[0] + PAD_R + gut_in / 2.0, PIN_X[1] - PAD_R - gut_in / 2.0)
+    for col, order, tx in ((0, (0, 1, 2, 3), nx[0]), (1, (7, 6, 5, 4), nx[1])):
         for i, cn in enumerate(order):
             y = PIN_Y0 + i * PIN_PITCH
             L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.1f" cy="%.1f" r="%.1f" '
@@ -131,8 +139,9 @@ def breadboard_svg():
             L.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
                      % (PIN_X[col], y, HOLE_R))
             num = i + 1 if col == 0 else 8 - i
-            L.append('  <text x="%.1f" y="%.1f" font-size="48" fill="#ffffff" text-anchor="middle" '
-                     'dominant-baseline="central" font-family="DroidSans">%d</text>\n' % (tx, y, num))
+            L.append('  <text x="%.1f" y="%.1f" font-size="%.1f" fill="#ffffff" text-anchor="middle" '
+                     'dominant-baseline="central" font-family="DroidSans">%d</text>\n'
+                     % (tx, y, num_fs, num))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)

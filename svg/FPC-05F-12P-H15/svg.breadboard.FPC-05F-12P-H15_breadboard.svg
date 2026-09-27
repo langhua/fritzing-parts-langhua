@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="15.24mm" height="18.18mm" viewBox="0 -15.75 600 715.75">
+<svg xmlns="http://www.w3.org/2000/svg" width="15.24mm" height="19.05mm" viewBox="0 -50.00 600 750.00">
  <g id="breadboard">
-  <rect x="0" y="-15.75" width="600" height="700" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
+  <rect x="0" y="-50.00" width="600" height="700" fill="#00aa44" stroke="#00772f" stroke-width="5"/>
   <rect x="101.18" y="475.04" width="397.64" height="161.42" fill="#f2f2f2" stroke="#9a9a9a" stroke-width="3.15"/>
   <rect x="185.83" y="443.54" width="11.81" height="31.50" fill="#f7bf13" stroke="none"/>
   <rect x="205.51" y="443.54" width="11.81" height="31.50" fill="#f7bf13" stroke="none"/>

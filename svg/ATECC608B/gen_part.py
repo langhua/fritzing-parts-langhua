@@ -278,18 +278,23 @@ def gen_breadboard_svg():
                      f'cx="{xx:.1f}" cy="{y:.1f}" r="{pad_r:.1f}" '
                      f'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n')
             s.append(f'  <circle cx="{xx:.1f}" cy="{y:.1f}" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-    # 脚号：焊盘**外侧**（照片里就是外侧），**不旋转**（水平正着写）
-    # ⚠ 旋转这事来回改过：§3b 写的是 `rotate(-90 x y)`（逆时针）→ 用户 2026-09-22 说顺时针
-    #   （`rotate(90)`）→ 随即澄清：「文字**不转动**」⇒ 现在**不加 transform**。
-    #   位置/字号仍是外侧 48（1.22mm）。水平写时字宽 ±13、字高 ±17，都还在板内且不压焊盘环
-    #   （数字 x 22..48 与焊盘环 60.6..139.4 不重叠）。
-    nx_l, nx_r = x_left - NUM_OFF, x_right + NUM_OFF
+    # 脚号：焊盘**内侧** ✓（AGENTS §3b；用户 2026-09-27 定：「内侧放不下就把字缩小」✓）
+    #   ★ 曾经在**外侧**（照片里就是外侧 ✓，那时板边还在 x=0 ✓ 外侧有 60.6 单位 ✓）；
+    #     2026-09-27 板边"让半格"缩到 x=50 ✗ ⇒ 外侧只剩 10.6 单位 ⇒ 数字漂到板外 ✗。
+    #   ★ 内侧净空 = 本体左缘 (cx − BODY_D·U/2) − 焊盘右缘 (x_left + pad_r) ≈ **11.2 单位**（0.28mm ✓）
+    #     ⇒ 放不下原字号 48 ✗（1 位数就要 28.8 宽 ✗）⇒ 按净空**自适应缩字**（≈0.4mm ✓，
+    #     数字**居中**在净空里 ✓）。代价：数字很小 ✗（用户已看过这个代价并选了它 ✓）。
+    #   ★ 旋转依旧**不加** ✓（用户 2026-09-22 明确：「文字不转动」✓）。
+    gut_in = (cx - BODY_D * U / 2.0) - (x_left + pad_r)
+    num_fs = max(10.0, (gut_in - 2.0) / 0.60)
+    nx_l = x_left + pad_r + gut_in / 2.0
+    nx_r = x_right - pad_r - gut_in / 2.0
     for i in range(per):
         y = y_pins[i]
-        s.append(f'  <text x="{nx_l:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
+        s.append(f'  <text x="{nx_l:.1f}" y="{y:.1f}" font-size="{num_fs:.1f}" fill="#ffffff" '
                  f'text-anchor="middle" dominant-baseline="central" '
                  f'font-family="DroidSans">{i + 1}</text>\n')
-        s.append(f'  <text x="{nx_r:.1f}" y="{y:.1f}" font-size="{NUM_FS}" fill="#ffffff" '
+        s.append(f'  <text x="{nx_r:.1f}" y="{y:.1f}" font-size="{num_fs:.1f}" fill="#ffffff" '
                  f'text-anchor="middle" dominant-baseline="central" '
                  f'font-family="DroidSans">{per * 2 - i}</text>\n')
     s.append(' </g>\n</svg>\n')
