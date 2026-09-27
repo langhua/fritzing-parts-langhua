@@ -265,8 +265,15 @@ def breadboard_svg():
     L.append('  <text x="250" y="%.2f" font-size="13" fill="#c0c0c0" text-anchor="middle" '
              'dominant-baseline="central" font-family="DroidSans">%s</text>\n' % (cy, ICON_MARK))
     # header pins: left column = pins 1,2,3 (top->bottom), right = 4,5,6 (bottom->top)
+    # 脚号：焊盘**内侧**（朝板心那一侧 ✓，AGENTS §3b「数字必须落在焊盘内侧」✓）
+    # ★ 2026-09-27 修（用户：「引脚数字是丝印在板上的，现在漂浮在空中了」✗）：
+    #   板边"让半格"后板宽只剩 400（x=50..450）✓，而数字原来写在**外侧**（x=35/465）✗
+    #   ⇒ 漂到板外去了 ✗。实测内侧空间 = 焊盘右缘 139.4 → 本体左缘 210.6 = **71.2 单位** ✓
+    #   （数字最宽 24 ✓）⇒ 改到内侧 ✓、与焊盘环留 0.3mm 空隙（≈11.8 内部单位 ✓）。
+    #   用 anchor start/end（而不是 middle）⇒ 一位/两位数的空隙都恒定 ✓。
     for col, order in ((0, (1, 2, 3)), (1, (6, 5, 4))):
         x = (100.0, 400.0)[col]
+        nx = x + BB_PAD_R + 11.8 if col == 0 else x - BB_PAD_R - 11.8
         for j, pno in enumerate(order):
             y = y0 + j * 100.0
             L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.1f" cy="%.1f" r="%.1f" '
@@ -274,9 +281,9 @@ def breadboard_svg():
                      % (pno - 1, node(pno), x, y, BB_PAD_R))
             L.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
                      % (x, y, BB_HOLE_R))
-            L.append('  <text x="%.1f" y="%.1f" font-size="40" fill="#ffffff" text-anchor="middle" '
+            L.append('  <text x="%.1f" y="%.1f" font-size="40" fill="#ffffff" text-anchor="%s" '
                      'dominant-baseline="central" font-family="DroidSans">%d</text>\n'
-                     % (35.0 if col == 0 else 465.0, y, pno))
+                     % (nx, y, "start" if col == 0 else "end", pno))
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 

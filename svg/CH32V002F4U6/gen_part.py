@@ -214,8 +214,18 @@ def breadboard_svg():
     # pins: left column = 1..n_col top->bottom, right = n..n_col+1 top->bottom
     left = list(range(1, n_col + 1))
     right = list(range(n, n - n_col, -1))
+    # 脚号：焊盘**内侧**（朝板心那一侧 ✓，AGENTS §3b「数字必须落在焊盘内侧」✓）
+    # ★ 2026-09-27 修（用户：「引脚数字是丝印在板上的，现在漂浮在空中了」✗）：
+    #   板边"让半格"后板宽只剩 400（x=50..450）✓，而数字原来写在**外侧**（x=35/465）✗
+    #   ⇒ 漂到板外去了 ✗。本族实测内侧空间 = 焊盘右缘 139.4 → 本体左缘 190.9 = **51.5 单位** ✓。
+    #   ⚠ 两位数字（10..20 脚）fs 40 需 48 + 11.8 空隙 = 59.8 ✗ 放不下（差 8.3 ✗）
+    #     ⇒ **本族字号取 32**（0.81mm）：2 位 = 38.4 + 11.8 = 50.2 ≤ 51.5 ✓ 放得下 ✓
+    #     （2mm 焊盘旁边 0.81mm 的数字 ✓，与实物丝印尺寸相当 ✓）。
+    #   用 anchor start/end（而不是 middle）⇒ 一位/两位数的空隙都恒定 ✓。
+    #   ★ 本生成器**一族共用** ✓（CH32V002D4U6 / CH32V003F4U6 都用 importlib 加载它 ✓）⇒ 改一处一族全好 ✓。
     for col, order in ((0, left), (1, right)):
         x = BB_PIN_X[col]
+        nx = x + BB_PAD_R + 11.8 if col == 0 else x - BB_PAD_R - 11.8
         for j, pno in enumerate(order):
             y = y0 + j * BB_PITCH
             L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.1f" cy="%.1f" r="%.1f" '
@@ -223,16 +233,16 @@ def breadboard_svg():
                      % (pno - 1, pin_name(pno), x, y, BB_PAD_R))
             L.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
                      % (x, y, BB_HOLE_R))
-            L.append('  <text x="%.1f" y="%.1f" font-size="40" fill="#ffffff" text-anchor="middle" '
+            L.append('  <text x="%.1f" y="%.1f" font-size="32" fill="#ffffff" text-anchor="%s" '
                      'dominant-baseline="central" font-family="DroidSans">%d</text>\n'
-                     % (35.0 if col == 0 else 465.0, y, pno))
+                     % (nx, y, "start" if col == 0 else "end", pno))
     # exposed pad (pin 0) broken out at the bottom centre
     L.append('  <circle id="connector%dpin" connectorname="%s" cx="250.0" cy="%.1f" r="%.1f" '
              'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n'
              % (n, PAD_NAME, bh - 50.0, BB_PAD_R))
     L.append('  <circle cx="250.0" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
              % (bh - 50.0, BB_HOLE_R))
-    L.append('  <text x="250.0" y="%.1f" font-size="40" fill="#ffffff" text-anchor="middle" '
+    L.append('  <text x="250.0" y="%.1f" font-size="32" fill="#ffffff" text-anchor="middle" '
              'dominant-baseline="central" font-family="DroidSans">0</text>\n' % (bh - 130.0))
     L.append(' </g>\n')
     L.append('</svg>\n')
