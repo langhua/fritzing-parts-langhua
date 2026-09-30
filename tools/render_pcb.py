@@ -17,20 +17,53 @@ r"""把 sketch 的 **pcbView** 画成预览图 ✓（2026-09-30 立）
   py -3.13 tools\render_pcb.py <sketch.fzz> <out.svg> [--px 12] [--png]
 """
 import os
+import re
 import sys
+import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import part_box as PB                                             # noqa: E402
 import pcb_check as PC                                            # noqa: E402
+import pcb_pads as PP                                             # noqa: E402
 import pcb_wire as PW                                             # noqa: E402
 
 C_TOP, C_BOT = "#d02020", "#2040d0"        # copper1 = 顶层（红 ✓）/ copper0 = 底层（蓝 ✓）
-C_VIA, C_BRD, C_TXT = "#118011", "#7a9a7a", "#333333"
+C_VIA, C_TXT = "#118011", "#333333"
+C_BRD_FILL, C_BRD_EDGE = "#d9d9d9", "#333333"   # ★ 板画成**灰色** ✓
 _OPTS = [set()]                            # `render()` 的开关 ✓（给 bbox 那段判 `--board-only` ✓）
 
 
 def esc(s):
     return (s or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def copper_inner(svg_text):
+    """把件 svg 里 **copper0 / copper1** 两组的内容**原样**取出来 ✓（配平扫描 ✓）
+
+    ★ 为什么**原样**取 ✗：线圈那种件的铜箔是 **700 多条 path** ✓ —— 自己按包围盒画只会
+      画成方块 ✗；照搬原文才和 Fritzing 画的一模一样 ✓。
+    ★ 为什么**配平扫描**、不用非贪婪正则 ✗：组里还有嵌套 `<g>` ✓（AGENTS 里踩过：非贪婪
+      会截到第一个 `</g>` ✗）。
+    ★ 为什么不画面包板视图的老毛病 ✗：这里只取 `copper0/copper1` ✓（丝印不要 ✓）。
+    """
+    out = []
+    for lay in ("copper0", "copper1"):
+        m = re.search(r'<g\b[^>]*\bid="%s"[^>]*>' % lay, svg_text)
+        if not m:
+            continue
+        depth, i = 1, m.end()
+        while i < len(svg_text) and depth:
+            nxt = re.search(r"<(/?)g\b", svg_text[i:])
+            if not nxt:
+                break
+            j = i + nxt.start()
+            depth += -1 if nxt.group(1) else 1
+            i = i + nxt.end()
+            if depth == 0:
+                out.append(svg_text[m.end():j])
+                break
+    return "".join(out)
 
 
 def render(model, px_per_mm=12.0, opts=()):
@@ -47,6 +80,22 @@ def render(model, px_per_mm=12.0, opts=()):
     for v in model["vias"]:
         xs.append(v["p"][0])
         ys.append(v["p"][1])
+    for p in model.get("parts", []):          # ★ 件的**画布**也包进来 ✓（线圈的铜比它的盘大很多 ✗）
+        if p.get("svg_text") is None or "loc" not in p:
+            continue
+        if (p.get("moduleId") or "").startswith(("Breadboard", "Via")):
+            continue
+        root = ET.fromstring(p["svg_text"])
+        kk, _o = PB.svg_k(root)
+        wmm, hmm = PB.canvas_mm(root.attrib)
+        if kk and wmm and hmm:
+            uv = PB._nums(root.get("viewBox"))
+            if len(uv) == 4:
+                for cu in (uv[0], uv[0] + uv[2]):
+                    for cv in (uv[1], uv[1] + uv[3]):
+                        q = PB.apply(p["M"], (cu - uv[0]) * kk, (cv - uv[1]) * kk)
+                        xs.append(p["loc"][0] + q[0])
+                        ys.append(p["loc"][1] + q[1])
     r = model["board"] or (min(xs), min(ys), max(xs), max(ys))
     if "--board-only" not in _OPTS[0] and xs:
         # ★★ 视口 = **板框 ∪ 所有焊盘/走线/过孔** ✓（2026-09-30 修 ✗）：
@@ -67,9 +116,31 @@ def render(model, px_per_mm=12.0, opts=()):
     o = ['<svg xmlns="http://www.w3.org/2000/svg" width="%.0f" height="%.0f" '
          'viewBox="0 0 %.1f %.1f">' % (W, H, W, H),
          '<rect width="100%" height="100%" fill="#ffffff"/>',
-         '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#eef6ee" '
+         '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
          'stroke="%s" stroke-width="1.2"/>'
-         % (X(r[0]), Y(r[1]), (r[2] - r[0]) * k, (r[3] - r[1]) * k, C_BRD)]
+         % (X(r[0]), Y(r[1]), (r[2] - r[0]) * k, (r[3] - r[1]) * k, C_BRD_FILL, C_BRD_EDGE)]
+    # ★★ 件的**铜箔原文**（含线圈 700 多条绕组 ✓）—— 2026-09-30 用户点名补 ✗：
+    #   上一版只画焊盘 ✗ ⇒ 线圈看成一个空框 ✗，没法用眼看"压绕组" ✗。
+    T = (k, 0.0, 0.0, k, -x0 * k, -y0 * k)                    # sketch → px ✓
+    for p in model.get("parts", []):
+        if p.get("svg_text") is None or "loc" not in p:
+            continue
+        if (p.get("moduleId") or "").startswith(("Breadboard", "Via")):
+            continue
+        inner = copper_inner(p["svg_text"])
+        if not inner:
+            continue
+        root = ET.fromstring(p["svg_text"])
+        kk, (ox, oy) = PB.svg_k(root)
+        vb = PB._nums(root.get("viewBox"))
+        vbw = vb[2] if len(vb) == 4 and vb[2] else None
+        flip = ((p.get("pv") or {}).get("bottom") or "").lower() == "true" and vbw
+        F = (-1.0, 0.0, 0.0, 1.0, 2.0 * ox + vbw, 0.0) if flip else (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+        S = PB.mul(PB.mul(T, p["M"]), PB.mul((kk, 0.0, 0.0, kk, -ox * kk, -oy * kk), F))
+        LX = X(p["loc"][0])
+        LY = Y(p["loc"][1])
+        o.append('<g transform="translate(%.3f,%.3f) matrix(%s)">%s</g>'
+                 % (LX, LY, ",".join(PW.fmt(v) for v in S), inner))
     # 走线（先画线、后画盘 ✓，盘压线 ✓）
     for t in model["traces"]:
         c = C_TOP if t["layer"] == "copper1" else C_BOT

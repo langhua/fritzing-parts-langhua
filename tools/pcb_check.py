@@ -140,7 +140,7 @@ def collect(path):
         traces.append(dict(layer=t["layer"][:-5] if t["layer"].endswith("trace") else t["layer"],
                            a=e[0], b=e[1]))
     return dict(pads=pads, traces=traces, vias=vias, board=PW.board_rect(text),
-                text=text, name=name, warns=warns)
+                text=text, name=name, warns=warns, parts=parts)
 
 
 def pad_layers(q):
