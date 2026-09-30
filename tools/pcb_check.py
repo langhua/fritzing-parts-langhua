@@ -118,7 +118,8 @@ def collect(path):
                 warns.append("%s.%s 带孔（Ø%.2f）却只画在 `%s` 一层 ⇒ 按**贯通两层**算 ✓（口径待核 ⚠️）"
                              % (p["title"], cid, q["hole_mm"], q["layer"]))
             pads.append(dict(title=p["title"], cid=cid, nm=q["nm"], c=q["abs"], box=q["absbox"],
-                             layer=q["layer"], thr=bool(q["hole_mm"])))
+                             layer=q["layer"], thr=bool(q["hole_mm"]),
+                             mi=p.get("mi") or ""))
     text, name = PW.read(path)
     traces, vias = [], []
     for _ind, b in PW.blocks(text):
@@ -160,7 +161,7 @@ def check(model, expect=None):
     def endpt(t, k):
         return t["a"] if k == 0 else t["b"]
 
-    # ① 悬空端点 ＋ ⑤ 建边（端点↔焊盘 ✓、端点↔别条线 ✓）
+    # ① 悬空端点 ＋ ⑤ 建边（端点↔焊盘 ✓、端点↔别条线 ✓、★端点↔过孔 ✓）
     for i, t in enumerate(traces):
         for k in (0, 1):
             e = endpt(t, k)
@@ -174,6 +175,15 @@ def check(model, expect=None):
                     continue
                 if on_seg(e, u["a"], u["b"]):
                     uf.union(end(i, k), end(j, 0))
+                    hit = True
+            # ★★ 2026-09-30 补 ✗：端点落在**过孔**上也算接上了 ✓ ——
+            #   ✗ 旧版只查"焊盘 + 同层线" ✗ ⇒ **换层的两根线各报一个悬空端点** ✗
+            #     （两层当然不同层 ✗）⇒ 实测把 15 个过孔报成 **30 条悬空** ✗
+            #     —— 而用户早就说过：「有时候需要添加过孔，来跨层连接」✓。
+            #   ★ 过孔**两层都连通** ✓ ⇒ 不挑端点所在层 ✓。
+            for vi, v in enumerate(vias):
+                if (abs(v["p"][0] - e[0]) <= TOL and abs(v["p"][1] - e[1]) <= TOL):
+                    uf.union(end(i, k), ("via", vi))
                     hit = True
             if not hit:
                 probs.append("① 悬空端点：走线 #%d（%s 层，(%.2f,%.2f)→(%.2f,%.2f) mm）的 %s 端"

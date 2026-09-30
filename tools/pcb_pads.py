@@ -40,6 +40,19 @@ import part_box as PB                                            # noqa: E402
 
 tag = PB.tag
 SK = PB.MM                       # 1 mm = 3.5433 sketch 单位 ✓
+
+# ★★ Fritzing **核心安装孔件**画在哪 ✓：`图上画出来的孔心 = <geometry> + HOLE_DRAW_OFF_MM` ✓
+#   ★ 出处（**实测** ✓，不是猜 ✗）：用户导出的 `pixel-pcb-v25_图示.svg` 里，两颗孔的钻孔圆
+#     画在他板框的 (2.898, 21.898) / (21.898, 2.898) mm ✓，而该实例的 `<geometry>`
+#     写的是 (3.00, 22.00) / (22.00, 3.00) ✓ ⇒ 直接差 **(+1.665, +1.665) mm** ✗。
+#     （帧差 0.102 mm 是拿**线圈两个通孔盘**当参照扣的 ✓：模型 (11.90,16.05) vs 图
+#      (11.798,15.948) ✓ 两盘一致 ✓ ⇒ 这个参照稳 ✓。）
+#   ⇒ 把 `<geometry>` 当孔心 ✗ 会把孔写到离板边 **1.23 mm** ✗（IPC 要 ≥ 3 ✓）。
+#   ⚠️ 它是**这个件**的属性 ✗（不是 Fritzing 的通则 ✗，也没有公式可推 ✓）；
+#     大板上量到的 (−46.50, −21.11) 是**错的** ✗（不能跳板用 ✗）。
+#   ★★ **只有这一份** ✓：`gen_pcb` / `audit_placement` / `render_pcb` 都引用它 ✓
+#     （2026-09-30 收拢 ✓ —— 之前是三份字面量 ✗，改一处就漂 ✗）。
+HOLE_DRAW_OFF_MM = (1.665, 1.665)
 PAD_SUF = ("pad", "pin", "leg", "terminal", "circle", "ring")
 PADLIKE = ("rect", "circle", "ellipse")          # 焊盘形状 ✓（path = 走线/铜箔 ✓）
 BOARD_MID = "TwoLayerRectanglePCBModuleID"        # 板框自己 ⇒ **不是元件** ✗（不读焊盘 ✓）
