@@ -19,6 +19,7 @@ r"""网标签（net label）规则 —— **全仓唯一实现** ✓
   常数**全部实测**并注明出处 ✓；生成器、渲染器、判定器都调它 ✓（各写一套就是等着两边对不上 ✗）。
 """
 import math
+import os
 import re
 
 _MOD = re.compile(r'moduleIdRef\s*=\s*"([^"]*)"')
@@ -331,12 +332,19 @@ def ground_geom(pin_pt):
     return (pin_pt[0] - GROUND_PIN_DX, pin_pt[1] - GROUND_PIN_DY)
 
 
-# ★★ 接地符号的**图形** ✓（2026-09-30 ✓ 用户同意入库 ✓）—— 数据在 `_assets/ground_symbol.svg`
-#   （逐字取自 Fritzing 自己导出的 svg ✓ + `_assets/LICENSE-ground.txt` 记来源与许可 ✓）。
+# ★★ 接地符号的**图形** ✓（2026-09-30 ✓ 用户同意入库 ✓）—— 数据在
+#   **`svg/_assets/ground_symbol.svg`** ✓（逐字取自 Fritzing 自己导出的 svg ✓ +
+#   `svg/_assets/LICENSE-ground.txt` 记来源与许可 ✓）。
+#   ★★ 2026-09-30 ✓ **用户定：全部外部素材统一放 `svg/_assets/`** ✓（原来在 `tools/_assets/` ✗）。
+#     定位 = **本仓根**（= 工具目录的上一级）下的 `svg/_assets/` ✓；`FZ_ASSETS` 可覆盖 ✓。
+#     ✗ 不按 cwd 找 ✗（工具被别处调用时会**静默少画接地符号** ✗ —— 实测踩过：零件 13→**11** ✗）。
 #   ★ 内层 → sketch：**×1.25** ✓（内层 1 单位 = 1/72 in ✓）；**脚**在内层 `(7.201, 0.375)` ✓
 #     ⇒ 摆法 = `translate(几何 + (9.001, 0.596)) · scale(1.25) · translate(-7.201, -0.375)`
 #     ⇒ 脚正好落在 `ground_pin()` 上 ✓（两处口径**同一份** ✓）。
-GROUND_ART = ("_assets", "ground_symbol.svg")
+ASSET_DIR = (os.environ.get("FZ_ASSETS")
+             or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "svg", "_assets"))
+GROUND_ART = ("ground_symbol.svg",)     # ★ 素材名 ✓（就在 `ASSET_DIR` 里 ✓）
 GROUND_ART_PIN = (7.201, 0.375)          # 内层脚位 ✓（见上 ✓）
 GROUND_ART_SCALE = 1.25                  # 内层 → sketch ✓
 
@@ -362,12 +370,12 @@ _ground_cache = {}
 def ground_art(geom):
     """接地符号的**图形**（已摆好位 ✓ 视图坐标 ✓）—— 直接塞进渲染器的 `body` ✓
 
-    ★ 图形从 `_assets/ground_symbol.svg` 读 ✓（只读一次、缓存 ✓）；
+    ★ 图形从 **`svg/_assets/ground_symbol.svg`** 读 ✓（只读一次、缓存 ✓）；
       ✗ 缺文件时**返回空串**并让调用方如实报出 ✗（不许静默画个假的 ✗）。
     """
     import os
     if not _ground_cache:
-        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), *GROUND_ART)
+        p = os.path.join(ASSET_DIR, *GROUND_ART)
         try:
             _txt = open(p, encoding="utf-8").read()
         except OSError:

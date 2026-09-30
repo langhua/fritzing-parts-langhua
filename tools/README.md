@@ -474,7 +474,7 @@ CH347T 手工版里有 **14 组**这样偏了 0.135~0.228mm → **改的是手�
 |---|---|
 | `sch_geom.py` | 原理图几何的**唯一实现**（`seg_cross` / `on_seg` / `seg_hits_box` / `hits_box` / `p2seg` / `near_overlap`）：布线器与渲染器**共用这一份** —— ✗ 两份实现的教训是"数字对不上、找不到原因" ✗ |
 | `sch_box.py` | **本体盒的唯一实现**（零件 svg + 一次摆放 ⇒ sketch 坐标下的轴对齐盒）；`part_svg_text` / `resolve_parts_svg` 也在这 |
-| `sch_net.py` | **网标签 / 接地符号**的规则（唯一实现）：同名标签即同网、接地符号是"桥"不是电气成员、标签旗标本体盒、**接地符号图形**（数据在 `tools/_assets/ground_symbol.svg` ✓ 许可在 `_assets/LICENSE-ground.txt` ✓） |
+| `sch_net.py` | **网标签 / 接地符号**的规则（唯一实现）：同名标签即同网、接地符号是"桥"不是电气成员、标签旗标本体盒、**接地符号图形**（数据在 **`svg/_assets/ground_symbol.svg`** ✓ 许可在 `svg/_assets/LICENSE-ground.txt` ✓ —— ★ 用户 2026-09-30 定：**全部外部素材统一放 `svg/_assets/`** ✓；工具按**本仓根**找它 ✓ 不按 cwd ✗，`FZ_ASSETS` 可覆盖 ✓） |
 | `sch_text.py` / `sch_glyphs.py` | **文字宽度表**（`sch_text` = 位号 ✓；`sch_glyphs` = 网标签旗标 ✓）—— 都靠"渲成 PNG + 扫像素"**实测**得到；换机器/装字体要重测 ✗ |
 | `projdata.py` | 读**项目数据模块**（`--nets=` ✓）—— 见上 ✓ |
 | `render_sch.py <fzz> <out.png\|svg>` | 把原理图渲成 PNG（"看得见"的眼睛 ✓）+ 出一整套判据：**(A)** 声明接了脚而线没画到 ✗、**(B)** 线画在脚上而表里没那条 ✗、**(C)** 退化为点 ✗、十字交叉 / 穿本体 / 贴脚 / 悬空端 / 画布 ✓（还有 `--pins-out=` 反推脚位 ✓、`--verify-export=` 与 Fritzing 导出对账 ✓） |

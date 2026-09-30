@@ -271,7 +271,7 @@ for el in root.iter("instance"):
                         (PART_BOX[ttl][2], PART_BOX[ttl][3])):
                 ALL_PTS.append(_qc)
         else:
-            skipped.append((ttl, "**接地符号：图形文件没读到** ✗（`_assets/ground_symbol.svg` ✓）"
+            skipped.append((ttl, "**接地符号：图形文件没读到** ✗（`svg/_assets/ground_symbol.svg` ✓）"
                                  "⇒ 只登脚位、不画 ✓（如实报出 ✓）"))
         continue
     fzp = (el.get("path") or "").replace("/", os.sep)
