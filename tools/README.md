@@ -454,3 +454,42 @@ CH347T 手工版里有 **14 组**这样偏了 0.135~0.228mm → **改的是手�
   要动它们先跟用户对齐。
 - 容差一律按**文字自己的字号**算（仓库里符号尺度差两个数量级：CH347F 字号 35、
   官方小符号件 0.88），写死绝对值必然误报。芯片名/图例比脚号大得多 → 不当引脚名。
+
+## 原理图 / 面包板的通用工具（2026-09-30 从 `AuroraTessellation-NFC` 收进库 ✓）
+
+★ **为什么要收进来** ✓：它们的**规则正文本来就在本仓**（`docs/schem-drawing-rules.md` A 节 ✓
+`docs/breadboard-routing-rules.md` ✓），而实现却在项目仓 ✗ ⇒ "文档在一个仓、代码在另一个仓"
+＝ 改一处忘三处 ✗。项目仓里现在**只留项目数据与项目脚本** ✓（`pixel_nets.py` / `gen_schematic_wires.py` /
+`gen_schematic_layout*.py` / `pins_*.py` / `toolpaths.py` ✓）。
+
+★ **项目数据从工具里抽出去了** ✗✓（不然就是"公共仓里写着某块板的网名" ✗）：
+工具收 `--nets=<项目数据.py>` ✓，**缺省 = 当前目录的 `pixel_nets.py`** ✓（例：
+`AuroraTessellation-NFC/hardware/pixel/pixel_nets.py` ✓ 里面有 `NETS` / `EXPECT` / `COLOR` 三张表 ✓）。
+读项目数据一律走 `projdata.load()` ✓（**唯一实现** ✓；找不到文件或缺表 ⇒ **报错退出** ✗，不静默 ✓）。
+
+★ **`toolpaths.py` 留在项目仓** ✓ —— 它是**项目侧**的定位器（把本仓 `tools/` 接进 `sys.path` ✓），
+跨仓引用只此一处 ✓；本仓的工具**不再需要它** ✗（同目录直接 import ✓）。
+
+| 脚本 / 模块 | 干什么 |
+|---|---|
+| `sch_geom.py` | 原理图几何的**唯一实现**（`seg_cross` / `on_seg` / `seg_hits_box` / `hits_box` / `p2seg` / `near_overlap`）：布线器与渲染器**共用这一份** —— ✗ 两份实现的教训是"数字对不上、找不到原因" ✗ |
+| `sch_box.py` | **本体盒的唯一实现**（零件 svg + 一次摆放 ⇒ sketch 坐标下的轴对齐盒）；`part_svg_text` / `resolve_parts_svg` 也在这 |
+| `sch_net.py` | **网标签 / 接地符号**的规则（唯一实现）：同名标签即同网、接地符号是"桥"不是电气成员、标签旗标本体盒、**接地符号图形**（数据在 `tools/_assets/ground_symbol.svg` ✓ 许可在 `_assets/LICENSE-ground.txt` ✓） |
+| `sch_text.py` / `sch_glyphs.py` | **文字宽度表**（`sch_text` = 位号 ✓；`sch_glyphs` = 网标签旗标 ✓）—— 都靠"渲成 PNG + 扫像素"**实测**得到；换机器/装字体要重测 ✗ |
+| `projdata.py` | 读**项目数据模块**（`--nets=` ✓）—— 见上 ✓ |
+| `render_sch.py <fzz> <out.png\|svg>` | 把原理图渲成 PNG（"看得见"的眼睛 ✓）+ 出一整套判据：**(A)** 声明接了脚而线没画到 ✗、**(B)** 线画在脚上而表里没那条 ✗、**(C)** 退化为点 ✗、十字交叉 / 穿本体 / 贴脚 / 悬空端 / 画布 ✓（还有 `--pins-out=` 反推脚位 ✓、`--verify-export=` 与 Fritzing 导出对账 ✓） |
+| `render_bb.py <fzz> <out.png>` | 面包板视图渲染（同上，给面包板用） |
+| `check_netlist.py <fzz> [--nets=<项目数据>]` | **网表核对**：从 sketch 建连接图 ⇒ 分量 ⇒ 与项目数据里的 `EXPECT` 逐网比 ✓；**判定行与退出码一致** ✓（✗ ⇒ 1）—— ✗ 以前从不设退出码 ⇒ "判定 ✗"照样 exit 0，是一枚**橡皮图章** ✗（2026-09-30 被用户看图抓出 ✓） |
+| `check_fake_wires.py <fzz>…` | 假连线出厂检查（跑 `render_sch.py` 取 (A)/(B)/(C)，合格线 (A)=0 且 (B)=0）✓；中间产物写**系统临时目录** ✓（`FZ_WORK` 可覆盖 ✓） |
+| `check_flags.py` / `check_grounds.py` / `check_label_touch.py` / `check_junctions.py` / `check_labels.py` | 五道**电路层**判据：① 导线穿网标签旗标 ✗ ② 接地符号几何（**另一份实现** ✓ 不许自证 ✓）③ 标签的脚是否**真落在**导线上 ✓ ④ 多余接线点（共线切分 ✗，落在引脚上的接头豁免 ✓）⑤ 标签几何 vs Fritzing 导出的 svg 对账 ✓ |
+| `bb_route4.py <layout.fzz> <out.fzz> [--nets=<项目数据>]` | 面包板**跳线布线器** v4（规则正文在 `docs/breadboard-routing-rules.md` ✓）：总线/孔位/遮挡/颜色（颜色表来自项目数据 ✓，只能用 Fritzing 官方色值 ✓） |
+| `audit_layout.py` ✗ | **留在项目仓** ✓（它直接读那块板的网表/摆位 ✓ ⇒ 是项目脚本 ✓） |
+| `wire_dump.py` / `set_rot.py` | 开发辅助：把 `.fzz` 里导线的 `<geometry>` 逐条打出来（钉死坐标口径 ✓）；按 Fritzing 自己的格式给某个元件加旋转 ✓ |
+
+★ **搬家后的用法** ✓（例：项目仓里跑）：
+```
+py -3.13 <库仓>/tools/render_sch.py    <out.fzz> <out.png>
+py -3.13 <库仓>/tools/check_netlist.py <out.fzz>          # 自动读当前目录的 pixel_nets.py
+```
+★ **相对路径按「当前目录」解** ✓（✗ 曾经按 `HERE`=工具自己所在目录解 ⇒ 搬进库仓后一律"文件不存在" ✗，
+实测踩到 ✓）；要指别处就给**绝对路径** ✓。
