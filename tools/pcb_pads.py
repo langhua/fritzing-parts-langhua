@@ -128,12 +128,17 @@ def copper_shapes(root):
     return out, bad
 
 
-def pcb_pads(root, connectors=()):
+def pcb_pads(root, connectors=(), decl=None):
     """按 **connector id** 把焊盘归好 ✓
 
     ⇒ `({cid: pad}, 没人认领的铜（焊盘形状 ✓）, 认不出的清单 ✓)`
     ★ 同一 connector 多个候选（如通孔件在 copper0/copper1 各画一份 ✓）⇒ 取**铜层**里的 ✓，
       层数不同 ⇒ `layer="both"` ✓；位置必须**一致** ✓（不一致就该人看 ✓，别硬挑一个 ✗）。
+    ★★ **所在层以 `.fzp` 的 `<p layer="copper0|copper1" svgId=…>` 声明为准** ✓
+      （2026-09-30 修 ✗）：原来只看"焊盘图元最近的 `<g id=copperN>` 祖先" ✗ ⇒
+      把 `NFC-Coil` 那种**把 `copper0` 嵌在 `copper1` 里**（两个盘两层都要 ✓）画法
+      误报成"只有底层" ✗ ⇒ 害我以为顶层缺环 ✗（虚惊 ✓；官方惯例也确实是两层都声明 ✓）。
+      声明与嵌套**不一致** ⇒ 归到声明 ✓ 并**报出来** ✓（不静默 ✗）。
     """
     shapes, bad = copper_shapes(root)
     cand = {}
@@ -157,6 +162,13 @@ def pcb_pads(root, connectors=()):
         if max(abs(s["c"][0] - c0[0]) + abs(s["c"][1] - c0[1]) for s in win) > 0.02:
             bad.append("%s 有 %d 个候选、位置还不一致 ✗ ⇒ 请人工看" % (cid, len(win)))
         lay = "both" if len({s["layer"] for s in win}) > 1 else win[0]["layer"]
+        dl = (decl or {}).get(cid)
+        if dl:
+            want = "both" if len(set(dl)) > 1 else dl[0]
+            if want != lay and lay in ("copper0", "copper1", "both"):
+                bad.append("%s：`.fzp` 声明 `%s`、svg 嵌套看着是 `%s` ⇒ **按声明** ✓"
+                           % (cid, want, lay))
+            lay = want
         s = win[0]
         got[cid] = dict(cid=cid, layer=lay, shape=s["tag"], c=s["c"], box=s["box"],
                         r=s["r"], sw=s["sw"], name=s["name"], src=s["id"], n_cand=len(win))
@@ -214,6 +226,16 @@ def read_fzz(zpath):
         image = lay.get("image") if lay is not None else None
         connectors = [c.get("id") for c in fr.findall(".//connectors/connector") if c.get("id")]
         names = {c.get("id"): (c.get("name") or "") for c in fr.findall(".//connectors/connector")}
+        # ★ 每个脚在 pcb 上**声明**了哪几层 ✓（`<connector><views><pcbView><p layer=… svgId=…/>` ✓）
+        decl = {}
+        for c in fr.findall(".//connectors/connector"):
+            cid = c.get("id")
+            if not cid:
+                continue
+            lays = [p.get("layer") for p in c.findall("./views/pcbView/p")
+                    if p.get("layer") in ("copper0", "copper1")]
+            if lays:
+                decl[cid] = lays
         svg_text, src = None, "（**没找到 svg** ✗）"
         want = os.path.basename(image or "")
         for n, t in packed_svg.items():
@@ -230,7 +252,7 @@ def read_fzz(zpath):
             if cand:
                 svg_text, src = open(cand, encoding="utf-8").read(), cand
         out.append(dict(title=(el.findtext("title") or "").strip(), moduleId=mid, fzp=fr,
-                        image=image, connectors=connectors, names=names,
+                        image=image, connectors=connectors, names=names, decl=decl,
                         svg_text=svg_text, src=src, loc=(float(g.get("x") or 0), float(g.get("y") or 0)),
                         M=PB.tf_of(g), geo=dict(g.attrib), pv=dict(pv.attrib)))
     return out, board
@@ -259,7 +281,7 @@ def part_pads(part):
     flip = ((part.get("pv") or {}).get("bottom") or "").lower() == "true"
     if flip and vbw is None:
         flip = False
-    pads, extra, bad, n_track = pcb_pads(root, part["connectors"])
+    pads, extra, bad, n_track = pcb_pads(root, part["connectors"], part.get("decl"))
     if flip:
         bad.append("（这件在**背面** ⇒ 按 Fritzing 的口径做了 **x 镜像** ✓ 轴 = 画布中线 ✓）")
     M = part["M"]
@@ -291,6 +313,14 @@ def part_pads(part):
                                 part["loc"][1] + max(v[1] for v in cor)),
                         size_mm=(w, h), hole_mm=hole, ring_mm=ring,
                         nm=part["names"].get(cid, ""))
+        # ★★ **翻面 ⇒ 层要对调** ✗（2026-09-30 修 ✓，证据 = 用户导出的 Fritzing 图 ✓）：
+        #   背面件（`bottom="true"`）的焊盘在**板子**上是 `copper0` ✓ ——
+        #   导出图里那 43 个盘全在 `<g id="copper0">` ✓（顶层只剩 LED2 的 4 个 ✓）✓。
+        #   ✗ 不改就会让校验器把"线走在 copper0、去接一个背面件的盘"判成**没接上** ✗
+        #     ⇒ 报一堆假"悬空端点" ✗。
+        if out[cid]["layer"] in ("copper0", "copper1"):
+            out[cid]["layer"] = ("copper1" if out[cid]["layer"] == "copper0" else "copper0") \
+                if flip else out[cid]["layer"]
     ex = [dict(s, abs=tuple(part["loc"][i] + abs_of(s["c"])[i] for i in (0, 1))) for s in extra]
     return out, ex, bad, n_track
 
