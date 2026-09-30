@@ -341,3 +341,28 @@ def place(loc, m, box):
             xs.append(loc[0] + p[0])
             ys.append(loc[1] + p[1])
     return (min(xs), min(ys), max(xs), max(ys))
+
+
+# ── PCB：svg 单位 → sketch 单位（2026-09-30 ✓ 焊盘读入器 `pcb_pads.py` 用 ✓）────
+def svg_k(root):
+    """svg 的 **sketch 单位 / 用户单位** 换算 ＋ `viewBox` 原点 ✓
+
+    ⇒ `(k, (vb_x0, vb_y0))`；算不出（`width` 没单位 / 没宽度 ✗）⇒ `(None, (0, 0))` ✓
+      —— **不猜** ✓（宁可让调用方报"不知道" ✓，也不要算一个错的出来 ✗，与 `body_box` 同一个原则 ✓）。
+
+    ★★ 口径与渲染器 `render_bb.scale_of` **必须一致** ✓（同一条规则 ✓）：把 svg 的 `width`
+      当**物理尺寸** ✓、`viewBox` 第 3 项当**用户单位宽** ✓、`px`/`pt` = 1/72 in ✓（不是 96dpi ✗）。
+      ✗ 那份是**内联写在 CLI 脚本**里的 ✗（它的模块顶层就开跑 ⇒ `import` 不进来 ✗）
+      ⇒ 收到共享模块里一份 ✓、**以后改只改这里** ✓（渲染器那份留待一起收拢 ✓，别各改各的 ✗）。
+    """
+    wmm, _hmm = canvas_mm(root.attrib)
+    if not wmm:
+        return None, (0.0, 0.0)
+    vb = _nums(root.get("viewBox"))
+    if len(vb) == 4 and vb[2]:
+        return wmm * MM / vb[2], (vb[0], vb[1])
+    w = re.sub(r"[a-z%]", "", root.get("width") or "")
+    try:
+        return wmm * MM / float(w), (0.0, 0.0)
+    except ValueError:
+        return None, (0.0, 0.0)
