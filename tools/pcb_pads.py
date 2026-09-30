@@ -182,6 +182,27 @@ def pcb_pads(root, connectors=(), decl=None):
 
 
 # ── 从 .fzz 取实例 ──────────────────────────────────────────────────────────
+def cid_of(names, cids, name):
+    """网表里的**脚名** → `connectorN` ✓（**唯一实现** ✓，2026-09-30 收进来 ✓）
+
+    ★ `#N` = **第 N 个脚（1 起算 ✓）** ⇒ `#1` → `connector0` ✓
+      （出处：`pixel_nets.py` 表头「`#N` = 第 N 个脚 ✓（core 件没有名字 ✓）」✓；
+       第一版把它当 `connectorN` ✗ ⇒ `C1.#2`/`J1.#3` 全映射错 ✗，摆位报告里当场报出来 ✓）
+    ★ 具名脚按 `.fzp` 的 `connectorname` ✓ 比（**大小写不敏感** ✓）。
+    """
+    nm = (name or "").strip().lower()
+    if nm.startswith("#"):
+        try:
+            cid = "connector%d" % (int(nm[1:]) - 1)
+        except ValueError:
+            return None
+        return cid if not cids or cid in cids else None
+    for cid, n in (names or {}).items():
+        if (n or "").strip().lower() == nm:
+            return cid
+    return None
+
+
 def read_fzz(zpath):
     """读 `.fzz`：pcbView 里的零件实例 ✓（件定义**优先用包里内嵌的** ✓，core 件回落到磁盘 ✓）"""
     z = zipfile.ZipFile(zpath)
@@ -252,6 +273,7 @@ def read_fzz(zpath):
             if cand:
                 svg_text, src = open(cand, encoding="utf-8").read(), cand
         out.append(dict(title=(el.findtext("title") or "").strip(), moduleId=mid, fzp=fr,
+                        mi=(el.get("modelIndex") or ""),
                         image=image, connectors=connectors, names=names, decl=decl,
                         svg_text=svg_text, src=src, loc=(float(g.get("x") or 0), float(g.get("y") or 0)),
                         M=PB.tf_of(g), geo=dict(g.attrib), pv=dict(pv.attrib)))
@@ -304,7 +326,18 @@ def part_pads(part):
         # ★ `absbox`：焊盘在 sketch 绝对坐标下的**矩形** ✓（`pcb_check.py` 判"线端是不是
         #   落在焊盘上"要用它 ✓）—— 取局部包围盒**四角**过矩阵再取 min/max ✓（能容旋转 ✓）
         #   ★★ 背面件要**一起镜像** ✗（只镜像中心、不镜像包围盒 ⇒ 盘和框会差一整个件宽 ✗）
-        cor = [PB.apply(M, ((2.0 * ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
+        #   ★★★ 2026-09-30 **修** ✗：镜像那支原来写的是 `2.0*ox + vbw - u` ✗ ——
+        #     两个分支的口径**必须一致** ✓（都要得"**相对画布左上角**"的量 ✓）：
+        #       · 非背面：`u - ox` ✓（用户坐标 − 画布原点 ✓）；
+        #       · 镜像后：`(2·ox + vbw − u) − ox` = **`ox + vbw − u`** ✓ ← 这才是对的 ✗。
+        #     ✗ 旧写法漏了那个 `− ox` ⇒ **整框平移 `ox·k`** ✗（`ox ≠ 0` 的件全中招 ✗）。
+        #     ★ 证据（**自洽判据** ✓，不是猜 ✗）：**盘心必须落在自己的盘框里** ✓——
+        #       实测 `SH-1.0-3P-V`（viewBox `-3.00 -1.12 6.13 5.47` ⇒ `ox = −3` ✗）
+        #       三个盘**全部**"中心不在框里"✗、**正好差 3.00 mm** ✗；而 `ox = 0` 的件（如 0603）
+        #       全部 ✓ ⇒ 缺陷量 = `ox` ✓，与"漏减 ox"完全吻合 ✓。修后盘框落进该件**墨迹框**内 ✓。
+        #     ⚠️ 90° 朝向的件会把这个 x 方向的错**变成 y 方向**的偏移 ✗（实测 J2 真焊盘在
+        #       y = 21.96，旧报 18.96 ✗）⇒ 摆位/DRC 会跟着错 ✗。
+        cor = [PB.apply(M, ((ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
                for u in (p["box"][0], p["box"][2]) for v in (p["box"][1], p["box"][3])]
         out[cid] = dict(p, abs=(part["loc"][0] + c[0], part["loc"][1] + c[1]),
                         absbox=(part["loc"][0] + min(v[0] for v in cor),
