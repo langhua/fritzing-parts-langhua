@@ -232,23 +232,41 @@ def read_fzz(zpath):
         out.append(dict(title=(el.findtext("title") or "").strip(), moduleId=mid, fzp=fr,
                         image=image, connectors=connectors, names=names,
                         svg_text=svg_text, src=src, loc=(float(g.get("x") or 0), float(g.get("y") or 0)),
-                        M=PB.tf_of(g), geo=dict(g.attrib)))
+                        M=PB.tf_of(g), geo=dict(g.attrib), pv=dict(pv.attrib)))
     return out, board
 
 
 def part_pads(part):
-    """实例的焊盘 ⇒ **绝对 sketch 单位** ✓（`loc + M·k·(u − vb0)` ✓ 与渲染器同一套矩阵数学 ✓）"""
+    """实例的焊盘 ⇒ **绝对 sketch 单位** ✓（`loc + M·k·(u − vb0)` ✓ 与渲染器同一套矩阵数学 ✓）
+
+    ★★ **背面件（`bottom="true"`）会被 Fritzing 水平镜像** ✓ —— 2026-09-30 补 ✗：
+      证据（不是猜 ✗）：Fritzing 给背面件的 `titleGeometry` 写的是
+        `<transform m11="-1" m12="0" … m31="9" …/>` ⇒ **m11 = −1 = x 镜像** ✓，
+        而动量 `m31 = 9` 单位 = **画布宽（2.54 mm ✓）** ⇒ 镜像轴 = **画布中线** ✓
+        （`x' = 2·vb_x0 + vb_w − x` ✓）。
+      ⚠️ 口径待核（P0 第 3 步拿 Fritzing 源码钉死 ✓）；**它是错的就会让 0603 的两个脚
+        对调** ✗ ⇒ 摆位不受影响 ✓（0603 两盘对称 ✓），**布线/DRC 会中招** ✗ ⇒ 现在先按
+        这个口径做 ✓ 并**逐件报出**哪些件被镜像过 ✓（不静默 ✗）。
+    """
     if part.get("svg_text") is None:
         return None, None, ["`%s` 的 svg %s" % (part["title"], part["src"])], 0
     root = ET.fromstring(part["svg_text"])
     k, (ox, oy) = PB.svg_k(root)
     if k is None:
         return None, None, ["`%s` 的 svg 尺寸算不出（`width` 没单位 ✗）⇒ 焊盘位置换算不了 ✗" % part["title"]], 0
+    vb = PB._nums(root.get("viewBox"))
+    vbw = vb[2] if len(vb) == 4 and vb[2] else None
+    flip = ((part.get("pv") or {}).get("bottom") or "").lower() == "true"
+    if flip and vbw is None:
+        flip = False
     pads, extra, bad, n_track = pcb_pads(root, part["connectors"])
+    if flip:
+        bad.append("（这件在**背面** ⇒ 按 Fritzing 的口径做了 **x 镜像** ✓ 轴 = 画布中线 ✓）")
     M = part["M"]
 
     def abs_of(p):                       # 用户单位 → 绝对 sketch 单位 ✓
-        return PB.apply(M, (p[0] - ox) * k, (p[1] - oy) * k)
+        x = (2.0 * ox + vbw - p[0]) if flip else p[0]
+        return PB.apply(M, (x - ox) * k, (p[1] - oy) * k)
 
     out = {}
     for cid, p in pads.items():
@@ -263,7 +281,8 @@ def part_pads(part):
             w = h = hole + ring
         # ★ `absbox`：焊盘在 sketch 绝对坐标下的**矩形** ✓（`pcb_check.py` 判"线端是不是
         #   落在焊盘上"要用它 ✓）—— 取局部包围盒**四角**过矩阵再取 min/max ✓（能容旋转 ✓）
-        cor = [PB.apply(M, (u - ox) * k, (v - oy) * k)
+        #   ★★ 背面件要**一起镜像** ✗（只镜像中心、不镜像包围盒 ⇒ 盘和框会差一整个件宽 ✗）
+        cor = [PB.apply(M, ((2.0 * ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
                for u in (p["box"][0], p["box"][2]) for v in (p["box"][1], p["box"][3])]
         out[cid] = dict(p, abs=(part["loc"][0] + c[0], part["loc"][1] + c[1]),
                         absbox=(part["loc"][0] + min(v[0] for v in cor),
