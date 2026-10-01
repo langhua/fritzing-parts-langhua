@@ -44,7 +44,20 @@ import pcb_check as PC                                            # noqa: E402
 import pcb_pads as PP                                             # noqa: E402
 import pcb_wire as PW                                             # noqa: E402
 
-C_TOP, C_BOT = "#d02020", "#2040d0"        # copper1 = 顶层（红 ✓）/ copper0 = 底层（蓝 ✓）
+# ★★ 铜层配色：**照 Fritzing 源码** ✓（2026-10-01 用户点名改 ✗：顶层黄 ✓ / 底层橘 ✓）
+#   出处（可逐行核 ✓）：`fritzing-app/src/viewlayer.cpp` 开头那批常量 ——
+#     `copper0`（底层 ✓）：面 `#f9a435`（`Copper0Color` ✓）／线 `#f28a00`（`Copper0WireColor` ✓）
+#     `copper1`（顶层 ✓）：面 `#fdde68`（`Copper1Color` ✓）／线 `#f2c600`（`Copper1WireColor` ✓）
+#   ★ 面与线是**两套值** ✗（不是一个色 ✓）⇒ 不能只写一个 ✓
+#     （旁证 ✓：用户导出的 `pixel-pcb-v47_图示.svg` 里走线 75 条 `#f28a00` + 56 条 `#f2c600` ✓
+#       —— 注明：我们 .fzz 里写的是**网色** ✗，Fritzing 渲染走线时按**层**盖掉了 ✓）
+#   ★★ “件 svg 里画的是什么色”**不算数** ✓：Fritzing 载入件图时按层改色
+#     （`src/items/itembase.cpp` `setUpImage()`：`loadInfo.setColor = Copper0Color / Copper1Color` ✓）
+#     ⇒ 件里画成金 `#F7BD13` 也会被它盖成 `#f9a435` / `#fdde68` ✓
+#     ⇒ 预览必须**照样改** ✗，否则“我画金、它画橘”两张图永远对不上 ✗。
+#   ✗ 旧版自创的红/蓝（`#d02020` / `#2040d0`）已废 ✓ —— 那不是 Fritzing 的任何颜色 ✗。
+C_CU0, C_CU1 = "#f9a435", "#fdde68"        # 面（焊盘 / 件铜箔）：底层橘 ✓ / 顶层黄 ✓
+C_W0, C_W1 = "#f28a00", "#f2c600"          # 走线：底层橘 ✓ / 顶层黄 ✓
 C_TXT = "#333333"
 # ★★ 过孔怎么画 ✓（2026-10-01 量 **Fritzing 自己的导出**定死 ✓，不再自己发明 ✗）：
 #   导出里每个过孔 = **两个同心圆**，`fill="none"`（= **环** ✗ 不是实心点 ✗）：
@@ -65,7 +78,7 @@ C_BRD_FILL, C_BRD_EDGE, C_BRD_FILL_OP = "#ffffff", "#111111", "0.5"
 #   ① 件 svg 里丝印写死了 `stroke="#f0f0f0"` ✗（近白 ✓）—— 那是给**深色板**配的 ✓，
 #      而本预览的板是**浅灰** ✗ ⇒ **一个字也看不见** ✗（实测：画了 9 块，图上一片空 ✗）；
 #   ② 件里那个颜色是**自己的属性** ✗ ⇒ 在父组上写 fill/stroke **盖不住** ✗
-#      ⇒ 必须**逐个改**（`repaint_silk` ✓）。
+#      ⇒ 必须**逐个改**（`repaint_colors` ✓）。
 #   取值：深灰 ✓（浅灰板上看得清 ✓）—— **不为好看，只为看得见** ✓。
 C_SILK = "#3f3f3f"
 # ★★ 安装孔：**照 Fritzing 的画法** ✓ —— 它导出里就是一个 `circle fill="black" stroke="#f9a435" sw="0"` ✓
@@ -117,7 +130,7 @@ def layer_inner(svg_text, layer):
                 #   ✗ 旧扫描见 `<g` 就 +1 ✗ ⇒ 遇到 `<g id="copper0"/>` 这种**空层**（自闭合 ✓、
                 #     **没有** `</g>` ✓）就永远回不到 0 ✗ ⇒ `layer_inner` **什么都不返回** ✗
                 #     ⇒ 整个件**画不出来** ✗（实测 `U1`：焊盘全在 `<g id="copper1">` 里 ✓、
-                #       紧跟一个 `<g id="copper0"/>` ✓ ⇒ `copper_inner` = **0 字符** ✗）。
+                #       紧跟一个 `<g id="copper0"/>` ✓ ⇒ `layer_inner(…, "copper1")` = **0 字符** ✗）。
                 #   ★ 这是**通病** ✗：底层件常把空层写成自闭合 ✓（`U1` 就是背面件 ✓）。
                 k = svg_text.find(">", j)
                 if not (k >= 0 and svg_text[j:k].rstrip().endswith("/")):
@@ -130,8 +143,11 @@ def layer_inner(svg_text, layer):
     return "".join(out)
 
 
-def repaint_silk(xml, color):
-    """把丝印原文里**自带的颜色**换成 `color` ✓（不改就看不见 ✗ —— 见 `C_SILK` 注释 ✓）
+def repaint_colors(xml, color):
+    """把原文里**自带的颜色**换成 `color` ✓ —— **丝印**✗ / **铜层** ✓ 共用这一个 ✓
+
+    ★ 丝印不改就看不见 ✗（件里写死近白 `#f0f0f0` ✓ —— 见 `C_SILK` ✓）；
+      铜层不改就**与 Fritzing 不一致** ✗（它载入时按层盖色 ✓ —— 见 `C_CU0` ✓）。
 
     ★ 只改**颜色值** ✓：`stroke="none"` / `fill="none"` **原样保留** ✓
       （那个是"这块不画"的意思 ✓，改了反而画出一个色块 ✗）。
@@ -148,11 +164,6 @@ def repaint_silk(xml, color):
 
     x = re.sub(r'\b(stroke|fill)\s*=\s*"([^"]*)"', rep, xml)
     return re.sub(r'\b(stroke|fill)\s*:\s*([a-zA-Z#0-9]+)', rep2, x)
-
-
-def copper_inner(svg_text):
-    """件 svg 里 **copper0 / copper1** 两组的内容 ✓（两层的画法一样 ✓）"""
-    return "".join(layer_inner(svg_text, l) for l in ("copper0", "copper1"))
 
 
 def holes_of(text):
@@ -228,7 +239,6 @@ def render(model, px_per_mm=12.0, opts=()):
             continue
         if (p.get("moduleId") or "").startswith(("Breadboard", "Via")):
             continue
-        inner = copper_inner(p["svg_text"])
         root = ET.fromstring(p["svg_text"])
         kk, (ox, oy) = PB.svg_k(root)
         vb = PB._nums(root.get("viewBox"))
@@ -243,14 +253,19 @@ def render(model, px_per_mm=12.0, opts=()):
         S = PB.mul(PB.mul(T, (1.0, 0.0, 0.0, 1.0, p["loc"][0], p["loc"][1])),
                    PB.mul(p["M"], PB.mul((kk, 0.0, 0.0, kk, -ox * kk, -oy * kk), F)))
         trans = 'matrix(%s)' % ",".join(PW.fmt(v) for v in S)
-        if inner:
-            o.append('<g transform="%s">%s</g>' % (trans, inner))
+        # ★★ 铜箔：**按层取、按层改色** ✓（见 `C_CU0` / `C_CU1` ✓）
+        #   顺序不变 ✓：`copper0` 先、`copper1` 后 ✓（= Fritzing 的 `PCBViewLayerList` 顺序 ✓
+        #   ⇒ 顶层盖在底层上 ✓，哪层在上不会因这次改动而变 ✗）。
+        cu = (repaint_colors(layer_inner(p["svg_text"], "copper0"), C_CU0)
+              + repaint_colors(layer_inner(p["svg_text"], "copper1"), C_CU1))
+        if cu:
+            o.append('<g transform="%s">%s</g>' % (trans, cu))
             n_parts += 1
         # ★★ 丝印也**原样**画一份 ✓（`silkscreen` / `silkscreen0` ✓）—— 先存着 ✓，
         #   等焊盘/走线都画完再上 ✓（丝印是**最后印**上去的 ✓，压在铜上是正常的 ✓）；
         #   颜色必须**逐元素改** ✗（件里写死近白的 `#f0f0f0` ✗ ⇒ 不改就看不见 ✗）。
-        sk = repaint_silk(layer_inner(p["svg_text"], "silkscreen")
-                          + layer_inner(p["svg_text"], "silkscreen0"), C_SILK)
+        sk = repaint_colors(layer_inner(p["svg_text"], "silkscreen")
+                            + layer_inner(p["svg_text"], "silkscreen0"), C_SILK)
         if sk:
             silk_layers.append('<g transform="%s">%s</g>' % (trans, sk))
             n_silk += 1
@@ -260,7 +275,7 @@ def render(model, px_per_mm=12.0, opts=()):
     #     细 **4.3 倍** ✗ ⇒ 线看着像发丝、过孔看着被“放大” ✗（2026-10-01 用户让改 ✓）。
     #     没写 `wireExtras` 的老线 ⇒ 回退到原来的 0.25 ✓（不改变旧行为 ✓）。
     for t in model["traces"]:
-        c = C_TOP if t["layer"] == "copper1" else C_BOT
+        c = C_W1 if t["layer"] == "copper1" else C_W0
         w = PB.mils_to_units(t.get("mils"), 0.25)
         o.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
                  'stroke-width="%.2f" stroke-linecap="round"/>'
@@ -273,7 +288,7 @@ def render(model, px_per_mm=12.0, opts=()):
     #     可用 `--pad-marks` 找回来 ✓。
     if "--pad-marks" in _OPTS[0]:
         for q in model["pads"]:
-            c = C_TOP if q["layer"] in ("copper1", "both") else C_BOT
+            c = C_CU1 if q["layer"] in ("copper1", "both") else C_CU0
             o.append('<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
                      'fill-opacity="0.85" stroke="%s" stroke-width="0.4"/>'
                      % (X(q["box"][0]), Y(q["box"][1]),
