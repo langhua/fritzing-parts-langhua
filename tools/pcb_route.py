@@ -1007,6 +1007,10 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         other = "copper1" if pref == "copper0" else "copper0"
         linked, todo = [mem[0]], list(mem[1:])
         segs, vias, fails = [], [], 0
+        why = []                                   # ★ 失败原因（首例足够 ✓）—— 2026-10-01 补 ✗
+        #   ✗ 起因：`5V` 报"有 4 段没连上 ✗" ✓ 但**哪一段、为什么**全无 ✗ ⇒
+        #     只能靠 `--why` 的 DIAG ✓，而 DIAG 只存**最后一次** `_route_once` ✗ ⇒
+        #     真正失败的那次已经在拆线重布里被覆盖掉了 ✗ ⇒ 看不见 ✓。
         # ★★ 这张网的**禁落孔集合** ✓ = 元件体禁落区 ✓ ∪ **所有焊盘**的禁落区 ✓：
         #   · 别的网 ⇒ 用 `halo` ✓（⚠ 0.55 ✓）；
         #   · **本网自己** ⇒ 用 `halo_own` ✓（同样是 0.55 ✓，**除了** EPAD/细间距 ⇒ 空集 ✓）。
@@ -1091,6 +1095,13 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     break
             if not path:
                 fails += 1
+                hit = False
+                for la in pads[a]["lays"]:
+                    reach = flood(grid, la, pads[a]["c"], no_via)
+                    hit = hit or any((lb, grid.rc(*pads[b]["c"])) in reach
+                                     for lb in pads[b]["lays"])
+                if len(why) < 3:
+                    why.append("%s.%s→%s.%s 不可达/可达=%s" % (a[0], a[1], b[0], b[1], hit))
                 if DIAG["on"]:
                     for la in pads[a]["lays"]:
                         reach = flood(grid, la, pads[a]["c"], no_via)
@@ -1112,6 +1123,18 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             #   ⇒ 现在：层对不上就**记失败** ✓（宁可不通、不许假装通 ✓）。
             if sg and (sg[0][0] not in pads[a]["lays"] or sg[-1][0] not in pads[b]["lays"]):
                 fails += 1
+                if len(why) < 3:
+                    why.append("%s.%s→%s.%s 层对不上（段 %s→%s ✓）"
+                               % (a[0], a[1], b[0], b[1], sg[0][0], sg[-1][0]))
+                # ★★ 2026-10-01 补 ✗：这一支以前**静默**记失败 ✗ ⇒ `--why` 看不见它 ✓
+                #   （实测：`5V` 5 个脚、0 段 ✓，而 `为什么布不通` 那一节是**空的** ✗
+                #    ⇒ 我就没法从日志判断"是堵死了 ✗ 还是层对不上 ✗" ✓ ⇒ 补上 ✓。）
+                if DIAG["on"]:
+                    DIAG["fails"].append(
+                        "网 %s：%s.%s → %s.%s｜**层对不上** ✗（A* 出来的段在 "
+                        "%s → %s ✓，而起点盘层 = %s ✓、目标盘层 = %s ✓）"
+                        % (net, a[0], a[1], b[0], b[1], sg[0][0], sg[-1][0],
+                           pads[a]["lays"], pads[b]["lays"]))
                 todo.remove(b)
                 continue
             if sg:
@@ -1154,6 +1177,10 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                            _clash[2][0] / U(1.0), _clash[2][1] / U(1.0)))
                 if _clash:
                     fails += 1
+                    if len(why) < 3:
+                        why.append("%s.%s→%s.%s 压盘 %s.%s（段 %s ✓）"
+                                   % (a[0], a[1], b[0], b[1], _clash[3][0],
+                                      _clash[3][1], _clash[0]))
                     todo.remove(b)
                     continue
             # ★★ 2026-10-01：“不许压焊盘”**试过两版、都撤了** ✗ —— 不再往这里加补偿改动 ✗：
@@ -1181,7 +1208,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     ("both", (p[0], p[1], p[0], p[1]), U(0.45)))
             linked.append(b)
             todo.remove(b)
-        note = "" if not fails else "有 %d 段没连上 ✗" % fails
+        note = "" if not fails else "有 %d 段没连上 ✗（%s）" % (fails, "；".join(why))
         if miss:
             note = (note + "；网表里的 %s 在板上找不到 ✗" % ",".join(miss)).strip("；")
         out[net] = dict(ok=not fails, segs=segs, vias=vias, note=note)
