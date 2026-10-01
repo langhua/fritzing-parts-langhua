@@ -256,8 +256,15 @@ def render(model, px_per_mm=12.0, opts=()):
         # ★★ 铜箔：**按层取、按层改色** ✓（见 `C_CU0` / `C_CU1` ✓）
         #   顺序不变 ✓：`copper0` 先、`copper1` 后 ✓（= Fritzing 的 `PCBViewLayerList` 顺序 ✓
         #   ⇒ 顶层盖在底层上 ✓，哪层在上不会因这次改动而变 ✗）。
-        cu = (repaint_colors(layer_inner(p["svg_text"], "copper0"), C_CU0)
-              + repaint_colors(layer_inner(p["svg_text"], "copper1"), C_CU1))
+        # ★★ **背面件（`bottom="true"`）铜层要对调** ✓（2026-10-01 用户点名 ✗：
+        #   「J1/J2 在底面，焊盘应是橘黄色，现在还是浅黄色，看不出来它们在底面」✓）：
+        #   背面件 svg 里的 `copper1` 落在**板子的 copper0（背面 ✓）**上 ✓
+        #   ⇒ 它取**底层色**（橘 ✓）、`copper0` 取**顶层色**（黄 ✓）✓。
+        #   ★ 口径**只有一份** ✗：与 `pcb_pads.part_shapes` 同一判据 ✓
+        #     （它的证据 ✓：用户导出的 Fritzing 图里，背面件的 43 个盘全在 `<g id="copper0">` ✓）。
+        col0, col1 = (C_CU1, C_CU0) if flip else (C_CU0, C_CU1)
+        cu = (repaint_colors(layer_inner(p["svg_text"], "copper0"), col0)
+              + repaint_colors(layer_inner(p["svg_text"], "copper1"), col1))
         if cu:
             o.append('<g transform="%s">%s</g>' % (trans, cu))
             n_parts += 1
