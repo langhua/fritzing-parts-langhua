@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- This xml file is generated through a template. Please don't edit it directly -->
+
+<svg
+   gorn="0"
+   height="2.2677176"
+   id="Layer_1"
+   version="1.1"
+   viewBox="0 0 4.1574807 2.2677175"
+   width="4.1574807"
+   x="0px"
+   xml:space="preserve"
+   y="0px"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs435" /><desc
+     id="desc417" /><g
+     gorn="0.1.0"
+     id="copper1"
+     transform="matrix(0.0176378,0,0,0.00755906,-0.16377871,0.11338577)"><rect
+       gorn="0.1.0.0"
+       height="250"
+       id="connector0pad-1"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="53.571415"
+       x="20"
+       y="10" /><rect
+       gorn="0.1.0.1"
+       height="250"
+       id="connector1pad-1"
+       style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+       width="53.571415"
+       x="180.71419"
+       y="10.000004" /><rect
+       style="fill:#D9B477;fill-opacity:1;stroke:none"
+       id="rect889"
+       width="107.14283"
+       height="249.99983"
+       x="73.571365"
+       y="10.000004" /></g><rect
+     gorn="0.2"
+     height="2.1779733"
+     id="silkscreen"
+     style="fill:none;stroke:#ffffff;stroke-width:0.0897444;stroke-opacity:1"
+     width="4.0677361"
+     x="0.044872198"
+     y="0.044872198" /></svg>

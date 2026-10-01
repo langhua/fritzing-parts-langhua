@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+        焊盘 = 同封装 SMD 无源件的 land pattern（IPC 标称）✓
+        出处 = 本库 `Resistor-0402`（`svg.pcb.R0402_7e77de42b07f5e89f21edc15e9289a71_1_pcb.svg`）✓ —— 坐标逐字沿用✓
+        丝印：本体外轮廓，线宽 0.1mm，与焊盘间隙 0.1mm✓
+-->
+
+<svg
+   gorn="0"
+   height="0.60000008mm"
+   id="svg2"
+   version="1.1"
+   viewBox="0 0 145 60.000012"
+   width="1.45mm"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  
+  <desc
+     id="desc2">
+    <referenceFile>C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1_pcb.svg</referenceFile>
+  </desc>
+  <defs
+     id="defs13" />
+  <g
+     gorn="0.1.0"
+     id="copper1"
+     transform="matrix(0.46666667,0,0,0.20000001,-4.3333173,2.9999954)">
+    <rect
+       gorn="0.1.0.0"
+       height="250"
+       id="connector0pad"
+       style="fill:#f7bf13;fill-opacity:1;stroke:none;stroke-width:0"
+       width="96.428574"
+       x="20"
+       y="10" />
+    <rect
+       gorn="0.1.0.1"
+       height="250"
+       id="connector1pad"
+       style="fill:#f7bf13;fill-opacity:1;stroke:none;stroke-width:0"
+       width="96.428574"
+       x="212.85712"
+       y="10" />
+  </g>
+  <rect
+     gorn="0.2"
+     height="57.278137"
+     id="silkscreen"
+     style="fill:none;stroke:#ffffff;stroke-width:2.72187;stroke-opacity:1"
+     width="142.27814"
+     x="1.360935"
+     y="1.360935" />
+</svg>

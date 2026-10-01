@@ -105,12 +105,15 @@ SHEETS = {
         ("PB86-A0/gray", "PB86-A0-GRAY"), ("PB86-A0/green", "PB86-A0-GREEN"),
         ("PB86-A0/red", "PB86-A0-RED"), ("PB86-A0/yellow", "PB86-A0-YELLOW"),
     ]),
-    "passive": ("无源件（电阻 / 晶振 / 电感）", 5, [
+    "passive": ("无源件（电阻 / 电容 / 晶振 / 电感）", 5, [
         ("Resistor-01005", "R 01005"), ("Resistor-0201", "R 0201"),
         ("Resistor-0402", "R 0402"), ("Resistor-0603", "R 0603"),
         ("Resistor-0805", "R 0805"), ("Resistor-1206", "R 1206"),
         ("Resistor-1210", "R 1210"), ("Resistor-1812", "R 1812"),
         ("Resistor-2010", "R 2010"), ("Resistor-2512", "R 2512"),
+        # ★ 2026-10-01 新增本库**第一套电容** ✓（默认 100nF / 25V / X7R / ±10% ✓；
+        #   焊盘 = 同封装电阻 land pattern ✓，见 `svg/Capacitor-0402/gen_part.py` 的出处注释 ✓）
+        ("Capacitor-0402", "C 0402"), ("Capacitor-0603", "C 0603"),
         ("Crystal-3215", "Crystal-3215"), ("Crystal-3225", "Crystal-3225"),
         ("molding_power_inductors/SHC0420", "SHC0420"),
         ("molding_power_inductors/SHC0520", "SHC0520"),

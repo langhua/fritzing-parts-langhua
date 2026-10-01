@@ -6,21 +6,31 @@ r"""把 sketch 的 **pcbView** 画成预览图 ✓（2026-09-30 立）
 
 画什么 ✓（只画**有电学/装配意义**的东西 ✓ + 板框 ✓）：
   · 板框（矩形 PCB 模块 ✓）
-  · 焊盘：按 `pcb_pads` 读出的**绝对矩形** ✓，**顶层 `copper1` 红 / 底层 `copper0` 蓝** ✓
-    （★ 颜色分工按 Fritzing 的 PCB 惯例 ✓：红 = 顶层 ✓）
-  · ★★ **件自己的铜箔原文** ✓（含线圈那 700 多条绕组 ✓）—— **不**只画焊盘 ✗
+  · ★★ **只画件 svg 自己的铜箔原文** ✓（含线圈那 700 多条绕组 ✓）—— **不**另画焊盘 ✗
+    （2026-10-01 用户定 ✓："Fritzing 里的画法我改不了，我只能看你两者是否一致" ✓
+     ⇒ 额外叠的东西都会让两边不一样 ✗；确需时用 `--pad-marks` 找回来 ✓）
   · ★★ **丝印** ✓（`<g id="silkscreen">` 原文 ✓）—— 2026-09-30 用户点名补 ✗：
     「渲染器不画孔/丝印，我觉得是错误的，应该画上才是」✓ —— 不画就看不出来
     "丝印有没有出板 / 压到孔"✗（而那正是摆位最常错的两种 ✗）。
   · ★★ **安装孔**（核心 `HoleModuleID` 的**钻孔圆** ✓）—— 同上 ✓；孔心按
     `pcb_pads.HOLE_DRAW_OFF_MM` 换算 ✓（`<geometry>` **不是**孔心 ✗）。
-  · 走线：`pcb_wire` 读出的绝对端点 ✓，**同色分两层** ✓
-  · 过孔：绿点 ✓
+  · 走线：`pcb_wire` 读出的绝对端点 ✓，**同色分两层** ✓，**线宽 = 实物** ✓
+    （`wireExtras@mils` ✓ ⇒ 如 `12 mil` = 0.3048 mm ✓；没写的才回退 0.25 单位 ✓）
+  · ★★ 过孔：**照 Fritzing 自己导出的画法** ✓ —— **只有环** ✓（`fill="none"` ✓）
+    （2026-10-01 二次修 ✗：先修掉了"实心绿点"✗，但我又自己加了个**白心孔**✗ ⇒
+     Fritzing 环里是**透的**（透出焊盘铜 ✓）、我的是白点 ✗ ⇒ 同一个孔两种观感 ✗；
+     现改为**只画环** ✓，要看得见的孔用 `--via-hole` ✓。几何按导出量出 ✓，见 `VIA_*` ✓）
+  · 安装孔：同口径 ✓（`circle fill="black"` ✓ 一个黑盘 ✓，与 Fritzing 一致 ✓）
   · 位号：写在它的焊盘**重心**上 ✓（旁边不留白也看得懂 ✓）
 ★ 几何**一律来自 `pcb_check.collect()`** ✓（= 校验器同一个世界模型 ✓，**不另算一套** ✗）
 
 用法：
   py -3.13 tools\render_pcb.py <sketch.fzz> <out.svg> [--px 12] [--png]
+
+开关 ✓：
+  `--board-only` 只按板框开视口 ✓；`--png` 同时出 png ✓；
+  `--pad-marks` 额外叠焊盘方块（调试用 ✗）；`--via-hole` 额外画过孔白心（调试用 ✗）——
+  ★ 这两个默认**关** ✓：开了就与 Fritzing 不一致 ✗。
 """
 import os
 import re
@@ -35,8 +45,22 @@ import pcb_pads as PP                                             # noqa: E402
 import pcb_wire as PW                                             # noqa: E402
 
 C_TOP, C_BOT = "#d02020", "#2040d0"        # copper1 = 顶层（红 ✓）/ copper0 = 底层（蓝 ✓）
-C_VIA, C_TXT = "#118011", "#333333"
-C_BRD_FILL, C_BRD_EDGE = "#d9d9d9", "#333333"   # ★ 板画成**灰色** ✓
+C_TXT = "#333333"
+# ★★ 过孔怎么画 ✓（2026-10-01 量 **Fritzing 自己的导出**定死 ✓，不再自己发明 ✗）：
+#   导出里每个过孔 = **两个同心圆**，`fill="none"`（= **环** ✗ 不是实心点 ✗）：
+#     `<circle r="0.637795" stroke-width="0.425197"/>`
+#   一个 `#f9a435`（copper0 底层 ✓）、一个 `#fdde68`（copper1 顶层 ✓）—— **同心、半径相同** ✓
+#   ⇒ 1 导出单位 = 0.35277778 mm ✓ ⇒ 中心线半径 **0.225 mm**、环宽 **0.15 mm** ✓
+#   ⇒ 孔内径 **0.30 mm**、铜盘外径 **0.60 mm** ✓ —— 正好对上 .fzz 里的 `hole size="0.3mm,0.15mm"` ✓
+#   ⇒ **口径 = `<孔直径>,<环宽>`** ✓（内径/外径都能被 Fritzing 的画法反算出来 ✓）
+#   ★ 量法/证据：18 个过孔 ×2 层 = 36 个圆，**两层圆心偏差 0.0001 mm**（= 同心 ✓），
+#     且 36 个圆相对 .fzz `<geometry>` 点的偏移**投票 36/36 一致** ⇒ 圆心就在声明点上 ✓。
+C_VIA_BOT, C_VIA_TOP = "#f9a435", "#fdde68"
+VIA_HOLE_MM, VIA_RING_MM = 0.30, 0.15      # 兜底值 ✓（件若没写 `hole size` 才用 ✓）
+# ★★ 板框：**照 Fritzing 导出** ✓（2026-10-01 改 ✗）：它画的是 `fill="#ffffff"` +
+#   `fill-opacity="0.5"` + `stroke="#111111"` ✓；✗ 我以前画**灰底**（`#d9d9d9`）✗
+#   ⇒ 两图底色就不一样 ✗（用户逐张对图时一眼可见 ✓）。
+C_BRD_FILL, C_BRD_EDGE, C_BRD_FILL_OP = "#ffffff", "#111111", "0.5"
 # ★★ 丝印（2026-09-30 用户点名补 ✗）—— 两层问题：
 #   ① 件 svg 里丝印写死了 `stroke="#f0f0f0"` ✗（近白 ✓）—— 那是给**深色板**配的 ✓，
 #      而本预览的板是**浅灰** ✗ ⇒ **一个字也看不见** ✗（实测：画了 9 块，图上一片空 ✗）；
@@ -44,9 +68,11 @@ C_BRD_FILL, C_BRD_EDGE = "#d9d9d9", "#333333"   # ★ 板画成**灰色** ✓
 #      ⇒ 必须**逐个改**（`repaint_silk` ✓）。
 #   取值：深灰 ✓（浅灰板上看得清 ✓）—— **不为好看，只为看得见** ✓。
 C_SILK = "#3f3f3f"
-# ★★ 安装孔：孔 = **白圆 + 深描边** ✓（跟 Fritzing 导出的板一样：板白、边 `#111111` ✓）；
-#   铜环只有 `hole size` 的外径 > 0 时才画 ✓（咱们的孔是 `2.2mm,0.0mm` ⇒ 无铜盘 ✓）。
-C_HOLE_FILL, C_HOLE_EDGE, C_HOLE_RING = "#ffffff", "#111111", "#b8860b"
+# ★★ 安装孔：**照 Fritzing 的画法** ✓ —— 它导出里就是一个 `circle fill="black" stroke="#f9a435" sw="0"` ✓
+#   ✗ 我以前画"白圆 + 深边" ✗ ⇒ 与 Fritzing 看着就不一样 ✗（用户 2026-10-01：
+#     "Fritzing 里的画法我改不了，我只能看你两者是否一致" ✓）。
+#   `hole size` 的外径 > 内径 时它才多一层铜环 ✓（咱们的孔是 `2.2mm,0.0mm` ⇒ 没铜环 ✓）。
+C_HOLE_FILL, C_HOLE_EDGE, C_HOLE_RING = "#000000", "none", "#b8860b"
 _OPTS = [set()]                            # `render()` 的开关 ✓（给 bbox 那段判 `--board-only` ✓）
 _STATS = {}                                # `render()` 回的计数 ✓（给 `main` 报数用 ✓）
 
@@ -63,9 +89,21 @@ def layer_inner(svg_text, layer):
     ★ 为什么**配平扫描**、不用非贪婪正则 ✗：组里还有嵌套 `<g>` ✓（AGENTS 里踩过：非贪婪
       会截到第一个 `</g>` ✗）。
     ★ 一件里可能有**多个同名层组**（`silkscreen` / `silkscreen0` ✓）⇒ 全都要 ✓。
+    ★★ 2026-10-01 修 ✗：**层组自己的属性也要带上** ✗ —— ✗ 旧版只返回组**里面**的内容 ✗
+      ⇒ 若颜色是写在层组上的（如 `<g id="copper0" fill="#F7BD13">` ✗），**继承链就断了** ✗
+      ⇒ 那些焊盘在预览里**没有填充**（发黑 ✗），而 Fritzing 导出里是对的 ✓
+      （实测：`U1` 的 21 块焊盘在我这边丢了 `#F7BD13` ✗）。
     """
     out = []
     for m in re.finditer(r'<g\b[^>]*\bid="%s"[^>]*>' % re.escape(layer), svg_text):
+        # ★ 自闭合的空层（`<g id="copper1"/>` ✓）⇒ **跳过** ✗
+        #   ✗ 不跳会出两个 bug ✗（2026-10-01 实测：整个 svg 变成"标签不配平" ✗）：
+        #     ① 配平扫描会去找那个**不存在的** `</g>` ✗ ⇒ 一路吞到文件尾 ✗；
+        #     ② 属性里会剩一个 `/` ✗ ⇒ 包出来变成 `<g />` ✗。
+        if m.group(0).rstrip().endswith("/>"):
+            continue
+        # 把层组自己的属性（去掉 `id` ✓、去掉可能残留的 `/` ✓）原样带上 ✓ ⇒ 继承的 fill/stroke 不丢 ✓
+        extra = re.sub(r'\s*\bid\s*=\s*"[^"]*"', '', m.group(0)[2:-1]).strip().rstrip("/").strip()
         depth, i = 1, m.end()
         while i < len(svg_text) and depth:
             nxt = re.search(r"<(/?)g\b", svg_text[i:])
@@ -75,7 +113,8 @@ def layer_inner(svg_text, layer):
             depth += -1 if nxt.group(1) else 1
             i = i + nxt.end()
             if depth == 0:
-                out.append(svg_text[m.end():j])
+                body = svg_text[m.end():j]
+                out.append(('<g %s>%s</g>' % (extra, body)) if extra else body)
                 break
     return "".join(out)
 
@@ -179,8 +218,9 @@ def render(model, px_per_mm=12.0, opts=()):
          'viewBox="0 0 %.1f %.1f">' % (W, H, W, H),
          '<rect width="100%" height="100%" fill="#ffffff"/>',
          '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
-         'stroke="%s" stroke-width="1.2"/>'
-         % (X(r[0]), Y(r[1]), (r[2] - r[0]) * k, (r[3] - r[1]) * k, C_BRD_FILL, C_BRD_EDGE)]
+         'fill-opacity="%s" stroke="%s" stroke-width="1.2"/>'
+         % (X(r[0]), Y(r[1]), (r[2] - r[0]) * k, (r[3] - r[1]) * k, C_BRD_FILL,
+            C_BRD_FILL_OP, C_BRD_EDGE)]
     # ★★ 件的**铜箔原文**（含线圈 700 多条绕组 ✓）—— 2026-09-30 用户点名补 ✗：
     #   上一版只画焊盘 ✗ ⇒ 线圈看成一个空框 ✗，没法用眼看"压绕组" ✗。
     T = (k, 0.0, 0.0, k, -x0 * k, -y0 * k)                    # sketch → px ✓
@@ -217,35 +257,73 @@ def render(model, px_per_mm=12.0, opts=()):
             silk_layers.append('<g transform="%s">%s</g>' % (trans, sk))
             n_silk += 1
     # 走线（先画线、后画盘 ✓，盘压线 ✓）
+    #   ★★ 线宽按**实物** ✓：`wireExtras@mils` ⇒ sketch 单位 ✓（`part_box.mils_to_units` ✓）
+    #     ✗ 旧版写死 `0.25` 单位 = **0.0705 mm** ✗ ⇒ 比实物（v47 = `12 mil` = **0.3048 mm** ✓）
+    #     细 **4.3 倍** ✗ ⇒ 线看着像发丝、过孔看着被“放大” ✗（2026-10-01 用户让改 ✓）。
+    #     没写 `wireExtras` 的老线 ⇒ 回退到原来的 0.25 ✓（不改变旧行为 ✓）。
     for t in model["traces"]:
         c = C_TOP if t["layer"] == "copper1" else C_BOT
+        w = PB.mils_to_units(t.get("mils"), 0.25)
         o.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
                  'stroke-width="%.2f" stroke-linecap="round"/>'
-                 % (X(t["a"][0]), Y(t["a"][1]), X(t["b"][0]), Y(t["b"][1]), c, 0.25 * k))
-    for q in model["pads"]:
-        c = C_TOP if q["layer"] in ("copper1", "both") else C_BOT
-        o.append('<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
-                 'fill-opacity="0.85" stroke="%s" stroke-width="0.4"/>'
-                 % (X(q["box"][0]), Y(q["box"][1]),
-                    max(1.0, (q["box"][2] - q["box"][0]) * k),
-                    max(1.0, (q["box"][3] - q["box"][1]) * k), c, c))
+                 % (X(t["a"][0]), Y(t["a"][1]), X(t["b"][0]), Y(t["b"][1]), c, max(0.6, w * k)))
+    # ★★ 焊盘：**不再叠自己画的方块** ✗（2026-10-01 按用户要求改 ✓）
+    #   ✗ 以前会在"件自己的铜箔原文"之上再画一层半透明矩形 ✗ ⇒
+    #     焊盘的**观感尺寸/边缘**与 Fritzing 不一样 ✗ ⇒ 用户看到"过孔与焊盘的相对位置变了" ✗
+    #     （实为多画了一层 ✗，坐标本身是对的 ✓）。
+    #   ⇒ 默认**啥也不画** ✓（件自己的铜箔已经画了 ✓）；确有需要（比如没有 svg 的件 ✓）
+    #     可用 `--pad-marks` 找回来 ✓。
+    if "--pad-marks" in _OPTS[0]:
+        for q in model["pads"]:
+            c = C_TOP if q["layer"] in ("copper1", "both") else C_BOT
+            o.append('<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="%s" '
+                     'fill-opacity="0.85" stroke="%s" stroke-width="0.4"/>'
+                     % (X(q["box"][0]), Y(q["box"][1]),
+                        max(1.0, (q["box"][2] - q["box"][0]) * k),
+                        max(1.0, (q["box"][3] - q["box"][1]) * k), c, c))
+    # ★★ 过孔：**环 + 白心孔** ✓（= Fritzing 导出的画法 ✓，见文件头 `C_VIA_*` 的量化依据 ✓）
+    #   ✗ 旧版画一个 `r=0.35*k` 的**实心绿点** ✗ ⇒ 过孔在图上跟焊盘没区别 ✗，
+    #     孔眼完全看不出来 ✗（2026-10-01 用户：「过孔都画错了」✓ —— 病根在这儿 ✓）。
     for v in model["vias"]:
-        o.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s"/>'
-                 % (X(v["p"][0]), Y(v["p"][1]), 0.35 * k, C_VIA))
+        hd = v.get("hole_mm") or VIA_HOLE_MM                   # 孔直径 mm ✓（读件自己的值 ✓）
+        rg = v.get("ring_mm") if v.get("ring_mm") is not None else VIA_RING_MM
+        rc = (hd + rg) / 2.0 * PB.MM * k                       # 环**中心线**半径 ✓
+        sw = max(0.8, rg * PB.MM * k)                          # 环宽 = 描边宽 ✓
+        # ★★ 稳定 id ✓（2026-10-01 用户拿 `circleNNNN` 来对账 ✗ —— 那名字是**查看器自己起的** ✗，
+        #   文件里根本没有 ✗）⇒ 这里按件的标题（`Via15` ✓）写 id ✓ ⇒ 两边能按**同一个名字**找 ✓。
+        vid = esc(v.get("ttl") or "")
+        i0 = ' id="%s_ring_bot"' % vid if vid else ""
+        i1 = ' id="%s_ring_top"' % vid if vid else ""
+        i2 = ' id="%s_hole"' % vid if vid else ""
+        o.append('<circle%s cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
+                 'stroke-width="%.2f"/>'
+                 % (i0, X(v["p"][0]), Y(v["p"][1]), rc, C_VIA_BOT, sw))
+        o.append('<circle%s cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
+                 'stroke-width="%.2f"/>'
+                 % (i1, X(v["p"][0]), Y(v["p"][1]), rc, C_VIA_TOP, sw))
+        # ★ **不再画白心孔** ✗（2026-10-01 按用户要求改 ✓）：Fritzing 的过孔 = 一个
+        #   `fill="none"` 的环 ✓ ⇒ 环里是**透的** ✓（透出焊盘铜 ✓）；我加的那个白圆
+        #   ⇒ 同一个孔两种观感 ✗。需要"看得见的孔"时用 `--via-hole` 找回来 ✓。
+        if "--via-hole" in _OPTS[0]:
+            o.append('<circle%s cx="%.2f" cy="%.2f" r="%.2f" fill="%s" stroke="%s" '
+                     'stroke-width="%.2f"/>'
+                     % (i2, X(v["p"][0]), Y(v["p"][1]), hd / 2.0 * PB.MM * k,
+                        C_HOLE_FILL, C_HOLE_EDGE, max(0.8, 0.07 * k)))
     # ★★ 丝印（压在铜/焊盘之上 ✓ —— 与 Fritzing 的层序一致 ✓）
     o += silk_layers
-    # ★★ 安装孔：**钻孔圆** ✓（白 + 深边 ⇒ 一眼看出"这里是个洞"✓）；有铜盘才多画一个环 ✓
+    # ★★ 安装孔：**照 Fritzing 导出画** ✓（一个铜环 + 一个黑实心钻孔盘 ✓）
+    #   ✗ 以前是"白圆 + 深边 + 只在 `outer>inner` 才加环" ✗ ⇒ 观感不同 ✗、还少了一个环 ✗。
     holes = holes_of(model.get("text"))
-    for (hx, hy), inner_mm, outer_mm in holes:
-        if outer_mm > inner_mm:
-            o.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
-                     'stroke-width="%.2f"/>'
-                     % (X(hx), Y(hy), (inner_mm + outer_mm) / 4.0 * PB.MM * k,
-                        C_HOLE_RING, (outer_mm - inner_mm) / 2.0 * PB.MM * k))
-        o.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s" stroke="%s" '
+    for hi, ((hx, hy), inner_mm, outer_mm) in enumerate(holes):
+        # ★ 安装孔的铜环 ✓：Fritzing 导出里**总有一个**（实测：`环 r=0.550 mm sw=0.500 mm`
+        #   = 内 Ø0.6 / 外 Ø1.6 ✓，2 个孔 × 2 层 = 4 个 ✓）——它来自核心 `hole` 件自己的 svg ✓
+        #   ⇒ 不管 `hole size` 那栏写多少，**照它画** ✓
+        o.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
                  'stroke-width="%.2f"/>'
-                 % (X(hx), Y(hy), inner_mm / 2.0 * PB.MM * k, C_HOLE_FILL, C_HOLE_EDGE,
-                    max(0.8, 0.07 * k)))
+                 % (X(hx), Y(hy), 0.55 * PB.MM * k, C_HOLE_RING, 0.50 * PB.MM * k))
+        # ★ 钻孔 = **黑色实心盘** ✓（Fritzing 里就是 `fill="black"` 无描边 ✓）
+        o.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s" stroke="none"/>'
+                 % (X(hx), Y(hy), inner_mm / 2.0 * PB.MM * k, C_HOLE_FILL))
     # 位号（焊盘重心 ✓）
     per = {}
     for q in model["pads"]:
@@ -257,8 +335,23 @@ def render(model, px_per_mm=12.0, opts=()):
                  'font-size="%.1f" font-weight="bold" fill="%s" text-anchor="middle">%s</text>'
                  % (X(cx), Y(cy) + 3.2, max(8.0, 1.3 * k), C_TXT, esc(ttl)))
     o.append('</svg>')
+    # ★ 统计里报过孔尺寸 ✓ —— 但有的文件过孔**没写 `hole size`** ✗（那两项是 `None` ✓）
+    #   ⇒ 排序前必须**把 `None` 换掉** ✗（`sorted({(0.3,0.15),(None,None)})` 会在
+    #   `float < None` 上抛 `TypeError` ✗ —— 2026-10-01 在单通道板上实测撞到 ✓）。
+    szs = sorted({(v.get("hole_mm") or -1.0,
+                   v.get("ring_mm") if v.get("ring_mm") is not None else -1.0)
+                  for v in model["vias"]})
+    if not szs:
+        vsz = "—"
+    elif len(szs) > 1:
+        vsz = "（%d 种尺寸 ✓）" % len(szs)
+    elif szs[0][0] < 0:
+        vsz = "（件没写 hole size ✗）"
+    else:
+        vsz = "孔 %.2f / 环 %.2f mm" % szs[0]
     _STATS.update(pads=len(model["pads"]), traces=len(model["traces"]),
-                  vias=len(model["vias"]), copper=n_parts, silk=n_silk, holes=len(holes))
+                  vias=len(model["vias"]), copper=n_parts, silk=n_silk, holes=len(holes),
+                  via_sz=vsz)
     return "\n".join(o)
 
 
@@ -272,12 +365,12 @@ def main(argv):
         if a == "--px" and i + 1 < len(argv):
             px = float(argv[i + 1])
     model = PC.collect(fzz)
-    svg = render(model, px, [a for a in argv if a.startswith("--board-only")])
+    svg = render(model, px, [a for a in argv if a.startswith("--")])
     open(out, "w", encoding="utf-8", newline="\n").write(svg)
-    print("✓ 写出 %s（%d 字节）：焊盘 %d / 走线 %d / 过孔 %d / 铜箔块 %d / 丝印块 %d / 孔 %d / 板框 %s"
+    print("✓ 写出 %s（%d 字节）：焊盘 %d / 走线 %d / 过孔 %d（%s）/ 铜箔块 %d / 丝印块 %d / 孔 %d / 板框 %s"
           % (out, len(svg), _STATS.get("pads", 0), _STATS.get("traces", 0),
-             _STATS.get("vias", 0), _STATS.get("copper", 0), _STATS.get("silk", 0),
-             _STATS.get("holes", 0),
+             _STATS.get("vias", 0), _STATS.get("via_sz", "—"), _STATS.get("copper", 0),
+             _STATS.get("silk", 0), _STATS.get("holes", 0),
              ("%.2f×%.2f mm" % ((model["board"][2] - model["board"][0]) * PW.SK,
                                 (model["board"][3] - model["board"][1]) * PW.SK))
              if model["board"] else "读不出 ✗"))

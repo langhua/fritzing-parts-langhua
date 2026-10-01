@@ -23,6 +23,44 @@ import re
 import xml.etree.ElementTree as ET
 
 MM = 3.5433                     # 1 mm = 3.5433 sketch 单位 ✓（1/90 in ✓）
+MIL_UNITS = 90.0 / 1000.0       # 1 mil = 1/1000 in ✓、sketch 单位 = 1/90 in ✓ ⇒ ×0.09 ✓
+
+# ★★ 过孔 / 安装孔：`<geometry>` 是 **svg 画布原点**，不是铜的心 ✗（2026-10-01 定案 ✓）
+#   来源：用户导出的 `hardware/pixel/pixel-pcb-v48_图示.svg`（权威 ✓）里每个过孔是
+#     `<g transform="translate(44.6824,47.1388)"><g id="copper0">
+#        <circle cx="2.45039" cy="2.45039" r="0.637795" stroke="#f9a435"/></g></g>`
+#   ⇒ `translate` 换算后 **正好等于** 模型算出的过孔坐标 ✓（摆放一致 ✓）
+#     铜却画在**局部** `(2.45039, 2.45039)`（画布单位 = 1/72 in）⇒ 真铜心 = geometry + 偏移 ✓
+#   同样地：安装孔局部铜心 `(4.71811, 4.71811)` ✓（= 旧的 `HOLE_DRAW_OFF_MM` 1.665 ✓）。
+#   ✗ 后果（踩过 ✓）：把 geometry 当铜心 ⇒ 过孔/孔**整体**差 0.86 / 1.66 mm ✗ ⇒
+#     “过孔压别的焊盘”这类硬闸门**测在错点上** ⇒ 真短接也不报警 ✗。
+VIA_DRAW_OFF_MM = 0.86444       # 过孔：铜心 = <geometry> + (0.86444, 0.86444) mm ✓
+HOLE_DRAW_OFF_MM = 1.66454      # 安装孔：铜心 = <geometry> + (1.66454, 1.66454) mm ✓
+
+
+def draw_off_units(kind="via"):
+    """把上面那两个 mm 偏移换成 **sketch 单位** ✓（给 pcb_check / pcb_route 用 ✓）
+
+    ★ 只留这一份 ✗：`render_pcb.py` 里曾写死 `HOLE_DRAW_OFF_MM = 1.665` ✗、
+      `pcb_check` 完全没加 ✗ ⇒ 三处口径不一致 ✗（典型的“两套实现找不到原因” ✗）。
+    """
+    mm = HOLE_DRAW_OFF_MM if str(kind).startswith("hole") else VIA_DRAW_OFF_MM
+    return mm / (25.4 / 90.0)
+
+
+def mils_to_units(mils, default=None):
+    """`wireExtras@mils` ⇒ **sketch 单位** ✓（线宽/丝印宽度都用它 ✓）
+
+    ★ 公式**只留这一份** ✗：`render_sch.py` 原来就地写着 `mils*90/1000` ✗ ⇒ 改成调这里 ✓
+      （两处各写一份 ⇒ 改一处忘一处 ✗）。
+    ★ 量过的锚点 ✓：`12 mil` ⇒ 1.08 sketch 单位 = **0.3048 mm** ✓
+      （正是 `pixel-pcb-v47.fzz` 全板 131 根走线的宽度 ✓）；
+      `22.2222 mil` ⇒ 2.0 单位 = **0.5645 mm** ✓（面包板导线标准宽 ✓）；
+      `9.7222 mil` ⇒ 0.875 单位 = **0.247 mm** ✓（原理图导线 ✓）。
+    """
+    if mils in (None, ""):
+        return default
+    return float(mils) * MIL_UNITS
 
 
 def tag(e):

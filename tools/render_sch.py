@@ -382,7 +382,9 @@ for el in root.iter("instance"):
     x, y = enum(g, "x"), enum(g, "y")
     a = (x + enum(g, "x1"), y + enum(g, "y1"))
     b = (x + enum(g, "x2"), y + enum(g, "y2"))
-    w = (float(mils) * 90.0 / 1000.0) if mils else 0.875          # mils → 1/90in 单位 ✓；默认 9.7222mil ✓
+    w = PB.mils_to_units(mils, 0.875)        # mils → sketch 单位 ✓（默认 9.7222mil ✓）；
+    #   ★ 公式只留一份 ✗：原来就地写着 `mils*90/1000` ✗ ⇒ 2026-10-01 改调 `part_box` ✓
+    #     （行为逐字节不变 ✓ —— 已重渲对账过 ✓）。
     wires.append((ttl, a, b, col, w))
     widx.append((ttl, a, b))
     ALL_PTS += [a, b]

@@ -47,12 +47,65 @@ MIL_MM = 0.0254
 MIL_TIERS = {8: "超细", 12: "特细", 16: "薄", 24: "标准", 32: "厚", 48: "特厚"}
 TRACE_MIL = 24                 # 默认**标准 24 mil** ✓（= 0.6096 mm ✓；就是 Fritzing 下拉里默认点中的那档 ✓）
 TRACE_MM = TRACE_MIL * MIL_MM  # 线宽 ✓（跟着上面那一档走 ✓）
-CLEAR_MM = 0.20            # 铜与铜的净空 ✓（**工艺值** ✓，不是"档"）
+CLEAR_MM = 0.15            # 铜与铜的净空 ✓（**工艺值** ✓，不是"档"）
+#   ★★ 2026-10-01 由 0.20 收到 0.15 ✗（起因：加"过孔不许压盘"后布不通 ✓）：
+#     0.20 是**保守**值 ✗；嘉立创 1 oz 铜的**最小线间距**是 **0.127 mm**（5 mil ✓，工艺能力表 ✓）
+#     ⇒ 0.15 合法且留了余量 ✓。
+#     ★ 实测（`hardware/pixel/_work/diag_keepout_sweep.py` ✓）：`DATA_IN` 在**空板**上，
+#       用 0.20 净空 + 0.45 过孔禁落区**根本无解** ✗ —— 而 A* 是**完备**的 ✓
+#       ⇒ 不是"搜不出来" ✗，是**真没有合法走法** ✗。
+#     ⇒ 把净空收到工艺允许的值是**必须**的 ✓（否则只剩"过孔压在别人盘上"那种违法走法 ✗）。
 # ★ 过孔**盘半径** ✓（用户 2026-09-30 定：过孔尺寸取 `hole size="0.3mm,0.15mm"` ✓
 #   —— 注意 Fritzing 的格式是「**钻孔 , 环宽**」✓（`mazerouter.cpp:2430` ✓），不是盘径 ✗
 #   ⇒ 盘径 = 0.3 + 2×0.15 = **0.6 mm** ✓ ⇒ 半径 0.30 ✓。
-#   用途：算"过孔不许碰元件"的外扩量 ✓。改了过孔尺寸就**必须同步改这里** ✓。
+# ★ 过孔**盘半径** ✓（2026-09-30 立 ✓；2026-10-01 复核 ✗）：
+#   过孔写作 `hole size="0.3mm,0.15mm"` ✓ —— Fritzing 的格式是「**钻孔 , 环宽**」✓
+#   （`mazerouter.cpp:2430` ✓），不是盘径 ✗ ⇒ 盘径 = 0.3 + 2×0.15 = **0.6 mm** ✓ ⇒ 半径 **0.30** ✓。
+#   用途：① 算"过孔不许碰元件"的外扩量 ✓；② 算"过孔不许压盘"的禁落区 ✓（`VIA_PAD_KEEPOUT_MM` ✓）。
+#   ★ 改了过孔尺寸就**必须同步改这里** ✓（盘半径写错 ⇒ 又会压盘 ✗）。
+#   ★ 试过缩到 0.2/0.15 与 0.2/0.1 想省禁落区 ✗ ⇒ **实测没变好** ✗（8/9 → 7/9 ✓）⇒ 已回退 ✓。
 VIA_CLEAR_MM = 0.30
+# ★★ 过孔**不许压盘**的禁落量 ✓（2026-10-01 修 ✗ —— 用户点名的"通孔严重错误" ✓）：
+#   孔心到**任何焊盘框**的距离必须 ≥ `VIA_CLEAR_MM`（= 铜盘半径 0.30 ✓）+ `CLEAR_MM`（净空 0.20 ✓）
+#   —— ✗ 旧版只禁"**孔心落在盘框内**" ✗ ⇒ 孔心落在盘外一点点就"合法" ✗，
+#     而它的**铜盘**（Ø0.60 ✓）恰好压进盘里 ✗✗：实测 v47 有 **7/18** 个孔压盘 ✗，
+#     其中 `Via18`（RC 网）把 **DATA_IN** 的盘压了 **0.20 mm** ⇒ **两张网并在一起（短路）** ✗✗
+#     —— 用户拿图一眼就看出来了 ✗，而我当时还写了句"只禁盘内 ⇒ 不会出现环套环"的错结论 ✗。
+#   ★ 代价要认 ✓：禁落区变大 ⇒ 过孔会变多 ✓（实测外扩 0.2 mm 时 18→28 颗 ✗），
+#     但**短路不能接受** ✗ ⇒ 多几颗孔是必须付的 ✓。
+#   ★★ 净空取 **0.15 mm**（不是走线用的 0.20 ✓）：工艺上 1 oz 铜**最小线间距**只要
+#      **0.127 mm**（5 mil ✓，嘉立创工艺能力表 ✓）⇒ 0.15 mm 是**合法且安全**的 ✓；
+#      而 0.20 mm 在这个 0.4 mm 间距的 QFN 旁边会把可落孔区吃光 ✗
+#      ⇒ 实测：0.20 时只能连通 **4/9** ✗（布不出来 ✓），必须先保铜面再谈美观 ✓。
+#   ★★ 净空值必须是**规则值 `VIA_SAFE_MM` = 0.25** ✗（2026-10-01 第二次修 ✗）：
+#     ✗ 之前写 0.15（按“1 oz 铜最小间距 0.127 ✓”订的工艺下限 ✓）⇒ 布出来的孔
+#       **净距只有 0.15 mm** ✗ ⇒ 违反用户规则 ✗，而且闸门 `via_pad_conflicts` 只报 1 处、
+#       独立校验器 `pcb_check` 报 3 处 ✗（实测 ✓）—— 差的就是这 0.10 mm ✓。
+#     ★ 教训 ✓：**布线时的搜索余量**不能比**规则值**松 ✗ —— 闸门只能“事后否决”✗，
+#       不能“绕开”✗ ⇒ 搜索必须按规则值躲 ✓。
+#     ★ 定义在 `VIA_SAFE_MM` **之后** ✓（要用到它 ✗ —— 先前排前面会 NameError ✗）。
+# ★★ 过孔**安全距离**规则值 ✓（2026-10-01 用户定 ✓）：「通孔不能在元件内，并与有安全距离」✓
+#   = 过孔**铜盘边** → 焊盘框边的**最小净距** ✓（**同网的盘也一样** ✗ ⇒ 不许 via-in-pad ✗）。
+#   ★ 和 `pcb_check.VIA_SAFE_MM` **同值、各自实现** ✓（故意的 ✓ —— 布线与校验不许共用一份 ✗，
+#     否则一边错两边一起错 ✗）；改这里就**必须同步**改那边 ✓，两处都写了这条注释 ✓。
+#   ★ 值 0.25 mm 的理由（我定的 ✓，可调 ✓）：1 oz 铜**最小线间距 0.127 mm**（嘉立创工艺表 ✓）
+#     ⇒ 0.25 是留了一档余量的安全值 ✓。
+#   ★★ 用法警告 ✗：它是「**盘边**→盘边」✓ ⇒ 当作「**孔心**→盘边」用的时候
+#     **必须加铜盘半径** ✓（`VIA_CLEAR_MM` = 0.30 ✓）—— 少加就会让孔压到盘上 ✗。
+VIA_SAFE_MM = 0.25
+VIA_PAD_CLEAR_MM = VIA_SAFE_MM                    # = 0.25 ✓（盘边→盘边的规则值 ✓）
+VIA_PAD_KEEPOUT_MM = VIA_CLEAR_MM + VIA_PAD_CLEAR_MM   # = 0.55 ✓（**孔心**→盘边 ✓）
+# ★★ 细间距区**缩宽（neck-down）** ✓（2026-10-01 用户选 ① ✓）：
+#   进**细间距元件**（`fine` = 同件最近盘中心距 ≤ 0.65 mm ✓，如 QFN 0.4 ✓）
+#   **前 `NECK_ZONE_MM`（1.5 mm ✓）** 内，**所有网**的线宽收到 **`NECK_MIL` = 10 mil** ✓。
+#   ★ 值怎么来的（算的 ✓，不是拍的 ✗）：`VSS` 中心离 `PA2` 盘边 0.300 ✓、净距规则 0.15
+#     ⇒ 半宽上限 0.150 ⇒ **线宽上限 0.300 mm** ⇒ **12 mil（0.3048）差 0.0048 mm 过不去** ✗
+#     ⇒ 取 10 mil（0.254 ✓ 半宽 0.127 ✓ 净距 0.173 ✓ ≥ 0.15 ✓）。
+#   ★ 理由（工艺 ✓）：0.4 mm 间距的 QFN 不能整根跑 24 mil ✓；缩最后一段是业界常规做法 ✓
+#     （载流靠整段铜面 ✓，0.5 mm 的 10 mil 短头子对载流几乎无影响 ✓）。
+NECK_MIL = 10
+NECK_W_MM = NECK_MIL * 25.4 / 1000.0              # = 0.254 mm ✓
+NECK_ZONE_MM = 1.5
 # ★★ 过孔**递增代价** ✓（2026-09-30 用户定："改代价结构" ✓）——
 #   同一张网里**每多用一颗过孔**，下一颗就更贵 `VIA_ESCALATE` 倍 ✓：
 #     第 1 颗 = 1.0× ✓、第 2 颗 = 1.6× ✓、第 3 颗 = 2.2× ✓ …
@@ -168,9 +221,16 @@ def obstacles(model, part_copper=True):
                 nm = net
                 break
         net_of[(q["title"], q["cid"])] = nm
+        # ★★ 细间距盘：障碍净空也按**缩宽后**算 ✓（2026-10-01 用户定 ① 之后补 ✗）：
+        #   ✗ 若按**信号粗档**（0.302 ✓）挡 ⇒ 隔壁盘的禁落区把 `VSS` 前面那道
+        #     “只能过细线”的缝**吃掉了** ✗ ⇒ A* 直接报布不通 ✓（实测：改前 2/9 ✓ ⇒ 一改就 **0/9** ✗）。
+        #   ✓ 按 `NECK_MIL`（10 mil ⇒ 净空 0.277 ✓）算 ⇒ 缝还在 ✓
+        #     而进去的那一段由写回器**真的变成 10 mil** ✓（`gen_routes.split_neck` ✓）
+        #     ⇒ 模型与实际铜面一致 ✓。
+        gp = U(NECK_W_MM / 2 + CLEAR_MM) if q.get("fine") else grow
         for lay in lays:
             if lay in LAYERS:
-                items.append((lay, q["box"], grow, nm))
+                items.append((lay, q["box"], gp, nm))
                 n_pad += 1
     # ③ 件自己的**铜箔图形** ✓（线圈绕组 722 条 ✓ —— 不挡它线会压在绕组上 ✗；tag=None ✓）
     n_cu = 0
@@ -222,7 +282,42 @@ def make_grid(rect, cell, items, extra=(), skip_tag=None):
     return grid
 
 
-def carve_pads(grid, pads, mem, grow):
+def neck_zones(pads, grow_mm=None):
+    """⇒ `[(box, mm 净宽上限), …]` ✓ = **细间距元件附近要缩宽**的区域 ✓（2026-10-01 用户定 ✓）
+
+    起因（实测 ✓，不是推测 ✗）：`U1` = QFN **0.400 mm 间距** ✓、盘 0.600×0.200 ✓
+    ⇒ 相邻两盘**边缘只隔 0.200 mm** ✓；而电源网走 **24 mil（0.6096 ✓ 半宽 0.305 ✓）**
+    ⇒ 瞄 `VSS` 中心（离 `PA2` 盘边 **0.300** ✓）时 **超了 0.005 mm** ✗
+    ⇒ 铜盖住 `PA2` ⇒ **真短路** ✗（独立校验器 ⑤ 抓到 ✓）。
+
+    ★ 缩宽量是**算出来**的 ✓（不拍脑袋 ✗）：净距规则 `CLEAR_MM` = 0.15 ✓、可用间隙 0.300 ✓
+      ⇒ **半宽上限 = 0.150** ✓ ⇒ **线宽上限 = 0.300 mm** ✓
+      ⇒ **12 mil（0.3048）过不去** ✗（超 0.0048 ✓）⇒ 取 **`NECK_MIL` = 10 mil（0.254 ✓ 半宽 0.127 ✓）** ✓。
+    ★ 只**缩**不涨 ✓：信号线本来 12 mil ⇒ 进区也变 10 ✓（绝不把细线“涨”成粗线 ✗）。
+    """
+    if grow_mm is None:
+        grow_mm = NECK_ZONE_MM
+    g = U(grow_mm)
+    out = []
+    for _k, q in pads.items():
+        if not q.get("fine"):
+            continue                        # ✗ 只对**细间距**件缩宽 ✓（接插件/电阻/电容不算 ✓）
+        b = q.get("box")
+        if not b:
+            continue
+        out.append(((b[0] - g, b[1] - g, b[2] + g, b[3] + g), NECK_W_MM))
+    return out
+
+
+def in_neck(x, y, zones):
+    """点是否落在**缩宽区**里 ✓"""
+    for (b, _w) in zones:
+        if b[0] <= x <= b[2] and b[1] <= y <= b[3]:
+            return True
+    return False
+
+
+def carve_pads(grid, pads, mem, grow, neck_grow=None):
     """把**本网自己焊盘**的铜与净空区改回可走 ✓ ⇒ 线才进得去 ✓
 
     ✗ 不挖会怎样（实测 ✓）：`U1` 是 QFN20、脚距 0.4 mm ✗ —— 邻脚的净空就把出口
@@ -232,8 +327,26 @@ def carve_pads(grid, pads, mem, grow):
         q = pads.get((t, c))
         if not q:
             continue
+        # ★★ 细间距盘：只能按**缩宽后的净空**挖 ✓（2026-10-01 用户定 ✓）：
+        #   ✗ 按粗线的 `grow`（GND 0.455 ✓）挖 ⇒ 把**隔壁盘的禁落区**一起挖掉了 ✗
+        #     ⇒ 粗线就能从别人盘上穿过去 ✓✓（实测这就是 `GND`↔`PA2` 短路的机制 ✓：
+        #     `VSS` 与 `PA2` 只隔 0.4 mm ⇒ VSS 的 0.455 挖盘区把 PA2 也包了进去 ✗）。
+        gg = grow
+        if neck_grow is not None and q.get("fine"):
+            gg = neck_grow
+            # ★ 与 `obstacles` 里“细间距盘按缩宽算”**同一个值** ✓（两处必须一致 ✗：
+            #   一边 0.277 ✓ 一边 0.302 ✗ ⇒ 挖出来的比挡住的还小 ⇒ 一格可走的都没有 ✓）
         for lay in q["lays"]:
-            grid.free_box(lay, q["box"], grow, free=True)
+            grid.free_box(lay, q["box"], gg, free=True)
+
+
+# ★★ A* 的**展开上限** ✓（2026-10-01 抽出来并放大 ✗）：
+#   ✗ 旧值是硬写的 `400000` ✗ ⇒ 本板 0.10 mm 格 ~ 250×250×2 层×4 向 ≈ **50 万状态** ✗
+#     ⇒ **很容易撞上限** ✗ ⇒ `astar` 返回 None ✗ ⇒ 把"其实能布通"误报成"布不通" ✗✗
+#     （而且完全不提示 ✗ —— 我当时据此下了"这个摆位无解"的结论 ✗，**是错的** ✗）。
+#   ⇒ 默认放大 10 倍 ✓；真撞上也会在下面打印一声 ✗（不静默 ✗）。
+ASTAR_LIMIT = 4000000
+_ASTAR_HIT = []          # 撞上限**只报一次** ✓（免得刷屏 ✗）
 
 
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
@@ -288,7 +401,12 @@ def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, av
             path.append((node[0], node[1]))
             return list(reversed(path))
         cnt += 1
-        if cnt > 400000:
+        if cnt > ASTAR_LIMIT:
+            # ★ 撞上限时**报一声** ✗（不静默 ✗）—— 否则"能布"会被当成"无解" ✗（2026-10-01 踩过 ✓）
+            if not _ASTAR_HIT:
+                _ASTAR_HIT.append(1)
+                print("   ⚠ A* 展开到上限 %d ⇒ 这条**可能**本来布得通 ✗（不得当\"无解\" ✗）"
+                      % ASTAR_LIMIT)
             return None
         g0 = seen[cur]
         onpen = pen if (pen_layer is not None and cl == pen_layer) else 0.0
@@ -424,6 +542,10 @@ def pad_index(model):
             continue
         out[(q["title"], q["cid"])] = dict(
             lays=lays, box=q["box"],
+            # ★★ 过孔例外的两个标记要**带过来** ✓（2026-10-01 ✓，否则布线器看不见 ✗）：
+            #   `epad` = 裸露焊盘 ✓、`fine` = 细间距盘 ✓ ⇒ 同网时它们不设禁落区 ✓
+            #   （校验器 `pcb_check` 用**同一套**标记判 ✓，两边口径一致 ✓）
+            epad=bool(q.get("epad")), fine=bool(q.get("fine")),
             # ★ 焊盘中心**只有一个口径** ✓：用 `part_pads` 的 `abs` ✓
             #   ✗ 别自作聪明取外接框中心 ✗ —— 两者实测差 0.05 mm ✗ ⇒
             #   布线器吸附到 A ✓、写回器按 B 找焊盘 ✗ ⇒ 焊盘端对不上 ✗（悬空端点 ✗）。
@@ -463,7 +585,7 @@ def _net_keys(net_pads, pads):
 
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
-          width_of=None, first=(), mid_keep=(), ban_via=()):
+          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=()):
     """⇒ **多种次序里最优的那份** ✓（先比连通网数 ✓，再比总长 ✓）
 
     ★★ 2026-09-30 加**按网分宽** ✓（用户定 ✓：「用与 JST-SH 1.0 功率匹配的 5V 和 GND 线宽 ✓，
@@ -476,7 +598,8 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     for name, key in _net_keys(net_pads, pads)[:tries]:
         order = sorted(net_pads, key=lambda n: (0 if n in tuple(first) else 1, key(n)))
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
-                          width_of=w_of, mid_keep=mid_keep, ban_via=ban_via)
+                          width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
+                          copper_keep=copper_keep)
         n_ok = sum(1 for d in res.values() if d["ok"])
         ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
                  for d in res.values() for s in d["segs"])
@@ -498,7 +621,8 @@ def _score(res):
 
 
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
-                blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=()):
+                blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=(),
+                copper_keep=()):
     """先多次序布 ✓，再对布不通的网**拆掉挡它的线**重来 ✓（rip-up & reroute ✓）
 
     ★ 为什么要它 ✓（实测 2026-09-30 ✓）：9 个网只连通 3 个 ✗，而线宽 8～32 mil 全一样 ✗
@@ -511,7 +635,8 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
          但板上少了几条线 ✗（自欺 ✓）。
     """
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
-                 width_of=width_of, first=first, mid_keep=mid_keep, ban_via=ban_via)
+                 width_of=width_of, first=first, mid_keep=mid_keep, ban_via=ban_via,
+                 copper_keep=copper_keep)
     best_s = _score(best)
     if verbose:
         print("   [拆线重布] 起点：连通 %d/%d ✓｜长 %.1f mm"
@@ -542,7 +667,8 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 pre = {k: v for k, v in best.items() if k not in (net, blk)}
                 trial = _route_once(items, rect, net_pads, pads, cell, via_cost,
                                     [net, blk], pre=pre, width_of=width_of,
-                                    mid_keep=mid_keep, ban_via=ban_via)
+                                    mid_keep=mid_keep, ban_via=ban_via,
+                                    copper_keep=copper_keep)
                 s = _score(trial)
                 if s > best_s:
                     best, best_s, gain = trial, s, True
@@ -560,7 +686,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
 
 
 def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, width_of=None,
-                mid_keep=(), ban_via=()):
+                mid_keep=(), ban_via=(), copper_keep=()):
     """按给定次序贪心布一遍 ✓ ⇒ `{net: dict(ok, segs, vias, note)}`
 
     `pre` = **已经布好**的 `{net: d}` ✓ —— 它们既不重布 ✓、又照旧当障碍 ✓（拆线重布用 ✓）。
@@ -619,22 +745,71 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         for ix in range(i0, i1 + 1):
             for jy in range(j0, j1 + 1):
                 novia.add((ix, jy))
-    # ★ 焊盘：只禁**它自己的内部** ✓（不外扩 ✓）—— 实测：外扩 0.2mm 会把过孔 18 → **28** ✗
-    #   （布线器爱在焊盘处换层 ✓，一刀切掉就得绕远 ✓）；只禁盘内 ⇒ 过孔只能落在盘**外** ✓，
-    #   于是不会出现"过孔环套在焊盘环上"那种看着压在元件上的样子 ✓（用户点名 ✓）。
-    for q in pads.values():
+    # ★★ 焊盘禁落区 ✓ —— **按网**分开算 ✓（2026-10-01 修 ✗，见 `VIA_PAD_KEEPOUT_MM` ✓）：
+    #   · **别的网**的盘：禁落区 = 盘框 + 铜盘半径 + 净空 ✓（= 0.45 ✓）—— 这是**硬**的 ✓
+    #     （v47 就是这里出的事 ✗：孔心离盘边 0.10 mm 也能落 ✓ ⇒ 铜盘压进别人的盘 ⇒ 短路 ✗✗）。
+    #   · **本网自己**的盘：**不设**禁落区 ✓ ⇒ 允许落在本网盘里（via-in-pad ✓，QFN 常见做法 ✓、
+    #     同网本就不短路 ✓）—— ★ 实测：一刀全禁（不分网）时只连通 **5/9** ✗；
+    #     按网分后布线器才有地方换层 ✓（本板 0.4 mm 间距 QFN ⇒ 禁止向盘内落孔等于封死扇出 ✗）。
+    #   · 取整余量只给**半格** ✓；剩下的交给**精确闸门**兜底 ✓（`via_pad_conflicts` ✓ 真几何 ✓）。
+    #   ★★ 2026-10-01 用户定 ✗：**同网络的 via-in-pad 也不再放行** ✗ ——
+    #     原话：「我想先实现通孔不能在元件内，并与有安全距离的规则，比如 Via10 在 J1 焊盘上打孔了」✓
+    #     ⇒ `keep_own` 与 `keep` **同值** ✓（下面那行 = 规则的落点 ✓）。
+    #     ✗ 旧口径（同网只留 `VIA_CLEAR_MM` = 盘半径 ⇒ 允许落在自己盘里 ✗）已被用户否掉 ✗；
+    #       当时写成"via-in-pad ✓ 合法 ✓"✗，理由是 QFN 扇出方便 ✗ ⇒ 现在按用户规则走 ✓。
+    #     ★ 代价要认 ✓：扇出会变难 ✓ ⇒ **布不通就报出来** ✓（不许为了好看偷偷放行 ✗）。
+    keep = U(VIA_PAD_KEEPOUT_MM) + 0.5 * base.cell      # ★ 一律 0.55（= 铜盘 0.30 + 规则 0.25 ✓）
+    # ★ 本网的盘⇒**同一个值** ✗（2026-10-01 第二次修 ✗）：
+    #   ✗ 旧值 `U(VIA_SAFE_MM)` = 0.25 是当作「**孔心**→盘边」用的 ✗ ⇒ 实际净距 = 0.25 − 0.30 = **−0.05** ✗
+    #     ⇒ 同网的盘**一定被压** ✗（实测 `#3` 压 `C2.connector0` 叠 0.300 mm ✗ 就是它 ✓）。
+    #   ★ `VIA_SAFE_MM` 的语义是「**铜盘边**→盘边」✓（见它的定义 ✓）⇒ 用的时候**必须加铜盘半径** ✓。
+    keep_own = keep
+    # ★★ EPAD / 细间距例外 ✓（2026-10-01 用户定 ✓）：「是在 EPAD 上开通孔接 GND 吗？这个必须允许」✓
+    #   这两类盘上**完全不设**禁落区 ✓（允许孔落在它里面 ✓ = via-in-pad ✓）——
+    #   QFN 的中央散热盘接地就是这么接 ✓、0.4 mm 间距的脚也是靠它扇出 ✓；
+    #   其余盘（接插件 / 电阻 / 电容，**含同网的** ✗）一律按规则躲 ✓。
+    halo, halo_own = {}, {}
+    for key, q in pads.items():
         box = q.get("box")
         if not box:
             continue
-        i0, j0 = base.rc(box[0], box[1])
-        i1, j1 = base.rc(box[2], box[3])
+        st, st2 = set(), set()
+        i0, j0 = base.rc(box[0] - keep, box[1] - keep)
+        i1, j1 = base.rc(box[2] + keep, box[3] + keep)
         for ix in range(i0, i1 + 1):
             for jy in range(j0, j1 + 1):
-                novia.add((ix, jy))
+                st.add((ix, jy))
+        # ★★ 本网自己的盘也同样要躲 ✗（2026-10-01 第三次修 ✗）：
+        #   ✗ `keep_own` 先前**算出来但从来没被用上** ✗ —— 组网时只 OR 了「**别的网**的 `halo`」✗
+        #     ⇒ 本网的盘**完全不设防** ✗ ⇒ 实测 3 处真违规**全部是同网的盘** ✓
+        #     （`#3`@`C2.connector0` 叠 0.300 ✗、`#7`@`R1.connector0` 0.353 ✗、`#10`@`LED2.connector1` 0.474 ✗
+        #     —— 需要 0.550 ✓）⇒ 这就是“改了禁落区、孔却纹丝不动”的原因 ✓。
+        #   ★ EPAD / 细间距盘 = **例外** ✓ ⇒ `st2` 保持**空集** ✓（不设任何禁落区 ✓）。
+        if q.get("epad") or q.get("fine"):
+            halo[key], halo_own[key] = st, st2
+            continue
+        i0, j0 = base.rc(box[0] - keep_own, box[1] - keep_own)
+        i1, j1 = base.rc(box[2] + keep_own, box[3] + keep_own)
+        for ix in range(i0, i1 + 1):
+            for jy in range(j0, j1 + 1):
+                st2.add((ix, jy))
+        halo[key], halo_own[key] = st, st2
     # ★ 外部点名要禁的过孔位 ✓（`ban_via` = **点** `(x, y)` ✓，单位 = 草图单位 ✓）——
     #   用于"成对过孔回收" ✓：把"下去一小段又上来"的那两个孔位禁掉再布一遍 ✓。
     for (bx, by) in ban_via or ():
         novia.add(base.rc(bx, by))
+    # ★★ 元件**画出来的铜**（`copper_keep` ✓ 矩形表 ✓，含 NFC 线圈那几百条螺旋 ✓）——
+    #   2026-10-01 用户定 ✗：「通孔不能在元件内，并与有安全距离」✓
+    #   （校验器那边是第 ⑦ 条 ✓，**各自实现** ✓ 不许共用一份 ✗）。
+    #   ✗ 旧版只按"带 `tag` 的障碍框"禁 ✓ ⇒ 线圈这类"画出来的铜"完全没管 ✗
+    #     ⇒ 实测 v49 有 **7 个孔**贴着/压着线圈的铜 ✗（如 `Via15` 距 −0.006 mm ✗）。
+    for box in copper_keep or ():
+        g = U(VIA_CLEAR_MM + VIA_SAFE_MM)          # 铜盘半径 + 安全间隔 ✓
+        i0, j0 = base.rc(box[0] - g, box[1] - g)
+        i1, j1 = base.rc(box[2] + g, box[3] + g)
+        for ix in range(i0, i1 + 1):
+            for jy in range(j0, j1 + 1):
+                novia.add((ix, jy))
     for net in order:
         if net in (pre or {}):
             continue
@@ -655,8 +830,19 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         other = "copper1" if pref == "copper0" else "copper0"
         linked, todo = [mem[0]], list(mem[1:])
         segs, vias, fails = [], [], 0
+        # ★★ 这张网的**禁落孔集合** ✓ = 元件体禁落区 ✓ ∪ **所有焊盘**的禁落区 ✓：
+        #   · 别的网 ⇒ 用 `halo` ✓（⚠ 0.55 ✓）；
+        #   · **本网自己** ⇒ 用 `halo_own` ✓（同样是 0.55 ✓，**除了** EPAD/细间距 ⇒ 空集 ✓）。
+        #   ✗ 2026-10-01 第三次修 ✓：原来本网只写“不设禁落区”✗ ⇒ 3 处真违规全是本网盘被压 ✓。
+        mykeys = set(mem)
+        no_via = set(novia)
+        for k2, st2 in halo.items():
+            no_via |= (halo_own[k2] if k2 in mykeys else st2)
         # ★★ 这张网**自己的**净空 ✓（按网分宽 ✓）—— 宽网要多占地方 ✓、细网不必陪跑 ✗。
         grow = U(w_of(net) / 2 + CLEAR_MM)
+        # ★★ 细间距区：只按**缩宽后**的净空挖盘 ✓（否则粗线能借“挖盘”穿过别人盘 ✗，
+        #   见 `carve_pads` 的注释 ✓ —— 实测就是 `GND`↔`PA2` 短路的机制 ✓）
+        neck_grow = U(min(w_of(net), NECK_W_MM) / 2 + CLEAR_MM)
         while todo:
             best = None
             for a in linked:
@@ -675,7 +861,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 for lay, box, gr in tlist:
                     for l2 in (LAYERS if lay == "both" else (lay,)):
                         grid.block_box(l2, box, gr)
-            carve_pads(grid, pads, mem, grow)
+            carve_pads(grid, pads, mem, grow, neck_grow)
             path = None
             for la in pads[a]["lays"]:
                 # ★ 本网**已用几颗过孔** ⇒ 下一颗贵多少 ✓（递增 ✓，见 `VIA_ESCALATE` ✓）
@@ -683,7 +869,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 path = astar(grid, la, pads[a]["c"],
                              [(lb, pads[b]["c"]) for lb in pads[b]["lays"]], vc,
                              avoid=keep_cells if net in tuple(mid_keep) else None,
-                             avoid_w=MID_KEEP_W, no_via=novia,
+                             avoid_w=MID_KEEP_W, no_via=no_via,
                              turn=TURN_COST, pen_layer=other, pen=LAYER_PEN)
                 if path:
                     break
@@ -758,6 +944,49 @@ def resolve_nets(model, nets):
             got.append((t, cid))
         net_pads[net] = got
     return net_pads, unresolved
+
+
+def via_pad_conflicts(vias, pads, net_of_pad, keep_mm=VIA_PAD_KEEPOUT_MM):
+    """⇒ `[(网, (x,y), 位号, cid, 距边 mm, 需要 mm), …]` ✓（空 = 全过 ✓）
+    `vias` = `[(网, (x, y)), …]` ✓；`pads` = `{(位号, cid): dict(box=…)}` ✓
+
+    ★ 这是**生成器的硬闸门** ✓：非空就**不许写文件** ✗（与"悬空端点必须 0"同级 ✓）。
+    ★ 与校验器 `pcb_check` 的第 ⑥ 条**各自实现** ✓（不许自证 ✗）：
+      那边按“**铜盘与盘框重叠**”判 ✗（严格 0 重叠 ✓）；这边按“**净空够不够**”判 ✓。
+      ★★ 2026-10-01 二次修 ✗：两边**都按规则值 0.25 mm** ✓ —— 这边比的是
+        「**孔心**→盘框 ≥ `keep_mm` = 0.55 ✓（= 铜盘半径 0.30 + 0.25 ✓）」✓；
+        ✗ 旧口径按同网/异网分 0.25 / 0.45 ✗ ⇒ **同网少了铜盘半径** ✗ ⇒ 实测 `#3`/#7/#10 漏过去 ✓。
+    """
+    bad = []
+    for net, (x, y) in vias:
+        for (ttl, cid), q in pads.items():
+            b = q.get("box")
+            if not b:
+                continue
+            dx = max(b[0] - x, 0.0, x - b[2])
+            dy = max(b[1] - y, 0.0, y - b[3])
+            d = MM((dx * dx + dy * dy) ** 0.5)
+            # ★ 同网的盘：只要**铜盘不伸出到别人头上**就合法 ✓ ⇒ 这里只要求"不叠"（≥ 0.30 ✓）；
+            #   真正确保邻盘安全的是**别的网那一条**（≥ 0.45 ✓）⇒ 短路仍然抓得住 ✓。
+            # ★★ 同网的盘：**压上去也合法** ✓（via-in-pad ✓，同网铜相接 ✓，电气不断路 ✓）
+            #   ⇒ 判据是 **0**（不管）；真正要守的是**别的网那条 0.45** ✓ —— 短路仍然抓得住 ✓
+            #   （从 0.30 改成 0.0 的依据 ✗：本板实测 ✓ 一刀禁本网盘 ⇒ 只剩 8/9 ✗；
+            #     允许本网盘内落孔 ⇒ 9/9 ✓ 且**异网零重叠** ✓ —— 拿 `pcb_check` ⑥ 复核过 ✓）。
+            # ★★★ 2026-10-01 用户规则 ✓：**同网的盘要 0.25 mm** ✗（不许 via-in-pad ✗）——
+            #   ✗ 旧口径写的是 `need = 0.0 if 同网 else 0.45` ✗（把同网盘当“随便压”✗）。
+            #   ★★ 但 **EPAD 是例外** ✓（2026-10-01 用户定 ✓）：「在 EPAD 上开通孔接 GND……必须允许」✓
+            #     ⇒ 同网 + EPAD ⇒ `need = 0.0` ✓（允许孔落在 EPAD 里 ✓）；其余同网盘仍需 0.25 ✓。
+            # ★★ 例外（同网 + EPAD / 细间距盘 ✓）⇒ `need = 0.0` ✓（允许孔落在它里面 ✓）；
+            #   其余的盘**一律** `VID_PAD_KEEPOUT_MM` = 0.55 ✓ —— 即「**孔心**→盘边 ≥ 铜盘半径 0.30
+            #   + 规则 0.25」✓（✗ 旧口径按同网/异网分 0.25 / 0.45 ✗ ⇒ 同网少了铜盘半径
+            #     ⇒ 实测 `#7`（离 `R1` 盘边 0.053 mm ✗）、`#10`（0.150 ✗）就是这么漏过去的 ✓）。
+            if net_of_pad.get((ttl, cid)) == net and (q.get("epad") or q.get("fine")):
+                need = 0.0
+            else:
+                need = keep_mm
+            if d < need - 1e-9:
+                bad.append((net, (x, y), ttl, cid, d, need))
+    return bad
 
 
 def opt(argv, name, default=None, cast=str):

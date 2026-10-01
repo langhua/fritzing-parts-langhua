@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
 <module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_passive.png">
-    <title>无源件（电阻 / 晶振 / 电感）</title>
+    <title>无源件（电阻 / 电容 / 晶振 / 电感）</title>
     <instances>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="SMD 电阻">
         <views>
@@ -38,6 +38,19 @@
             <views/>
         </instance>
         <instance moduleIdRef="R2512_0a212ee8e15d616ed79a8cc68f76bf99_5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/R2512_0a212ee8e15d616ed79a8cc68f76bf99_5.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="SMD 电容">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="晶振">

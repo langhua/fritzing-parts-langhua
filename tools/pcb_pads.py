@@ -293,6 +293,100 @@ def read_fzz(zpath):
     return out, board
 
 
+def _placer(part):
+    """一个实例的**换算器** ✓：用户单位 → part 局部 sketch 单位（**不含 loc** ✓）
+
+    ★★ 口径**只留这一份** ✗（2026-10-01 抽出来 ✓）：`part_pads` 原来把这段写在函数体里 ✗，
+      新增的 `part_body`（元件占位框 ✓）要用**同一套**矩阵/镜像/画布原点数学 ✓ ——
+      抄一份就是“两套实现，找不到原因” ✗（本仓的老坑 ✓）。
+    返回 `(root, k, ox, oy, vbw, flip, M, loc, abs_of)` ✓；换算不了 ⇒ `(None, …)` ✓。
+    """
+    if part.get("svg_text") is None:
+        return None
+    root = ET.fromstring(part["svg_text"])
+    k, (ox, oy) = PB.svg_k(root)
+    if k is None:
+        return None
+    vb = PB._nums(root.get("viewBox"))
+    vbw = vb[2] if len(vb) == 4 and vb[2] else None
+    flip = ((part.get("pv") or {}).get("bottom") or "").lower() == "true"
+    if flip and vbw is None:
+        flip = False
+    M, loc = part["M"], part["loc"]
+
+    def abs_of(p):                       # 用户单位 → 局部 sketch 单位 ✓（调用方再加 loc ✓）
+        x = (2.0 * ox + vbw - p[0]) if flip else p[0]
+        return PB.apply(M, (x - ox) * k, (p[1] - oy) * k)
+
+    return root, k, ox, oy, vbw, flip, M, loc, abs_of
+
+
+def part_body(part):
+    """元件在 PCB 上的**占位框**（本体墨迹包围盒 ✓）⇒ sketch 绝对矩形 `(x0,y0,x1,y1)` ✓
+
+    ★ 用途（2026-10-01 用户定 ✓）：**过孔不许打进元件里** ✗ —— 用户原话：
+      「我想先实现通孔不能在元件内，并与有安全距离的规则，比如 Via10 在 J1 焊盘上打孔了」✓。
+      判据需要的是“这个件占了哪块地方” ✓ ⇒ 用 `part_box.shape_bbox`（**所有**画出来的形状 ✓）
+      而不是只算焊盘 ✗：`SH-1.0-3P-V` 这类接插件，焊盘只是它的一小部分 ✗。
+    ★ 矩阵数学与 `part_pads` **共用 `_placer`** ✓（含背面件的 x 镜像 ✓、画布原点 `ox/oy` ✓）
+      —— 不另写一份 ✗。
+    ★ 量不出来（svg 尺寸无单位等 ✓）⇒ **None** ✓（宁可报“不知道”也不编 ✗）。
+    """
+    pl = _placer(part)
+    if pl is None:
+        return None
+    root, k, ox, oy, vbw, flip, M, loc, _abs_of = pl
+    c = PB.shape_bbox(root)
+    if c is None:
+        return None
+    pts = [PB.apply(M, ((ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
+           for u in (c[0], c[2]) for v in (c[1], c[3])]
+    return (loc[0] + min(p[0] for p in pts), loc[1] + min(p[1] for p in pts),
+            loc[0] + max(p[0] for p in pts), loc[1] + max(p[1] for p in pts))
+
+
+def part_shapes(part):
+    """一个件在 PCB 上**画出来的图元**（铜 `copper0/1` + 丝印 `silkscreen` + `outline` ✓）
+    ⇒ `[(layer, (x0,y0,x1,y1)), …]`（**sketch 绝对单位** ✓）；换算不了 ⇒ `[]` ✓
+
+    ★ 共用 `_placer` ✓（画布原点 / 比例 / 背面镜像 / 实例矩阵 ✓ —— 与焊盘**同一套** ✗）。
+    ★★ 用途（2026-10-01 用户定 ✓）——**逐图元**判，**不用整体外框** ✗：
+      · ⑦b 过孔不许落在**元件画出来的东西**上（例：NFC 线圈是 `copper1` 里几百条螺旋 `<line>` ✓）；
+      · ⑧ **同一面**的两个件不许相交（用户：「C1 是不是在同一面跟 U1 位置重叠了？」✓ 实测量到
+        C1/U1 都在**背面**、叠 4.48 mm² ✗ ⇒ 必须有规则禁止 ✓）。
+      ✗ 用"墨迹外框"会**假报** ✓：线圈的外框是 21.6×22.05 mm（板才 25×25 ✓），而 `LED2`
+        本来就坐在线圈**中间的空地**上（天经地义 ✓）⇒ 实测 10 对相交里 8 对是异面正常 ✓、
+        1 对是线圈假报 ✗、真违规只有 **C1×U1** ✓。
+    ★ 线条（`<line>`）的包围盒是**退化的**（宽或高 = 0 ✗）⇒ 按 `stroke-width/2` 外扩 ✓，
+      否则"两根线相交"永远测不出来 ✗（线圈全是线 ✓）。
+    """
+    pl = _placer(part)
+    if pl is None:
+        return []
+    root, k, ox, oy, vbw, flip, M, loc, _abs_of = pl
+    sh, _bad = copper_shapes(root)
+    out = []
+    for s in sh:
+        if s["layer"] not in ("copper0", "copper1", "silkscreen", "outline"):
+            continue                                   # `(root)` 等 ⇒ 不当作实体 ✓
+        b = s["box"]
+        pts = [PB.apply(M, ((ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
+               for u in (b[0], b[2]) for v in (b[1], b[3])]
+        g = ((s.get("sw") or 0.0) / 2.0) * k           # ★ 线宽算进去 ✓（细线不再是零面积 ✓）
+        lay = s["layer"]
+        # ★★ 背面件（`bottom="true"`）的**铜层要对调** ✓ —— 与 `part_pads` 同一口径 ✗：
+        #   svg 里的 `copper1` 画在板子的 `copper0`（背面 ✓）上 ✓（证据：用户导出图里
+        #   背面件的 43 个盘全在 `<g id="copper0">` ✓）。✗ 不对调 ⇒ ⑧“同层相交”会把
+        #   一个件的上下两层当成同一层 ✗（NFC 线圈两面都有铜 ✗ ⇒ 必错）。
+        if flip and lay in ("copper0", "copper1"):
+            lay = "copper1" if lay == "copper0" else "copper0"
+        out.append((lay,
+                    (loc[0] + min(p[0] for p in pts) - g, loc[1] + min(p[1] for p in pts) - g,
+                     loc[0] + max(p[0] for p in pts) + g, loc[1] + max(p[1] for p in pts) + g),
+                    s["id"]))          # ★ 图元 id 也带出去 ✓ —— ⑦ 要据此**跳掉焊盘形状** ✗
+    return out
+
+
 def part_pads(part):
     """实例的焊盘 ⇒ **绝对 sketch 单位** ✓（`loc + M·k·(u − vb0)` ✓ 与渲染器同一套矩阵数学 ✓）
 
@@ -307,23 +401,17 @@ def part_pads(part):
     """
     if part.get("svg_text") is None:
         return None, None, ["`%s` 的 svg %s" % (part["title"], part["src"])], 0
-    root = ET.fromstring(part["svg_text"])
-    k, (ox, oy) = PB.svg_k(root)
-    if k is None:
-        return None, None, ["`%s` 的 svg 尺寸算不出（`width` 没单位 ✗）⇒ 焊盘位置换算不了 ✗" % part["title"]], 0
-    vb = PB._nums(root.get("viewBox"))
-    vbw = vb[2] if len(vb) == 4 and vb[2] else None
-    flip = ((part.get("pv") or {}).get("bottom") or "").lower() == "true"
-    if flip and vbw is None:
-        flip = False
+    # ★★ 换算（画布原点 / 单位比例 / 背面镜像 / 实例矩阵）**只有 `_placer` 一份** ✓
+    #   （2026-10-01 抽出来 ✓）：`part_body`（占位框 ✓）与这里的焊盘**用同一套** ✗，
+    #   否则“两套实现找不到原因” ✗（本仓老坑 ✓）。
+    pl = _placer(part)
+    if pl is None:
+        return None, None, ["`%s` 的 svg 尺寸算不出（`width` 没单位 ✗）⇒ 焊盘位置换算不了 ✗"
+                            % part["title"]], 0
+    root, k, ox, oy, vbw, flip, M, _loc, abs_of = pl
     pads, extra, bad, n_track = pcb_pads(root, part["connectors"], part.get("decl"))
     if flip:
         bad.append("（这件在**背面** ⇒ 按 Fritzing 的口径做了 **x 镜像** ✓ 轴 = 画布中线 ✓）")
-    M = part["M"]
-
-    def abs_of(p):                       # 用户单位 → 绝对 sketch 单位 ✓
-        x = (2.0 * ox + vbw - p[0]) if flip else p[0]
-        return PB.apply(M, (x - ox) * k, (p[1] - oy) * k)
 
     out = {}
     for cid, p in pads.items():

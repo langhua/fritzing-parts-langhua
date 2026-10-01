@@ -19,8 +19,12 @@ r"""sketch 里的 **PCB 走线 / 过孔**：读、改、写 ✓（2026-09-30 立
         （`layer="copper0|copper1"` = 接在**零件焊盘**上 ✓；`…trace` = 接在**另一根线**上 ✓；
          `modelIndex` = 对方实例号 ✓）
   · 过孔 = `<instance moduleIdRef="ViaModuleID">` ⇒ `<pcbView layer="copper0|copper1"><geometry z x y wireFlags/>`
-    ⇒ 位置 = `(x, y)` ✓；`<property name="hole size" value="0.4mm,0.3mm"/>` ✓
-      （口径 = **外径, 钻孔** ⚠️ 待核 —— P0 第 3 步拿 Fritzing 源码钉死 ✓，先别当结论 ✗）
+    ⇒ 位置 = `(x, y)` ✓；`<property name="hole size" value="0.30mm,0.15mm"/>` ✓
+      （口径 = **`<孔直径>,<环宽>`** ✓✓ 2026-10-01 定死 ✓：拿 Fritzing 自己的导出反算
+       —— 它画的环中心线半径 = `(孔直+环宽)/2` ✓、圆环宽 = 环宽 ✓ ⇒ 反算出
+       内径 **0.30** ✓ / 外径 **0.60** ✓，与属性逐位对上 ✓；证据在
+       `docs/fritzing-sketch-format-notes.md` 的 **F17** ✓。
+       ✗ 旧版备注写的“外径,钻孔”是**错的** ✗，已删 ✗）
   · ★★ **数字格式 = `%.6g`** ✓（= `QString::number(double)` 的默认精度 ✓）：
     `116.672` / `9.502` / `0` / `68.7266` / `22.2222` / `-966.375` / `5.50214` 全部对得上 ✓
     ⇒ **改数字必须用它** ✓，否则写出字节 diff ✗（`--roundtrip` 就是守这条的 ✓）。
@@ -90,7 +94,11 @@ def parse_trace(block):
                re.finditer(r'<connect connectorId="([\w]+)" modelIndex="(\d+)" layer="([\w]+)"',
                            cm.group(2))]
         ends[int(cm.group(1))] = lst
-    return dict(layer=lay, geo=geo, ends=ends)
+    # ★ 线宽在 `<wireExtras mils="…"/>` ✓（与 `<geometry>` 同级 ✓，在**同一个视图**里 ✓）
+    #   ⇒ 读出来给渲染/校验用 ✓；没写 ⇒ None ✓（调用方自己定默认值 ✓）。
+    #   ★ 量的锚点 ✓：`12 mil` = 1.08 单位 = **0.3048 mm** ✓（v47 全板走线 ✓，见 F17 附近 ✓）。
+    we = re.search(r'<wireExtras\b[^>]*?\bmils="([-\d.eE+]+)"', body)
+    return dict(layer=lay, geo=geo, ends=ends, mils=float(we.group(1)) if we else None)
 
 
 def abs_ends(geo):
