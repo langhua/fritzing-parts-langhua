@@ -19,6 +19,11 @@ r"""PCB 读回校验器（通用 ✓）2026-09-30 立
    其中 **6 处是别的网** ⇒ 实物短路 ✗；用户拿图一眼就看出来了 ✗ —— 这条就是那次教训
    补上的机器守 ✓，`pcb_route` 里的 `novia` 只禁了盘内 ✓ 不够 ✗）。
    铜盘外半径 = `(孔直 + 环宽)/2 + 环宽/2` ✓（口径见 `fritzing-sketch-format-notes.md` 的 F17 ✓）。
+⑩ ★★ **声明 vs 几何** ✓（2026-10-02 补 ✗）—— 把 Fritzing 写下的 `<connect>`（它认为
+   “这里接上了” ✓）与**真铜是否重叠** ✗ 对照一遍；声明接了但铜没碰上 ⇒ 造出来是**断的** ✗。
+   ★ 起因：用户手加的过孔被 ①③ 报成“孤立/悬空”✗，而他在 Fritzing 里**点线节点是通的** ✓
+     —— 文件里确实写了 `<connect … modelIndex="…"/>` ✓ ⇒ 两套判据必须互相对照 ✓。
+   ★ 反过来（铜重叠但没声明 ✓）只是 Fritzing 没记 ✓ ⇒ 制造上没事 ✓ ⇒ **不报** ✗。
 
 ⚠️ **通孔盘（THT）口径**：`pcb_pads` 报的层 = svg 里画的那层 ✓；但**带孔**的盘物理上**贯通两层** ✓
    ⇒ 这里按"贯通两层"算 ✓，并把"只画了一层"**另行提示** ✓（不静默 ✗；口径待拿 Fritzing 源码核 ✓）。
@@ -59,6 +64,13 @@ def on_seg(p, a, b, tol=TOL):
 
 def in_rect(p, r, tol=TOL):
     return r[0] - tol <= p[0] <= r[2] + tol and r[1] - tol <= p[1] <= r[3] + tol
+
+
+def d_pt_rect(p, r):
+    """点到**矩形**的距离 ✓（在框内 ⇒ 0 ✓；单位同输入 ✓）"""
+    dx = max(r[0] - p[0], 0.0, p[0] - r[2])
+    dy = max(r[1] - p[1], 0.0, p[1] - r[3])
+    return (dx * dx + dy * dy) ** 0.5
 
 
 def seg_rect(a, b, r, tol=TOL):
@@ -272,6 +284,8 @@ def collect(path):
                 sz = re.search(r'name="hole size"\s+value="([^"]+)"', b)
                 mmv = [float(x) for x in re.findall(r"([\d.]+)\s*mm", sz.group(1))] if sz else []
                 ttl = re.search(r"<title>([^<]*)</title>", b)
+                # ★ ⑩ 要按 `modelIndex` 反查“这条线上声明接的是谁” ✓（2026-10-02 ✓）
+                mi = re.search(r'modelIndex="(\d+)"', b)
                 # ★★ 过孔的 `<geometry>` 是 **svg 画布原点** ✗ —— 真铜心要加**画图偏移** ✓
                 #   （2026-10-01 定案 ✓，见 `part_box.draw_off_units` 的出处 ✓）
                 #   ✗ 旧版直接把 geometry 当铜心 ⇒ 所有过孔差 0.8644 mm ✗ ⇒ “压别的焊盘”测不出来 ✗
@@ -287,6 +301,7 @@ def collect(path):
                                  p=(geo[0] + off, geo[1] + off),      # 真铜心 ✓
                                  geo=geo,                            # 原始 geometry ✓（写文件时用 ✓）
                                  off=off,
+                                 inst=mi.group(1) if mi else None,   # ⑩ 反查用 ✓
                                  # ★ 标题（`Via1`… ✓）也带出来 ⇒ 渲染器能写**稳定 id** ✓
                                  #   （2026-10-01 用户按 "circleNNNN" 对不上账 ✓ —— 那名字是查看器给的 ✗）
                                  ttl=ttl.group(1) if ttl else None,
@@ -299,11 +314,16 @@ def collect(path):
         if t is None:
             continue
         e = PW.abs_ends(t["geo"])
+        mi = re.search(r'modelIndex="(\d+)"', b)
         traces.append(dict(layer=t["layer"][:-5] if t["layer"].endswith("trace") else t["layer"],
                            a=e[0], b=e[1],
                            # ★ 线宽跟着走 ✓（`<wireExtras mils>` ✓）⇒ 渲染器照实物画 ✓
                            #   ✗ 旧版没有它 ⇒ 预览把每根线画成死值 ✗（v47 实宽 0.3048 mm ✓）。
-                           mils=t.get("mils")))
+                           mils=t.get("mils"),
+                           # ★ ⑩ 要用：自己的 `modelIndex` ✓ ＋ 两端**声明的**连接 ✓
+                           #   （`{端: [(connectorId, modelIndex, layer), …]}` ✓）
+                           inst=mi.group(1) if mi else None,
+                           ends=t.get("ends") or {}))
     return dict(pads=pads, traces=traces, vias=vias, board=PW.board_rect(text),
                 bodies=bodies, holes=PP.holes(text), text=text, name=name,
                 warns=warns, parts=parts)
@@ -444,6 +464,62 @@ def check(model, expect=None):
         else:
             notes.append("过孔 #%d @(%.2f,%.2f) mm 挨到 %s ✓"
                          % (i, v["p"][0] * PW.SK, v["p"][1] * PW.SK, "/".join(sorted(set(touch)))))
+
+    # ⑩ ★★ **声明 vs 几何** ✓（2026-10-02 补 ✗，见文件头 ⑩ ✓）
+    #   ★ 为什么需要 ✗：**声明**（`<connect>` ✓）与**铜重叠**（几何 ✓）是**两套判据** ✗ ——
+    #     2026-10-02 实测：用户手加的过孔，①③ 报“孤立/悬空”✗，而 Fritzing 里
+    #     **点线节点显示是通的** ✓（文件里也确实写着 `<connect … modelIndex="…"/>` ✓）——
+    #     两边不一致时不能只信一边 ✗ ⇒ 这里把它们**摆在一起对** ✓。
+    #   ★ 铜判据（物理 ✓）：`净距 = 端点到目标铜的距离 − 本线半宽 − 目标半宽` ⇒ > 0 = **没碰上** ✗
+    #     · 过孔半宽 = **铜盘外半径** = 孔直/2 + 环宽 ✓；· 焊盘 ⇒ 用它的**盘框** ✓；
+    #     · 线↔线 ⇒ 两个半宽相加 ✓。
+    #   ★ 容差 5 µm ✓（Fritzing 的数字是 6 位有效数字 ✓ ⇒ 不该有可见误差 ✓）
+    DECL_TOL_MM = 0.005
+
+    def _hw(t):
+        # 线宽不明 ⇒ 按 Fritzing 核心默认 12 mil 算 ✓（偏保守 ✓ —— 报出来的自己再核 ✓）
+        return (t.get("mils") or 12.0) * 0.0254 / 2.0
+
+    by_inst = {}
+    for i, v in enumerate(vias):
+        if v.get("inst"):
+            by_inst[v["inst"]] = ("via", i)
+    for i, t in enumerate(traces):
+        if t.get("inst"):
+            by_inst[t["inst"]] = ("wire", i)
+    pad_by = {}
+    for q in pads:
+        pad_by[(q["mi"], q["cid"])] = q
+    seen10 = 0
+    for i, t in enumerate(traces):
+        for k in (0, 1):
+            for cid, midx, _lay in (t.get("ends") or {}).get(k, []):
+                seen10 += 1
+                e = endpt(t, k)
+                tg = by_inst.get(midx)
+                who, gap = None, None
+                if tg and tg[0] == "via":
+                    v = vias[tg[1]]
+                    r = (v.get("hole_mm") or 0.3) / 2.0 + (v.get("ring_mm") or 0.15)
+                    gap = math.hypot(e[0] - v["p"][0], e[1] - v["p"][1]) * PW.SK - r - _hw(t)
+                    who = "过孔 #%d" % tg[1]
+                elif tg and tg[0] == "wire":
+                    u = traces[tg[1]]
+                    gap = d_pt_seg(e, u["a"], u["b"]) * PW.SK - _hw(t) - _hw(u)
+                    who = "走线 #%d" % tg[1]
+                else:
+                    q = pad_by.get((midx, cid))
+                    if q is not None:
+                        gap = d_pt_rect(e, q["box"]) * PW.SK - _hw(t)
+                        who = "焊盘 %s.%s" % (q["title"], q["cid"])
+                if gap is not None and gap > DECL_TOL_MM:
+                    probs.append("⑩ 声明未兼现：走线 #%d 的%s端在 `<connect>` 里声明接在 %s 上 ✓，"
+                                 "但几何上铜还差 **%.3f mm** ✗ ⇒ 造出来是**断的** ✗"
+                                 % (i, ("起" if k == 0 else "终"), who, gap))
+    if seen10:
+        notes.append("⑩ 逐条核对 Fritzing 的 `<connect>` 声明 %d 条 ✓"
+                     "（**声明接上 ≠ 铜真碰上** ✗）；不合格 %d 条 ✓"
+                     % (seen10, sum(1 for p in probs if p.startswith("⑩"))))
 
     # ⑥ ★★ 过孔**铜盘**压焊盘 ✓（2026-10-01 补 ✗，见文件头 ⑥ ✓）
     #   ✗ ③ 只问"孔心在不在盘框里" ✗ ⇒ 孔心在盘外、**环压在盘上**的情形它看不见 ✗✗
@@ -711,7 +787,8 @@ def main(argv):
         k = p[:1]
         cnt[k] = cnt.get(k, 0) + 1
     names = {"①": "悬空端点", "②": "板外", "③": "孤立过孔", "④": "同层短接", "⑤": "网表",
-             "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交", "⑨": "安装孔"}
+             "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交", "⑨": "安装孔",
+             "⑩": "声明未兼现"}
     if cnt:
         print("%s分类：%s" % (IND, "｜".join("%s%s %d" % (k, names.get(k, "?"), cnt[k])
                                      for k in sorted(cnt))))
