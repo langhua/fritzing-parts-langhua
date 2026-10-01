@@ -673,6 +673,100 @@ def _score(res):
     return (n_ok, -ln)
 
 
+def _sgn(v):
+    return 0 if abs(v) < 1e-12 else (1 if v > 0 else -1)
+
+
+def _orient(a, b, c):
+    """叉积 ✓（> 0 = 逆时针 ✓）"""
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _on(p, q, r):
+    """`r` 是否落在线段 `pq` 的框里 ✓（调用方已保证共线 ✓；含两端 ✓）"""
+    return (min(p[0], q[0]) - 1e-9 <= r[0] <= max(p[0], q[0]) + 1e-9 and
+            min(p[1], q[1]) - 1e-9 <= r[1] <= max(p[1], q[1]) + 1e-9)
+
+
+def _seg_hit(a, b, c, d):
+    """两线段**是否相交** ✓ —— 真 X 形 ✓、T 形搭上 ✓、共线重叠 ✓ **都算** ✓
+
+    ★ 为什么三种都要算 ✗：短路**不挑姿势** ✓（2026-10-01 起，仓规 §5b 第 ⑤ 条对面包板
+      也定了"X / T / 穿过"都算 ✓）—— 少算一种 ⇒ 目标函数就看不见用户看见的东西 ✗。
+    """
+    o1, o2 = _sgn(_orient(a, b, c)), _sgn(_orient(a, b, d))
+    o3, o4 = _sgn(_orient(c, d, a)), _sgn(_orient(c, d, b))
+    if o1 * o2 < 0 and o3 * o4 < 0:
+        return True
+    return ((o1 == 0 and _on(a, b, c)) or (o2 == 0 and _on(a, b, d)) or
+            (o3 == 0 and _on(c, d, a)) or (o4 == 0 and _on(c, d, b)))
+
+
+def _pt_seg_d(p, a, b):
+    """点到线段的最短距离（内部单位 ✓）"""
+    vx, vy = b[0] - a[0], b[1] - a[1]
+    wx, wy = p[0] - a[0], p[1] - a[1]
+    L2 = vx * vx + vy * vy
+    t = 0.0 if L2 <= 1e-18 else max(0.0, min(1.0, (wx * vx + wy * vy) / L2))
+    dx, dy = wx - t * vx, wy - t * vy
+    return math.sqrt(dx * dx + dy * dy)
+
+
+def _seg_dist(a, b, c, d):
+    """两线段**中心线**最短距离（内部单位 ✓）；相交 ⇒ **0** ✓
+
+    ★★ 几何公式**必须拿手算真值对一遍** ✗✓ —— 本仓栽过一次 ✓（2026-09-26：算"导线盖住
+      孔的面积比"的圆弓公式平方根项符号写反 ✗ ⇒ 真值 78% 报成 15% ✗ ⇒ 那条硬规则形同虚设 ✗）。
+      ⇒ 本函数的逐例真值在 `_work/check_segdist.py` ✓（8 例：X / 平行 / T / 共线重叠 /
+        退化点 / 斜线 / 对角错开 ✓）。
+    """
+    if _seg_hit(a, b, c, d):
+        return 0.0
+    return min(_pt_seg_d(a, c, d), _pt_seg_d(b, c, d),
+               _pt_seg_d(c, a, b), _pt_seg_d(d, a, b))
+
+
+def copper_overlap(seg_a, hw_a, seg_b, hw_b):
+    """两段（**同层** ✓）的铜是否重叠 ✓ —— `seg` = `(lay, p, q)` ✓、`hw` = 半宽（内部单位 ✓）
+
+    ★ 过孔也能用 ✓：把它写成**退化段** `(lay, v, v)` ✓、半宽给铜盘半径 ✓
+      （过孔本来就在**两层**上 ✓ ⇒ `lay` 传哪一层都对 ✓）。
+    """
+    if seg_a[0] != seg_b[0]:
+        return False
+    return _seg_dist(seg_a[1], seg_a[2], seg_b[1], seg_b[2]) < hw_a + hw_b - 1e-9
+
+
+def copper_clashes(res, width_of=None):
+    """同层、**不同网**的两段线，**铜真的叠了** ⇒ `[(网A, 网B, 段A, 段B, 叠了多少单位), …]` ✓
+
+    ★ 判据 = 中心线最短距离 < **半宽A + 半宽B** ✓（半宽 = 本网线宽的一半 ✓）
+    ★★ 为什么要有它 ✗（2026-10-01 实测 ✓）：v61 里 `BR+` 的竖段与 `DATA_OUT` 的近横段
+      **真交叉** ✗（中心线距 0.000 ✓、叠 0.203 mm ✓ = 两个半宽之和 ✓）—— 而**不是** A* 放的 ✗
+      （A* 的栅格把别的网挡着 ✓），是**后面的 pass**（拆线重布 / 去白钻对 / 确定性合并 ✓）
+      动了几何、却只按「连通 / 线长」验收 ✗ ⇒ 谁也没看"有没有叠" ✗。
+    ★ 口径**只有一份** ✓：生成器用它决定要不要修 ✓；**独立复核**另有校验器 `pcb_check` 第 ④ 条
+      与 `_work/diag_pairw.py`（按线宽算真铜间隙 ✓）✗ —— 不许自证 ✓。
+    """
+    w_of = width_of or (lambda n: TRACE_MM)
+    segs = []
+    for net, d in res.items():
+        for (lay, p, q) in d["segs"]:
+            segs.append((net, lay, p, q, U(w_of(net) / 2.0)))
+    out = []
+    for i in range(len(segs)):
+        for j in range(i + 1, len(segs)):
+            na, la, pa, qa, ha = segs[i]
+            nb, lb, pb, qb, hb = segs[j]
+            if na == nb:
+                continue
+            if copper_overlap((la, pa, qa), ha, (lb, pb, qb), hb):
+                out.append((na, nb, (la, pa, qa), (lb, pb, qb),
+                            _seg_dist(pa, qa, pb, qb) - ha - hb))
+    out.sort(key=lambda t: t[4])
+    return out
+
+
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=(),
                 copper_keep=()):
