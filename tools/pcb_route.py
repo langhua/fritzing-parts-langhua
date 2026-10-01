@@ -676,8 +676,12 @@ def _net_keys(net_pads, pads):
 
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
-          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=()):
+          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=(), pre=None):
     """⇒ **多种次序里最优的那份** ✓（先比连通网数 ✓，再比总长 ✓）
+
+    `pre` = **已经布好、要钉住的网** ✓ `{net: d}` —— 它们既不重布 ✓、又照旧当障碍 ✓
+      （2026-10-01 加 ✓，用于「留走廊」：先把某个网单独布好 ✓、后面所有网的栅格里
+       它的铜就是硬障碍 ✓ ⇒ 谁都不许占它的通道 ✓）。
 
     ★★ 2026-09-30 加**按网分宽** ✓（用户定 ✓：「用与 JST-SH 1.0 功率匹配的 5V 和 GND 线宽 ✓，
       信号线 12 或 8 mil ✓」）——JST SH 官方额定 **1 A/触点**（AWG #28 ✓）⇒ 电源网要宽 ✓。
@@ -689,7 +693,7 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     for name, key in _net_keys(net_pads, pads)[:tries]:
         order = sorted(net_pads, key=lambda n: (0 if n in tuple(first) else 1, key(n)))
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
-                          width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
+                          pre=pre, width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
                           copper_keep=copper_keep)
         n_ok = sum(1 for d in res.values() if d["ok"])
         ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
@@ -807,7 +811,7 @@ def copper_clashes(res, width_of=None):
 
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=(),
-                copper_keep=()):
+                copper_keep=(), pre=None):
     """先多次序布 ✓，再对布不通的网**拆掉挡它的线**重来 ✓（rip-up & reroute ✓）
 
     ★ 为什么要它 ✓（实测 2026-09-30 ✓）：9 个网只连通 3 个 ✗，而线宽 8～32 mil 全一样 ✗
@@ -821,7 +825,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
     """
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
                  width_of=width_of, first=first, mid_keep=mid_keep, ban_via=ban_via,
-                 copper_keep=copper_keep)
+                 copper_keep=copper_keep, pre=pre)
     best_s = _score(best)
     if verbose:
         print("   [拆线重布] 起点：连通 %d/%d ✓｜长 %.1f mm"
@@ -847,7 +851,8 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
             break
         gain = False
         for net in fails:
-            cand = [n for n in best if n != net and best[n]["ok"] and best[n]["segs"]]
+            cand = [n for n in best if n != net and best[n]["ok"] and best[n]["segs"]
+                    and n not in (pre or {})]
             for blk in sorted(cand, key=lambda n: near_net(net, n))[:blockers]:
                 pre = {k: v for k, v in best.items() if k not in (net, blk)}
                 trial = _route_once(items, rect, net_pads, pads, cell, via_cost,
@@ -1216,6 +1221,16 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                           max(p2[0], q2[0]) + hw, max(p2[1], q2[1]) + hw)
                     for k2, q in pads.items():
                         if k2 in mykeys:
+                            continue
+                        # ★★ 2026-10-01 修 ✗：**盘不在这一层就不算压** ✓！
+                        #   ✗ 旧版不看层 ✗ ⇒ 一条 **copper1** 的段会被判成"压了 **copper0** 的盘" ✗。
+                        #   证据（实测 ✓）：`5V` **单独**布时（没有任何别的线 ✗）只差最后一段
+                        #     `U1.connector5→LED2.connector3` ✓，报的却是
+                        #     「压盘 `U1.connector10`（**段 copper1**）」✗ —— 而 `U1` 是**背面件**
+                        #     ⇒ 它所有脚都在 **copper0** ✓ ⇒ 两层不相干 ✓ ⇒ **是误判** ✓✓
+                        #     （`_work/probe_5v_alone.py` 量出来的 ✓）。
+                        #   ★ 闸门本身**该留** ✓（同层真压盘 ⇒ 短路 ✓，见 `_work/repro_clash.py` ✓）。
+                        if lay2 not in q["lays"]:
                             continue
                         bb = q.get("box")
                         if not bb:
