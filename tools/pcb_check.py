@@ -317,6 +317,26 @@ def check(model, expect=None):
     def end(i, k):
         return ("end", i, k)
 
+    # ★★ `net_of` / `_nets_of` ✓（2026-10-01 提到最前 ✓，**各只留一份** ✗）：
+    #   `net_of` = 焊盘 → 网名 ✓（从 `expect` 来 ✓）；`_nets_of(root)` = 该连通块牵了哪几张网 ✓。
+    #   ★ 必须在 ①/⑤ 建边（会拿它判「短路桥」✓）与 ④ 之前就位 ✗。
+    net_of = {}
+    if expect:
+        for _n2, _lst2 in expect.items():
+            for _s2 in _lst2:
+                if isinstance(_s2, str) and "." in _s2:
+                    net_of[_s2] = _n2
+
+    def _nets_of(root):
+        """这个连通块里牵到几张网 ✓（顺着并查集看块里的焊盘 ✓）"""
+        out = set()
+        for q in pads:
+            if uf.find(("pad", q["title"], q["cid"])) == root:
+                nm = net_of.get("%s.%s" % (q["title"], q["cid"]))
+                if nm is not None:
+                    out.add(nm)
+        return out
+
     def endpt(t, k):
         return t["a"] if k == 0 else t["b"]
 
@@ -333,7 +353,19 @@ def check(model, expect=None):
             hit = False
             for q in pads:
                 if t["layer"] in pad_layers(q) and in_rect(e, q["box"]):
-                    uf.union(end(i, k), ("pad", q["title"], q["cid"]))
+                    # ★★ 「线端落在盘框里」也要**按网筛** ✗✓（2026-10-01 ✓）：
+                    #   同网的盘 ⇒ 正常接入 ✓；**别的网**的盘 ⇒ **短路桥** ✗（报出来 ✓）。
+                    ttl2 = (q["title"], q["cid"])
+                    qn = net_of.get("%s.%s" % ttl2)
+                    if qn is not None:
+                        ra2 = uf.find(end(i, k))
+                        na2 = _nets_of(ra2)
+                        if na2 and qn not in na2:
+                            probs.append("④ 走线 #%d（网 %s）的%s端落在**别的网**的盘 `%s.%s`"
+                                         "（网 %s）里 ⇒ **短路桥** ✗"
+                                         % (i, "、".join(sorted(na2)), ("起" if k == 0 else "终"),
+                                            ttl2[0], ttl2[1], qn))
+                    uf.union(end(i, k), ("pad", ttl2[0], ttl2[1]))
                     hit = True
             for j, u in enumerate(traces):
                 if j == i or u["layer"] != t["layer"]:
@@ -357,6 +389,12 @@ def check(model, expect=None):
                                 t["b"][0] * PW.SK, t["b"][1] * PW.SK, ("起" if k == 0 else "终")))
 
     # ④ 同层交叉 / 重叠 ⇒ 短接 ✗（并进连通图 ✓ 让它也在 ⑤ 现形 ✓）
+    #   ★★ 2026-10-01 修 ✗：**必须按网筛** ✗ —— 实测 6 对里大部分是**同一张网**的铜互碰 ✓
+    #     （`GND`×`GND` ✓、`C1.connector1`×`C1.connector1` ✓、`LED2.connector1`×… ✓）
+    #     ⇒ 那是**合法**的 ✓（同一张网本来就是一块铜 ✓，尤其是 GND 的汇流 ✓），不是短路 ✗。
+    #   ⇒ 判据改成：这一碰**是否把两张不同的网并到一起** ✓（拿 `net_of` 查到 ≥2 张网才报 ✓）。
+    #   ★ `net_of` 必须在**这之前**建好 ✗（它早先只在 ⑥ 里定义 ⇒ 这里引用会 `UnboundLocalError` ✓）
+    #   ★ `net_of` / `_nets_of` 已在上面定义过一份 ✓ ⇒ 这里**不再重复定义** ✗（单一实现 ✓）
     for i in range(len(traces)):
         for j in range(i + 1, len(traces)):
             ti, tj = traces[i], traces[j]
@@ -367,11 +405,21 @@ def check(model, expect=None):
             share = any(abs(endpt(ti, k)[0] - endpt(tj, m)[0]) <= TOL
                         and abs(endpt(ti, k)[1] - endpt(tj, m)[1]) <= TOL
                         for k in (0, 1) for m in (0, 1))
+            # ★★ 只在「这一碰**真的把两张不同的网并到一起**」时才是**短路桥** ✗✓
+            #   （2026-10-01 ✓）：先看这一碰**之前**两边各牵了哪些网 ✓ ——
+            #   · 两边已含同一张网 ✓ ⇒ 只是同网自己碰自己 ✓ ⇒ 合法 ✓、**不报** ✗；
+            #   · 一边 A、一边 B（不同网 ✓）⇒ **就是它把两张网接通了** ✗ ⇒ 报 ✓
+            #     （一个网对只会在**第一次**被接通时报一次 ✓ ⇒ 4 处伏报自然收敛成真桥 ✓）。
+            ra, rb = uf.find(end(i, 0)), uf.find(end(j, 0))
+            na, nb = _nets_of(ra), _nets_of(rb)
             uf.union(end(i, 0), end(j, 0))
-            if not share:
-                kind = "重叠" if abs(_cr(ti["a"], ti["b"], tj["a"])) < 1e-6 else "交叉"
-                probs.append("④ 同层%s（= 短接）：走线 #%d 与 #%d 都在 %s 层 ✗"
-                             % (kind, i, j, ti["layer"]))
+            if share or not na or not nb or (na & nb):
+                continue
+            kind = "重叠" if abs(_cr(ti["a"], ti["b"], tj["a"])) < 1e-6 else "交叉"
+            probs.append("④ 同层%s ⇒ **短路桥**：走线 #%d（网 %s）与 #%d（网 %s）在 %s 层"
+                         "把两张网接通了 ✗"
+                         % (kind, i, "、".join(sorted(na)), j, "、".join(sorted(nb)),
+                            ti["layer"]))
 
     # ③ 过孔挨铜 ＋ 贯通两层 ✓
     for i, v in enumerate(vias):
@@ -399,12 +447,6 @@ def check(model, expect=None):
     #     · 压到**同一张网**的一个/几个盘 ⇒ **via-in-pad** ✓ 合法 ✓ ⇒ 只**提示** ✓
     #       （万一它其实属于别的网 ⇒ ⑤ 的连通性会把两张网粘在一起 ⇒ 报"粘上了别的脚" ✓
     #         —— 所以这条放宽**不会**漏掉真短路 ✓）
-    net_of = {}
-    if expect:
-        for net, lst in expect.items():
-            for s in lst:
-                if isinstance(s, str) and "." in s:
-                    net_of[s] = net
     for i, v in enumerate(vias):
         hd, rg = v.get("hole_mm"), v.get("ring_mm")
         if hd is None or rg is None:
