@@ -363,6 +363,7 @@ def carve_pads(grid, pads, mem, grow, neck_grow=None):
 #   ⇒ 默认放大 10 倍 ✓；真撞上也会在下面打印一声 ✗（不静默 ✗）。
 ASTAR_LIMIT = 4000000
 _ASTAR_HIT = []          # 撞上限**只报一次** ✓（免得刷屏 ✗）
+BFS_USED = []            # A* 没搜到、改用 BFS 兜底的记录 ✓（2026-10-01 ✓）
 
 
 # ★★ 布不通时的**诊断** ✓（2026-10-01 立 ✓，只需 `--why` 打开 ✓）：
@@ -373,27 +374,64 @@ _ASTAR_HIT = []          # 撞上限**只报一次** ✓（免得刷屏 ✗）
 DIAG = {"on": False, "fails": []}
 
 
-def flood(grid, lay0, start, no_via=()):
-    """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓）"""
+def _flood_core(grid, lay0, start, no_via=(), want=None):
+    """泛洪内核 ✓ —— **唯一实现** ✓：`flood`（要可达集 ✓）与 `bfs_path`（要一条路 ✓）都走它 ✓
+
+    ★ 邻居规则 = `astar` 那一套 ✓（四邻 ✓ + 换层 ✓），**并且**照 `astar` 的过孔规矩：
+      起点格 / 终点格**不许打孔** ✗（要换层得先离开盘 ✓，见 `astar` 函数头注 ✓）——
+      ✗ 老 `flood` 既不看 `no_via` ✓、也不禁终点打孔 ✗ ⇒ 它说"可达"而 `astar` 说"无路" ✓
+      ⇒ 两边口径不一致 ✗（2026-10-01 实测 `5V` 就卡在这个矛盾上 ✓，查了很久 ✗）。
+    ⇒ 返回 `(seen, prev, hit)` ✓（`hit` = 撞到的目标状态 ✓，没给 `want` 就是 `None` ✓）
+    """
     s = (lay0, grid.rc(*start))
     if not grid.free(s[0], s[1][0], s[1][1]):
-        return set()
-    seen = {s}
-    st = [s]
-    while st:
-        cl, (ix, iy) = st.pop()
-        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nxt = (cl, (ix + dx, iy + dy))
-            if nxt in seen or not grid.free(cl, ix + dx, iy + dy):
-                continue
-            seen.add(nxt)
-            st.append(nxt)
+        return set(), {}, None
+    want = {(w[0], w[1]) for w in (want or ())}
+    seen, prev, st, head = {s: 0.0}, {}, [s], 0
+    while head < len(st):
+        cur = st[head]
+        head += 1
+        cl, (ix, iy) = cur
+        if cur in want:
+            return seen, prev, cur
         nl = "copper1" if cl == "copper0" else "copper0"
-        nxt = (nl, (ix, iy))
-        if nxt not in seen and grid.free(nl, ix, iy):
-            seen.add(nxt)
+        nbrs = [(cl, (ix + dx, iy + dy)) for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+        if (ix, iy) != s[1] and cur not in want and (ix, iy) not in no_via:
+            nbrs.append((nl, (ix, iy)))
+        for nxt in nbrs:
+            if nxt in seen or not grid.free(nxt[0], nxt[1][0], nxt[1][1]):
+                continue
+            seen[nxt] = 0.0
+            prev[nxt] = cur
             st.append(nxt)
-    return seen
+    return seen, prev, None
+
+
+def flood(grid, lay0, start, no_via=()):
+    """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓，见 `_flood_core` ✓）"""
+    return _flood_core(grid, lay0, start, no_via)[0]
+
+
+def bfs_path(grid, lay0, start, goals, no_via=()):
+    """**朴素 BFS 找一条路** ✓ ⇒ `[(层, (ix, iy)), …]` 或 None ✓（与 `astar` 的邻居规则**同一份** ✓）
+
+    ★★ 为什么要有它 ✗（2026-10-01 实测 ✓）：`5V` 的四个目标，`flood` 说**可达** ✓、
+      起点格也**空** ✓，可 `astar` 一条都搜不出来 ✗（也没撞上限 ✓）——
+      带代价/加罚的搜索偶尔就会这样 ✓ ⇒ **不能让"搜索没搜到"把本来布得通的线判死** ✗。
+      ⇒ 兜底：`not path` 且 `flood` 说可达 ⇒ 用**不带任何代价**的 BFS 再来一次 ✓
+        （它一定能找出来 ✓ —— 与 `flood` 用的是同一份邻居规则 ✓）。
+      ⚠️ 代价：BFS 的路径**不优化拐弯** ✓（折点可能多几个 ✓）⇒ 只当**兜底**用 ✗、不替代 A* ✓。
+    """
+    want = [(lay, grid.rc(*xy)) for lay, xy in goals]
+    _seen, prev, hit = _flood_core(grid, lay0, start, no_via, want=want)
+    if hit is None:
+        return None
+    path = [hit]
+    node = hit
+    while node in prev:
+        node = prev[node]
+        path.append(node)
+    return list(reversed(path))
 
 
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
@@ -1094,6 +1132,22 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 if path:
                     break
             if not path:
+                # ★★ 兜底 ✓（2026-10-01 ✓）：A* 没搜到 ⇒ 用**不带任何代价**的 BFS 再来一次 ✓
+                #   出处（实测 ✓）：`5V` 四个目标 `flood` 说可达 ✓、起点格也空 ✓，
+                #     而 `astar` 一条都没搜出来 ✗（也没撞上限 ✓）—— 带代价/加罚的搜索会这样 ✓。
+                #   ✗ 不许把它当"无解"咽下去 ✗（那就是静默失败 ✓）⇒ 能兜就兜、兜了要**报** ✓。
+                #   ★ BFS 的邻居规则与 `flood` **同一份** ✓ ⇒ `flood` 说可达它就一定找得出 ✓。
+                for la in pads[a]["lays"]:
+                    path = bfs_path(grid, la, pads[a]["c"],
+                                    [(lb, pads[b]["c"]) for lb in pads[b]["lays"]],
+                                    no_via)
+                    if path:
+                        if len(BFS_USED) < 3:
+                            print("   ⚠ A* 没搜到路 ⇒ **BFS 兜底** ✓：网 %s 的 %s.%s→%s.%s ✓"
+                                  % (net, a[0], a[1], b[0], b[1]))
+                        BFS_USED.append((net, a, b))
+                        break
+            if not path:
                 fails += 1
                 hit = False
                 for la in pads[a]["lays"]:
@@ -1101,7 +1155,12 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     hit = hit or any((lb, grid.rc(*pads[b]["c"])) in reach
                                      for lb in pads[b]["lays"])
                 if len(why) < 3:
-                    why.append("%s.%s→%s.%s 不可达/可达=%s" % (a[0], a[1], b[0], b[1], hit))
+                    _s_free = [la for la in pads[a]["lays"]
+                               if grid.free(la, *grid.rc(*pads[a]["c"]))]
+                    why.append("%s.%s→%s.%s 不可达/可达=%s 起点格%s"
+                               % (a[0], a[1], b[0], b[1], hit,
+                                  "空 ✓" if len(_s_free) == len(pads[a]["lays"])
+                                  else "**被占** ✗（%s）" % (pads[a]["lays"],)))
                 if DIAG["on"]:
                     for la in pads[a]["lays"]:
                         reach = flood(grid, la, pads[a]["c"], no_via)
