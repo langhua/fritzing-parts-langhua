@@ -74,13 +74,15 @@ VIA_HOLE_MM, VIA_RING_MM = 0.30, 0.15      # 兜底值 ✓（件若没写 `hole 
 #   `fill-opacity="0.5"` + `stroke="#111111"` ✓；✗ 我以前画**灰底**（`#d9d9d9`）✗
 #   ⇒ 两图底色就不一样 ✗（用户逐张对图时一眼可见 ✓）。
 C_BRD_FILL, C_BRD_EDGE, C_BRD_FILL_OP = "#ffffff", "#111111", "0.5"
-# ★★ 丝印（2026-09-30 用户点名补 ✗）—— 两层问题：
-#   ① 件 svg 里丝印写死了 `stroke="#f0f0f0"` ✗（近白 ✓）—— 那是给**深色板**配的 ✓，
-#      而本预览的板是**浅灰** ✗ ⇒ **一个字也看不见** ✗（实测：画了 9 块，图上一片空 ✗）；
-#   ② 件里那个颜色是**自己的属性** ✗ ⇒ 在父组上写 fill/stroke **盖不住** ✗
-#      ⇒ 必须**逐个改**（`repaint_colors` ✓）。
-#   取值：深灰 ✓（浅灰板上看得清 ✓）—— **不为好看，只为看得见** ✓。
-C_SILK = "#3f3f3f"
+# ★★ 丝印色：**跟官方一致** ✓（2026-10-01 用户定 ✗：「丝印色跟官方一致吧」✓）
+#   出处（同 `viewlayer.cpp` ✓）：`Silkscreen1Color = "#000000"`（顶层 ✓）、
+#     `Silkscreen0Color = "#444444"`（底层 ✓）✓
+#   ⇒ 与铜层**同一套“按所在面”口径** ✓：背面件的 `silkscreen`（件里写的顶层丝印 ✓）
+#     落在**板子的底层** ✓ ⇒ 取 `#444444` ✓（对调 ✓ —— 与 `pcb_pads.part_shapes` 同一条规矩 ✗）。
+#   ★ 为什么必须自己改色 ✗（2026-09-30 踩过 ✓）：件 svg 里丝印写死 `stroke="#f0f0f0"`（近白 ✗）
+#     —— 那是给**深色板**配的 ✓ ⇒ 在本预览的**浅色板**上**一个字也看不见** ✗；
+#     而且那是**元素自己的属性** ✗ ⇒ 在父组上写 fill/stroke 盖不住 ✗ ⇒ 只能逐个改 ✓。
+C_SK0, C_SK1 = "#444444", "#000000"        # 丝印：底层 `#444444` ✓ / 顶层 `#000000` ✓
 # ★★ 安装孔：**照 Fritzing 的画法** ✓ —— 它导出里就是一个 `circle fill="black" stroke="#f9a435" sw="0"` ✓
 #   ✗ 我以前画"白圆 + 深边" ✗ ⇒ 与 Fritzing 看着就不一样 ✗（用户 2026-10-01：
 #     "Fritzing 里的画法我改不了，我只能看你两者是否一致" ✓）。
@@ -146,7 +148,7 @@ def layer_inner(svg_text, layer):
 def repaint_colors(xml, color):
     """把原文里**自带的颜色**换成 `color` ✓ —— **丝印**✗ / **铜层** ✓ 共用这一个 ✓
 
-    ★ 丝印不改就看不见 ✗（件里写死近白 `#f0f0f0` ✓ —— 见 `C_SILK` ✓）；
+    ★ 丝印不改就看不见 ✗（件里写死近白 `#f0f0f0` ✓ —— 见 `C_SK0` ✓）；
       铜层不改就**与 Fritzing 不一致** ✗（它载入时按层盖色 ✓ —— 见 `C_CU0` ✓）。
 
     ★ 只改**颜色值** ✓：`stroke="none"` / `fill="none"` **原样保留** ✓
@@ -271,8 +273,10 @@ def render(model, px_per_mm=12.0, opts=()):
         # ★★ 丝印也**原样**画一份 ✓（`silkscreen` / `silkscreen0` ✓）—— 先存着 ✓，
         #   等焊盘/走线都画完再上 ✓（丝印是**最后印**上去的 ✓，压在铜上是正常的 ✓）；
         #   颜色必须**逐元素改** ✗（件里写死近白的 `#f0f0f0` ✗ ⇒ 不改就看不见 ✗）。
-        sk = repaint_colors(layer_inner(p["svg_text"], "silkscreen")
-                            + layer_inner(p["svg_text"], "silkscreen0"), C_SILK)
+        # ★ 丝印**按所在面取色** ✓（背面件对调 ✓ —— 见 `C_SK0` / `C_SK1` ✓）
+        top_sk, bot_sk = (C_SK0, C_SK1) if flip else (C_SK1, C_SK0)
+        sk = (repaint_colors(layer_inner(p["svg_text"], "silkscreen"), top_sk)
+              + repaint_colors(layer_inner(p["svg_text"], "silkscreen0"), bot_sk))
         if sk:
             silk_layers.append('<g transform="%s">%s</g>' % (trans, sk))
             n_silk += 1
