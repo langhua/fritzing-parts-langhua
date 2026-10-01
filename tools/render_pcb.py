@@ -110,7 +110,18 @@ def layer_inner(svg_text, layer):
             if not nxt:
                 break
             j = i + nxt.start()
-            depth += -1 if nxt.group(1) else 1
+            if nxt.group(1):
+                depth -= 1
+            else:
+                # ★★ **自闭合的 `<g ... />` 不占层级** ✗✓（2026-10-01 修 ✗，用户报「U1 看不见」✓）：
+                #   ✗ 旧扫描见 `<g` 就 +1 ✗ ⇒ 遇到 `<g id="copper0"/>` 这种**空层**（自闭合 ✓、
+                #     **没有** `</g>` ✓）就永远回不到 0 ✗ ⇒ `layer_inner` **什么都不返回** ✗
+                #     ⇒ 整个件**画不出来** ✗（实测 `U1`：焊盘全在 `<g id="copper1">` 里 ✓、
+                #       紧跟一个 `<g id="copper0"/>` ✓ ⇒ `copper_inner` = **0 字符** ✗）。
+                #   ★ 这是**通病** ✗：底层件常把空层写成自闭合 ✓（`U1` 就是背面件 ✓）。
+                k = svg_text.find(">", j)
+                if not (k >= 0 and svg_text[j:k].rstrip().endswith("/")):
+                    depth += 1
             i = i + nxt.end()
             if depth == 0:
                 body = svg_text[m.end():j]
