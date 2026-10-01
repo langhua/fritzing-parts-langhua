@@ -425,8 +425,12 @@ def _flood_core(grid, lay0, start, no_via=(), want=None):
 
 
 def flood(grid, lay0, start, no_via=()):
-    """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓，见 `_flood_core` ✓）"""
-    return _flood_core(grid, lay0, start, no_via)[0]
+    """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓，见 `_flood_core` ✓）
+
+    ★ 返回**集合** ✓（2026-10-01 修 ✗）：`_flood_core` 内部用 `{状态: 代价}` 记 seen ✓，
+      ✗ 直接把它当集合返回 ⇒ 调用方一碰 `&` / `|` 就 TypeError ✗（实测 `_work/probe_reach.py` ✓）。
+    """
+    return set(_flood_core(grid, lay0, start, no_via)[0])
 
 
 def bfs_path(grid, lay0, start, goals, no_via=()):
