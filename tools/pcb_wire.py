@@ -79,7 +79,12 @@ def parse_trace(block):
 
     `ends` = `{0: [(connectorId, modelIndex, layer), …], 1: […]}` ✓（端点接在谁身上 ✓）
     """
-    m = re.search(r'<pcbView layer="([\w]+)">(.*?)</pcbView>', block, re.S)
+    # ★★ 2026-10-01 修 ✗：原来要求标签**只有** `layer` 一个属性 ✗ —— 而**用户手画的线**
+    #   会被 Fritzing 写成 `<pcbView layer="copper0trace" bottom="true">` ✓
+    #   ⇒ 整条线**看不见** ✗（实测：`pixel-pcb-v51_byHand.fzz` 里有 **18** 条手画线 ✓，
+    #     旧正则只认出 **1** 条 ✗ —— 而**布线器/校验器都靠这个函数** ✗✗
+    #     ⇒ 它们会以为那 17 条不存在 ⇒ 可能压上去布线 ✗）。⇒ 改成**容忍额外属性** ✓。
+    m = re.search(r'<pcbView\b[^>]*?\blayer="([\w]+)"[^>]*>(.*?)</pcbView>', block, re.S)
     if not m:
         return None
     lay, body = m.group(1), m.group(2)
@@ -225,7 +230,7 @@ def main(argv):
         for b in samples:
             isvia = "ViaModuleID" in b
             if isvia:
-                m = re.search(r'<pcbView layer="([\w]+)">\s*<geometry ([^>]*)/>', b)
+                m = re.search(r'<pcbView\b[^>]*?\blayer="([\w]+)"[^>]*>\s*<geometry ([^>]*)/>', b)
                 a = dict(re.findall(r'([\w]+)="([^"]*)"', m.group(2)))
                 print("   [过孔] %-30s 在 (%.3f, %.3f) sketch 单位 = (%.2f, %.2f) mm"
                       % (m.group(1), float(a.get("x", 0)), float(a.get("y", 0)),

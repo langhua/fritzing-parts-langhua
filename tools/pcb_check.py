@@ -261,7 +261,7 @@ def collect(path):
         mr = re.search(r'moduleIdRef="([^"]+)"', b)
         mid = mr.group(1) if mr else ""
         if mid.startswith("Via"):
-            m = re.search(r'<pcbView layer="([\w]+)">\s*<geometry ([^>]*)/>', b)
+            m = re.search(r'<pcbView\b[^>]*?\blayer="([\w]+)"[^>]*>\s*<geometry ([^>]*)/>', b)
             if m:
                 a = dict(re.findall(r'([\w]+)="([^"]*)"', m.group(2)))
                 # ★★ 过孔尺寸 = 件属性 `hole size` ✓，口径 **`<孔直径>,<环宽>`** ✓
