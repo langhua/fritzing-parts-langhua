@@ -27,6 +27,7 @@ r"""PCB 读回校验器（通用 ✓）2026-09-30 立
   py -3.13 tools\pcb_check.py <sketch.fzz> [--nets=<含 EXPECT 的项目数据.py>]
 退出码：0 = 全过 ✓；1 = 有问题 ✗（每条问题都点名 ✓，不静默 ✓）
 """
+import math
 import os
 import re
 import sys
@@ -100,6 +101,40 @@ def seg_seg(a, b, c, d):
 #     0.25 = 给装配/蚀刻留一档余量 ✓；✗ 别跟布线器的 `VIA_PAD_KEEPOUT_MM=0.45`（布局用的**预警**区 ✓）
 #     混为一谈 ✗ —— 一个是"量出来合不合法" ✓（本文件 ✓），一个是"布的时候躲多远" ✓（`pcb_route` ✓），
 #     **两份实现** ✓（故意的 ✓：互不背书 ⇒ 不会一起错 ✗）。
+# ★★ 「**该缩宽**」的判据 ✓（2026-10-01 立 ✓，单一定义 ✓ —— 布线器与生成器都读它 ✓）：
+#   = 这个盘到**同一个件**最近另一个盘的**边缘间隙** < `NECK_TRIGGER_MM` ✓。
+#   由来（实测 ✓）：电线在盘旁边走，要占 `线宽/2` ✓、两侧还要净距 `CLEAR` ✓
+#     ⇒ 间隙放不下 ⇒ **必须缩宽**（进盘前变细 ✓，业界常规做法 ✓）。
+#   ★ 值 = `TRACE_MM + 2×CLEAR_MM` = 0.3048 + 0.30 = **0.6048 mm** ✓
+#     （= 信号线满宽 + 两侧净距 ✓，放不下就得细 ✓）。
+#   ★ 为什么不用 `VIA_INPAD_PITCH_MM`（细间距）当缩宽判据 ✗：那个是**过孔合法性**的口径 ✓，
+#     而且只按**中心距**≤ 0.65 ✓ ⇒ `R1`（0402 ✓ 0.9 间距）与 `J1`（1.0 ✓）都不算 ✓
+#     ⇒ 它们旁边的粗线仍按 0.455 挡 ✗ ⇒ 实测起点被围成 **72 / 312 / 288 格的小口袋** ✗
+#       （`RC` / `COIL_A` / `COIL_B` 就是死在这里 ✓）。
+#   ★ 实测本板命中（按**间隙**算 ✓）：`U1` QFN 0.200 ✓、`D3` 0.200 ✓、`R1`/`C1` 0402 ≈ 0.4 ✓、
+#     `J1`/`J2` ≈ 0.4 ✓、`LED2` ≈ 0.4 ✓ ⇒ 都命中 ✓；`C2` 0603 ≈ 1.5 ✗、`L1` 线圈 7.4 ✗ ⇒ 不缩 ✓。
+NECK_TRIGGER_MM = 0.6048
+
+# ★★ 安装孔的**净距规则** ✓（2026-10-01 用户定 ✓，原话：
+#   「安装孔附近是不能布线的，更不能穿体」✓）——
+#   走线 / 过孔 到**孔内壁**的净距必须 ≥ `HOLE_CLEAR_MM` ✓；穿过（净距 < 0 ✓）**必定** FAIL ✗。
+#   ★ 值 0.25 与 `VIA_SAFE_MM` / `PART_GAP_MM` 同值 ✓（好记 ✓、一行可调 ✓）。
+#   ★ 起因（实测 ✓，不是推测 ✗）：安装孔件是核心 `HoleModuleID` ✓、`hole size="2.2mm,0.0mm"`
+#     ⇒ **没有铜** ✓ ⇒ 以前**谁都看不见它** ✗（渲染器要画孔才解析过它 ✗）
+#     ⇒ `v50H.fzz` 里有 **4 根走线直接穿过安装孔** ✗（实测距内壁 −1.100 / −0.900 / −0.800 / −0.300 mm ✓，
+#     其中 −1.100 = 正**穿孔心** ✓）。
+#   ★ 与布线器的口径关系 ✓：那边把孔按**方框**挡（`pcb_route.HOLE_CLEAR_MM` ✓，多挡四个角 ✓ = 更严 ✓）；
+#     这里是**圆**的精确判据 ✓ —— 两边**各自实现** ✓（互不背书 ✓）。
+HOLE_CLEAR_MM = 0.25
+
+
+def rect_gap_mm(a, b):
+    """两个**盘框**的**边缘间隙**（mm ✓；相交 ⇒ 0 ✓）—— 缩宽判据的**唯一实现** ✓"""
+    dx = max(a[0] - b[2], 0.0, b[0] - a[2])
+    dy = max(a[1] - b[3], 0.0, b[1] - a[3])
+    return (dx * dx + dy * dy) ** 0.5 * 25.4 / 90.0
+
+
 VIA_SAFE_MM = 0.25
 # ★★ EPAD（裸露焊盘）上的**同网 via-in-pad 是允许的** ✓（2026-10-01 用户定 ✓）：
 #   用户原话：「是在 EPAD 上开通孔接 GND 吗？这个必须允许」✓
@@ -205,13 +240,21 @@ def collect(path):
     for lst in by_title.values():
         for q in lst:
             best = None
+            gap = None
             for z in lst:
                 if z is q:
                     continue
                 d = ((z["c"][0] - q["c"][0]) ** 2 + (z["c"][1] - q["c"][1]) ** 2) ** 0.5 \
                     * 25.4 / 90.0
                 best = d if best is None else min(best, d)
+                gg = rect_gap_mm(q["box"], z["box"])
+                gap = gg if gap is None else min(gap, gg)
             q["fine"] = bool(best is not None and best <= VIA_INPAD_PITCH_MM)
+            # ★★ 「**该缩宽**」= 边缘间隙放不下满宽线 + 两侧净距 ✓（判据见 `NECK_TRIGGER_MM` ✓，
+            #   2026-10-01 立 ✓ —— 与 `fine` 是**两件事** ✗：`fine` 管“过孔能不能落盘上” ✓，
+            #   `tight` 管“线到这里要不要变细” ✓）
+            q["gap_mm"] = gap
+            q["tight"] = bool(gap is not None and gap < NECK_TRIGGER_MM)
     text, name = PW.read(path)
     traces, vias = [], []
     for _ind, b in PW.blocks(text):
@@ -256,7 +299,8 @@ def collect(path):
                            #   ✗ 旧版没有它 ⇒ 预览把每根线画成死值 ✗（v47 实宽 0.3048 mm ✓）。
                            mils=t.get("mils")))
     return dict(pads=pads, traces=traces, vias=vias, board=PW.board_rect(text),
-                bodies=bodies, text=text, name=name, warns=warns, parts=parts)
+                bodies=bodies, holes=PP.holes(text), text=text, name=name,
+                warns=warns, parts=parts)
 
 
 def pad_layers(q):
@@ -501,6 +545,28 @@ def check(model, expect=None):
                                 B["title"], ("背面" if B.get("side") == "bottom" else "正面"),
                                 worst, PART_GAP_MM, wk[0], wk[1]))
 
+    # ⑨ ★★ 安装孔 ✓（2026-10-01 用户定 ✓：「安装孔附近是不能布线的，更不能穿体」✓）
+    #   判据 = 「**线段/点到孔心**的距离 − 孔半径」≥ `HOLE_CLEAR_MM` ✓（圆 ✓，不是方框 ✓）。
+    #   ★ 为什么必须有这条 ✗：孔件是核心 `HoleModuleID` ✓、`hole size="2.2mm,0.0mm"`
+    #     ⇒ **没有铜** ✗ ⇒ ①–⑧ 没一条看得见它 ✗ ⇒ 实测 `v50H.fzz` 有 4 根走线穿过孔 ✗
+    #     （其中一根距内壁 **−1.100 mm** = 正穿孔心 ✓）。
+    for hi, (c, dia, _cup) in enumerate(model.get("holes") or ()):
+        r = (dia / 2.0) / PW.SK                        # 孔半径 ⇒ sketch 单位 ✓
+        for i, t in enumerate(traces):
+            d = (d_pt_seg(c, t["a"], t["b"]) - r) * PW.SK
+            if d < HOLE_CLEAR_MM - 1e-9:
+                probs.append("⑨ 安装孔：走线 #%d 距孔 #%d 内壁只有 %+.3f mm ✗"
+                             "（需要 ≥ %.2f mm ✓；孔 Ø%.2f ✓%s）"
+                             % (i, hi, d, HOLE_CLEAR_MM, dia,
+                                "，**穿体** ✗" if d < 0 else ""))
+        for i, v in enumerate(vias):
+            d = (math.hypot(v["p"][0] - c[0], v["p"][1] - c[1]) - r) * PW.SK
+            if d < HOLE_CLEAR_MM - 1e-9:
+                probs.append("⑨ 安装孔：过孔 #%d 距孔 #%d 内壁只有 %+.3f mm ✗"
+                             "（需要 ≥ %.2f mm ✓；孔 Ø%.2f ✓%s）"
+                             % (i, hi, d, HOLE_CLEAR_MM, dia,
+                                "，**落在孔里** ✗" if d < 0 else ""))
+
     # ② 板外 ✓
     r = model["board"]
     if r is None:
@@ -597,7 +663,7 @@ def main(argv):
         k = p[:1]
         cnt[k] = cnt.get(k, 0) + 1
     names = {"①": "悬空端点", "②": "板外", "③": "孤立过孔", "④": "同层短接", "⑤": "网表",
-             "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交"}
+             "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交", "⑨": "安装孔"}
     if cnt:
         print("%s分类：%s" % (IND, "｜".join("%s%s %d" % (k, names.get(k, "?"), cnt[k])
                                      for k in sorted(cnt))))

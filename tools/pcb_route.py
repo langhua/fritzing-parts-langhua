@@ -104,8 +104,16 @@ VIA_PAD_KEEPOUT_MM = VIA_CLEAR_MM + VIA_PAD_CLEAR_MM   # = 0.55 ✓（**孔心**
 #   ★ 理由（工艺 ✓）：0.4 mm 间距的 QFN 不能整根跑 24 mil ✓；缩最后一段是业界常规做法 ✓
 #     （载流靠整段铜面 ✓，0.5 mm 的 10 mil 短头子对载流几乎无影响 ✓）。
 NECK_MIL = 10
-NECK_W_MM = NECK_MIL * 25.4 / 1000.0              # = 0.254 mm ✓
+NECK_W_MM = NECK_MIL * 25.4 / 1000.0              # = 0.254 mm ✓（半宽 0.127 ✓）
 NECK_ZONE_MM = 1.5
+# ★★ 安装孔的**禁落区** ✓（2026-10-01 用户定 ✓：「安装孔附近是不能布线的，更不能穿体」✓）：
+#   核心孔件 `HoleModuleID` 的 `hole size="2.2mm,0.0mm"` ⇒ **没有铜** ✗
+#   ⇒ 以前 `obstacles()` 里它一个障碍都不产生 ✗ ⇒ 实测 `v50H.fzz` 有 **4 根走线穿过孔** ✗
+#     （距内壁 −1.100 / −0.900 / −0.800 / −0.300 mm ✓，其中 −1.100 = 正穿孔心 ✓）。
+#   ★ 挡法 = **方框**（`孔外接框 + HOLE_CLEAR_MM` ✓）—— 比方孔多挡四个角 ✓（更严 ✓，代价小 ✓）；
+#     校验器 `pcb_check` 第 ⑨ 条用**圆**的精确判据 ✓（两边各自实现 ✓，互不背书 ✓）。
+#   ★ 与 `pcb_check.HOLE_CLEAR_MM` **同值** ✓（改一处必须同步 ✓）。
+HOLE_CLEAR_MM = 0.25
 # ★★ 过孔**递增代价** ✓（2026-09-30 用户定："改代价结构" ✓）——
 #   同一张网里**每多用一颗过孔**，下一颗就更贵 `VIA_ESCALATE` 倍 ✓：
 #     第 1 颗 = 1.0× ✓、第 2 颗 = 1.6× ✓、第 3 颗 = 2.2× ✓ …
@@ -208,6 +216,7 @@ def obstacles(model, part_copper=True):
     """
     items = []
     grow = U(TRACE_MM / 2 + CLEAR_MM)
+    n_hole = 0
     # ① 板边留边 ✓ ⇒ 由 `make_grid` 调 `block_frame` ✓（✗ 不能写成一块矩形障碍：
     #   那是**整块板** ✓ ⇒ 一格都走不了 ✗ —— 2026-09-30 实测踩到过 ✓）
     # ② 焊盘铜 ✓（带网名 ✓；通孔盘两层都算 ✓）
@@ -227,12 +236,19 @@ def obstacles(model, part_copper=True):
         #   ✓ 按 `NECK_MIL`（10 mil ⇒ 净空 0.277 ✓）算 ⇒ 缝还在 ✓
         #     而进去的那一段由写回器**真的变成 10 mil** ✓（`gen_routes.split_neck` ✓）
         #     ⇒ 模型与实际铜面一致 ✓。
-        gp = U(NECK_W_MM / 2 + CLEAR_MM) if q.get("fine") else grow
+        gp = U(NECK_W_MM / 2 + CLEAR_MM) if q.get("tight") else grow
         for lay in lays:
             if lay in LAYERS:
                 items.append((lay, q["box"], gp, nm))
                 n_pad += 1
     # ③ 件自己的**铜箔图形** ✓（线圈绕组 722 条 ✓ —— 不挡它线会压在绕组上 ✗；tag=None ✓）
+    # ★★ ③b 安装孔 ✓（2026-10-01 用户定 ✓，见 `HOLE_CLEAR_MM` ✓）—— 孔件**没有铜** ✗，
+    #   所以必须**单独**按它的**外接框**挡 ✓（否则走线会直接穿过去 ✗，实测 4 根 ✓）。
+    for (c, dia, _cup) in (model.get("holes") or ()):
+        rr = U(dia / 2.0)                              # 孔半径 ⇒ sketch 单位 ✓
+        items.append(("both", (c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr),
+                      U(HOLE_CLEAR_MM), None))
+        n_hole += 1
     n_cu = 0
     if part_copper:
         import xml.etree.ElementTree as ET
@@ -261,7 +277,7 @@ def obstacles(model, part_copper=True):
                 xs = [p["loc"][0] + q[0] for q in pts]
                 ys = [p["loc"][1] + q[1] for q in pts]
                 items.append((lay, (min(xs), min(ys), max(xs), max(ys)), grow, None))
-    return items, dict(pads=n_pad, copper=n_cu, net_of=net_of)
+    return items, dict(pads=n_pad, copper=n_cu, net_of=net_of, holes=n_hole)
 
 
 def make_grid(rect, cell, items, extra=(), skip_tag=None):
@@ -300,8 +316,8 @@ def neck_zones(pads, grow_mm=None):
     g = U(grow_mm)
     out = []
     for _k, q in pads.items():
-        if not q.get("fine"):
-            continue                        # ✗ 只对**细间距**件缩宽 ✓（接插件/电阻/电容不算 ✓）
+        if not q.get("tight"):
+            continue                        # ✗ 只对**间隙放不下线宽**的盘缩宽 ✓（2026-10-01 ✓）
         b = q.get("box")
         if not b:
             continue
@@ -332,7 +348,7 @@ def carve_pads(grid, pads, mem, grow, neck_grow=None):
         #     ⇒ 粗线就能从别人盘上穿过去 ✓✓（实测这就是 `GND`↔`PA2` 短路的机制 ✓：
         #     `VSS` 与 `PA2` 只隔 0.4 mm ⇒ VSS 的 0.455 挖盘区把 PA2 也包了进去 ✗）。
         gg = grow
-        if neck_grow is not None and q.get("fine"):
+        if neck_grow is not None and q.get("tight"):
             gg = neck_grow
             # ★ 与 `obstacles` 里“细间距盘按缩宽算”**同一个值** ✓（两处必须一致 ✗：
             #   一边 0.277 ✓ 一边 0.302 ✗ ⇒ 挖出来的比挡住的还小 ⇒ 一格可走的都没有 ✓）
@@ -347,6 +363,37 @@ def carve_pads(grid, pads, mem, grow, neck_grow=None):
 #   ⇒ 默认放大 10 倍 ✓；真撞上也会在下面打印一声 ✗（不静默 ✗）。
 ASTAR_LIMIT = 4000000
 _ASTAR_HIT = []          # 撞上限**只报一次** ✓（免得刷屏 ✗）
+
+
+# ★★ 布不通时的**诊断** ✓（2026-10-01 立 ✓，只需 `--why` 打开 ✓）：
+#   目的 —— 区分两件事 ✗（以前不分 ✓，所以老在猜 ✗）：
+#     ① **真没路** ✗（障碍模型把目标周围堵死了 ✓）；
+#     ② **有路但 A* 没搜到 / 代价结构不对** ✗（如撞上限 ✓、或拐弯/换层代价把它顶歪 ✓）。
+#   做法：从起点泛洪一遍 ✓（步法、`no_via` 与 `astar` **同口径** ✓）⇒ 看目标格在不在可达集里 ✓。
+DIAG = {"on": False, "fails": []}
+
+
+def flood(grid, lay0, start, no_via=()):
+    """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓）"""
+    s = (lay0, grid.rc(*start))
+    if not grid.free(s[0], s[1][0], s[1][1]):
+        return set()
+    seen = {s}
+    st = [s]
+    while st:
+        cl, (ix, iy) = st.pop()
+        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nxt = (cl, (ix + dx, iy + dy))
+            if nxt in seen or not grid.free(cl, ix + dx, iy + dy):
+                continue
+            seen.add(nxt)
+            st.append(nxt)
+        nl = "copper1" if cl == "copper0" else "copper0"
+        nxt = (nl, (ix, iy))
+        if nxt not in seen and grid.free(nl, ix, iy):
+            seen.add(nxt)
+            st.append(nxt)
+    return seen
 
 
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
@@ -546,6 +593,12 @@ def pad_index(model):
             #   `epad` = 裸露焊盘 ✓、`fine` = 细间距盘 ✓ ⇒ 同网时它们不设禁落区 ✓
             #   （校验器 `pcb_check` 用**同一套**标记判 ✓，两边口径一致 ✓）
             epad=bool(q.get("epad")), fine=bool(q.get("fine")),
+            # ★★ 「该缩宽」标记也必须带过来 ✗（2026-10-01 实测踩过 ✓）：
+            #   ✗ 漏了它 ⇒ `neck_zones()` 拿到的一律是 `None` ⇒ **缩宽区是空的** ✗
+            #     ⇒ 写回不缩宽 ✗ ⇒ 实测「缩宽段 **0** 条」✗ + 独立复核报
+            #       「④ 同层交叉 6 处」✗ 与「⑤ GND 粘上 U1.connector2」✗ 一起回来 ✓。
+            #   ★ 判据本身只写在 `pcb_check.collect` 一处 ✓（`tight` / `gap_mm` ✓）⇒ 这里只**搬运** ✓。
+            tight=bool(q.get("tight")), gap=q.get("gap_mm"),
             # ★ 焊盘中心**只有一个口径** ✓：用 `part_pads` 的 `abs` ✓
             #   ✗ 别自作聪明取外接框中心 ✗ —— 两者实测差 0.05 mm ✗ ⇒
             #   布线器吸附到 A ✓、写回器按 B 找焊盘 ✗ ⇒ 焊盘端对不上 ✗（悬空端点 ✗）。
@@ -683,6 +736,35 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 print("   [拆线重布] 第 %d 轮：没有一种拆法更优 ⇒ 停 ✓" % rnd)
             break
     return best
+
+
+def _snap_ends(sg, pa, pb):
+    r"""把首段的起点吸到 `pa` ✓、末段的终点吸到 `pb` ✓ —— ★★ 必须**保持横平竖直** ✗✓
+
+    （2026-10-01 定案 ✓，实测真凶 ✓）
+    ✗ 旧写法直接改端点 ✗ ⇒ 那一段变成**斜段** ✗（实测 **33 条** ✓，斜 0.025∼0.067 mm
+      = **半个格** ✓）⇒ 写回器按“横平竖直”切缩宽区（`split_neck` ✓）时把它当竖线处理 ✗
+      ⇒ **把端点搬走** ✗ ⇒ 报 **17 处「悬空端点」** ✗（独立复核也 8 处 ✗），
+      而且逐点看都“有主” ✓ ⇒ 极难查 ✗。
+    ✓ 现在：吸附偏移在**半个格**之内 ✓ ⇒ 用**两条正交小折线**接过去 ✓（拐点取
+      `(吸附点.x, 原 y)` 或 `(原 x, 吸附点.y)` ✓）⇒ 全仓「线都横平竖直」的前提继续成立 ✓。
+    """
+    if not sg:
+        return sg
+    out = list(sg)
+    # 首段：`(lay, a, b)` ⇒ 改成 `pa → 拐点 → b` ✓（拐点选得让**两段都正交** ✓）
+    lay, a, b = out[0]
+    if a != pa:
+        hor = abs(a[1] - b[1]) < 1e-9
+        corner = (pa[0], a[1]) if hor else (a[0], pa[1])
+        out[0:1] = [(lay, pa, corner), (lay, corner, b)]
+    # 末段：`(lay, a, b)` ⇒ 改成 `a → 拐点 → pb` ✓
+    lay, a, b = out[-1]
+    if b != pb:
+        hor = abs(a[1] - b[1]) < 1e-9
+        corner = (pb[0], b[1]) if hor else (b[0], pb[1])
+        out[-1:] = [(lay, a, corner), (lay, corner, pb)]
+    return [s for s in out if s[1] != s[2]]            # 零长段丢掉 ✓
 
 
 def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, width_of=None,
@@ -855,6 +937,24 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             # ★★ 每段重建栅格：**只挡别人网**的线 ✓ —— 同网铜相碰是合法的 ✓，
             #    而"把自己挡死"会让多脚网再也接不上剩下的脚 ✗（实测：GND 1 段之后 7 段全败 ✗）。
             grid = base.clone()
+            # ★★ 按**自己的线宽**多留余量 ✓（2026-10-01 用户定 ✓，实测根因 ✓）：
+            #   ✗ 障碍表（焊盘 / 件铜 / 安装孔 / 板边 ✓）的净空是按**信号档**（`TRACE_MM` = 12 mil
+            #     ⇒ 半宽 0.152 ✓）算的 ✗ ⇒ **粗电源线**（24 mil ⇒ 半宽 **0.305** ✓）照那样走 ⇒
+            #     铜**外溢 0.153 mm** ✗ ⇒ 独立复核报「④ 同层交叉 4 处」✗ + 「⑤ 粘上了别的脚」✗
+            #     （`DATA_IN` / `GND` 粘一堆 ✓）。和「`VSS` 差 0.005 mm」是同一类算术坑 ✓。
+            #   ✓ 现在：把障碍**再挡一圈** = `(自己的半宽 − 信号半宽)` ✓ —— 物理上就是
+            #     “宽线离障碍更远” ✓。
+            #   ★ **跳掉紧间隙盘** ✗（`grow` 已经是缩宽档的那些 ✓）：那些地方线会缩到 10 mil ✓
+            #     ⇒ 不能再按粗线挡 ✗（否则一格可走的都没有 ⇒ 实测掉到 **0/9** ✗，前车之鉴 ✓）。
+            extra = U(max(0.0, w_of(net) / 2.0 - TRACE_MM / 2.0))
+            if extra > 1e-9:
+                neck_g = U(NECK_W_MM / 2 + CLEAR_MM)
+                for (lay, box, grow0, _tag) in items:
+                    if abs(grow0 - neck_g) < 1e-9:
+                        continue
+                    for l2 in (LAYERS if lay == "both" else (lay,)):
+                        grid.block_box(l2, box, grow0 + extra)
+                grid.block_frame(U(EDGE_MM) + U(w_of(net) / 2 + CLEAR_MM))
             for net2, tlist in traces.items():
                 if net2 == net:
                     continue
@@ -875,6 +975,17 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     break
             if not path:
                 fails += 1
+                if DIAG["on"]:
+                    for la in pads[a]["lays"]:
+                        reach = flood(grid, la, pads[a]["c"], no_via)
+                        hit = [lb for lb in pads[b]["lays"]
+                               if (lb, grid.rc(*pads[b]["c"])) in reach]
+                        DIAG["fails"].append(
+                            "网 %s：%s.%s → %s.%s｜起点层 %s ⇒ 可达 %d 格 ✓｜"
+                            "目标%s"
+                            % (net, a[0], a[1], b[0], b[1], la, len(reach),
+                               ("**可达** ⇒ A* 的问题（上限/代价）✗" if hit
+                                else "**不可达** ⇒ 障碍模型堵死了 ✗")))
                 todo.remove(b)
                 continue
             sg, vs = path_to_segments(path, grid)
@@ -888,8 +999,8 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 todo.remove(b)
                 continue
             if sg:
-                sg[0] = (sg[0][0], pads[a]["c"], sg[0][2])          # 吸附到起点盘中心 ✓
-                sg[-1] = (sg[-1][0], sg[-1][1], pads[b]["c"])        # 吸附到终点盘中心 ✓
+                # ★★ 吸附到两个盘心 ✓ —— 用 `_snap_ends` ✓（**保持横平竖直** ✗✓，2026-10-01 ✓）
+                sg = _snap_ends(sg, pads[a]["c"], pads[b]["c"])
             # ★★ 2026-10-01：“不许压焊盘”**试过两版、都撤了** ✗ —— 不再往这里加补偿改动 ✗：
             #   ① 先试“吸附 ⇒ 压了就改成不吸附” ✗：端点差**半个格**（0.071 mm ✗）⇒
             #      写回器“端↔端/端↔盘必须正中”的判据对不上 ✗ ⇒ 报 6 个悬空端点 ✗ ⇒ **文件写不出** ✗；

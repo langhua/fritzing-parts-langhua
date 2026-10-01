@@ -52,6 +52,34 @@ SK = PB.MM                       # 1 mm = 3.5433 sketch 单位 ✓
 #     大板上量到的 (−46.50, −21.11) 是**错的** ✗（不能跳板用 ✗）。
 #   ★★ **只有这一份** ✓：`gen_pcb` / `audit_placement` / `render_pcb` 都引用它 ✓
 #     （2026-09-30 收拢 ✓ —— 之前是三份字面量 ✗，改一处就漂 ✗）。
+def holes(text):
+    """⇒ `[(钻孔心 sketch 单位 ✓, 孔内径 mm ✓, 铜盘外径 mm ✓), …]` ✓（核心孔件 ✓）
+
+    ★★ **唯一实现** ✓（2026-10-01 ✓）：`render_pcb.holes_of` 与 `pcb_check.collect`
+      都调这里 ✓ —— ✗ 以前只有渲染器会解析 ⇒ **布线器与校验器都不知道有孔** ✗
+      ⇒ 实测 `v50H.fzz` 里有 **4 根走线直接穿过安装孔** ✗（距内壁 **−1.100 mm** = 正穿孔心 ✗，
+      用户原话：「安装孔附近是不能布线的，更不能穿体」✓）。
+    ★ 孔心 = **`<geometry>` + `HOLE_DRAW_OFF_MM`** ✗ —— 把 `<geometry>` 当孔心 ✗
+      会把孔画在离板边 1.23 mm 的地方 ✗（实测：用户导出的图里就是那样 ✗）。
+    ★ 孔**不在** `model["parts"]` 里 ✗（它没有可解析的 fzp/svg ✓）⇒ 从 sketch 原文里找 ✓。
+    """
+    out = []
+    for m in re.finditer(r'(?ms)<instance\b[^>]*?moduleIdRef="HoleModuleID".*?</instance>',
+                         text or ""):
+        b = m.group(0)
+        sz = re.search(r'name="hole size"\s+value="([^"]+)"', b)
+        g = re.search(r'<pcbView\b[^>]*>\s*<geometry\s+([^>]*?)/>', b)
+        if not (sz and g):
+            continue
+        nums = [float(v) for v in re.findall(r"([\d.]+)\s*mm", sz.group(1))]
+        inner = nums[0] if nums else 2.2
+        outer = nums[1] if len(nums) > 1 else 0.0
+        a = dict(re.findall(r'([\w]+)="([^"]*)"', g.group(1)))
+        out.append(((float(a.get("x", 0)) + HOLE_DRAW_OFF_MM[0] * PB.MM,
+                     float(a.get("y", 0)) + HOLE_DRAW_OFF_MM[1] * PB.MM), inner, outer))
+    return out
+
+
 HOLE_DRAW_OFF_MM = (1.665, 1.665)
 PAD_SUF = ("pad", "pin", "leg", "terminal", "circle", "ring")
 PADLIKE = ("rect", "circle", "ellipse")          # 焊盘形状 ✓（path = 走线/铜箔 ✓）

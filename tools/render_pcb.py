@@ -147,24 +147,11 @@ def copper_inner(svg_text):
 def holes_of(text):
     """⇒ `[(钻孔心 sketch 单位 ✓, 孔内径 mm ✓, 铜盘外径 mm ✓), …]` ✓（核心孔件 ✓）
 
-    ★ 孔心 = **`<geometry>` + `pcb_pads.HOLE_DRAW_OFF_MM`** ✗ —— 把 `<geometry>` 当孔心 ✗
-      会把孔画在离板边 **1.23 mm** 的地方 ✗（实测：用户导出的图里就是那样 ✗，见库里那条注释 ✓）。
-    ★ 孔**不在** `model["parts"]` 里 ✗（它没有可解析的 fzp/svg ✓）⇒ 从 sketch 原文里找 ✓。
+    ★★ 实现搬到 `pcb_pads.holes()` 了 ✓（2026-10-01 ✓）—— 因为**布线器与校验器也必须知道**
+      这几颗孔 ✗（实测 `v50H.fzz` 有 4 根走线穿过安装孔 ✗）。这里只留一个**薄封装** ✓，
+      免得外面（本文件其它地方）改调用 ✓。
     """
-    out = []
-    for m in re.finditer(r'(?ms)<instance\b[^>]*?moduleIdRef="HoleModuleID".*?</instance>', text or ""):
-        b = m.group(0)
-        sz = re.search(r'name="hole size"\s+value="([^"]+)"', b)
-        g = re.search(r'<pcbView\b[^>]*>\s*<geometry\s+([^>]*?)/>', b)
-        if not (sz and g):
-            continue
-        nums = [float(v) for v in re.findall(r"([\d.]+)\s*mm", sz.group(1))]
-        inner = nums[0] if nums else 2.2
-        outer = nums[1] if len(nums) > 1 else 0.0
-        a = dict(re.findall(r'([\w]+)="([^"]*)"', g.group(1)))
-        out.append(((float(a.get("x", 0)) + PP.HOLE_DRAW_OFF_MM[0] * PB.MM,
-                     float(a.get("y", 0)) + PP.HOLE_DRAW_OFF_MM[1] * PB.MM), inner, outer))
-    return out
+    return PP.holes(text)
 
 
 def render(model, px_per_mm=12.0, opts=()):
