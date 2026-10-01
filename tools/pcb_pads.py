@@ -75,12 +75,17 @@ def holes(text):
         inner = nums[0] if nums else 2.2
         outer = nums[1] if len(nums) > 1 else 0.0
         a = dict(re.findall(r'([\w]+)="([^"]*)"', g.group(1)))
-        out.append(((float(a.get("x", 0)) + HOLE_DRAW_OFF_MM[0] * PB.MM,
-                     float(a.get("y", 0)) + HOLE_DRAW_OFF_MM[1] * PB.MM), inner, outer))
+        # ★★★ 2026-10-02 修 ✗：偏移 = `孔径/2 + 环宽 + 画布留白` ✓ —— **按本颗的尺寸算** ✗
+        #   （✗ 旧版是死的 `HOLE_DRAW_OFF_MM`(1.665) ✗ ⇒ 换过孔/孔尺寸就偏 ✓，
+        #    同 `part_box.ring_off_mm` 那三个实测点 ✓；2.2/0.0 ⇒ 1.66444 ✓ 与旧值差 1e-4 mm ✓）
+        off = PB.draw_off_units("hole", (inner, outer))
+        out.append(((float(a.get("x", 0)) + off, float(a.get("y", 0)) + off), inner, outer))
     return out
 
 
-HOLE_DRAW_OFF_MM = (1.665, 1.665)
+# ★★ 2026-10-02 修 ✓：**从唯一实现推导** ✓（= `ring_off_mm(2.2, 0.0)` ✓）——
+#   ✗ 旧值是字面量 `(1.665, 1.665)` ✗（把两处口径又分成了两份 ✗，且第 4/5 位写反 ✓）
+HOLE_DRAW_OFF_MM = (PB.HOLE_DRAW_OFF_MM, PB.HOLE_DRAW_OFF_MM)
 PAD_SUF = ("pad", "pin", "leg", "terminal", "circle", "ring")
 PADLIKE = ("rect", "circle", "ellipse")          # 焊盘形状 ✓（path = 走线/铜箔 ✓）
 BOARD_MID = "TwoLayerRectanglePCBModuleID"        # 板框自己 ⇒ **不是元件** ✗（不读焊盘 ✓）

@@ -272,10 +272,16 @@ def collect(path):
                 sz = re.search(r'name="hole size"\s+value="([^"]+)"', b)
                 mmv = [float(x) for x in re.findall(r"([\d.]+)\s*mm", sz.group(1))] if sz else []
                 ttl = re.search(r"<title>([^<]*)</title>", b)
-                # ★★ 过孔的 `<geometry>` 是 **svg 画布原点** ✗ —— 真铜心要加 `VIA_DRAW_OFF_MM` ✓
+                # ★★ 过孔的 `<geometry>` 是 **svg 画布原点** ✗ —— 真铜心要加**画图偏移** ✓
                 #   （2026-10-01 定案 ✓，见 `part_box.draw_off_units` 的出处 ✓）
                 #   ✗ 旧版直接把 geometry 当铜心 ⇒ 所有过孔差 0.8644 mm ✗ ⇒ “压别的焊盘”测不出来 ✗
-                off = PB.draw_off_units("via")
+                # ★★★ 2026-10-02 修 ✗：偏移 = **铜半径 + 画布留白** ✓ ⇒ **必须把本颗的尺寸传进去** ✗
+                #   （✗ 旧版对**所有**过孔都用默认常数的 0.86444 ✗ ⇒ 用户那颗 `0.4mm,0.3mm`
+                #    （外径 1.00）的过孔被算偏 0.2 mm/轴（0.283 mm 斜）✗ ⇒ 报成
+                #    “孤立过孔 ＋ 两个悬空端点” ✗，而用户拿 Fritzing 点一下**明明是通的** ✗
+                #    —— 2026-10-02 用户当场指出 ✓。三个实测点见 `part_box.ring_off_mm` ✓）
+                off = PB.draw_off_units("via", (mmv[0], mmv[1] if len(mmv) > 1 else None)
+                                        if mmv else None)
                 geo = (float(a.get("x", 0)), float(a.get("y", 0)))
                 vias.append(dict(layer=m.group(1),
                                  p=(geo[0] + off, geo[1] + off),      # 真铜心 ✓
