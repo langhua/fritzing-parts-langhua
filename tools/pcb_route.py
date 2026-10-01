@@ -782,6 +782,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
     """
     w_of = width_of or (lambda n: TRACE_MM)   # ★ 按网分宽 ✓（没给 ⇒ 用全局那一档 ✓）
     grow = U(TRACE_MM / 2 + CLEAR_MM)         # 兜底 ✓（报不出网名时用 ✓）
+    zones = neck_zones(pads)                  # ★ 缩宽区 ✓（闸门要按**局部**线宽算 ✓）
     out, traces = dict(pre or {}), {}
     # ★ 把 `pre` 里已布的铜箔**原样**收进障碍表 ✓（并集要跟正常布线时一模一样 ✓，
     #   否则"拆线重布"就是在跟一个假障碍打过 ✗）
@@ -962,6 +963,27 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     for l2 in (LAYERS if lay == "both" else (lay,)):
                         grid.block_box(l2, box, gr)
             carve_pads(grid, pads, mem, grow, neck_grow)
+            # ★★ 挖完自己的盘之后，把**别人的盘框本身**重新挡住 ✗✓（2026-10-01 ✓）
+            #   为什么需要 ✗（实测 ✓）：`carve_pads` 为让线进自己的盘会挖 0.277 mm ✓，
+            #   而 QFN 脚距只有 0.400 mm ✓ ⇒ 挖开区**盖住隔壁盘框的一角** ✗
+            #   ⇒ 栅格以为能走 ✓ ⇒ 实测 `网 GND（EPAD→VSS）` 的线在 y=16.922 横穿 `PA2` 的盘框 ✗
+            #     （`_work/repro_clash.py` 量过 ✓：与 PA2 的框 x 交 **+0.377 mm**、y 交 **+0.177 mm** ✓
+            #      ⇒ **真压盘** ✗，不是误判 ✓）⇒ 直接短路 ✗。
+            #   ★ 只挡**盘框本身**（`grow=0` ✓、不加肥 ✓）：线仍可从盘**外侧的净空**里绕 ✓
+            #     ⇒ 不会把细间距件的出口堵死 ✓（对比：按净空挡会 ⇒ 实测 0/9 ✗）。
+            for k2, q2 in pads.items():
+                if k2 in mykeys:
+                    continue
+                bb = q2.get("box")
+                if not bb:
+                    continue
+                # ★★ 只挡**盘框本身**（`grow=0` ✓）—— 试过「按净空挡」✗、**更差** ✗：
+                #   2026-10-01 实测 ✓：按 `半宽 + 净空` 挡（紧间隙盘按缩宽后的半宽 ✓ 也不行 ✗）
+                #     ⇒ 连通 **3/9 → 0/9** ✗、问题 6 → **10 处** ✗，还多出一处 GND↔RC 短路 ✗。
+                #   ⇒ 维持 `grow=0` ✓（用户 2026-10-01 选定的“零短路”配置 ✓）；
+                #     要再往前走，得从**摆位/拓扑**下手 ✓（≠ 调这个系数 ✗）。
+                for l2 in q2["lays"]:
+                    grid.block_box(l2, bb, 0.0)
             path = None
             for la in pads[a]["lays"]:
                 # ★ 本网**已用几颗过孔** ⇒ 下一颗贵多少 ✓（递增 ✓，见 `VIA_ESCALATE` ✓）
@@ -1001,6 +1023,45 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             if sg:
                 # ★★ 吸附到两个盘心 ✓ —— 用 `_snap_ends` ✓（**保持横平竖直** ✗✓，2026-10-01 ✓）
                 sg = _snap_ends(sg, pads[a]["c"], pads[b]["c"])
+                # ★★★ 闸门 ✓：线身/折线段**不许压「别的网」的盘框** ✗（2026-10-01 装回 ✓）
+                #   ★ 曾撤过一次、现装回 ✓ —— 撤的理由是“误判太多”✗，而 `_work/repro_clash.py`
+                #     复现下来 **闸门是对的** ✓：真正压盘的是 `y=16.922` 那根 ✓
+                #     （与 `PA2` 的框 x 交 **+0.377 mm** ✓、y 交 **+0.177 mm** ✓ —— 就是那条短路 ✓）；
+                #     当时是我把“哪根线”记混了 ✗（mm 与内部单位混着看 ✓）。
+                #   ★ 配套：栅格已把**别人的盘框**挡住（上面那段 ✓）⇒ 正常路线不该命中 ✓；
+                #     命中即“这段真会压盘”✗ ⇒ 记失败、换走法 ✗。
+                _half = grow - U(CLEAR_MM)                 # = 本网线宽的一半 ✓
+                _half_neck = U(NECK_W_MM / 2)              # = 缩宽区内那一半 ✓（10 mil ✓）
+                _clash = None
+                for (lay2, p2, q2) in sg:
+                    _mx, _my = (p2[0] + q2[0]) / 2.0, (p2[1] + q2[1]) / 2.0
+                    hw = _half_neck if in_neck(_mx, _my, zones) else _half
+                    bx = (min(p2[0], q2[0]) - hw, min(p2[1], q2[1]) - hw,
+                          max(p2[0], q2[0]) + hw, max(p2[1], q2[1]) + hw)
+                    for k2, q in pads.items():
+                        if k2 in mykeys:
+                            continue
+                        bb = q.get("box")
+                        if not bb:
+                            continue
+                        if bx[0] <= bb[2] and bb[0] <= bx[2] and \
+                                bx[1] <= bb[3] and bb[1] <= bx[3]:
+                            _clash = (lay2, p2, q2, k2)
+                            break
+                    if _clash:
+                        break
+                if _clash and DIAG["on"]:
+                    # ✗ 别用 `MM(...)` ✗ —— 那是 `gen_routes` 的函数 ✓，本模块没有 ⇒ 会 NameError 崩掉 ✓
+                    #   （实测踩过 ✓）；本模块用 `U()` 作 mm↔单位 的换算 ✓ ⇒ 反算 = `值 / U(1.0)` ✓。
+                    DIAG["fails"].append(
+                        "net %s: %s.%s -> %s.%s | CLASH pad %s.%s | line (%.3f,%.3f)-(%.3f,%.3f)"
+                        % (net, a[0], a[1], b[0], b[1], _clash[3][0], _clash[3][1],
+                           _clash[1][0] / U(1.0), _clash[1][1] / U(1.0),
+                           _clash[2][0] / U(1.0), _clash[2][1] / U(1.0)))
+                if _clash:
+                    fails += 1
+                    todo.remove(b)
+                    continue
             # ★★ 2026-10-01：“不许压焊盘”**试过两版、都撤了** ✗ —— 不再往这里加补偿改动 ✗：
             #   ① 先试“吸附 ⇒ 压了就改成不吸附” ✗：端点差**半个格**（0.071 mm ✗）⇒
             #      写回器“端↔端/端↔盘必须正中”的判据对不上 ✗ ⇒ 报 6 个悬空端点 ✗ ⇒ **文件写不出** ✗；
