@@ -690,3 +690,49 @@
   但**没有电容件** ✗ ⇒ 已按 §2「芯片类元件固定工作流」补上 `Capacitor-0402` / `Capacitor-0603` ✓
   （焊盘照同尺寸电阻 1:1 ✓；默认 100nF / 25V / X7R / ±10% ✓；已登记 README 与元件箱 ✓）。
 
+## 13. ★★ 判据必须与 **Fritzing 同源同语义**（2026-10-02 用户定 ✓）
+
+用户原话 ✓：「我希望你的判据，能与 Fritzing **完全一致** ✓ —— 这样我用 Fritzing 打开你生成的文件，
+才有可能**理解你说的问题是什么** ✓，也才有可能**我手工做修改** ✓。之前没有办法手工修改，也是这个原因：
+**理解不了你和 Fritzing 的表达 —— 两个声音，两种语义，把我弄得晕头转向的**」✗。
+
+⇒ 四条规矩 ✓：
+
+1. **只允许一个声音** ✓：凡是我报的「连通 / 断开 / 短接 / 还剩几个没布线」，
+   **必须能用 Fritzing 的同一句话指同一件事** ✓ —— 说的是「**哪只脚**」（如 `U1.connector3` ✓）、
+   「**哪两点之间那根虚线**」✓、「**N of M nets routed - K connector(s) still to be routed**」✓；
+   ✗ 不许拿我自造的「铜块 / 块数 / 净距 < 0.05 mm」直接当结论 ✗（那是我自己的语义 ✗）。
+2. **口径以源码为准** ✓：本机有 Fritzing 源码树 ✓ **`F:\build-fritzing\fritzing-app\src`** ✓ ——
+   判据**先读源码、引行号** ✓，✗ 不许凭"我觉得"自造容差 ✗。已读实的（可复查 ✓）：
+   - 状态栏那句 = `mainwindow/mainwindow.cpp:2298` ✓
+     （`"%1 of %2 nets routed - %n connector(s) still to be routed"` ✓）；
+   - 「还剩几个连接件」= `utils/graphutils.cpp` 的 `GraphUtils::scoreOneNet` ✓ ——
+     **按 connector 计** ✓，源码原话：“even if multiple connections are missing from a given
+     connector, **count it as one**” ✓；
+   - **★ 总闸门** = `graphutils.cpp:550` ✓：
+     `if (!(wire->getViewGeometry().wireFlags() & myTrace)) continue;` ✓
+     ⇒ **`wireFlags` 不含"这种铜"的位 ⇒ 该走线直接跳过、不给它加边** ✗ ⇒ 它连的脚就成了
+     "未布线" ✓（`myTrace` = `SketchWidget::getTraceFlag()` ✓，调用点
+     `sketch/sketchwidget.cpp:7049` ✓；四种 trace 位见 `src/viewgeometry.h` ✓）；
+   - **「同网的脚」≠「连上了」** ✓：`scoreOneNet` 里，**不同件的两只脚**只置
+     `gotUserConnection` ✓、**不加边** ✗ ⇒ 必须靠**走线链**（`Wire::collectChained` ✓）
+     或**同一 `bus()`** ✓（= `.fzp` 的 `<buses>` ✓）或**跨层同脚** ✓ 才算连 ✓；
+   - "nets" 只数**有用户连接**的网 ✓（`if (!gotUserConnection) return false;` ✓ ——
+     这就是它说 7 而不是 9 的原因 ✓）；
+   - 几何匹配 = **Qt 场景命中测试** ✓（`connectors/connectoritem.cpp:1972`
+     `scene()->items(sceneAdjustedTerminalPoint())` ✓ ⇒ 「点落在对方 connector 的**矩形/腿多边形**里」
+     ✓），✗ **不是**"离盘心 ≤ 某容差" ✗；
+   - 线只认**端点** ✓（`Wire::findConnectorsUnder` 只查 `connectionsCount()==0` 的自由端 ✓，
+     `items/wire.cpp:1133` ✓）⇒ 走线**中段压过**焊盘**不算连** ✗。
+3. **两套口径分开命名、永不混用** ✗：**Fritzing 口径**（它认不认、还差几只 ✓）／
+   **制造口径**（嘉立创能不能做出来：线距 / 孔径 / 铜距 ✓）—— 报的时候**明说哪一套** ✓。
+   ★ 尤其：**Fritzing 没有"短路检查"** ✗（全树 `ShortCircuit` **0 命中** ✓）—— "短接"是我的
+   **制造口径** ✓，不是它的 ✓；它的"短"表现为**两张网被铜并成一张** ✓（只在网表/ERC 里看得出 ✓）。
+4. **验收 = 复现它的数字** ✓：新判据必须能**复现 Fritzing 状态栏那句** ✓
+   （「N of M nets routed - K connector(s)…」✓）；复现不了 ⇒ **不算对齐** ✗，
+   ✗ 不许拿"我的实现说它对"当结论 ✗（自证 ✗）。手边现成的对照件 ✓：
+   `hardware/pixel/pixel-pcb-v59.fzz` ⇔ 用户 Fritzing 截图「**7 中的 5** ✓，**2 个连接件**」✓。
+
+★ 为什么重要 ✓（用户的原话就是理由 ✓）：判据不一致 ⇒ 我报的问题**他在 Fritzing 里找不到** ✗
+⇒ 他既理解不了、也没法自己动手改 ✗ ⇒ **两个声音把他绕晕** ✓。**同一个声音，才谈得上协作** ✓。
+
