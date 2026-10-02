@@ -176,12 +176,22 @@ LAYERS = ("copper0", "copper1")
 class Grid(object):
     """两层栅格 ✓：`1` = 可以走 ✓ / `0` = 被占 ✗"""
 
+    # ★★ 2026-10-03 加 ✓：**障碍出处**记录 ✓（只为诊断 ✓，**默认关** ✗）。
+    #   为什么加 ✗：布不通时旧诊断只能说"可达 39 格 ⇒ 障碍模型堵死了"✗ ✓ ——
+    #     这句话**等于没说** ✗（还是得回去猜"谁堵的" ✗）。
+    #     ⇒ 现在把每个被挡格子的**出处**记下来 ✓ ⇒ 直接报「`U1.connector2` 的出口被
+    #       `盘:U1.connector1` 挡住 ✓」这类结论 ✓。
+    #   ★ 默认关 ✗ —— 开它要多写一个 dict（每格一次 ✓）⇒ 正常布线**不该付这个钱** ✗；
+    #     只有 `--why`（`gen_routes` 里打开 ✓）才记 ✓ ⇒ **不影响布线结果** ✗（只影响速度 ✓）。
+    OWN = False
+
     def __init__(self, rect, cell_mm=CELL_MM):
         self.cell = U(cell_mm)
         self.x0, self.y0 = rect[0], rect[1]
         self.nx = int((rect[2] - rect[0]) / self.cell) + 1
         self.ny = int((rect[3] - rect[1]) / self.cell) + 1
         self.g = {lay: bytearray(b"\x01" * (self.nx * self.ny)) for lay in LAYERS}
+        self.own = {}                     # (lay, ix, iy) -> 出处标签 ✓（`OWN` 关时恒空 ✓）
 
     def xy(self, ix, iy):
         return (self.x0 + ix * self.cell, self.y0 + iy * self.cell)
@@ -195,37 +205,56 @@ class Grid(object):
     def free(self, lay, ix, iy):
         return self.inside(ix, iy) and self.g[lay][iy * self.nx + ix]
 
-    def free_box(self, lay, box, grow, free=True):
-        """把矩形（`box` + `grow`）标成可走/不可走 ✓（`free=False` ⇒ 挡 ✓）"""
+    def own_at(self, lay, ix, iy):
+        """该格**被谁挡** ✓（可走/没记 ⇒ None ✓）"""
+        return self.own.get((lay, ix, iy))
+
+    def free_box(self, lay, box, grow, free=True, owner=None):
+        """把矩形（`box` + `grow`）标成可走/不可走 ✓（`free=False` ⇒ 挡 ✓）
+
+        ★ `owner` = 这块障碍的**出处** ✓（如 `"盘:U1.connector1"` ✓）—— 只在
+          `Grid.OWN` 打开时记录 ✓（诊断用 ✓，见本类头注 ✓）。
+        """
         i0, j0 = self.rc(box[0] - grow, box[1] - grow)
         i1, j1 = self.rc(box[2] + grow, box[3] + grow)
         v = 1 if free else 0
+        rec = self.own if Grid.OWN else None
         for j in range(max(0, j0), min(self.ny - 1, j1) + 1):
             row = j * self.nx
             for i in range(max(0, i0), min(self.nx - 1, i1) + 1):
                 self.g[lay][row + i] = v
+                if rec is not None:
+                    if v:
+                        rec.pop((lay, i, j), None)      # 挖回可走 ⇒ 出处也撤掉 ✓
+                    else:
+                        rec[(lay, i, j)] = owner or "?"
 
-    def block_box(self, lay, box, grow):
-        self.free_box(lay, box, grow, free=False)
+    def block_box(self, lay, box, grow, owner=None):
+        self.free_box(lay, box, grow, free=False, owner=owner)
 
     def clone(self):
         """拷一份 ✓（每张网一层子拷贝 ✓ —— 比每次重建障碍快得多 ✓）"""
         o = Grid.__new__(Grid)
         o.cell, o.x0, o.y0, o.nx, o.ny = self.cell, self.x0, self.y0, self.nx, self.ny
         o.g = {k: bytearray(v) for k, v in self.g.items()}
+        o.own = dict(self.own)
         return o
 
-    def block_frame(self, margin):
+    def block_frame(self, margin, owner=None):
         """只挡**四周一圈** ✓（离板边 < margin ✓）—— ✗ 不能拿一个矩形当障碍：
         那是**整块板** ✓ ⇒ 可走 0 格 ✗（2026-09-30 实测：0.0% ✓ 当场看出来 ✓）。"""
         m = int(margin / self.cell) + 1
+        rec = self.own if Grid.OWN else None
+        lbl = owner or "板边"
         for lay in LAYERS:
             for j in range(self.ny):
                 for i in range(self.nx):
                     if min(i, j, self.nx - 1 - i, self.ny - 1 - j) < m:
                         self.g[lay][j * self.nx + i] = 0
+                        if rec is not None:
+                            rec[(lay, i, j)] = lbl
 
-    def block_seg(self, lay, a, b, grow, steps=24):
+    def block_seg(self, lay, a, b, grow, steps=24, owner=None):
         """把一条**线段**（按小矩形拆 ✓）标成不可走 ✓ —— 件自己的铜箔是细长图形 ✓"""
         for k in range(steps):
             t0, t1 = k / float(steps), (k + 1) / float(steps)
@@ -233,7 +262,8 @@ class Grid(object):
             y = a[1] + (b[1] - a[1]) * t0
             x2 = a[0] + (b[0] - a[0]) * t1
             y2 = a[1] + (b[1] - a[1]) * t1
-            self.block_box(lay, (min(x, x2), min(y, y2), max(x, x2), max(y, y2)), grow)
+            self.block_box(lay, (min(x, x2), min(y, y2), max(x, x2), max(y, y2)), grow,
+                           owner=owner)
 
 
 def obstacles(model, part_copper=True, owners=None):
@@ -250,6 +280,7 @@ def obstacles(model, part_copper=True, owners=None):
       ★ **不影响行为** ✗ —— 不传就什么都不变 ✓（tag 语义、数量、顺序全部照旧 ✓）。
     """
     items = []
+    print_lab = []            # ★ 与 `items` **逐条对齐** 的出处标签 ✓（2026-10-03 ✓，诊断用 ✓）
     grow = U(TRACE_MM / 2 + CLEAR_MM)
     n_hole = 0
     # ① 板边留边 ✓ ⇒ 由 `make_grid` 调 `block_frame` ✓（✗ 不能写成一块矩形障碍：
@@ -275,6 +306,8 @@ def obstacles(model, part_copper=True, owners=None):
         for lay in lays:
             if lay in LAYERS:
                 items.append((lay, q["box"], gp, nm))
+                print_lab.append("盘:%s.%s%s" % (q["title"], q["cid"],
+                                                 ("(网=%s)" % nm) if nm else "(无网)"))
                 n_pad += 1
                 if owners is not None:
                     owners.setdefault("pad", []).append(
@@ -286,6 +319,7 @@ def obstacles(model, part_copper=True, owners=None):
         rr = U(dia / 2.0)                              # 孔半径 ⇒ sketch 单位 ✓
         items.append(("both", (c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr),
                       U(HOLE_CLEAR_MM), None))
+        print_lab.append("安装孔(Ø%.1f mm)" % dia)
         n_hole += 1
         if owners is not None:
             owners.setdefault("hole", []).append(
@@ -336,27 +370,34 @@ def obstacles(model, part_copper=True, owners=None):
                 if len(_nets) == 1:
                     _tag = _nets.pop()
                 items.append((lay, bb, grow, _tag))
+                print_lab.append("件铜:%s" % p.get("title"))
                 if owners is not None:
                     owners.setdefault("cu", []).append(
                         (lay, bb, grow, p.get("title"), p.get("moduleId"), _tag))
-    return items, dict(pads=n_pad, copper=n_cu, net_of=net_of, holes=n_hole)
+    return items, dict(pads=n_pad, copper=n_cu, net_of=net_of, holes=n_hole,
+                       labels=print_lab)
 
 
-def make_grid(rect, cell, items, extra=(), skip_tag=None):
+def make_grid(rect, cell, items, extra=(), skip_tag=None, labels=None):
     """⇒ 基准栅格 ✓（障碍表全挡上 ✓；板边留边 ✓）
 
     ★★ 每张网用 `base.clone()` ✓ 再把自己焊盘的地盘 `free_box` 挖回来 ✓ ——
       比"每段重建一次障碍"快得多 ✓（0.15 mm 网格有 2.8 万格 ✗）。
+    ★ `labels` = 与 `items` **逐条对齐** 的出处 ✓（2026-10-03 ✓；`--why` 时由
+      `obstacles()` 一起返回 ✓）⇒ 栅格能记住"这格是谁挡的" ✓（见 `Grid.OWN` ✓）。
     """
     grid = Grid(rect, cell)
-    grid.block_frame(U(EDGE_MM) + U(TRACE_MM / 2 + CLEAR_MM))
-    for it in items:
+    grid.block_frame(U(EDGE_MM) + U(TRACE_MM / 2 + CLEAR_MM), owner="板边")
+    for _i, it in enumerate(items):
         lay, box, grow, _tag = it
+        # ★ 容错 ✓：`items` 可能被调用方**追加过** ✓（`gen_routes` 要把“保线”塞进来 ✓）
+        #   ⇒ 出处表可能短一截 ✗ ⇒ 短的当“未记录” ✓，**不报错** ✗（诊断不该把主线弄崩 ✓）。
+        lab = labels[_i] if labels and _i < len(labels) else None
         for l2 in (LAYERS if lay == "both" else (lay,)):
-            grid.block_box(l2, box, grow)
+            grid.block_box(l2, box, grow, owner=lab)
     for lay, box, grow in extra:
         for l2 in (LAYERS if lay == "both" else (lay,)):
-            grid.block_box(l2, box, grow)
+            grid.block_box(l2, box, grow, owner="额外障碍")
     return grid
 
 
@@ -434,6 +475,59 @@ BFS_USED = []            # A* 没搜到、改用 BFS 兜底的记录 ✓（2026-
 #     ② **有路但 A* 没搜到 / 代价结构不对** ✗（如撞上限 ✓、或拐弯/换层代价把它顶歪 ✓）。
 #   做法：从起点泛洪一遍 ✓（步法、`no_via` 与 `astar` **同口径** ✓）⇒ 看目标格在不在可达集里 ✓。
 DIAG = {"on": False, "fails": []}
+
+
+# ★★ 2026-10-03 补 ✓：布不通时**逐格报到"谁堵的"** ✓（`--why` 用 ✓）
+#   为什么补 ✗：旧诊断只报「可达 39 格 ⇒ 障碍模型堵死了」✗ ✓ ——
+#     数字有了 ✓，但"**堵它的到底是哪只盘/哪根线**"还是不知道 ✗ ⇒ 还得回去猜 ✗
+#     （改判据先改"能不能一眼看出病在哪" ✓）。
+def _cell_report(grid, lay, ix, iy):
+    """一格的状态 ✓：可走 ✓ / 界外 ✗ / **被谁挡住** ✓"""
+    if not grid.inside(ix, iy):
+        return "界外"
+    if grid.free(lay, ix, iy):
+        return "可走"
+    return "挡住(%s)" % (grid.own_at(lay, ix, iy) or "未记录")
+
+
+def _why_report(grid, lay, c, no_via):
+    """把一个**盘格**的四周（含换层 ✓）逐格报出来 ✓ —— 回答"它是怎么被围死的" ✓"""
+    ix, iy = grid.rc(*c)
+    nl = "copper1" if lay == "copper0" else "copper0"
+    out = ["本格=%s" % _cell_report(grid, lay, ix, iy)]
+    for dx, dy, nm in ((1, 0, "东"), (-1, 0, "西"), (0, 1, "北"), (0, -1, "南")):
+        out.append("%s=%s" % (nm, _cell_report(grid, lay, ix + dx, iy + dy)))
+    if (ix, iy) in no_via:
+        out.append("换层=禁落区 ✗")
+    else:
+        out.append("换层=%s" % _cell_report(grid, nl, ix, iy))
+    return "｜".join(out)
+
+
+def grid_free(grid):
+    """全板**可走格数** ✓（用来判"可达 N 格"是大是小 ✓）"""
+    return sum(sum(g) for g in grid.g.values())
+
+
+def boundary_report(grid, reach, topn=6):
+    """可达区的**边界**上都是**谁的**障碍 ✓ ⇒ 回答"它被谁围住的" ✓（2026-10-03 ✓）
+
+    ✗ 为什么还要这一问 ✗：`_why_report` 只看**紧邻那一圈** ✓ ⇒ 那一圈常常是"可走"✓
+      （因为围住它的东西在**更外面** ✓ —— 实测：`BR+` 起点可达 **2.4 万格（≈全板 92% ✓）**✗、
+      终点那一格四面也都可走 ✗，但目标就是不可达 ✗）⇒ 必须看**可达区的边界** ✓：
+      边界上出现的出处 ✓ = "把它圈在这个区域里的东西" ✓。
+    """
+    cnt = {}
+    for (lay, (ix, iy)) in reach:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nb = (lay, (ix + dx, iy + dy))
+            if nb in reach or not grid.inside(nb[1][0], nb[1][1]):
+                continue
+            if grid.free(nb[0], nb[1][0], nb[1][1]):
+                continue                    # 可走但不在可达集 ⇒ 另成一个区域 ✓（不记 ✓）
+            lab = grid.own_at(nb[0], nb[1][0], nb[1][1]) or "未记录"
+            cnt[lab] = cnt.get(lab, 0) + 1
+    return sorted(cnt.items(), key=lambda kv: -kv[1])[:topn]
 
 
 def _flood_core(grid, lay0, start, no_via=(), want=None):
@@ -742,7 +836,8 @@ def _net_keys(net_pads, pads):
 
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
-          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=(), pre=None):
+          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=(), pre=None,
+          labels=()):
     """⇒ **多种次序里最优的那份** ✓（先比连通网数 ✓，再比总长 ✓）
 
     `pre` = **已经布好、要钉住的网** ✓ `{net: d}` —— 它们既不重布 ✓、又照旧当障碍 ✓
@@ -756,11 +851,15 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     """
     w_of = width_of or (lambda n: TRACE_MM)
     best = None
+    _mark0 = len(DIAG["fails"])                 # ★ 诊断起点的水位 ✓（下面只留胜者的 ✓）
+    _best_snap = []
     for name, key in _net_keys(net_pads, pads)[:tries]:
         order = sorted(net_pads, key=lambda n: (0 if n in tuple(first) else 1, key(n)))
+        _m = len(DIAG["fails"])
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
                           pre=pre, width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
-                          copper_keep=copper_keep)
+                          copper_keep=copper_keep, labels=labels)
+        _snap = DIAG["fails"][_m:]              # 本次次序的诊断 ✓
         n_ok = sum(1 for d in res.values() if d["ok"])
         ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
                  for d in res.values() for s in d["segs"])
@@ -768,8 +867,14 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
             print("   次序《%-14s》：连通 %d/%d ✓｜长 %6.1f mm" % (name, n_ok, len(res), MM(ln)))
         if best is None or (n_ok, -ln) > (best[0], -best[1]):
             best = (n_ok, ln, res, name)
+            _best_snap = list(_snap)            # ★ 记住**胜出那份**的诊断 ✓
     if verbose and best:
         print("   ⇒ 取《%s》那份 ✓（连通 %d/%d ✓）" % (best[3], best[0], len(best[2])))
+    # ★★ 2026-10-03 只留胜者 ✓：6 种次序各报一遍 ✗ ⇒ 日志里 6 倍噪音 ✗，
+    #   而且**最后那遍未必是胜者** ✗ ⇒ 会把不存在的病报给用户 ✗。
+    if DIAG["on"]:
+        del DIAG["fails"][_mark0:]
+        DIAG["fails"].extend(_best_snap)
     return best[2]
 
 
@@ -877,7 +982,7 @@ def copper_clashes(res, width_of=None):
 
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=(),
-                copper_keep=(), pre=None):
+                copper_keep=(), pre=None, labels=()):
     """先多次序布 ✓，再对布不通的网**拆掉挡它的线**重来 ✓（rip-up & reroute ✓）
 
     ★ 为什么要它 ✓（实测 2026-09-30 ✓）：9 个网只连通 3 个 ✗，而线宽 8～32 mil 全一样 ✗
@@ -889,9 +994,10 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
       ② 每轮只拆**一张**网 ✓、拆完**必须把它重布回去** ✓ —— 否则数字好看 ✗
          但板上少了几条线 ✗（自欺 ✓）。
     """
+    _mark0 = len(DIAG["fails"])              # ★ 诊断水位 ✓（只留最终这份 ✓）
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
                  width_of=width_of, first=first, mid_keep=mid_keep, ban_via=ban_via,
-                 copper_keep=copper_keep, pre=pre)
+                 copper_keep=copper_keep, pre=pre, labels=labels)
     best_s = _score(best)
     if verbose:
         print("   [拆线重布] 起点：连通 %d/%d ✓｜长 %.1f mm"
@@ -921,17 +1027,26 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                     and n not in (pre or {})]
             for blk in sorted(cand, key=lambda n: near_net(net, n))[:blockers]:
                 pre = {k: v for k, v in best.items() if k not in (net, blk)}
+                _m2 = len(DIAG["fails"])
                 trial = _route_once(items, rect, net_pads, pads, cell, via_cost,
                                     [net, blk], pre=pre, width_of=width_of,
                                     mid_keep=mid_keep, ban_via=ban_via,
-                                    copper_keep=copper_keep)
+                                    copper_keep=copper_keep, labels=labels)
+                _s2 = DIAG["fails"][_m2:]
                 s = _score(trial)
                 if s > best_s:
                     best, best_s, gain = trial, s, True
+                    # ★ 采纳了 ⇒ 用**它的**诊断替掉旧水位之后的一切 ✓（旧的是非最终状态 ✓）
+                    if DIAG["on"]:
+                        del DIAG["fails"][_mark0:]
+                        DIAG["fails"].extend(_s2)
                     if verbose:
                         print("   [拆线重布] 第 %d 轮：拆《%s》⇒ 重布《%s》✓｜连通 %d/%d ✓｜长 %.1f mm"
                               % (rnd, blk, net, s[0], len(trial), -s[1]))
                     break
+                # ✗ 否决了 ⇒ 它的诊断**丢掉** ✗（那是没被采纳的中间状态 ✓）
+                if DIAG["on"]:
+                    del DIAG["fails"][_m2:]
             if gain:
                 break
         if not gain:
@@ -971,7 +1086,7 @@ def _snap_ends(sg, pa, pb):
 
 
 def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, width_of=None,
-                mid_keep=(), ban_via=(), copper_keep=()):
+                mid_keep=(), ban_via=(), copper_keep=(), labels=()):
     """按给定次序贪心布一遍 ✓ ⇒ `{net: dict(ok, segs, vias, note)}`
 
     `pre` = **已经布好**的 `{net: d}` ✓ —— 它们既不重布 ✓、又照旧当障碍 ✓（拆线重布用 ✓）。
@@ -994,11 +1109,12 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         for lay, p, q in d["segs"]:
             traces.setdefault(net2, []).append(
                 (lay, (min(p[0], q[0]), min(p[1], q[1]),
-                       max(p[0], q[0]), max(p[1], q[1])), g2))
+                       max(p[0], q[0]), max(p[1], q[1])), g2,
+                 "线:%s" % net2))
         for p in d["vias"]:
             traces.setdefault(net2, []).append(
-                ("both", (p[0], p[1], p[0], p[1]), U(0.45)))
-    base = make_grid(rect, cell, items)
+                ("both", (p[0], p[1], p[0], p[1]), U(0.45), "过孔:%s" % net2))
+    base = make_grid(rect, cell, items, labels=labels)
     # ★★ 「留路」✓（2026-09-30 ✓）：把"中间"那圈子算出来 —— `mid_keep` 里的网
     #   （电源/地 ✓）走它们要加罚 ✓ ⇒ 中间走廊留给后面的信号线 ✓。
     keep_cells = set()
@@ -1157,16 +1273,17 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             extra = U(max(0.0, w_of(net) / 2.0 - TRACE_MM / 2.0))
             if extra > 1e-9:
                 neck_g = U(NECK_W_MM / 2 + CLEAR_MM)
-                for (lay, box, grow0, _tag) in items:
+                for _i2, (lay, box, grow0, _tag) in enumerate(items):
                     if abs(grow0 - neck_g) < 1e-9:
                         continue
+                    lab2 = labels[_i2] if labels else None
                     for l2 in (LAYERS if lay == "both" else (lay,)):
-                        grid.block_box(l2, box, grow0 + extra)
-                grid.block_frame(U(EDGE_MM) + U(w_of(net) / 2 + CLEAR_MM))
+                        grid.block_box(l2, box, grow0 + extra, owner=lab2)
+                grid.block_frame(U(EDGE_MM) + U(w_of(net) / 2 + CLEAR_MM), owner="板边")
             for net2, tlist in traces.items():
                 if net2 == net:
                     continue
-                for lay, box, gr in tlist:
+                for lay, box, gr, lab2 in tlist:
                     # ★★ 线↔线**中心距下限** ✓（`PITCH_MIN_MM` ✓）—— 取 `max` ✓：
                     #   正常时 `gr` 已是"半宽 + 净空"✓；量化不够时由下限兜住 ✓
                     #   （详见 `PITCH_MIN_MM` 的注释：0.15 栅格把 0.4032 量化成 0.30 ✗）。
@@ -1180,7 +1297,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     #       过孔（盘半径 0.30 ✓）：0.80 ⇒ 孔↔孔净距 **0.20** ✓、孔↔线 0.3984 ✓。
                     g2 = max(gr, gr - U(CLEAR_MM) + U(max(CLEAR_MM, PITCH_MIN_MM)))
                     for l2 in (LAYERS if lay == "both" else (lay,)):
-                        grid.block_box(l2, box, g2)
+                        grid.block_box(l2, box, g2, owner=lab2)
             carve_pads(grid, pads, mem, grow, neck_grow)
             # ★★ 挖完自己的盘之后，把**别人的盘框本身**重新挡住 ✗✓（2026-10-01 ✓）
             #   为什么需要 ✗（实测 ✓）：`carve_pads` 为让线进自己的盘会挖 0.277 mm ✓，
@@ -1202,7 +1319,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 #   ⇒ 维持 `grow=0` ✓（用户 2026-10-01 选定的“零短路”配置 ✓）；
                 #     要再往前走，得从**摆位/拓扑**下手 ✓（≠ 调这个系数 ✗）。
                 for l2 in q2["lays"]:
-                    grid.block_box(l2, bb, 0.0)
+                    grid.block_box(l2, bb, 0.0, owner="盘:%s.%s" % (k2[0], k2[1]))
             path = None
             for la in pads[a]["lays"]:
                 # ★ 本网**已用几颗过孔** ⇒ 下一颗贵多少 ✓（递增 ✓，见 `VIA_ESCALATE` ✓）
@@ -1245,16 +1362,58 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                                   "空 ✓" if len(_s_free) == len(pads[a]["lays"])
                                   else "**被占** ✗（%s）" % (pads[a]["lays"],)))
                 if DIAG["on"]:
+                    _nfree = grid_free(grid)                    # 全板可走格数 ✓（用来判数量级 ✓）
                     for la in pads[a]["lays"]:
                         reach = flood(grid, la, pads[a]["c"], no_via)
                         hit = [lb for lb in pads[b]["lays"]
                                if (lb, grid.rc(*pads[b]["c"])) in reach]
                         DIAG["fails"].append(
-                            "网 %s：%s.%s → %s.%s｜起点层 %s ⇒ 可达 %d 格 ✓｜"
-                            "目标%s"
-                            % (net, a[0], a[1], b[0], b[1], la, len(reach),
+                            "网 %s：%s.%s → %s.%s｜起点层 %s ⇒ 可达 %d 格 ✓"
+                            "（全板可走 %d 格 ✓）｜目标%s"
+                            % (net, a[0], a[1], b[0], b[1], la, len(reach), _nfree,
                                ("**可达** ⇒ A* 的问题（上限/代价）✗" if hit
                                 else "**不可达** ⇒ 障碍模型堵死了 ✗")))
+                        # ★★ 谁堵的 ✓（2026-10-03 ✓）：起点/终点**逐格**报出处 ✓
+                        DIAG["fails"].append(
+                            "     · 起点格（%s）%s" % (la, _why_report(grid, la, pads[a]["c"], no_via)))
+                        for lb in pads[b]["lays"]:
+                            DIAG["fails"].append(
+                                "     · 终点格（%s）%s"
+                                % (lb, _why_report(grid, lb, pads[b]["c"], no_via)))
+                        # ★★ 围住它的是谁 ✓（2026-10-03 ✓）：可达区**边界**上的出处统计 ✓
+                        _bd = boundary_report(grid, reach)
+                        if _bd:
+                            DIAG["fails"].append(
+                                "     · 可达区边界（%s）挡住它的：%s"
+                                % (la, "｜".join("%s×%d 格" % (t2, n2) for t2, n2 in _bd)))
+                        # ★ 目标那侧自己有多大 ✓ ⇒ 一眼看出"是两个区域被隔开 ✗"
+                        #   还是"某一侧被单独封死 ✗" ✓
+                        _rb = [(lb, flood(grid, lb, pads[b]["c"], no_via))
+                               for lb in pads[b]["lays"]]
+                        DIAG["fails"].append(
+                            "     · 从**目标**泛洪 ⇒ 可达 %s 格 ✓"
+                            % "/".join("%d" % len(x) for _l2, x in _rb))
+                        # ★★ 判决 ✓（**算出来**的 ✗ —— 不许写死一句话 ✗）：
+                        #   两侧格数一比，就知道"堵在哪一头" ✓（实测两种病都出现过 ✓）。
+                        _big = 0.3 * _nfree
+                        _s_n = len(reach)
+                        _t_n = max([len(x) for _l2, x in _rb] or [0])
+                        if _s_n < _big <= _t_n:
+                            _verdict = "**起点侧被封成小口袋** ✗ ⇒ 堵在起点扇出（`U1` 那种细间距）✓"
+                        elif _t_n < _big <= _s_n:
+                            _verdict = "**终点侧被封成小口袋** ✗ ⇒ 堵在目标那一片 ✓"
+                        elif _s_n < _big and _t_n < _big:
+                            _verdict = "**两侧都小** ✗ ⇒ 板中间被切断了 ✓"
+                        else:
+                            _verdict = "**两侧都大却互不相交** ✗ ⇒ 被隔成两块 ✓"
+                        DIAG["fails"].append("     · 判决：%s" % _verdict)
+                        for _l2, _r2 in _rb:
+                            _bd2 = boundary_report(grid, _r2)
+                            if _bd2:
+                                DIAG["fails"].append(
+                                    "     · **终点**可达区边界（%s）挡住它的：%s"
+                                    % (_l2, "｜".join("%s×%d 格" % (t3, n3)
+                                                      for t3, n3 in _bd2)))
                 todo.remove(b)
                 continue
             sg, vs = path_to_segments(path, grid)
@@ -1354,10 +1513,10 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             for lay, p, q in sg:
                 traces.setdefault(net, []).append(
                     (lay, (min(p[0], q[0]), min(p[1], q[1]),
-                           max(p[0], q[0]), max(p[1], q[1])), grow))
+                           max(p[0], q[0]), max(p[1], q[1])), grow, "线:%s" % net))
             for p in vs:
                 traces.setdefault(net, []).append(
-                    ("both", (p[0], p[1], p[0], p[1]), U(0.45)))
+                    ("both", (p[0], p[1], p[0], p[1]), U(0.45), "过孔:%s" % net))
             linked.append(b)
             todo.remove(b)
         note = "" if not fails else "有 %d 段没连上 ✗（%s）" % (fails, "；".join(why))
