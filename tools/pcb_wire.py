@@ -103,7 +103,49 @@ def parse_trace(block):
     #   ⇒ 读出来给渲染/校验用 ✓；没写 ⇒ None ✓（调用方自己定默认值 ✓）。
     #   ★ 量的锚点 ✓：`12 mil` = 1.08 单位 = **0.3048 mm** ✓（v47 全板走线 ✓，见 F17 附近 ✓）。
     we = re.search(r'<wireExtras\b[^>]*?\bmils="([-\d.eE+]+)"', body)
-    return dict(layer=lay, geo=geo, ends=ends, mils=float(we.group(1)) if we else None)
+    # ★★★ 2026-10-03 ✓：走线可以是**贝塞尔曲线** ✗ —— 控制点就在
+    #   `<wireExtras …><bezier><cp0 x y/><cp1 x y/></bezier></wireExtras>` ✓。
+    #   口径来源 = **Fritzing 源码** ✓（`src/utils/bezier.h` ✓）：
+    #     `Bezier(QPointF endpoint0, QPointF endpoint1, QPointF cp0, QPointF cp1)` ✓
+    #     ⇒ 三次贝塞尔 = **两个端点 ＋ 两个控制点** ✓；端点就是 `<geometry>` 那条线 ✓。
+    #   ★ `cp0/cp1` 与 `x1..y2` **同一个局部坐标系** ✓（实测 ✓：`cp0=(0,0)` 正好 = 弦的起点 ✓）。
+    #   ✗✗ 只读 `<geometry>` 两端点 ⇒ 把这 17 根曲线**当直线**算 ✗ ⇒ 线间距/交叉/障碍框全失真 ✗
+    #     （2026-10-03 实测踩到：假报 0.073 mm、假报“交叉” ✓）。
+    bz = re.search(r'<bezier>(.*?)</bezier>', body, re.S)
+    bez = None
+    if bz:
+        c0 = re.search(r'<cp0\b([^>]*)/?>', bz.group(1))
+        c1 = re.search(r'<cp1\b([^>]*)/?>', bz.group(1))
+        if c0 and c1:
+            def _p(s):
+                return (float((re.search(r'\bx="([-\d.eE+]+)"', s) or [None, 0])[1]),
+                        float((re.search(r'\by="([-\d.eE+]+)"', s) or [None, 0])[1]))
+            bez = (_p(c0.group(1)), _p(c1.group(1)))
+    return dict(layer=lay, geo=geo, ends=ends, bezier=bez,
+                mils=float(we.group(1)) if we else None)
+
+
+def curve_pts(geo, bezier, n=24):
+    """走线的**真实路径** ✓ ⇒ 采样点表（绝对坐标 ✓）
+
+    · `bezier is None` ⇒ 直线 ✓（就两点 ✓）；
+    · 否则三次贝塞尔 ✓：`p0` = `(x+x1, y+y1)` ✓、`p3` = `(x+x2, y+y2)` ✓、
+      控制点 = `loc + cp0` / `loc + cp1` ✓（与 `x1..y2` 同一局部系 ✓ —— 源码口径见 `parse_trace` ✓）。
+    """
+    x, y = float(geo.get("x", 0)), float(geo.get("y", 0))
+    p0 = (x + float(geo.get("x1", 0)), y + float(geo.get("y1", 0)))
+    p3 = (x + float(geo.get("x2", 0)), y + float(geo.get("y2", 0)))
+    if not bezier:
+        return [p0, p3]
+    c0 = (x + bezier[0][0], y + bezier[0][1])
+    c1 = (x + bezier[1][0], y + bezier[1][1])
+    out = []
+    for i in range(n + 1):
+        t = i / float(n)
+        u = 1.0 - t
+        out.append((u * u * u * p0[0] + 3 * u * u * t * c0[0] + 3 * u * t * t * c1[0] + t * t * t * p3[0],
+                    u * u * u * p0[1] + 3 * u * u * t * c0[1] + 3 * u * t * t * c1[1] + t * t * t * p3[1]))
+    return out
 
 
 def abs_ends(geo):

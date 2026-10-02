@@ -137,7 +137,20 @@ HOLE_CLEAR_MM = 0.25
 #   背景（实测 ✓）：过孔在旧口径下"躲一个交叉就钻一颗" ✗ ⇒ 9 张网用了 18 颗 ✓
 #   （理论下限 5 颗 ✓）；而把 via_cost 平着调高（20/60 ✓）只降到 16 颗 ✗、到顶 ✓。
 #   递增才是对症的 ✓：它惩罚的是"一条网上反复钻来钻去" ✓。
-VIA_ESCALATE = 0.6
+VIA_ESCALATE = 0.6         # 过孔加价翻档 ✓
+# ★★ 线↔线**中心距下限**（mm ✓）—— **默认 0 = 关** ✗（不动既有行为 ✓，要用就显式开 ✓）。
+#   为什么需要 ✗（2026-10-02 实测 ✓，像素板 v64 ✓）：
+#     净空只有 `CLEAR_MM` = 0.15 ✓，而**禁落半径会被栅格量化到整格** ✗
+#     ⇒ 8 mil（0.2032 ✓）的线 + 0.15 净空**需要**中心距 ≥ 0.4032 ✓
+#       实际只拿到 2 格 = **0.30 mm** ✗ ⇒ 真实净距 **0.0968 mm** ✗
+#       ——**低于嘉立创最小线间距 0.127 mm**（5 mil ✓）✗ ⇒ 33 处违规 ✓。
+#   ⇒ 给"线↔线"（含与过孔 ✓）加一条中心距下限 ✓：0.45 ⇒ 取整 3 格 ✓ ⇒ 净距 **0.2468 mm** ✓ ✓
+#   ★✗ **别用"加大栅格"来修** ✗（实测 ✓：`--cell=0.225` ⇒ 只连通 **4/9** ✗、
+#     `--cell=0.25` ⇒ 7/9 ✗，失败原因全是「**起点格空**」✗）——
+#     **脚口出不出得去**取决于**线↔焊盘**的禁落 ✓（0.4 mm 脚距的 QFN ✓），
+#     那是另一条路 ✓，**不许**跟着一起变粗 ✗。本开关**只管线↔线** ✓。
+#   ★ 库级默认关 ✓ —— 其它项目/其它板不受影响 ✓（§0「不扩大工作范围」✓）。
+PITCH_MIN_MM = 0.0
 # ★★ 拐弯代价 ✓ / 主层优惠 ✓（2026-09-30 用户定 ✓，原话："现在的 PCB 文件我看不懂、也改不了" ✓
 #   = 线路**碎**、折点多 ✓）——
 #   `TURN_COST`：每拐一次弯加多少分 ✓（直行一格 = 1.0 ✓）⇒ 路径更直 ✓、折点更少 ✓
@@ -223,13 +236,18 @@ class Grid(object):
             self.block_box(lay, (min(x, x2), min(y, y2), max(x, x2), max(y, y2)), grow)
 
 
-def obstacles(model, part_copper=True):
+def obstacles(model, part_copper=True, owners=None):
     """把障碍整理成**带归属的表** ✓ ⇒ `([(lay, box, grow, tag)], 统计)`
 
     ★★ `tag` = 这块障碍"属于哪张网的焊盘" ✓（件铜箔/板边 = `None` ✓）。
       为什么要归属 ✗：**同一张网的线不该被自己焊盘的净空挡住** ✓（不然线根本进不了盘 ✗
       —— 第一版就是这么失败的 ✗：GND 9 个脚一出发就出不去 ✗）。
       ⇒ 布某张网时，把 `tag == 本网` 的障碍**减掉**、别人网的照旧挡着 ✓。
+
+    ★★ `owners`（**可选出参** ✓，2026-10-03 加 ✓）：传一个 dict ✓ ⇒ 把每块障碍的
+      **出处**（哪只件 / 哪个孔）写进去 ✓ ⇒ 诊断工具（`_work/probe_start.py` ✓）能报
+      “某只脚是被**谁的**铜盖住的” ✓。
+      ★ **不影响行为** ✗ —— 不传就什么都不变 ✓（tag 语义、数量、顺序全部照旧 ✓）。
     """
     items = []
     grow = U(TRACE_MM / 2 + CLEAR_MM)
@@ -258,6 +276,9 @@ def obstacles(model, part_copper=True):
             if lay in LAYERS:
                 items.append((lay, q["box"], gp, nm))
                 n_pad += 1
+                if owners is not None:
+                    owners.setdefault("pad", []).append(
+                        (lay, q["box"], gp, q["title"], q["cid"], nm, q.get("thr")))
     # ③ 件自己的**铜箔图形** ✓（线圈绕组 722 条 ✓ —— 不挡它线会压在绕组上 ✗；tag=None ✓）
     # ★★ ③b 安装孔 ✓（2026-10-01 用户定 ✓，见 `HOLE_CLEAR_MM` ✓）—— 孔件**没有铜** ✗，
     #   所以必须**单独**按它的**外接框**挡 ✓（否则走线会直接穿过去 ✗，实测 4 根 ✓）。
@@ -266,6 +287,9 @@ def obstacles(model, part_copper=True):
         items.append(("both", (c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr),
                       U(HOLE_CLEAR_MM), None))
         n_hole += 1
+        if owners is not None:
+            owners.setdefault("hole", []).append(
+                ("both", (c[0] - rr, c[1] - rr, c[0] + rr, c[1] + rr), U(HOLE_CLEAR_MM), dia))
     n_cu = 0
     if part_copper:
         import xml.etree.ElementTree as ET
@@ -293,7 +317,28 @@ def obstacles(model, part_copper=True):
                 n_cu += 1
                 xs = [p["loc"][0] + q[0] for q in pts]
                 ys = [p["loc"][1] + q[1] for q in pts]
-                items.append((lay, (min(xs), min(ys), max(xs), max(ys)), grow, None))
+                bb = (min(xs), min(ys), max(xs), max(ys))
+                # ★★ 2026-10-03 修 ✓：件铜箔框**不许压住同一只件的焊盘** ✗。
+                #   病（**实测** ✓，`_work/probe_start.py` ✓）：4 张网**每一只脚**都被
+                #   `tag=None` 的件铜框盖住 ✗ ⇒ 布线器报 **“起点格空”** ✗、那张网永远布不通 ✗
+                #   （`U1.connector2/4/12`、`D3.connector3/4`、`J1.2`、`J2.2`、`LED2.2` ✓）。
+                #   口径 ✓（与布线器自己的注释同源 ✓）：**这块铜盖住了哪只脚 ⇒ 就算哪张网** ✓
+                #   ⇒ 布那张网时它会被“同网豁免”放行 ✓（其它网照旧挡着 ✓）。
+                #   ★ 保守处 ✓：被它盖住的脚**若不属于同一张网** ⇒ 保持 `None` ✗（不猜 ✓）。
+                _tag = None
+                _nets = set()
+                for q2 in (model.get("pads") or ()):
+                    if q2.get("title") != p.get("title") or "c" not in q2:
+                        continue
+                    cx, cy = q2["c"]
+                    if bb[0] <= cx <= bb[2] and bb[1] <= cy <= bb[3]:
+                        _nets.add(net_of.get((q2["title"], q2["cid"])))
+                if len(_nets) == 1:
+                    _tag = _nets.pop()
+                items.append((lay, bb, grow, _tag))
+                if owners is not None:
+                    owners.setdefault("cu", []).append(
+                        (lay, bb, grow, p.get("title"), p.get("moduleId"), _tag))
     return items, dict(pads=n_pad, copper=n_cu, net_of=net_of, holes=n_hole)
 
 
@@ -1122,8 +1167,20 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 if net2 == net:
                     continue
                 for lay, box, gr in tlist:
+                    # ★★ 线↔线**中心距下限** ✓（`PITCH_MIN_MM` ✓）—— 取 `max` ✓：
+                    #   正常时 `gr` 已是"半宽 + 净空"✓；量化不够时由下限兜住 ✓
+                    #   （详见 `PITCH_MIN_MM` 的注释：0.15 栅格把 0.4032 量化成 0.30 ✗）。
+                    # ★★ 2026-10-03 改成**按各自铜半径**算 ✓（原先是**同一平值** ✗）：
+                    #   障碍半径 `gr = 本件半径 + CLEAR_MM` ✓（走线 = 半宽 ✓、过孔 = 盘半径 ✓）
+                    #   ⇒ 想让**任意两件**的铜边净距 ≥ `C` ✓，就需要 `半径 + C` ✓ ——
+                    #   ✗ 平值（如 0.50）对**过孔**（半径 0.30 ✓）只给 0.20 ⇒ 两孔
+                    #     中心 ≥0.50 ⇒ 铜边净距 **−0.10** ✗ = 重叠 ✗（旧口径的真病根 ✓）；
+                    #   ✓ 现在：`gr' = gr − CLEAR_MM + max(CLEAR_MM, PITCH_MIN_MM)` ✓
+                    #     ⇒ 走线（半宽 0.1016 ✓）：0.6016 ⇒ 线↔线净距 **0.3984** ✓；
+                    #       过孔（盘半径 0.30 ✓）：0.80 ⇒ 孔↔孔净距 **0.20** ✓、孔↔线 0.3984 ✓。
+                    g2 = max(gr, gr - U(CLEAR_MM) + U(max(CLEAR_MM, PITCH_MIN_MM)))
                     for l2 in (LAYERS if lay == "both" else (lay,)):
-                        grid.block_box(l2, box, gr)
+                        grid.block_box(l2, box, g2)
             carve_pads(grid, pads, mem, grow, neck_grow)
             # ★★ 挖完自己的盘之后，把**别人的盘框本身**重新挡住 ✗✓（2026-10-01 ✓）
             #   为什么需要 ✗（实测 ✓）：`carve_pads` 为让线进自己的盘会挖 0.277 mm ✓，
