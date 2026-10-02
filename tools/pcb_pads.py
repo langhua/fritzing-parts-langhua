@@ -473,13 +473,46 @@ def part_pads(part):
         #       y = 21.96，旧报 18.96 ✗）⇒ 摆位/DRC 会跟着错 ✗。
         cor = [PB.apply(M, ((ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
                for u in (p["box"][0], p["box"][2]) for v in (p["box"][1], p["box"][3])]
+        # ★★ `poly`：焊盘**真几何**（四角过矩阵 ⇒ **旋转后的真矩形** ✓）—— 2026-10-02 补 ✓
+        #   原因 ✓：`absbox` 是**轴对齐**的包围盒 ✗，45° 摆的件（本板 `C2` ✓）会被**胀大** ✗
+        #   ⇒ 「线端落没落在焊盘上」这类判据必须用 **`poly`** ✗（用 `absbox` 会假报"接上了" ✗，
+        #   实测本板就是这么把 `C2` 的 5V/GND 并成一个网的 ✗）。
+        #   ★ 与 Fritzing 同源 ✓：`connectoritem.cpp:1972` 用的是**场景命中测试** ✓（点落在
+        #   元件**自己的形状**里 ✓），形状是旋转后的矩形/圆 ✓ —— 不是"离盘心多近" ✗。
+        #   ★ 只有一份实现 ✓：这里算一次，`fz_exact.py` 直接读 ✓（别在各处重算 ✗）。
+        loc = part["loc"]
+        if p.get("r"):          # 通孔焊盘：svg 画的是**圆** ✓ ⇒ 命中区也是圆 ✓（半径取盘外径/2 ✓）
+            _r = (2 * p["r"] + (p["sw"] or 0)) / 2 * k
+            geo = dict(circle=((loc[0] + c[0], loc[1] + c[1]), _r))
+        else:
+            # ★★ 四角必须**沿周长**给 ✗：`(x0,y0),(x0,y1),(x1,y1),(x1,y0)` ✓
+            #   ✗ 先写成 `(x0,y0),(x0,y1),(x1,y0),(x1,y1)` ⇒ 那是**蝴蝶结**（自交 ✗）⇒
+            #   「点在里面吗」的凸性判据会给出**错的答案** ✗（实测 `C2` 的**盘心**都被判"不在" ✗）。
+            #   自检 ✓：矩形**中心**必须在四条边的**同一侧** ✓（不符就说明顺序又错了 ✗）。
+            u0, u1, v0, v1 = p["box"][0], p["box"][2], p["box"][1], p["box"][3]
+            cor4 = [PB.apply(M, ((ox + vbw - u) if flip else u - ox) * k, (v - oy) * k)
+                    for (u, v) in ((u0, v0), (u0, v1), (u1, v1), (u1, v0))]
+            _sg = None
+            for _i2 in range(4):
+                x1, y1 = cor4[_i2]
+                x2, y2 = cor4[(_i2 + 1) % 4]
+                _cr = (x2 - x1) * (c[1] - y1) - (y2 - y1) * (c[0] - x1)
+                if abs(_cr) < 1e-12:
+                    continue
+                if _sg is None:
+                    _sg = _cr > 0
+                elif _sg != (_cr > 0):
+                    bad.append("%s 的焊盘四角顺序**不是沿周长** ✗（中心点判到了边的两侧 ✗）"
+                               % cid)
+                    break
+            geo = dict(poly=[(loc[0] + v[0], loc[1] + v[1]) for v in cor4])
         out[cid] = dict(p, abs=(part["loc"][0] + c[0], part["loc"][1] + c[1]),
                         absbox=(part["loc"][0] + min(v[0] for v in cor),
                                 part["loc"][1] + min(v[1] for v in cor),
                                 part["loc"][0] + max(v[0] for v in cor),
                                 part["loc"][1] + max(v[1] for v in cor)),
                         size_mm=(w, h), hole_mm=hole, ring_mm=ring,
-                        nm=part["names"].get(cid, ""))
+                        nm=part["names"].get(cid, ""), **geo)
         # ★★ **翻面 ⇒ 层要对调** ✗（2026-09-30 修 ✓，证据 = 用户导出的 Fritzing 图 ✓）：
         #   背面件（`bottom="true"`）的焊盘在**板子**上是 `copper0` ✓ ——
         #   导出图里那 43 个盘全在 `<g id="copper0">` ✓（顶层只剩 LED2 的 4 个 ✓）✓。
