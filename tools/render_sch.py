@@ -318,24 +318,42 @@ for el in root.iter("instance"):
     #   本机 Fritzing 命令行导出是坏的 ✗ ⇒ **我自己的渲染就是那份尺子** ✓（已对导出验平 ✓）。
     #   `partID` 用 `modelIndex + "0"` ✓（管线按 `startswith(mi)` + 长度 +1 匹配 ✓，与 Fritzing 同形 ✓）。
     mi = el.get("modelIndex") or "0"
-    # ★★ 2026-10-03 修 ✗：**Fritzing 不让零件文字倒过来** ✓ ——
-    #   实例是 **180° 旋转**时（`m11<0 且 m22<0` ✓，如 J1 的 `m11="-1" m22="-1"` ✓），
-    #   旧版把零件 svg **原样套进这个旋转** ✗ ⇒ 里面的 `<text>`（如 J1 的 `SH1.0` ✗）
-    #   渲染成**倒的** ✗（用户截图对照点名 ✓）。⇒ 就地把每个 `<text>` 转回来 ✓
-    #   （`transform="rotate(180 x y)"` ✓，绕它自己的锚点 ✓，位置不变 ✓）。
-    #   ★ 90°/270°（`m11==m22==0` ✓）**不动** ✓ —— 实测 Fritzing 那种情况**是**跟着转的 ✓
-    #     （用户截图里 J1 的脚号 1/2/3 就是侧着的 ✓）。★ 已有 `transform` 的 text 不动 ✓（不叠加 ✗）。
+    # ★★ 2026-10-03 修 ✗（**口径照 Fritzing 源码** ✓ —— AGENTS §13 ✓）——
+    #   **原理图的零件文字不跟着转** ✓，但"转回来"的**转心**是「该文字自己的墨迹框中心」✓：
+    #     · `items/layerkinpaletteitem.cpp:215 getTransformedSvg()` ✓：
+    #         `isFlipped(chiefTransform, rotation)` ⇒ **只有镜像**才 `flipTextSvg` ✓（J1 不是 ✗）；
+    #         紧接着 `if (rotation >= 135 && rotation <= 225) svg = rotate(svg, isFlipped);` ✓
+    #         ⇒ **只有 180°**（J1 的 `m11="-1" m22="-1"` ✓）才转 ✓；90°/270° **不转** ✓。
+    #     · `rotate()`（同文件 333 ✓）= 把每个 `<text>` **包进 `<g>`** ✓、转到
+    #         `translate(cx,cy)·rotate(180)·translate(−cx,−cy)` ✓，`(cx,cy)` = `positionTexts()`（305 ✓）
+    #         用 `QSvgRenderer::boundsOnElement(id)` 量的**墨迹框中心** ✓。
+    #   ⇒ 语义 =「**墨迹框跟着零件转 180°（所以跑到脚线的另一侧 ✓），框里的字正立**」✓。
+    #   ★ 我旧版绕**锚点**（`x,y` = **基线** ✗）转 ⇒ 墨迹框翻到基线的**另一侧** ✗
+    #     ⇒ 数字正好压在脚线上、被导线穿过 ✗（用户 2026-10-03 截图点名 ✓）。实测（J1 ✓）：
+    #       绕基线 ⇒ 屏幕 y 15.67..18.99（**脚线在 18.0 ⇒ 穿过数字** ✗）；
+    #       绕墨迹中心 ⇒ 18.99..22.45（整块在**线下方** ✓，离 0.28mm ✓ = 图纸"编号在线上方 0.28mm"
+    #       翻过来的同一段距离 ✓✓）。
+    #   ★ 已有 `transform` 的 `<text>` 不动 ✓（不叠加 ✗）；带 `<tspan>` 子的不动 ✓（正则匹配不到 ✓）。
     if m and m[0] < 0 and m[3] < 0 and abs(m[1]) < 1e-9 and abs(m[2]) < 1e-9:
-        def _unflip(mo):
-            tag = mo.group(0)
-            if "transform=" in tag:
-                return tag
-            ax = re.search(r'\sx="([^"]*)"', tag)
-            ay = re.search(r'\sy="([^"]*)"', tag)
-            if not (ax and ay):
-                return tag
-            return tag[:-1] + ' transform="rotate(180 %s %s)">' % (ax.group(1), ay.group(1))
-        laytxt = re.sub(r"<text\b[^>]*>", _unflip, laytxt)
+        def _upright180(mo):
+            head_, body_ = mo.group(1), mo.group(2)
+            if "transform=" in head_:
+                return mo.group(0)
+            fx = re.search(r'\sx="([^"]*)"', head_)
+            fy = re.search(r'\sy="([^"]*)"', head_)
+            if not (fx and fy):
+                return mo.group(0)
+            try:
+                x_ = float(fx.group(1))
+                y_ = float(fy.group(1))
+                fs_ = float((re.search(r'\sfont-size="([^"]*)"', head_) or [None, "5"])[1])
+            except ValueError:
+                return mo.group(0)
+            anc_ = (re.search(r'\stext-anchor="([^"]*)"', head_) or [None, "start"])[1]
+            cx_, cy_ = ST.ink_center(x_, y_, fs_, body_.strip(), anc_)     # ★ 唯一实现 ✓
+            return ('<g transform="rotate(180 %.4f %.4f)"><text%s>%s</text></g>'
+                    % (cx_, cy_, head_, body_))
+        laytxt = re.sub(r"<text\b([^>]*)>([^<]*)</text>", _upright180, laytxt)
     body_parts.append((ttl, "%s" % lnote,
                        '<g partID="%s0"><g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">'
                        '<g id="schematic">%s</g></g></g>'

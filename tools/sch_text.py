@@ -17,11 +17,33 @@ r"""位号文字的**宽度表**（唯一实现 ✓）—— 由 `_scratch/adv_m
 """
 ADV_DEFAULT = 2.4977          # 0.5em @ 字号 5 ✓（实测 2.4977 ✓）
 ADV_SPECIAL = {"\u00b1": 4.9953, "\u03a9": 4.9953}      # ± Ω = 1.0em ✓
+CAP_EM = 0.75                 # 基线以上的**字高**（em ✓）—— 与 `label_bbox` **同一口径** ✓（唯一实现 ✓）
 
 
 def twidth(text, fs=5.0):
     """字符串宽度（sketch 单位 ✓）"""
     return sum(ADV_SPECIAL.get(c, ADV_DEFAULT) for c in (text or "")) * fs / 5.0
+
+
+def ink_center(x, y, fs=5.0, text="", anchor="start"):
+    r"""`<text>` 的**墨迹框中心**（本地单位 ✓）—— 口径照 Fritzing 源码 ✓
+
+    出处 ✓（2026-10-03 ✓）：Fritzing 给原理图零件文字"转回来"时，转心取的是
+    `QSvgRenderer::boundsOnElement()` 量出的**墨迹框中心** ✓
+    —— `items/layerkinpaletteitem.cpp` 的 `positionTexts()`（量框 ✓）与 `rotate()`（用它当转心 ✓）。
+
+    横 ✓：`text-anchor="middle"` ⇒ **锚点就是中心** ✓；`end`/`start` ⇒ 按步进宽 `twidth()` 推 ✓。
+    纵 ✓：`<text y>` 是**基线** ✓（本库禁用 `dominant-baseline` ✓）⇒
+        上缘 = y − CAP_EM·fs ✓、下缘 = y ✓（数字/大写都坐在基线上 ✓）⇒ 中心 = y − CAP_EM·fs/2 ✓。
+
+    ★ 为什么不能用**锚点**当转心 ✗（我 2026-10-03 踩过 ✓）：转心在基线上 ⇒ 墨迹框被翻到基线的
+      **另一侧** ✗ ⇒ 数字正好压在脚线上、被导线穿过 ✗（用户截图点名 ✓）；
+      用墨迹框中心 ⇒ 墨迹框**位置不变** ✓，只有字被翻正 ✓ —— 这正是纸面上"编号在线上方"
+      翻 180° 后变成"在**线下方**"的那个结果 ✓（实测离 0.28mm = 原设计值 ✓）。
+    """
+    w = twidth(text, fs)
+    cx = x if anchor == "middle" else (x - w / 2.0 if anchor == "end" else x + w / 2.0)
+    return (cx, y - CAP_EM * fs / 2.0)
 
 
 def label_bbox(x, y, fs, lines):
@@ -33,4 +55,4 @@ def label_bbox(x, y, fs, lines):
     """
     n = max(1, len(lines))
     w = max((twidth(s, fs) for s in lines), default=0.0)
-    return (x, y + fs * 1 - fs * 0.75, x + w, y + fs * (n + 1) + fs * 0.2)
+    return (x, y + fs * 1 - fs * CAP_EM, x + w, y + fs * (n + 1) + fs * 0.2)
