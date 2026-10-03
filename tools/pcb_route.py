@@ -531,6 +531,20 @@ def boundary_report(grid, reach, topn=6):
     return sorted(cnt.items(), key=lambda kv: -kv[1])[:topn]
 
 
+def reach_bbox(grid, reach):
+    """可达区的**范围** ✓（mm ✓）⇒ 回答"这个口袋**在哪儿、多大**" ✓（2026-10-03 ✓）
+
+    ✗ 为什么需要 ✗：只知道"39 格"还是看不出它在**QFN 环内**还是**环外** ✗ ——
+      而这两种情况要改的东西**完全不同** ✓（环内 = 出口全被封 ✓；环外 = 外面有东西挡住 ✓）。
+    """
+    if not reach:
+        return None
+    xs = [grid.xy(i, j)[0] / U(1.0) for _l, (i, j) in reach]
+    ys = [grid.xy(i, j)[1] / U(1.0) for _l, (i, j) in reach]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+
 def _flood_core(grid, lay0, start, no_via=(), want=None):
     """泛洪内核 ✓ —— **唯一实现** ✓：`flood`（要可达集 ✓）与 `bfs_path`（要一条路 ✓）都走它 ✓
 
@@ -1407,6 +1421,14 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                             DIAG["fails"].append(
                                 "     · 可达区边界（%s）挡住它的：%s"
                                 % (la, "｜".join("%s×%d 格" % (t2, n2) for t2, n2 in _bd)))
+                        # ★ 口袋**在哪儿、多大** ✓ —— 分清"QFN 环内"与"环外被挡" ✓（两者改法不同 ✓）
+                        _bb2 = reach_bbox(grid, reach)
+                        if _bb2:
+                            DIAG["fails"].append(
+                                "     · 可达区范围：x %.3f…%.3f（宽 %.3f mm）｜"
+                                "y %.3f…%.3f（高 %.3f mm）"
+                                % (_bb2[0], _bb2[2], _bb2[2] - _bb2[0],
+                                   _bb2[1], _bb2[3], _bb2[3] - _bb2[1]))
                         # ★ 目标那侧自己有多大 ✓ ⇒ 一眼看出"是两个区域被隔开 ✗"
                         #   还是"某一侧被单独封死 ✗" ✓
                         _rb = [(lb, flood(grid, lb, pads[b]["c"], no_via))
