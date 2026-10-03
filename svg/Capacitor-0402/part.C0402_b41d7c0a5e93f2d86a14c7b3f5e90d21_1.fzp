@@ -12,8 +12,8 @@
   <tag>SMD</tag>
  </tags>
  <properties>
-  <property name="family">Capacitors</property>
-  <property name="package">[SMD] 0402</property>
+  <property name="family">Capacitor [bidirectional]</property>
+  <property name="package">0402 [SMD, multilayer]</property>
   <property name="capacitance" showInLabel="yes">100nF</property>
   <property name="voltage" showInLabel="yes">25V</property>
   <property name="dielectric">X7R</property>

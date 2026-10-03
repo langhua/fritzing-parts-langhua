@@ -23,6 +23,9 @@ r"""生成 **Capacitor-0402**（SMD 通用电容件 ✓，本库第一套电容 
     出处 = Fritzing core `SMD_multilayer-capacitor_0603` 的 breadboard svg ✓，CC-BY-SA 3.0 ✓，
     见 `svg/_assets/LICENSE-ceramic_capacitor_blue_leg.txt` ✓）；
     ✗ 不用电阻那套轴向胶囊 ✗（曾把 0402 电容面包板画成电阻图片 ✗，用户 2026-10-02 指出 ✓）。
+  · **family / package**：★ 2026-10-03 用户定 ✓ —— 并进 Fritzing 自带电容的变体族 ✓
+    `family = "Capacitor [bidirectional]"` + `package = "0402 [SMD, multilayer]"` ✓
+    ⇒ C2 的 mpn 下拉框里会出现 `0402 [SMD, multilayer]` ✓（换件 = 换 0402 焊盘 ✓）。
 
 ★ 默认值（2026-10-01 用户确认 ✓；也 = 本项目 `pixel` 板上 C1/C2 的实际用值 ✓）：
   `capacitance = 100nF`（**显示在标签** ✓）｜`voltage = 25V`｜`dielectric = X7R`｜`tolerance = ±10%`
@@ -54,7 +57,7 @@ ASSET_SCHEM = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_schematic.
 #   hex 是本次新生成的固定值 ✓ —— 一旦发布就不许改 ✗，否则 Fritzing 里会认成另一个件 ✗）
 SPEC = {
     "0402": dict(mod="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1", ref="Resistor-0402",
-                 title="Capacitor 0402", pkg="[SMD] 0402",
+                 title="Capacitor 0402", pkg="0402 [SMD, multilayer]",
                  body_w=107.14283, body_x=73.571365,        # icon 里本体矩形（用户单位 ✓）
                  can_w=1.45, can_h=0.60000008),             # pcb 画布 mm ✓
 }
@@ -88,7 +91,7 @@ def make_fzp(files, size, s):
     # 属性：换成电容那一套 ✓（`capacitance` 才是 Fritzing 认的容值属性 ✓ ——
     #   证据：项目里 C1/C2 的标签就显示 "100 nF" ✓ 而 fzp 属性名是 `capacitance` ✓）
     props = (""" <properties>
-  <property name="family">Capacitors</property>
+  <property name="family">Capacitor [bidirectional]</property>
   <property name="package">%s</property>
   <property name="capacitance" showInLabel="yes">100nF</property>
   <property name="voltage" showInLabel="yes">25V</property>
