@@ -374,6 +374,17 @@ for el in root.iter("instance"):
     g = next((c for c in sv if tag(c) == "geometry"), None)
     if g is None:
         continue
+    # ★★ 2026-10-03 修 ✗：**必须看 `wireFlags`** ✓ —— 一条线可以同时带三个视图 ✓，
+    #   但它在某个视图里**算不算铜**由 `wireFlags` 决定 ✓（Fritzing：
+    #   `if (!(wire->getViewGeometry().wireFlags() & myTrace)) continue;` ⇒ 位不含该视图
+    #   ⇒ **该视图直接跳过、不画** ✗ —— AGENTS §13 已认证 ✓）。位：面包板 64 ／ 原理图 128 ／ PCB 4 ✓。
+    #   ✗ 旧版不看 ⇒ 本板 8 条 **PCB 走线**（flags=4）却带非零原理图几何 ⇒ 被当成原理图线 ✗
+    #     ⇒ (A)「声明接了某脚、线没画到」里 **8 处是假阳性** ✗（用户看到的「10 处」实际只有 2 处真 ✗）。
+    #   ★ 属性缺失按"老文件"放行 ✓（只对写了 flags 的才判 ✗）。
+    _fl = g.get("wireFlags")
+    _bit = 128 if VIEW == "schematicView" else (64 if VIEW == "breadboardView" else 4)
+    if _fl is not None and not (int(_fl) & _bit):
+        continue
     ttl = (el.findtext("title") or "").strip()
     col, mils = "#404040", None
     for c in sv.iter():

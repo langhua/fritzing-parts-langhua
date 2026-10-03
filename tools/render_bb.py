@@ -176,6 +176,17 @@ for el in root.iter("instance"):
     if g is None:
         continue
     if mid.startswith("Wire"):
+        # ★★ 2026-10-03 修 ✗：**必须看 `wireFlags`** ✓ —— 一条线可以同时带三个视图 ✓，
+        #   但它在某个视图里**算不算铜**由 `wireFlags` 决定 ✓：
+        #   Fritzing = `if (!(wire->getViewGeometry().wireFlags() & myTrace)) continue;`
+        #   ⇒ 位不含该视图 ⇒ **该视图直接跳过、不画** ✗（AGENTS §13 已认证 ✓）。
+        #   实测本板：53 条 PCB 走线（flags=**4**）里 **23 条**的面包板几何**非零** ✗
+        #   ⇒ 旧版照画 ⇒ 面包板里多出 23 条**不属于面包板**的线 ✗（用户："很多蓝色线" ✗）。
+        #   位：面包板 = **64** ✓、原理图 = 128 ✓、PCB 铜 = 4 ✓（`views_hist.py` 实测 ✓）。
+        #   ★ 属性**缺失**时按"老文件"放行 ✓（只对**写了** flags 的才判 ✗，免得误杀 ✓）。
+        fl = g.get("wireFlags")
+        if fl is not None and not (int(fl) & 64):
+            continue
         col = "#404040"
         we = next((c for c in bv.iter() if tag(c) == "wireExtras"), None)
         if we is not None and we.get("color"):
