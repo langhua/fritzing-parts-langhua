@@ -475,6 +475,7 @@ BFS_USED = []            # A* 没搜到、改用 BFS 兜底的记录 ✓（2026-
 #     ② **有路但 A* 没搜到 / 代价结构不对** ✗（如撞上限 ✓、或拐弯/换层代价把它顶歪 ✓）。
 #   做法：从起点泛洪一遍 ✓（步法、`no_via` 与 `astar` **同口径** ✓）⇒ 看目标格在不在可达集里 ✓。
 DIAG = {"on": False, "fails": []}
+_ORD_SHOWN = []          # 实排次序**只打一次** ✓（验证开关真的生效 ✓，2026-10-03 ✓）
 
 
 # ★★ 2026-10-03 补 ✓：布不通时**逐格报到"谁堵的"** ✓（`--why` 用 ✓）
@@ -861,8 +862,20 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     _mark0 = len(DIAG["fails"])                 # ★ 诊断起点的水位 ✓（下面只留胜者的 ✓）
     _best_snap = []
     for name, key in _net_keys(net_pads, pads)[:tries]:
+        # ★★ 2026-10-03 修 ✗：`last` **必须先判** ✓ —— ✗ 旧写法 `(0 if in first else 2 if in last …)`
+        #   在一张网**同时**出现在 `first` 与 `last` 里时让 `first` 赢 ✗ ⇒ `last` **静默失效** ✗
+        #   （实测撞到 ✓：`--signals-first` 忘了不再传 `first=power` ✓ ⇒ 开关成了 **no-op** ✗，
+        #    而 A/B 两边数字**一模一样** ⇒ 我把“no-op”读成了“中性” ✗✗）。
         order = sorted(net_pads, key=lambda n: (
-            0 if n in tuple(first) else (2 if n in tuple(last) else 1), key(n)))
+            2 if n in tuple(last) else (0 if n in tuple(first) else 1), key(n)))
+        if DIAG["on"] and order not in _ORD_SHOWN:
+            # ★ 把**实排**打出来 ✓ —— 验证“开关真的改了次序”不能靠“结果一样就当中性” ✗
+            #   （血的教训 ✓：开关是 no-op 时 A/B 会显示“完全相同” ✗ ≡ 不是“中性” ✓）。
+            #   ★ 按**不同次序**各打一次 ✓（去重 ✓）：第一个 `route()` 调用可能只布一张网 ✓
+            #     （如“先钉 5V”那一趟 ✓），只看它会把真正的次序看漏 ✗。
+            print("   [--why] 次序实排（《%s》）：%s"
+                  % (name, " → ".join(order)))
+            _ORD_SHOWN.append(order)
         _m = len(DIAG["fails"])
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
                           pre=pre, width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
