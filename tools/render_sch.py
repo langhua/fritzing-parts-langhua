@@ -318,6 +318,24 @@ for el in root.iter("instance"):
     #   本机 Fritzing 命令行导出是坏的 ✗ ⇒ **我自己的渲染就是那份尺子** ✓（已对导出验平 ✓）。
     #   `partID` 用 `modelIndex + "0"` ✓（管线按 `startswith(mi)` + 长度 +1 匹配 ✓，与 Fritzing 同形 ✓）。
     mi = el.get("modelIndex") or "0"
+    # ★★ 2026-10-03 修 ✗：**Fritzing 不让零件文字倒过来** ✓ ——
+    #   实例是 **180° 旋转**时（`m11<0 且 m22<0` ✓，如 J1 的 `m11="-1" m22="-1"` ✓），
+    #   旧版把零件 svg **原样套进这个旋转** ✗ ⇒ 里面的 `<text>`（如 J1 的 `SH1.0` ✗）
+    #   渲染成**倒的** ✗（用户截图对照点名 ✓）。⇒ 就地把每个 `<text>` 转回来 ✓
+    #   （`transform="rotate(180 x y)"` ✓，绕它自己的锚点 ✓，位置不变 ✓）。
+    #   ★ 90°/270°（`m11==m22==0` ✓）**不动** ✓ —— 实测 Fritzing 那种情况**是**跟着转的 ✓
+    #     （用户截图里 J1 的脚号 1/2/3 就是侧着的 ✓）。★ 已有 `transform` 的 text 不动 ✓（不叠加 ✗）。
+    if m and m[0] < 0 and m[3] < 0 and abs(m[1]) < 1e-9 and abs(m[2]) < 1e-9:
+        def _unflip(mo):
+            tag = mo.group(0)
+            if "transform=" in tag:
+                return tag
+            ax = re.search(r'\sx="([^"]*)"', tag)
+            ay = re.search(r'\sy="([^"]*)"', tag)
+            if not (ax and ay):
+                return tag
+            return tag[:-1] + ' transform="rotate(180 %s %s)">' % (ax.group(1), ay.group(1))
+        laytxt = re.sub(r"<text\b[^>]*>", _unflip, laytxt)
     body_parts.append((ttl, "%s" % lnote,
                        '<g partID="%s0"><g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">'
                        '<g id="schematic">%s</g></g></g>'
