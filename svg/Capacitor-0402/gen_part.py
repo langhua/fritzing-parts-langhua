@@ -12,8 +12,10 @@ r"""生成 **Capacitor-0402**（SMD 通用电容件 ✓，本库第一套电容 
     `Resistor-0603`（`R0402_7e77de42…_1_pcb.svg` ✓）就是按 IPC 标称画的 ✓，
     同尺寸的 0402 电容/电阻 land pattern **本来就一样** ✓ ⇒ 直接沿用其几何 ✓（改出处注释 ✓）。
   · **fzp 结构**（moduleId / label / views / connectors / spice ✓）照 `Resistor-*` ✓。
-  · **原理图**的引脚线宽 `0.246944`、端子极小 rect、编号 DroidSans 0.881944 ✓ = 电阻件现行口径 ✓
-    （也是仓规 §5 的原理图口径 ✓）；**锯齿换成两块极板** ✓（电容符号 ✓）。
+  · **原理图**：★ 2026-10-03 用户定 ✓ —— 直接用 Fritzing 自带瓷片电容的原理图符号 ✓
+    （`svg/_assets/ceramic_capacitor_schematic.svg` = core `capacitor.svg` ✓，CC-BY-SA 3.0 ✓，
+    见 `svg/_assets/LICENSE-ceramic_capacitor_schematic.txt` ✓）；
+    ✗ 不再把电阻的锯齿改成两块极板 ✗（那是自画符号，用户要求与 Fritzing 自带一致 ✓）。
   · **icon**：米白陶瓷体 + 两端银 ✓（仓规 §1 工业风 ✓）；
     ✗ 去掉电阻那套**色环 / 阴影 / 高光**（那是 core 老件的装饰 ✗ ⇒ 仓规 §1 不许加装饰 ✓）。
   · **面包板**：★ 2026-10-02 用户定 ✓ —— 直接用 Fritzing 自带电容 C2 的面包板几何 ✓
@@ -42,6 +44,9 @@ FZPZ = os.path.join(ROOT, "fzpz")
 # ★ 面包板素材 = Fritzing 自带电容（C2）的面包板 ✓（逐字拷贝 ✓，CC-BY-SA 3.0 ✓，
 #   见 `svg/_assets/LICENSE-ceramic_capacitor_blue_leg.txt` ✓）
 ASSET_BB = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_blue_leg.svg")
+# ★ 原理图素材 = Fritzing 自带瓷片电容的原理图符号 ✓（逐字拷贝 ✓，CC-BY-SA 3.0 ✓，
+#   见 `svg/_assets/LICENSE-ceramic_capacitor_schematic.txt` ✓）
+ASSET_SCHEM = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_schematic.svg")
 
 # ── 单档规格（0402 ✓；几何**沿用同封装电阻** ✓；数值来自本库 `Resistor-*.fzpz` ✓）────
 #   ★ 0603 已删除（2026-10-02 ✓）—— Fritzing 自带的 0603 电容已支持 ✓
@@ -142,28 +147,16 @@ def make_pcb(files, s):
 
 
 def make_schematic(files, s):
-    """原理图：把电阻的**锯齿**换成电容的**两块极板** ✓，其余（引脚线/端子/编号）逐字照抄 ✓。"""
-    new = files[[n for n in files if ".schematic." in n][0]]
-    lines = re.findall(r'<line class="other"[^>]*/>', new)
-    if len(lines) < 9:
-        raise SystemExit("✗ 电阻原理图里锯齿线不是 9 条 ✗（%d）" % len(lines))
-    # 锯齿横跨 2.66347 → 7.74347（中线 5.20347 ✓）⇒ 两块极板以它为中心 ✓
-    plates = ('<line class="other" stroke="#000000" stroke-linecap="round" '
-              'stroke-width="0.1524" x1="4.80347" x2="4.80347" y1="0.1902" y2="1.9942"/>\n'
-              '        <line class="other" stroke="#000000" stroke-linecap="round" '
-              'stroke-width="0.1524" x1="5.60347" x2="5.60347" y1="0.1902" y2="1.9942"/>')
-    first = new.find(lines[0])
-    last = new.find(lines[-1]) + len(lines[-1])
-    new = new[:first] + plates + new[last:]
-    # 两条引脚线接到极板 ✓（原来是接到锯齿两端 ✓）
-    #   ✗ 我第一版删锯齿时捎带改了锯齿自己的线 ✗ ⇒ 左引线还停在 2.66347（没接上极板 ✗）
-    #     —— 实测渲图才看出来 ✓ ⇒ 这里直接改**引线那条**的 x2 ✓
-    new = new.replace('x2="2.66347"  y1="1.0922"', 'x2="4.80347"  y1="1.0922"')
-    new = new.replace('x1="10.2835" x2="7.74347"', 'x1="10.2835" x2="5.60347"')
-    # ✗ `<referenceFile >` 里有个空格 ✗ ⇒ 正则必须允许空白 ✓（踩过 ✓）
-    new = re.sub(r"<referenceFile\s*>[^<]*</referenceFile>",
-                 "<referenceFile >capacitor.svg</referenceFile>", new)
-    return new
+    """原理图：★ 2026-10-03 用户定 ✓ —— 直接用 Fritzing 自带瓷片电容的原理图符号 ✓
+    （`svg/_assets/ceramic_capacitor_schematic.svg` = core `capacitor.svg`，两块极板电容符号 ✓，
+    `connector0/1pin` + `connector0/1terminal` 命名与 fzp 一致 ✓，CC-BY-SA 3.0 ✓）；
+    ✗ 不再把电阻的锯齿改成两块极板 ✗（那是自画符号 ✗）。
+    """
+    txt = open(ASSET_SCHEM, encoding="utf-8").read()
+    # ★ core `capacitor.svg` 用**单引号**属性（`id='…'`）✗ —— 本仓检查器/工具只认双引号
+    #   `id="…"` ✗ ⇒ 把属性引号 `='…'` 规整成 `="…"` ✓（**不改几何** ✓；
+    #   `font-family="'Droid Sans'"` 是双引号包单引号、不含 `='` ⇒ 不受影响 ✓）
+    return re.sub(r"='([^']*)'", '="\\1"', txt)
 
 
 def make_body(files, kind, s):
