@@ -836,8 +836,8 @@ def _net_keys(net_pads, pads):
 
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
-          width_of=None, first=(), mid_keep=(), ban_via=(), copper_keep=(), pre=None,
-          labels=()):
+          width_of=None, first=(), last=(), mid_keep=(), ban_via=(), copper_keep=(),
+          pre=None, labels=()):
     """⇒ **多种次序里最优的那份** ✓（先比连通网数 ✓，再比总长 ✓）
 
     `pre` = **已经布好、要钉住的网** ✓ `{net: d}` —— 它们既不重布 ✓、又照旧当障碍 ✓
@@ -848,13 +848,21 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
       信号线 12 或 8 mil ✓」）——JST SH 官方额定 **1 A/触点**（AWG #28 ✓）⇒ 电源网要宽 ✓。
       · `width_of(net)` ⇒ 该网的**线宽 mm** ✓（同时决定它的净空 ✓）；缺省 ⇒ `TRACE_MM` ✓；
       · `first` ⇒ **先布的网** ✓（宽线要先占地方 ✗ —— 这就是仓规 §5b 第 ⑩ 条"留路"的"先宽后细"版 ✓）。
+
+    ★★ 2026-10-03 加 `last` ✓（`first` 的反面 ✓）：**把某几张网排到最后布** ✓。
+      为什么需要 ✗（诊断量出来的 ✓）：`GND`/`5V` **脚最多** ✓、自己又有很大的"回旋余地"✓
+      （同网铜相碰合法 ✓）⇒ 让它们**先布**就会把待接的信号脚**围成小口袋** ✗ ——
+      实测 `DATA_IN` 起点只剩 **39 格**（全板可走 ≈2.7 万 ✓）✗、`BR+` 终点只剩 **1321 格** ✗，
+      而围住它的正是 `线:GND` / `线:5V` / `过孔:5V` ✓。
+      ⇒ 反过来：**信号先走** ✓、电源/地最后收拾残局 ✓（它们最好找绕法 ✓）。
     """
     w_of = width_of or (lambda n: TRACE_MM)
     best = None
     _mark0 = len(DIAG["fails"])                 # ★ 诊断起点的水位 ✓（下面只留胜者的 ✓）
     _best_snap = []
     for name, key in _net_keys(net_pads, pads)[:tries]:
-        order = sorted(net_pads, key=lambda n: (0 if n in tuple(first) else 1, key(n)))
+        order = sorted(net_pads, key=lambda n: (
+            0 if n in tuple(first) else (2 if n in tuple(last) else 1), key(n)))
         _m = len(DIAG["fails"])
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
                           pre=pre, width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
@@ -981,8 +989,8 @@ def copper_clashes(res, width_of=None):
 
 
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
-                blockers=8, verbose=True, width_of=None, first=(), mid_keep=(), ban_via=(),
-                copper_keep=(), pre=None, labels=()):
+                blockers=8, verbose=True, width_of=None, first=(), last=(), mid_keep=(),
+                ban_via=(), copper_keep=(), pre=None, labels=()):
     """先多次序布 ✓，再对布不通的网**拆掉挡它的线**重来 ✓（rip-up & reroute ✓）
 
     ★ 为什么要它 ✓（实测 2026-09-30 ✓）：9 个网只连通 3 个 ✗，而线宽 8～32 mil 全一样 ✗
@@ -996,7 +1004,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
     """
     _mark0 = len(DIAG["fails"])              # ★ 诊断水位 ✓（只留最终这份 ✓）
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
-                 width_of=width_of, first=first, mid_keep=mid_keep, ban_via=ban_via,
+                 width_of=width_of, first=first, last=last, mid_keep=mid_keep, ban_via=ban_via,
                  copper_keep=copper_keep, pre=pre, labels=labels)
     best_s = _score(best)
     if verbose:
