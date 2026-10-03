@@ -32,7 +32,7 @@ z = zipfile.ZipFile(fzz)
 name = [x for x in z.namelist() if x.endswith(".fz")][0]
 r = ET.fromstring(z.read(name))
 
-bad_col, zero, props, bb = [], [], [], []
+bad_col, zero, zero_ph, props, bb = [], [], [], [], []
 for e in r.iter("instance"):
     ttl = (e.findtext("title") or "").strip()
     ttl_el = e.findtext("title")
@@ -45,6 +45,15 @@ for e in r.iter("instance"):
             for q in p:
                 if q.get("name") == "color":
                     props.append("%s(text)=%s" % (ttl, (q.text or "")[:10]))
+    # ★ 该实例在**任意视图**里有没有**真实长度**（非零长）✓ —— 用来区分「占位」与「真退化」✓
+    e_real = False
+    for _v in (child(e, "views") if child(e, "views") is not None else []):
+        _g = child(_v, "geometry")
+        if _g is None:
+            continue
+        if abs(float(_g.get("x2") or 0)) > 1e-9 or abs(float(_g.get("y2") or 0)) > 1e-9:
+            e_real = True
+            break
     for sub in child(e, "views"):
         if tag(sub) != "breadboardView":
             continue
@@ -57,7 +66,11 @@ for e in r.iter("instance"):
         if col and col not in STANDARD:
             bad_col.append((ttl, col))
         if abs(dx) < 1e-9 and abs(dy) < 1e-9:
-            zero.append(ttl)
+            # ★★ 2026-10-03 修 ✗：零长**未必**是毛病 ✓ —— 走线在别的视图、这里只是**占位** ✓
+            #   （Fritzing 硬要求三视图 ✓；非目标视图用零长占位 ✓、坐标不编造 ✓ ——
+            #    见 `AuroraTessellation-NFC/hardware/pixel/gen_routes.py` 的 `wire_block` 出处证据 ✓）
+            #   ⇒ 只有「**哪个视图都没有长度**」才是真退化 ✗（否则是判据的假阳性 ✗）
+            (zero if not e_real else zero_ph).append(ttl)
         peers = [c.get("modelIndex") for c in sub.iter()
                  if tag(c) == "connect" and (c.get("layer") or "") == "breadboardWire"]
         if "WireModuleID" in (e.get("moduleIdRef") or ""):
@@ -65,7 +78,9 @@ for e in r.iter("instance"):
 
 print("== 文件自检: %s" % fzz)
 print("   ① 非标准色的导线 : %s" % (bad_col if bad_col else "0 个 ✓"))
-print("   ② 零长线段       : %s" % (zero if zero else "0 个 ✓"))
+print("   ② 零长**真退化**线: %s" % (zero if zero else "0 个 ✓"))
+print("   ②' 零长**占位**线 : %d 个 ✓（非本视图的真实走线 ✓ 三视图占位 ✓ 见 gen_routes.wire_block）"
+      % len(zero_ph))
 print("   ③ 实例 color 属性: %s" % (props if props else "0 个 ✓（Fritzing 自己也不写 ✓）"))
 print("   ④ 面包板导线 %d 段（%d 根）| 颜色: %s"
       % (len(bb), len([b for b in bb if b[6]]), sorted({b[1] for b in bb if b[1]})))

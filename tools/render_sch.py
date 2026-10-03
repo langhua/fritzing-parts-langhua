@@ -546,9 +546,11 @@ for ttl_w, t5, c5, a, b in fake_b[:10]:
 for ttl_w, t3, c3, q3 in geom_body[:10]:
     print("      ✗ %-14s **线身穿过** %s.%s（%.1f,%.1f）✗ ⇒ 图上像接上了 ✓ 实际没连 ✗"
           % (ttl_w, t3, c3, q3[0], q3[1]))
-print("   (C) **退化为点的导线**（点接头 ✓ / 跨视图残留 ✗ —— 上面两条**不算它们** ✓；"
+print("   (C) **退化为点的导线**（点接头 ✓ / **三视图占位** ✓ / 跨视图残留 ✗ —— 上面两条**不算它们** ✓；"
       "这里**如实列出** ✓，请人看一眼 ✓）：**%d 根** %s"
       % (len(degen), "✓" if not degen else "⚠"))
+print("        ★ 本项目这 30 根 = PCB 走线的**三视图占位** ✓（Fritzing 硬要求三视图 ✓、"
+      "非目标视图零长占位 ✓、坐标不编造 ✗ ⇒ 不参与相交判定 ✓ —— 见 `gen_routes.wire_block` 出处证据 ✓）")
 for ttl_w in degen:
     _e = next((e for e in geom_end if e[0] == ttl_w), None)
     _a, _b = (_e[1], _e[2]) if _e else ((0, 0), (0, 0))
@@ -998,10 +1000,16 @@ print("── ★ **网**（按**连接表**认 ✓，颜色只用于画图 ✓�
 
 fj_hits = []
 fj_near = []
+# ★★ 2026-10-03 修 ✗：**零长占位线**（走线在本视图没有真实几何 ✓ —— 见 `gen_routes.wire_block`：
+#   Fritzing 硬要求三视图 ✓、非目标视图用零长占位 ✓）**没有几何** ⇒ **不参与**相交/擦身判定 ✗
+#   （以前不跳 ⇒ 30 条占位线全堆在 (0,0) ⇒ 报出 1668 处**假**接头 ✗ —— 是判据的假阳性 ✗）
+_zlen = {k for k in range(len(widx)) if widx[k][1] == widx[k][2]}
 for _i in range(len(widx)):
+    if _i in _zlen:
+        continue
     _t1, _a1, _b1 = widx[_i]
     for _j in range(len(widx)):
-        if _i == _j:
+        if _i == _j or _j in _zlen:
             continue
         _t2, _a2, _b2 = widx[_j]
         if _netkey(_i) == _netkey(_j):          # ★ 同一张网（含**同名网标签** ✓）⇒ 是接头 ✓ 不算毛病 ✗
