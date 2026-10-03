@@ -43,6 +43,8 @@ r"""★★ 原理图**后处理**：把"本该横平竖直"的线拉直 ✓（20
   数字再用独立脚本（如 `_work/sch_xy.py`）核 ✓。
 """
 import collections
+import contextlib
+import io
 import os
 import re
 import shutil
@@ -91,327 +93,372 @@ def parse_args(argv):
     return args, opts
 
 
-args, opts = parse_args(sys.argv[1:])
-if not args:
-    raise SystemExit("用法见文件头：py -3.13 sch_straighten.py <sketch.fz|.fzz> [--apply] [--out x]")
-SRC, VIEW = args[0], opts.get("view", "schematicView")
-TOL = float(opts.get("tol-mm", TOL_MM_DEF)) * SB.SK_U_PER_MM
-BIT = 128 if VIEW == "schematicView" else (64 if VIEW == "breadboardView" else 4)
+def _run(src, out, apply_, tol_mm, view):
+    """把一份草图跑一遍四条规则 ✓ → 结果 dict ✓
+
+    ★ **不自己 SystemExit** ✗（库化后调用方要能从返回值判断 ✓）：
+      出错就 `print` + `return dict(rc=2, ...)` ✓；`rc`：0 正常（含"无需改动" ✓）/ 2 出错未写文件 ✓。
+    ★ 报告照样 `print` ✓ —— 要安静就在外面用 `contextlib.redirect_stdout` 接住 ✓
+      （`straighten_file(quiet=True)` 就是这么做的 ✓）。
+    """
+    SRC, VIEW = src, view
+    TOL = float(tol_mm) * SB.SK_U_PER_MM
+    BIT = 128 if VIEW == "schematicView" else (64 if VIEW == "breadboardView" else 4)
 
 
-def load(path):
-    """★ 看**魔数**判是不是 zip ✓（别只看扩展名 ✗ —— 备份常叫 `.prestraight` ✓ / `.bak` ✓）"""
-    head = open(path, "rb").read(4)
-    if head[:2] == b"PK":
-        z = zipfile.ZipFile(path)
-        name = [n for n in z.namelist() if n.endswith(".fz")][0]
-        return z.read(name).decode("utf-8"), z, name
-    return open(path, encoding="utf-8").read(), None, None
+    def load(path):
+        """★ 看**魔数**判是不是 zip ✓（别只看扩展名 ✗ —— 备份常叫 `.prestraight` ✓ / `.bak` ✓）
+        ★ 收 `str` 也收 `Path` ✓（库调用方天然会传 `Path` ✗ ⇒ 自己 `str()` 一下 ✓）"""
+        path = str(path)
+        head = open(path, "rb").read(4)
+        if head[:2] == b"PK":
+            z = zipfile.ZipFile(path)
+            name = [n for n in z.namelist() if n.endswith(".fz")][0]
+            return z.read(name).decode("utf-8"), z, name
+        return open(path, encoding="utf-8").read(), None, None
 
 
-def save(path, text, pack, name):
-    """★ 绝不"边读边写同一个 zip" ✗（本仓踩过 `BadZipFile` ✓）⇒ 先写临时文件 ✓"""
-    tmp = path + ".tmp"
-    if pack is None:
-        open(tmp, "w", encoding="utf-8").write(text)
+    def save(path, text, pack, name):
+        """★ 绝不"边读边写同一个 zip" ✗（本仓踩过 `BadZipFile` ✓）⇒ 先写临时文件 ✓
+        ★ 同样收 `Path` ✓（✗ 第一版直接 `path + ".tmp"` ✗ ⇒ 传 `Path` 时 `TypeError` ✗
+          —— 是 notebook 里用库 API 传 `Path` 当场撞出来的 ✓）"""
+        path = str(path)
+        tmp = path + ".tmp"
+        if pack is None:
+            open(tmp, "w", encoding="utf-8").write(text)
+            os.replace(tmp, path)
+            return
+        with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zo:
+            for n in pack.namelist():
+                zo.writestr(n, text.encode("utf-8") if n == name else pack.read(n))
+        pack.close()
         os.replace(tmp, path)
-        return
-    with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zo:
-        for n in pack.namelist():
-            zo.writestr(n, text.encode("utf-8") if n == name else pack.read(n))
-    pack.close()
-    os.replace(tmp, path)
 
 
-def attrs(tagtext):
-    return collections.OrderedDict(re.findall(r'([\w:-]+)="([^"]*)"', tagtext))
+    def attrs(tagtext):
+        return collections.OrderedDict(re.findall(r'([\w:-]+)="([^"]*)"', tagtext))
 
 
-def fnum(d, k, dflt=0.0):
-    try:
-        return float(d[k])
-    except (KeyError, TypeError, ValueError):
-        return dflt
+    def fnum(d, k, dflt=0.0):
+        try:
+            return float(d[k])
+        except (KeyError, TypeError, ValueError):
+            return dflt
 
 
-def dist(p, q):
-    return max(abs(p[0] - q[0]), abs(p[1] - q[1]))
+    def dist(p, q):
+        return max(abs(p[0] - q[0]), abs(p[1] - q[1]))
 
 
-# ────────────────────── 解析：实例 / 视图 / 实例自己的 geometry ──────────────────────
-text, pack, fzname = load(SRC)
-print("== %s ▶ %s（%d 字节 ✓）" % (SRC, fzname or "（纯 .fz ✓）", len(text)))
+    # ────────────────────── 解析：实例 / 视图 / 实例自己的 geometry ──────────────────────
+    text, pack, fzname = load(SRC)
+    print("== %s ▶ %s（%d 字节 ✓）" % (SRC, fzname or "（纯 .fz ✓）", len(text)))
 
-INSTS, pos = [], 0
-while True:
-    i = text.find("<title>", pos)
-    if i < 0:
-        break
-    j = text.find("</title>", i)
-    s = text.rindex("<instance", 0, i)
-    e = text.index("</instance>", j) + len("</instance>")
-    INSTS.append(dict(ttl=text[i + 7:j], s=s, e=e, blk=text[s:e]))
-    pos = e
+    INSTS, pos = [], 0
+    while True:
+        i = text.find("<title>", pos)
+        if i < 0:
+            break
+        j = text.find("</title>", i)
+        s = text.rindex("<instance", 0, i)
+        e = text.index("</instance>", j) + len("</instance>")
+        INSTS.append(dict(ttl=text[i + 7:j], s=s, e=e, blk=text[s:e]))
+        pos = e
 
-PARTS, PINS, UNKNOWN, WIRES = {}, {}, set(), []
-for it in INSTS:
-    blk = it["blk"]
-    mi = (re.search(r'<instance[^>]*modelIndex="([^"]*)"', blk) or [None, "?"])[1]
-    ot = re.search(r"<%s\b[^>]*>" % VIEW, blk)
-    if not ot:
-        continue
-    seg_a = it["s"] + ot.end()
-    rest = text[seg_a:it["e"]]
-    cl = re.search(r"</%s>" % VIEW, rest)
-    seg = text[seg_a:seg_a + (cl.start() if cl else len(rest))]
+    PARTS, PINS, UNKNOWN, WIRES = {}, {}, set(), []
+    for it in INSTS:
+        blk = it["blk"]
+        mi = (re.search(r'<instance[^>]*modelIndex="([^"]*)"', blk) or [None, "?"])[1]
+        ot = re.search(r"<%s\b[^>]*>" % VIEW, blk)
+        if not ot:
+            continue
+        seg_a = it["s"] + ot.end()
+        rest = text[seg_a:it["e"]]
+        cl = re.search(r"</%s>" % VIEW, rest)
+        seg = text[seg_a:seg_a + (cl.start() if cl else len(rest))]
 
-    # ★ 实例自己的 `<geometry>`：视图子块里**第一个** ✓（`connectors/*/geometry` 是相对偏移 ✗）
-    #   带子节点（`<transform>` ✓）⇒ 要连内容一起解析 ✓，否则旋转的件会算错 ✗
-    gm = re.search(r"(?s)<geometry\b([^>]*?)(?:/>|>(.*?)</geometry>)", seg)
-    if not gm:
-        continue
-    gtag = ("<geometry%s/>" % gm.group(1)) if gm.group(2) is None \
-        else ("<geometry%s>%s</geometry>" % (gm.group(1), gm.group(2)))
-    g_el = ET.fromstring(gtag)
-    ga = attrs(gm.group(1))
-    gend = seg_a + gm.end()
-    # ★ 只改**开标签** ✓（子节点/闭合标签原样留着 ✓）
-    g_open_end = seg_a + gm.start() + len("<geometry%s>" % gm.group(1)) \
-        if gm.group(2) is not None else gend
-    tspan = None
-    tm = re.search(r"<titleGeometry\b([^>]*?)(/?)>", seg)
-    if tm:
-        # ★ 第 4 格 = 「自己是自闭合的吗」✓（**布尔** ✓ —— ✗ 以前存的是一段内容/斜杠字符串 ✗，
-        #   写回时真假反了 ⇒ 写出畸形 XML ✗✗，见下面 `SC` 的教训 ✓）
-        tspan = (seg_a + tm.start(), seg_a + tm.end(), tm.group(1), tm.group(2) == "/")
+        # ★ 实例自己的 `<geometry>`：视图子块里**第一个** ✓（`connectors/*/geometry` 是相对偏移 ✗）
+        #   带子节点（`<transform>` ✓）⇒ 要连内容一起解析 ✓，否则旋转的件会算错 ✗
+        gm = re.search(r"(?s)<geometry\b([^>]*?)(?:/>|>(.*?)</geometry>)", seg)
+        if not gm:
+            continue
+        gtag = ("<geometry%s/>" % gm.group(1)) if gm.group(2) is None \
+            else ("<geometry%s>%s</geometry>" % (gm.group(1), gm.group(2)))
+        g_el = ET.fromstring(gtag)
+        ga = attrs(gm.group(1))
+        gend = seg_a + gm.end()
+        # ★ 只改**开标签** ✓（子节点/闭合标签原样留着 ✓）
+        g_open_end = seg_a + gm.start() + len("<geometry%s>" % gm.group(1)) \
+            if gm.group(2) is not None else gend
+        tspan = None
+        tm = re.search(r"<titleGeometry\b([^>]*?)(/?)>", seg)
+        if tm:
+            # ★ 第 4 格 = 「自己是自闭合的吗」✓（**布尔** ✓ —— ✗ 以前存的是一段内容/斜杠字符串 ✗，
+            #   写回时真假反了 ⇒ 写出畸形 XML ✗✗，见下面 `SC` 的教训 ✓）
+            tspan = (seg_a + tm.start(), seg_a + tm.end(), tm.group(1), tm.group(2) == "/")
 
-    if re.search(r'moduleIdRef="Wire', blk):
-        fl = ga.get("wireFlags")
-        if fl is not None and not (int(fl) & BIT):
-            continue                                          # 本视图不算铜 ⇒ 不动 ✓
-        con = {}
-        for cm in re.finditer(r'(?s)<connector\b([^>]*)>(.*?)</connector>', seg):
-            cid = (re.search(r'connectorId="([^"]*)"', cm.group(1)) or [None, "?"])[1]
-            con[cid] = [(a.get("modelIndex"), a.get("connectorId"))
-                        for a in (attrs(x.group(1))
-                                  for x in re.finditer(r"<connect\b([^>]*)/>", cm.group(2)))]
-        x, y = fnum(ga, "x"), fnum(ga, "y")
-        WIRES.append(dict(ttl=it["ttl"], mi=mi, ga=ga, con=con,
-                          span=(seg_a + gm.start(), g_open_end, gm.group(1), gm.group(2) is None),
-                          A=(x + fnum(ga, "x1"), y + fnum(ga, "y1")),
-                          B=(x + fnum(ga, "x2"), y + fnum(ga, "y2"))))
-        continue
+        if re.search(r'moduleIdRef="Wire', blk):
+            fl = ga.get("wireFlags")
+            if fl is not None and not (int(fl) & BIT):
+                continue                                          # 本视图不算铜 ⇒ 不动 ✓
+            con = {}
+            for cm in re.finditer(r'(?s)<connector\b([^>]*)>(.*?)</connector>', seg):
+                cid = (re.search(r'connectorId="([^"]*)"', cm.group(1)) or [None, "?"])[1]
+                con[cid] = [(a.get("modelIndex"), a.get("connectorId"))
+                            for a in (attrs(x.group(1))
+                                      for x in re.finditer(r"<connect\b([^>]*)/>", cm.group(2)))]
+            x, y = fnum(ga, "x"), fnum(ga, "y")
+            WIRES.append(dict(ttl=it["ttl"], mi=mi, ga=ga, con=con,
+                              span=(seg_a + gm.start(), g_open_end, gm.group(1), gm.group(2) is None),
+                              A=(x + fnum(ga, "x1"), y + fnum(ga, "y1")),
+                              B=(x + fnum(ga, "x2"), y + fnum(ga, "y2"))))
+            continue
 
-    # ★ 面包板本体跳过 ✓ —— ✗ 原来写成 `"breadboardbreadboard" in blk` ✗ ⇒ **每个零件**都中招 ✗
-    #   （它们的 `<connect … layer="breadboardbreadboard"/>` 里就有这串 ✗）⇒ 零件全被跳过 ✗
-    #   （实测：`零件 0 ✓` ✓）。改按**模块名**判 ✓；万一漏网，`not pins` 那道闸门也拦得住 ✓。
-    if re.search(r'moduleIdRef="[^"]*[Bb]readboard', blk):
-        continue
-    pm = re.search(r'path="([^"]*)"', blk)
-    if not pm:
-        UNKNOWN.add(mi)
-        continue
-    fzp = pm.group(1)
-    # ★ `image=` 在 **fzp** 里 ✓ 不在 sketch 里 ✗（sketch 的 `<schematicView>` 没有 `<layers>` ✓）
-    image = None
-    try:
-        lay = ET.parse(fzp).getroot().find(".//%s/layers" % VIEW)
-        image = lay.get("image") if lay is not None else None
-    except Exception:
+        # ★ 面包板本体跳过 ✓ —— ✗ 原来写成 `"breadboardbreadboard" in blk` ✗ ⇒ **每个零件**都中招 ✗
+        #   （它们的 `<connect … layer="breadboardbreadboard"/>` 里就有这串 ✗）⇒ 零件全被跳过 ✗
+        #   （实测：`零件 0 ✓` ✓）。改按**模块名**判 ✓；万一漏网，`not pins` 那道闸门也拦得住 ✓。
+        if re.search(r'moduleIdRef="[^"]*[Bb]readboard', blk):
+            continue
+        pm = re.search(r'path="([^"]*)"', blk)
+        if not pm:
+            UNKNOWN.add(mi)
+            continue
+        fzp = pm.group(1)
+        # ★ `image=` 在 **fzp** 里 ✓ 不在 sketch 里 ✗（sketch 的 `<schematicView>` 没有 `<layers>` ✓）
         image = None
-    svg = SB.part_svg_text(fzp, None, image)[0] if image else None
-    pins, kind, _bad = SB.pins_of(svg) if svg else ({}, "none", [])
-    A = SB.A_of(svg, g_el) if svg else None
-    if not pins or A is None:
-        UNKNOWN.add(mi)                                       # 脚位未知 ⇒ 一律不动 ✓
-        continue
-    box = SB.box_of(svg, g_el, A)[0]
-    PARTS[mi] = dict(ttl=it["ttl"], ga=ga, span=(seg_a + gm.start(), g_open_end,
-                                                 gm.group(1), gm.group(2) is None),
-                     tspan=tspan, pins={}, box=box)
-    for cid, p in pins.items():
-        q = SB.to_sketch(g_el, A, p)
-        PINS[(mi, cid)] = q
-        PARTS[mi]["pins"][cid] = q
-
-print("   零件 %d ✓（脚位已知 %d 只 ✓）｜**脚位未知** %d 件 ⇒ 一律不动 ✓｜导线 %d 根 ✓"
-      % (len(PARTS), len(PINS), len(UNKNOWN), len(WIRES)))
-
-# 线端 ↔ 端点：实测 **connector0 ⇒ 第一个端点（A）** ✓；逐根**验** ✓ 验不过的那根不动 ✓
-END = {}
-for i, w in enumerate(WIRES):
-    for cid, which in (("connector0", 0), ("connector1", 1)):
-        if cid in w["con"]:
-            END[(w["mi"], cid)] = (i, which)
-
-SUSPECT = set()
-for w in WIRES:
-    for cid, which in (("connector0", 0), ("connector1", 1)):
-        for (m, c) in w["con"].get(cid, []):
-            if (m, c) in PINS:
-                q = PINS[(m, c)]
-                na, nb = dist(w["A"], q), dist(w["B"], q)
-                if (which == 0 and nb < na - EPS) or (which == 1 and na < nb - EPS):
-                    SUSPECT.add(w["ttl"])
-if SUSPECT:
-    print("   ⚠ %d 根线的「connector0 ⇒ 第一个端点」对不上 ⇒ 这几根**不动** ✓：%s"
-          % (len(SUSPECT), sorted(SUSPECT)))
-
-HANG = collections.defaultdict(list)
-for k in END:
-    wi, _ = END[k]
-    for (m, c) in WIRES[wi]["con"].get(k[1], []):
-        if (m, c) in PINS and (m, c) != k:
-            HANG[(m, c)].append(k)
-
-
-def endpt(k):
-    wi, which = END[k]
-    return WIRES[wi]["A"] if which == 0 else WIRES[wi]["B"]
-
-
-def setend(k, p):
-    wi, which = END[k]
-    if which == 0:
-        WIRES[wi]["A"] = tuple(p)
-    else:
-        WIRES[wi]["B"] = tuple(p)
-
-
-par = {}
-
-
-def find(k):
-    par.setdefault(k, k)
-    while par[k] != k:
-        par[k] = par[par[k]]
-        k = par[k]
-    return k
-
-
-for w in WIRES:
-    for cid, mates in w["con"].items():
-        if (w["mi"], cid) not in END:
+        try:
+            lay = ET.parse(fzp).getroot().find(".//%s/layers" % VIEW)
+            image = lay.get("image") if lay is not None else None
+        except Exception:
+            image = None
+        svg = SB.part_svg_text(fzp, None, image)[0] if image else None
+        pins, kind, _bad = SB.pins_of(svg) if svg else ({}, "none", [])
+        A = SB.A_of(svg, g_el) if svg else None
+        if not pins or A is None:
+            UNKNOWN.add(mi)                                       # 脚位未知 ⇒ 一律不动 ✓
             continue
-        for (m, c) in mates:
-            if (m, c) in END:
-                ru, rv = find((w["mi"], cid)), find((m, c))
-                if ru != rv:
-                    par[ru] = rv
-            else:
-                # ★★ 同一个**脚**（零件脚 / 脚位未知的脚 ✓）上的线端 = **同一个网** ✓
-                #   ✗ 2026-10-03 漏了这一步 ⇒ `Wire90012772.B`（R1 脚）与 `Wire90012778.A`（同一只脚 ✗）
-                #     分到两个网 ✗ ⇒ 两端"份量"都算 1 ✗ ⇒ R3 判成"两端相同 ⇒ 不动" ✗✗
-                #     （实测：改前备份一条都不改 ✗ —— 正确结果应当是把 C1 挪过去 ✓）。
-                ru, rv = find((w["mi"], cid)), find(("PIN", m, c))
-                if ru != rv:
-                    par[ru] = rv
+        box = SB.box_of(svg, g_el, A)[0]
+        PARTS[mi] = dict(ttl=it["ttl"], ga=ga, span=(seg_a + gm.start(), g_open_end,
+                                                     gm.group(1), gm.group(2) is None),
+                         tspan=tspan, pins={}, box=box)
+        for cid, p in pins.items():
+            q = SB.to_sketch(g_el, A, p)
+            PINS[(mi, cid)] = q
+            PARTS[mi]["pins"][cid] = q
 
-by_root = collections.defaultdict(list)
-for k in END:
-    by_root[find(k)].append(k)
-CLUST = []
-for keys in by_root.values():
-    left = list(keys)
-    while left:
-        grp = [left.pop(0)]
-        again = True
-        while again:
-            again = False
-            for k in list(left):
-                if any(dist(endpt(k), endpt(g)) <= TOL for g in grp):
-                    grp.append(k)
-                    left.remove(k)
-                    again = True
-        CLUST.append(grp)
-cl_of = {k: gi for gi, grp in enumerate(CLUST) for k in grp}
+    print("   零件 %d ✓（脚位已知 %d 只 ✓）｜**脚位未知** %d 件 ⇒ 一律不动 ✓｜导线 %d 根 ✓"
+          % (len(PARTS), len(PINS), len(UNKNOWN), len(WIRES)))
 
+    # 线端 ↔ 端点：实测 **connector0 ⇒ 第一个端点（A）** ✓；逐根**验** ✓ 验不过的那根不动 ✓
+    END = {}
+    for i, w in enumerate(WIRES):
+        for cid, which in (("connector0", 0), ("connector1", 1)):
+            if cid in w["con"]:
+                END[(w["mi"], cid)] = (i, which)
 
-def cluster(k):
-    return CLUST[cl_of[k]]
+    SUSPECT = set()
+    for w in WIRES:
+        for cid, which in (("connector0", 0), ("connector1", 1)):
+            for (m, c) in w["con"].get(cid, []):
+                if (m, c) in PINS:
+                    q = PINS[(m, c)]
+                    na, nb = dist(w["A"], q), dist(w["B"], q)
+                    if (which == 0 and nb < na - EPS) or (which == 1 and na < nb - EPS):
+                        SUSPECT.add(w["ttl"])
+    if SUSPECT:
+        print("   ⚠ %d 根线的「connector0 ⇒ 第一个端点」对不上 ⇒ 这几根**不动** ✓：%s"
+              % (len(SUSPECT), sorted(SUSPECT)))
 
-
-def deg(k):
-    return len(cluster(k))
-
-
-def declared_pin(k):
-    w = WIRES[END[k][0]]
-    return [(m, c) for (m, c) in w["con"].get(k[1], []) if (m, c) in PINS]
-
-
-def unknown_partner(k):
-    w = WIRES[END[k][0]]
-    for (m, c) in w["con"].get(k[1], []):
-        if (m, c) not in PINS and m in UNKNOWN:
-            return m
-    return None
-
-
-# ────────────────────────────── 规则 ──────────────────────────────
-LOG, SKIP = [], []
-
-
-def v1_off_pin():
-    """线端不在它声明的脚上（> NOISE ✓）的**个数** ✓ —— ★ 先用**改动前**的值打个底 ✓
-    （改完**不许变多** ✗ —— 否则就是我又把线从脚上扯下来了 ✗，见下面 R2 的教训 ✓）"""
-    n = 0
+    HANG = collections.defaultdict(list)
     for k in END:
-        for (m, c) in declared_pin(k):
-            if dist(endpt(k), PINS[(m, c)]) > NOISE:
-                n += 1
-    return n
+        wi, _ = END[k]
+        for (m, c) in WIRES[wi]["con"].get(k[1], []):
+            if (m, c) in PINS and (m, c) != k:
+                HANG[(m, c)].append(k)
 
 
-V1_BEFORE = v1_off_pin()
+    def endpt(k):
+        wi, which = END[k]
+        return WIRES[wi]["A"] if which == 0 else WIRES[wi]["B"]
 
-# R1 端点吸脚 + R4 端点归并（每个簇 → 一个目标点 ✓）
-for grp in CLUST:
-    pts = [endpt(k) for k in grp]
-    if len(grp) == 1:
-        k = grp[0]
-        if unknown_partner(k):
+
+    def setend(k, p):
+        wi, which = END[k]
+        if which == 0:
+            WIRES[wi]["A"] = tuple(p)
+        else:
+            WIRES[wi]["B"] = tuple(p)
+
+
+    par = {}
+
+
+    def find(k):
+        par.setdefault(k, k)
+        while par[k] != k:
+            par[k] = par[par[k]]
+            k = par[k]
+        return k
+
+
+    for w in WIRES:
+        for cid, mates in w["con"].items():
+            if (w["mi"], cid) not in END:
+                continue
+            for (m, c) in mates:
+                if (m, c) in END:
+                    ru, rv = find((w["mi"], cid)), find((m, c))
+                    if ru != rv:
+                        par[ru] = rv
+                else:
+                    # ★★ 同一个**脚**（零件脚 / 脚位未知的脚 ✓）上的线端 = **同一个网** ✓
+                    #   ✗ 2026-10-03 漏了这一步 ⇒ `Wire90012772.B`（R1 脚）与 `Wire90012778.A`（同一只脚 ✗）
+                    #     分到两个网 ✗ ⇒ 两端"份量"都算 1 ✗ ⇒ R3 判成"两端相同 ⇒ 不动" ✗✗
+                    #     （实测：改前备份一条都不改 ✗ —— 正确结果应当是把 C1 挪过去 ✓）。
+                    ru, rv = find((w["mi"], cid)), find(("PIN", m, c))
+                    if ru != rv:
+                        par[ru] = rv
+
+    by_root = collections.defaultdict(list)
+    for k in END:
+        by_root[find(k)].append(k)
+    CLUST = []
+    for keys in by_root.values():
+        left = list(keys)
+        while left:
+            grp = [left.pop(0)]
+            again = True
+            while again:
+                again = False
+                for k in list(left):
+                    if any(dist(endpt(k), endpt(g)) <= TOL for g in grp):
+                        grp.append(k)
+                        left.remove(k)
+                        again = True
+            CLUST.append(grp)
+    cl_of = {k: gi for gi, grp in enumerate(CLUST) for k in grp}
+
+
+    def cluster(k):
+        return CLUST[cl_of[k]]
+
+
+    def deg(k):
+        return len(cluster(k))
+
+
+    def declared_pin(k):
+        w = WIRES[END[k][0]]
+        return [(m, c) for (m, c) in w["con"].get(k[1], []) if (m, c) in PINS]
+
+
+    def unknown_partner(k):
+        w = WIRES[END[k][0]]
+        for (m, c) in w["con"].get(k[1], []):
+            if (m, c) not in PINS and m in UNKNOWN:
+                return m
+        return None
+
+
+    # ────────────────────────────── 规则 ──────────────────────────────
+    LOG, SKIP = [], []
+
+
+    def v1_off_pin():
+        """线端不在它声明的脚上（> NOISE ✓）的**个数** ✓ —— ★ 先用**改动前**的值打个底 ✓
+        （改完**不许变多** ✗ —— 否则就是我又把线从脚上扯下来了 ✗，见下面 R2 的教训 ✓）"""
+        n = 0
+        for k in END:
+            for (m, c) in declared_pin(k):
+                if dist(endpt(k), PINS[(m, c)]) > NOISE:
+                    n += 1
+        return n
+
+
+    V1_BEFORE = v1_off_pin()
+
+    # R1 端点吸脚 + R4 端点归并（每个簇 → 一个目标点 ✓）
+    for grp in CLUST:
+        pts = [endpt(k) for k in grp]
+        if len(grp) == 1:
+            k = grp[0]
+            if unknown_partner(k):
+                continue
+            dp = declared_pin(k)
+            if len(dp) == 1 and NOISE < dist(pts[0], PINS[dp[0]]) <= TOL:
+                setend(k, PINS[dp[0]])
+                LOG.append("R1 %s.%s 吸到 %s 的脚 ✓（%.4f 单位 = %.3f mm ✓）"
+                           % (WIRES[END[k][0]]["ttl"], k[1], PARTS[dp[0][0]]["ttl"],
+                              dist(pts[0], PINS[dp[0]]), dist(pts[0], PINS[dp[0]]) * 25.4 / 90.0))
             continue
-        dp = declared_pin(k)
-        if len(dp) == 1 and NOISE < dist(pts[0], PINS[dp[0]]) <= TOL:
-            setend(k, PINS[dp[0]])
-            LOG.append("R1 %s.%s 吸到 %s 的脚 ✓（%.4f 单位 = %.3f mm ✓）"
-                       % (WIRES[END[k][0]]["ttl"], k[1], PARTS[dp[0][0]]["ttl"],
-                          dist(pts[0], PINS[dp[0]]), dist(pts[0], PINS[dp[0]]) * 25.4 / 90.0))
-        continue
-    bad = next((b for k in grp for b in [unknown_partner(k)] if b), None)
-    if bad:
-        SKIP.append("一簇 %d 个端点：对端是**脚位未知**的零件（%s）⇒ 不动 ✓" % (len(grp), bad))
-        continue
-    anchors = [PINS[(m, c)] for k in grp for (m, c) in declared_pin(k)
-               if dist(endpt(k), PINS[(m, c)]) <= TOL]
-    # ★ 安全阀：簇里有端**声明了脚、却离脚超出 TOL** ✗ ⇒ 这簇本来就不干净 ⇒ 不动 ✓
-    far = [(m, c) for k in grp for (m, c) in declared_pin(k)
-           if dist(endpt(k), PINS[(m, c)]) > TOL]
-    if far:
-        SKIP.append("一簇 %d 个端点：有端离它声明的脚超出 %.2fmm ⇒ 不干净 ⇒ 不动 ✓"
-                    % (len(grp), TOL * 25.4 / 90.0))
-        continue
-    if anchors:
-        if any(dist(anchors[0], q) > NOISE for q in anchors[1:]):
-            SKIP.append("一簇 %d 个端点：声明接的几只脚**彼此不一致** ⇒ 不动 ✓" % len(grp))
+        bad = next((b for k in grp for b in [unknown_partner(k)] if b), None)
+        if bad:
+            SKIP.append("一簇 %d 个端点：对端是**脚位未知**的零件（%s）⇒ 不动 ✓" % (len(grp), bad))
             continue
-        tgt = anchors[0]
-    else:
-        tgt = (sorted(p[0] for p in pts)[len(pts) // 2], sorted(p[1] for p in pts)[len(pts) // 2])
-    if all(dist(p, tgt) <= NOISE for p in pts):
-        continue
-    for k in grp:
-        setend(k, tgt)
-    LOG.append("R4 %d 个端点归并到 (%.4f, %.4f) ✓（原最大差 %.4f 单位 ✓）"
-               % (len(grp), tgt[0], tgt[1], max(dist(p, tgt) for p in pts)))
+        anchors = [PINS[(m, c)] for k in grp for (m, c) in declared_pin(k)
+                   if dist(endpt(k), PINS[(m, c)]) <= TOL]
+        # ★ 安全阀：簇里有端**声明了脚、却离脚超出 TOL** ✗ ⇒ 这簇本来就不干净 ⇒ 不动 ✓
+        far = [(m, c) for k in grp for (m, c) in declared_pin(k)
+               if dist(endpt(k), PINS[(m, c)]) > TOL]
+        if far:
+            SKIP.append("一簇 %d 个端点：有端离它声明的脚超出 %.2fmm ⇒ 不干净 ⇒ 不动 ✓"
+                        % (len(grp), TOL * 25.4 / 90.0))
+            continue
+        if anchors:
+            if any(dist(anchors[0], q) > NOISE for q in anchors[1:]):
+                SKIP.append("一簇 %d 个端点：声明接的几只脚**彼此不一致** ⇒ 不动 ✓" % len(grp))
+                continue
+            tgt = anchors[0]
+        else:
+            tgt = (sorted(p[0] for p in pts)[len(pts) // 2], sorted(p[1] for p in pts)[len(pts) // 2])
+        if all(dist(p, tgt) <= NOISE for p in pts):
+            continue
+        for k in grp:
+            setend(k, tgt)
+        LOG.append("R4 %d 个端点归并到 (%.4f, %.4f) ✓（原最大差 %.4f 单位 ✓）"
+                   % (len(grp), tgt[0], tgt[1], max(dist(p, tgt) for p in pts)))
 
-# R2 近轴归正（重复到不动 ✓）
-for _r in range(4):
-    n0 = len(LOG)
+    # R2 近轴归正（重复到不动 ✓）
+    for _r in range(4):
+        n0 = len(LOG)
+        for w in WIRES:
+            k0, k1 = (w["mi"], "connector0"), (w["mi"], "connector1")
+            if k0 not in END or k1 not in END or w["ttl"] in SUSPECT:
+                continue
+            p0, p1 = endpt(k0), endpt(k1)
+            axis = 0 if abs(p1[0] - p0[0]) <= abs(p1[1] - p0[1]) else 1
+            small = abs(p1[axis] - p0[axis])
+            big = abs(p1[1 - axis] - p0[1 - axis])
+            if small <= NOISE or small > TOL or big < KI * TOL:
+                continue
+            d0, d1 = deg(k0), deg(k1)
+            if d0 == d1:
+                continue                                        # 交给 R3 / 人 ✓
+            mv, keep = (k0, k1) if d0 < d1 else (k1, k0)
+            # ★★ 钉在脚上的端**任何情况下都不许单独挪** ✗✗（2026-10-03 实测教训 ✓：
+            #   先跑了 R2 ⇒ 把 `Wire90012756` 靠 C1 的那端从 162.0 挪到 161.3279 ✗
+            #   ⇒ **线从 C1 的脚上扯下来了** ✗ ⇒ V1 从 0 变 1 ✗ ⇒ 自检当场报出来 ✓）。
+            #   正确做法 = 挪**零件**（R3 ✓）⇒ 线端跟着零件走 ✓。
+            if any(declared_pin(k) for k in cluster(mv)):
+                continue
+            if unknown_partner(mv):
+                SKIP.append("%s：要挪的那端脚位未知 ⇒ 不动 ✓" % w["ttl"])
+                continue
+            old = endpt(mv)[axis]
+            p = list(endpt(mv))
+            p[axis] = endpt(keep)[axis]
+            setend(mv, tuple(p))
+            LOG.append("R2 %s：%s 轴归零 ✓（%.4f → %.4f ✓，%.3f mm ✓）"
+                       % (w["ttl"], "xy"[axis], old, p[axis], small * 25.4 / 90.0))
+        if len(LOG) == n0:
+            break
+
+    # R3 零件归列（两端都钉在脚上、却还差一点点 ⇒ **零件摆偏了** ✓）
     for w in WIRES:
         k0, k1 = (w["mi"], "connector0"), (w["mi"], "connector1")
         if k0 not in END or k1 not in END or w["ttl"] in SUSPECT:
+            continue
+        if not (declared_pin(k0) and declared_pin(k1)):
             continue
         p0, p1 = endpt(k0), endpt(k1)
         axis = 0 if abs(p1[0] - p0[0]) <= abs(p1[1] - p0[1]) else 1
@@ -421,174 +468,198 @@ for _r in range(4):
             continue
         d0, d1 = deg(k0), deg(k1)
         if d0 == d1:
-            continue                                        # 交给 R3 / 人 ✓
+            SKIP.append("%s：两端份量相同（各 %d）⇒ 差 %.4f 单位 = %.3f mm 的歪 ✗ 请人看 ✓"
+                        % (w["ttl"], d0, small, small * 25.4 / 90.0))
+            continue
         mv, keep = (k0, k1) if d0 < d1 else (k1, k0)
-        # ★★ 钉在脚上的端**任何情况下都不许单独挪** ✗✗（2026-10-03 实测教训 ✓：
-        #   先跑了 R2 ⇒ 把 `Wire90012756` 靠 C1 的那端从 162.0 挪到 161.3279 ✗
-        #   ⇒ **线从 C1 的脚上扯下来了** ✗ ⇒ V1 从 0 变 1 ✗ ⇒ 自检当场报出来 ✓）。
-        #   正确做法 = 挪**零件**（R3 ✓）⇒ 线端跟着零件走 ✓。
-        if any(declared_pin(k) for k in cluster(mv)):
+        if not declared_pin(mv):
+            # ✗ 例：`Wire90012778` 的远端是核心库 `RC` 网标签（磁盘上没有它的 fzp ✗）
+            #   ⇒ 脚位**不可知** ⇒ 吸过去没法核对 ⇒ **不动**，但要说清楚 ✓（留给人的 0.04mm ✓）
+            unk = unknown_partner(mv) or "（脚位未知 ✓）"
+            SKIP.append("%s：要挪的那端是 %s ⇒ 脚位未知 ⇒ 不动 ✓（差 %.4f 单位 = %.3f mm，请人看 ✓）"
+                        % (w["ttl"], unk, small, small * 25.4 / 90.0))
             continue
-        if unknown_partner(mv):
-            SKIP.append("%s：要挪的那端脚位未知 ⇒ 不动 ✓" % w["ttl"])
+        part_mi = declared_pin(mv)[0][0]
+        if part_mi in UNKNOWN or part_mi not in PARTS:
             continue
-        old = endpt(mv)[axis]
-        p = list(endpt(mv))
-        p[axis] = endpt(keep)[axis]
-        setend(mv, tuple(p))
-        LOG.append("R2 %s：%s 轴归零 ✓（%.4f → %.4f ✓，%.3f mm ✓）"
-                   % (w["ttl"], "xy"[axis], old, p[axis], small * 25.4 / 90.0))
-    if len(LOG) == n0:
-        break
+        P = PARTS[part_mi]
+        att = sorted({cid for (m, cid) in HANG if m == part_mi and cid in P["pins"]})
+        if not att:
+            continue
+        vals = {round(P["pins"][c][axis], 4) for c in att}
+        if len(vals) > 1:
+            SKIP.append("跳过 %s：它挂线的脚在 %s 轴上不一致 %s ⇒ 平移会拆坏别的脚 ✗"
+                        % (P["ttl"], "xy"[axis], sorted(vals)))
+            continue
+        hangs = [k for c in att for k in HANG.get((part_mi, c), [])]
+        if any(deg(k) > 1 for k in hangs):
+            SKIP.append("跳过 %s：挂在它脚上的线端是**结点** ⇒ 平移会撕开结点 ✗" % P["ttl"])
+            continue
+        delta = endpt(keep)[axis] - endpt(mv)[axis]
+        was = endpt(mv)[axis]
+        P["ga"]["xy"[axis]] = fmt(fnum(P["ga"], "xy"[axis]) + delta)
+        P["moved"] = True
+        # ★★ 零件挪了 ⇒ **它的脚位也要跟着挪** ✗（✗ 2026-10-03 漏了这步 ⇒ V1 拿**旧脚位**比 ⇒
+        #   明明线端跟着零件走了 ✓，自检却报"2 处线端离开脚" ✗ ⇒ 自己把自己拦住 ✗✗）
+        for c in list(P["pins"]):
+            q = P["pins"][c]
+            P["pins"][c] = (q[0] + delta, q[1]) if axis == 0 else (q[0], q[1] + delta)
+            PINS[(part_mi, c)] = P["pins"][c]
+        if P["tspan"]:
+            na = attrs(P["tspan"][2])
+            na["xy"[axis]] = fmt(fnum(na, "xy"[axis]) + delta)
+            P["tspan_new"] = na
+        for k in hangs:
+            p = list(endpt(k))
+            p[axis] += delta
+            setend(k, tuple(p))
+        LOG.append("R3 零件 %s 沿 %s 轴平移 %.4f ✓（脚 %.4f → %.4f ✓，与干线 %.4f 对齐 ✓，%.3f mm ✓）"
+                   % (P["ttl"], "xy"[axis], delta, was, was + delta, endpt(keep)[axis],
+                      abs(delta) * 25.4 / 90.0))
 
-# R3 零件归列（两端都钉在脚上、却还差一点点 ⇒ **零件摆偏了** ✓）
-for w in WIRES:
-    k0, k1 = (w["mi"], "connector0"), (w["mi"], "connector1")
-    if k0 not in END or k1 not in END or w["ttl"] in SUSPECT:
-        continue
-    if not (declared_pin(k0) and declared_pin(k1)):
-        continue
-    p0, p1 = endpt(k0), endpt(k1)
-    axis = 0 if abs(p1[0] - p0[0]) <= abs(p1[1] - p0[1]) else 1
-    small = abs(p1[axis] - p0[axis])
-    big = abs(p1[1 - axis] - p0[1 - axis])
-    if small <= NOISE or small > TOL or big < KI * TOL:
-        continue
-    d0, d1 = deg(k0), deg(k1)
-    if d0 == d1:
-        SKIP.append("%s：两端份量相同（各 %d）⇒ 差 %.4f 单位 = %.3f mm 的歪 ✗ 请人看 ✓"
-                    % (w["ttl"], d0, small, small * 25.4 / 90.0))
-        continue
-    mv, keep = (k0, k1) if d0 < d1 else (k1, k0)
-    if not declared_pin(mv):
-        # ✗ 例：`Wire90012778` 的远端是核心库 `RC` 网标签（磁盘上没有它的 fzp ✗）
-        #   ⇒ 脚位**不可知** ⇒ 吸过去没法核对 ⇒ **不动**，但要说清楚 ✓（留给人的 0.04mm ✓）
-        unk = unknown_partner(mv) or "（脚位未知 ✓）"
-        SKIP.append("%s：要挪的那端是 %s ⇒ 脚位未知 ⇒ 不动 ✓（差 %.4f 单位 = %.3f mm，请人看 ✓）"
-                    % (w["ttl"], unk, small, small * 25.4 / 90.0))
-        continue
-    part_mi = declared_pin(mv)[0][0]
-    if part_mi in UNKNOWN or part_mi not in PARTS:
-        continue
-    P = PARTS[part_mi]
-    att = sorted({cid for (m, cid) in HANG if m == part_mi and cid in P["pins"]})
-    if not att:
-        continue
-    vals = {round(P["pins"][c][axis], 4) for c in att}
-    if len(vals) > 1:
-        SKIP.append("跳过 %s：它挂线的脚在 %s 轴上不一致 %s ⇒ 平移会拆坏别的脚 ✗"
-                    % (P["ttl"], "xy"[axis], sorted(vals)))
-        continue
-    hangs = [k for c in att for k in HANG.get((part_mi, c), [])]
-    if any(deg(k) > 1 for k in hangs):
-        SKIP.append("跳过 %s：挂在它脚上的线端是**结点** ⇒ 平移会撕开结点 ✗" % P["ttl"])
-        continue
-    delta = endpt(keep)[axis] - endpt(mv)[axis]
-    was = endpt(mv)[axis]
-    P["ga"]["xy"[axis]] = fmt(fnum(P["ga"], "xy"[axis]) + delta)
-    P["moved"] = True
-    # ★★ 零件挪了 ⇒ **它的脚位也要跟着挪** ✗（✗ 2026-10-03 漏了这步 ⇒ V1 拿**旧脚位**比 ⇒
-    #   明明线端跟着零件走了 ✓，自检却报"2 处线端离开脚" ✗ ⇒ 自己把自己拦住 ✗✗）
-    for c in list(P["pins"]):
-        q = P["pins"][c]
-        P["pins"][c] = (q[0] + delta, q[1]) if axis == 0 else (q[0], q[1] + delta)
-        PINS[(part_mi, c)] = P["pins"][c]
-    if P["tspan"]:
-        na = attrs(P["tspan"][2])
-        na["xy"[axis]] = fmt(fnum(na, "xy"[axis]) + delta)
-        P["tspan_new"] = na
-    for k in hangs:
-        p = list(endpt(k))
-        p[axis] += delta
-        setend(k, tuple(p))
-    LOG.append("R3 零件 %s 沿 %s 轴平移 %.4f ✓（脚 %.4f → %.4f ✓，与干线 %.4f 对齐 ✓，%.3f mm ✓）"
-               % (P["ttl"], "xy"[axis], delta, was, was + delta, endpt(keep)[axis],
-                  abs(delta) * 25.4 / 90.0))
+    # ────────────────────────────── 自检 ──────────────────────────────
+    #   ★ `v1_off_pin()` 已经在规则段开头定义过 ✓（用它量了 `V1_BEFORE` ✓）—— 这里**不再重定义** ✗
+    def v3_slanted():
+        out = []
+        for w in WIRES:
+            k0, k1 = (w["mi"], "connector0"), (w["mi"], "connector1")
+            if k0 not in END or k1 not in END:
+                continue
+            p0, p1 = endpt(k0), endpt(k1)
+            small = min(abs(p1[0] - p0[0]), abs(p1[1] - p0[1]))
+            big = max(abs(p1[0] - p0[0]), abs(p1[1] - p0[1]))
+            if NOISE < small <= TOL and big >= KI * TOL:
+                out.append((w["ttl"], small * 25.4 / 90.0))
+        return out
 
-# ────────────────────────────── 自检 ──────────────────────────────
-#   ★ `v1_off_pin()` 已经在规则段开头定义过 ✓（用它量了 `V1_BEFORE` ✓）—— 这里**不再重定义** ✗
-def v3_slanted():
-    out = []
+
+    print("── 改动 %d 处 ✓" % len(LOG))
+    for x in LOG:
+        print("   · %s" % x)
+    for x in SKIP:
+        print("   ⊘ 未动：%s" % x)
+    left = v3_slanted()
+    V1_AFTER = v1_off_pin()
+    print("── 自检：V1 线端不在它声明的脚上 **%d 处** ✓（改前 %d 处 ⇒ **不许变多** ✗）"
+          "｜V3 还「该直没直」 **%d 处** ✓" % (V1_AFTER, V1_BEFORE, len(left)))
+    for t, mm in left[:10]:
+        print("     ⚑ %s 还差 %.3f mm ✗（R2/R3 之外的情况 ⇒ 请人看 ✓）" % (t, mm))
+    if V1_AFTER > V1_BEFORE:
+        print("✗✗ 方案会让 %d 条线端离开它声明的脚（改前 %d）⇒ **不写文件** ✗"
+              % (V1_AFTER, V1_BEFORE))
+        return dict(rc=2, changes=len(LOG), plan=list(LOG), skipped=list(SKIP),
+                    v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                    still_slanted=[t for t, _mm in left], wrote=False, out=None)
+    if not LOG:
+        print("   ✓ 无需改动（已经横平竖直 ✓）")
+        return dict(rc=0, changes=0, plan=[], skipped=list(SKIP),
+                    v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                    still_slanted=[t for t, _mm in left], wrote=False, out=None)
+
+    # ────────────────────────── 写回（只改那几个**开标签** ✓）──────────────────────────
+    EDITS = []
     for w in WIRES:
-        k0, k1 = (w["mi"], "connector0"), (w["mi"], "connector1")
-        if k0 not in END or k1 not in END:
-            continue
-        p0, p1 = endpt(k0), endpt(k1)
-        small = min(abs(p1[0] - p0[0]), abs(p1[1] - p0[1]))
-        big = max(abs(p1[0] - p0[0]), abs(p1[1] - p0[1]))
-        if NOISE < small <= TOL and big >= KI * TOL:
-            out.append((w["ttl"], small * 25.4 / 90.0))
-    return out
+        new = collections.OrderedDict(w["ga"])
+        new["x"], new["y"] = keep_or_fmt(w["ga"].get("x"), w["A"][0]), keep_or_fmt(w["ga"].get("y"), w["A"][1])
+        if "x1" in new:
+            new["x1"], new["y1"] = keep_or_fmt(w["ga"].get("x1"), 0.0), keep_or_fmt(w["ga"].get("y1"), 0.0)
+            new["x2"], new["y2"] = (keep_or_fmt(w["ga"].get("x2"), w["B"][0] - w["A"][0]),
+                                    keep_or_fmt(w["ga"].get("y2"), w["B"][1] - w["A"][1]))
+        tag = "<geometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in new.items()),
+                                  "/" if w["span"][3] else "")
+        if text[w["span"][0]:w["span"][1]] != tag:
+            EDITS.append((w["span"][0], w["span"][1], tag, w["ttl"]))
+    for mi, P in PARTS.items():
+        if P.get("moved"):
+            tag = "<geometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in P["ga"].items()),
+                                      "/" if P["span"][3] else "")
+            if text[P["span"][0]:P["span"][1]] != tag:
+                EDITS.append((P["span"][0], P["span"][1], tag, P["ttl"] + "（本体）"))
+        if P.get("tspan_new"):
+            tag = "<titleGeometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in P["tspan_new"].items()),
+                                           "/" if P["tspan"][3] else "")
+            if text[P["tspan"][0]:P["tspan"][1]] != tag:
+                EDITS.append((P["tspan"][0], P["tspan"][1], tag, P["ttl"] + "（位号）"))
+
+    new_text = text
+    for s, e, tag, why in sorted(EDITS, key=lambda t: -t[0]):
+        new_text = new_text[:s] + tag + new_text[e:]
+    n_before = len(re.findall(r"<connect\b[^>]*/>", text))
+    n_after = len(re.findall(r"<connect\b[^>]*/>", new_text))
+    if n_before != n_after:
+        print("✗✗ 声明表 %d → %d 条 ⇒ 不写文件 ✗（V4 守 ✓）" % (n_before, n_after))
+        return dict(rc=2, changes=len(LOG), plan=list(LOG), skipped=list(SKIP),
+                    v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                    still_slanted=[t for t, _mm in left], wrote=False, out=None)
+    # ★★ 机器守：改完必须**还能解析** ✓（2026-10-03 实测教训 ✗：存"是否自闭合"的那一格真假反了 ✗
+    #   ⇒ 写线时漏了 `/>` ✗、写零件本体时反多一个 `/>` ✗ ⇒ 文件变成**畸形 XML** ✗✗，
+    #   而我当时只比了"声明表条数"✓、看不出这种坏 ✗ ⇒ 现在**先解析、解析不了就不写** ✓。）
+    try:
+        ET.fromstring(new_text)
+    except Exception as _ex:
+        print("✗✗ 改出来的 XML 解析不了（%s）⇒ **不写文件** ✗" % _ex)
+        return dict(rc=2, changes=len(LOG), plan=list(LOG), skipped=list(SKIP),
+                    v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                    still_slanted=[t for t, _mm in left], wrote=False, out=None)
+    print("   V4 声明表 %d 条 → %d 条 ✓（**0 条被动过** ✓）｜改了 %d 个几何开标签 ✓｜XML 可解析 ✓"
+          % (n_before, n_after, len(EDITS)))
+    if not apply_:
+        print("（默认只检查 ✓ —— 加 `--apply` 才写 ✓）")
+        return dict(rc=0, changes=len(LOG), plan=list(LOG), skipped=list(SKIP),
+                    v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                    still_slanted=[t for t, _mm in left], wrote=False, out=None)
+    dst = out or SRC
+    if dst == SRC:
+        bak = SRC + ".bak-straighten"
+        if not os.path.exists(bak):
+            shutil.copy2(SRC, bak)
+            print("   备份 → %s ✓" % os.path.basename(bak))
+    save(dst, new_text, pack, fzname)
+    print("   写入 %s ✓" % dst)
+    return dict(rc=0, changes=len(LOG), plan=list(LOG), skipped=list(SKIP),
+                v1_before=V1_BEFORE, v1_after=V1_AFTER,
+                still_slanted=[t for t, _mm in left], wrote=True, out=str(dst))
 
 
-print("── 改动 %d 处 ✓" % len(LOG))
-for x in LOG:
-    print("   · %s" % x)
-for x in SKIP:
-    print("   ⊘ 未动：%s" % x)
-left = v3_slanted()
-V1_AFTER = v1_off_pin()
-print("── 自检：V1 线端不在它声明的脚上 **%d 处** ✓（改前 %d 处 ⇒ **不许变多** ✗）"
-      "｜V3 还「该直没直」 **%d 处** ✓" % (V1_AFTER, V1_BEFORE, len(left)))
-for t, mm in left[:10]:
-    print("     ⚑ %s 还差 %.3f mm ✗（R2/R3 之外的情况 ⇒ 请人看 ✓）" % (t, mm))
-if V1_AFTER > V1_BEFORE:
-    raise SystemExit("✗✗ 方案会让 %d 条线端离开它声明的脚（改前 %d）⇒ **不写文件** ✗"
-                     % (V1_AFTER, V1_BEFORE))
-if not LOG:
-    print("   ✓ 无需改动（已经横平竖直 ✓）")
-    raise SystemExit(0)
 
-# ────────────────────────── 写回（只改那几个**开标签** ✓）──────────────────────────
-EDITS = []
-for w in WIRES:
-    new = collections.OrderedDict(w["ga"])
-    new["x"], new["y"] = keep_or_fmt(w["ga"].get("x"), w["A"][0]), keep_or_fmt(w["ga"].get("y"), w["A"][1])
-    if "x1" in new:
-        new["x1"], new["y1"] = keep_or_fmt(w["ga"].get("x1"), 0.0), keep_or_fmt(w["ga"].get("y1"), 0.0)
-        new["x2"], new["y2"] = (keep_or_fmt(w["ga"].get("x2"), w["B"][0] - w["A"][0]),
-                                keep_or_fmt(w["ga"].get("y2"), w["B"][1] - w["A"][1]))
-    tag = "<geometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in new.items()),
-                              "/" if w["span"][3] else "")
-    if text[w["span"][0]:w["span"][1]] != tag:
-        EDITS.append((w["span"][0], w["span"][1], tag, w["ttl"]))
-for mi, P in PARTS.items():
-    if P.get("moved"):
-        tag = "<geometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in P["ga"].items()),
-                                  "/" if P["span"][3] else "")
-        if text[P["span"][0]:P["span"][1]] != tag:
-            EDITS.append((P["span"][0], P["span"][1], tag, P["ttl"] + "（本体）"))
-    if P.get("tspan_new"):
-        tag = "<titleGeometry%s%s>" % ("".join(' %s="%s"' % (a, b) for a, b in P["tspan_new"].items()),
-                                       "/" if P["tspan"][3] else "")
-        if text[P["tspan"][0]:P["tspan"][1]] != tag:
-            EDITS.append((P["tspan"][0], P["tspan"][1], tag, P["ttl"] + "（位号）"))
+def straighten_file(src, out=None, tol_mm=TOL_MM_DEF, view="schematicView", apply=False,
+                    quiet=True):
+    """★ **库 API** ✓：把 `src` 拉直 ✓（`out` / `apply` 决定写不写 ✓）
 
-new_text = text
-for s, e, tag, why in sorted(EDITS, key=lambda t: -t[0]):
-    new_text = new_text[:s] + tag + new_text[e:]
-n_before = len(re.findall(r"<connect\b[^>]*/>", text))
-n_after = len(re.findall(r"<connect\b[^>]*/>", new_text))
-if n_before != n_after:
-    raise SystemExit("✗✗ 声明表 %d → %d 条 ⇒ 不写文件 ✗（V4 守 ✓）" % (n_before, n_after))
-# ★★ 机器守：改完必须**还能解析** ✓（2026-10-03 实测教训 ✗：存"是否自闭合"的那一格真假反了 ✗
-#   ⇒ 写线时漏了 `/>` ✗、写零件本体时反多一个 `/>` ✗ ⇒ 文件变成**畸形 XML** ✗✗，
-#   而我当时只比了"声明表条数"✓、看不出这种坏 ✗ ⇒ 现在**先解析、解析不了就不写** ✓。）
-try:
-    ET.fromstring(new_text)
-except Exception as _ex:
-    raise SystemExit("✗✗ 改出来的 XML 解析不了（%s）⇒ **不写文件** ✗" % _ex)
-print("   V4 声明表 %d 条 → %d 条 ✓（**0 条被动过** ✓）｜改了 %d 个几何开标签 ✓｜XML 可解析 ✓"
-      % (n_before, n_after, len(EDITS)))
+    参数 ✓：`out=<f>` 写到别处 ✓；`apply=True` 原地改 + 备份 `.bak-straighten` ✓；
+    两个都不给 = **只检查** ✓（默认 ✓，与 CLI 一致 ✓）。
 
-if not (opts.get("apply") or opts.get("out")):
-    print("（默认只检查 ✓ —— 加 `--apply` 才写 ✓）")
-    raise SystemExit(0)
-dst = opts.get("out") or SRC
-if dst == SRC:
-    bak = SRC + ".bak-straighten"
-    if not os.path.exists(bak):
-        shutil.copy2(SRC, bak)
-        print("   备份 → %s ✓" % os.path.basename(bak))
-save(dst, new_text, pack, fzname)
-print("   写入 %s ✓" % dst)
+    返回 ✓（调用方拿这个判，不用去解析 stdout ✓）：
+      `rc`            0 正常 / 2 出错（未写文件 ✓）
+      `changes`       改了几处 ✓
+      `plan`/`skipped` 逐条说明 ✓（改了哪、为什么不动 ✓）
+      `v1_before`/`v1_after`  线端「不在它声明的脚上」的个数 ✓（**不许变多** ✗）
+      `still_slanted` 还剩几根「该直没直」✓
+      `wrote`/`out`   写没写、写到哪 ✓
+      `text`          完整报告文本 ✓（`quiet=True` 时 stdout 被接住 ✓）
+    """
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        res = _run(src, out, bool(apply or out), tol_mm, view)
+    res["text"] = buf.getvalue()
+    if not quiet:
+        print(res["text"], end="")
+    return res
+
+
+def main(argv=None):
+    """CLI ✓（行为与库化之前**逐字一致** ✓；报告打到 stdout ✓）"""
+    argv = sys.argv[1:] if argv is None else argv
+    args, opts = parse_args(argv)
+    if not args:
+        print("用法见文件头：py -3.13 sch_straighten.py <sketch.fz|.fzz> [--apply] [--out x]")
+        return 2
+    res = straighten_file(args[0], out=opts.get("out"),
+                          tol_mm=float(opts.get("tol-mm", TOL_MM_DEF)),
+                          view=opts.get("view", "schematicView"),
+                          apply=bool(opts.get("apply")), quiet=False)
+    return res["rc"]
+
+
+if __name__ == "__main__":
+    sys.exit(main())
