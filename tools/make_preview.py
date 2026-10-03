@@ -113,7 +113,7 @@ SHEETS = {
         ("Resistor-2010", "R 2010"), ("Resistor-2512", "R 2512"),
         # ★ 2026-10-01 新增本库**第一套电容** ✓（默认 100nF / 25V / X7R / ±10% ✓；
         #   焊盘 = 同封装电阻 land pattern ✓，见 `svg/Capacitor-0402/gen_part.py` 的出处注释 ✓）
-        ("Capacitor-0402", "C 0402"), ("Capacitor-0603", "C 0603"),
+        ("Capacitor-0402", "C 0402"),
         ("Crystal-3215", "Crystal-3215"), ("Crystal-3225", "Crystal-3225"),
         ("molding_power_inductors/SHC0420", "SHC0420"),
         ("molding_power_inductors/SHC0520", "SHC0520"),

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-r"""生成 **Capacitor-0402 / Capacitor-0603**（SMD 通用电容件 ✓，本库第一套电容 ✓）
+r"""生成 **Capacitor-0402**（SMD 通用电容件 ✓，本库第一套电容 ✓；
+   ★ 0603 已删除 ✓ —— Fritzing 自带的 0603 电容（`SMD_multilayer-capacitor_0603`）已支持 ✓）
 
-   用法：py -3.13 svg\Capacitor-0402\gen_part.py            # 生成两档 + 打 .fzpz ✓
+   用法：py -3.13 svg\Capacitor-0402\gen_part.py            # 生成 + 打 .fzpz ✓
          py -3.13 svg\Capacitor-0402\gen_part.py --check    # 只报数字 ✓（不写文件 ✓）
 
 -----------------------------------------------------------------------------
@@ -13,8 +14,13 @@ r"""生成 **Capacitor-0402 / Capacitor-0603**（SMD 通用电容件 ✓，本�
   · **fzp 结构**（moduleId / label / views / connectors / spice ✓）照 `Resistor-*` ✓。
   · **原理图**的引脚线宽 `0.246944`、端子极小 rect、编号 DroidSans 0.881944 ✓ = 电阻件现行口径 ✓
     （也是仓规 §5 的原理图口径 ✓）；**锯齿换成两块极板** ✓（电容符号 ✓）。
-  · **icon / 面包板**：米白陶瓷体 + 两端银 ✓（仓规 §1 工业风 ✓）；
+  · **icon**：米白陶瓷体 + 两端银 ✓（仓规 §1 工业风 ✓）；
     ✗ 去掉电阻那套**色环 / 阴影 / 高光**（那是 core 老件的装饰 ✗ ⇒ 仓规 §1 不许加装饰 ✓）。
+  · **面包板**：★ 2026-10-02 用户定 ✓ —— 直接用 Fritzing 自带电容 C2 的面包板几何 ✓
+    （`svg/_assets/ceramic_capacitor_blue_leg.svg` = 蓝色陶瓷电容 + 两根下插引线 ✓，
+    出处 = Fritzing core `SMD_multilayer-capacitor_0603` 的 breadboard svg ✓，CC-BY-SA 3.0 ✓，
+    见 `svg/_assets/LICENSE-ceramic_capacitor_blue_leg.txt` ✓）；
+    ✗ 不用电阻那套轴向胶囊 ✗（曾把 0402 电容面包板画成电阻图片 ✗，用户 2026-10-02 指出 ✓）。
 
 ★ 默认值（2026-10-01 用户确认 ✓；也 = 本项目 `pixel` 板上 C1/C2 的实际用值 ✓）：
   `capacitance = 100nF`（**显示在标签** ✓）｜`voltage = 25V`｜`dielectric = X7R`｜`tolerance = ±10%`
@@ -33,8 +39,12 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))       # = 库根（本文件在 svg/<部件>/ 下 ✓）
 FZPZ = os.path.join(ROOT, "fzpz")
+# ★ 面包板素材 = Fritzing 自带电容（C2）的面包板 ✓（逐字拷贝 ✓，CC-BY-SA 3.0 ✓，
+#   见 `svg/_assets/LICENSE-ceramic_capacitor_blue_leg.txt` ✓）
+ASSET_BB = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_blue_leg.svg")
 
-# ── 两档规格（几何全部**沿用同封装电阻** ✓；数值来自本库 `Resistor-*.fzpz` ✓）────
+# ── 单档规格（0402 ✓；几何**沿用同封装电阻** ✓；数值来自本库 `Resistor-*.fzpz` ✓）────
+#   ★ 0603 已删除（2026-10-02 ✓）—— Fritzing 自带的 0603 电容已支持 ✓
 #   `mod` = 新件的 moduleId ✓（照电阻的 `<字母><尺寸>_<32位hex>_1` 格式 ✓；
 #   hex 是本次新生成的固定值 ✓ —— 一旦发布就不许改 ✗，否则 Fritzing 里会认成另一个件 ✗）
 SPEC = {
@@ -42,9 +52,6 @@ SPEC = {
                  title="Capacitor 0402", pkg="[SMD] 0402",
                  body_w=107.14283, body_x=73.571365,        # icon 里本体矩形（用户单位 ✓）
                  can_w=1.45, can_h=0.60000008),             # pcb 画布 mm ✓
-    "0603": dict(mod="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1", ref="Resistor-0603",
-                 title="Capacitor 0603", pkg="[SMD] 0603",
-                 body_w=None, body_x=None, can_w=None, can_h=None),
 }
 
 
@@ -99,6 +106,16 @@ def make_fzp(files, size, s):
     for kind in ("icon", "breadboard", "schematic", "pcb"):
         new = new.replace("%s/%s" % (kind, stem(files, kind)),
                           "%s/%s" % (kind, s["mod"]))
+    # ★ 面包板：与 core 电容（C2）同口径 ✓（2026-10-02 用户定 ✓）——
+    #   flip 补偿 + leg 高亮，保证与 C2 渲染**逐字一致** ✓
+    #   ★ 只给**顶层视图** `<breadboardView>`（后面跟 `<layers`）加 flip ✗；
+    #     `<connector><views>` 里的映射层不加（C2 也没有 ✗）—— 全局替换会把两者都改 ✗
+    new = new.replace("<breadboardView>\n   <layers",
+                      '<breadboardView fliphorizontal="true" flipvertical="true">\n   <layers')
+    new = new.replace('<p layer="breadboard" svgId="connector0pin"/>',
+                      '<p layer="breadboard" svgId="connector0pin" legId="connector0leg"/>')
+    new = new.replace('<p layer="breadboard" svgId="connector1pin"/>',
+                      '<p layer="breadboard" svgId="connector1pin" legId="connector1leg"/>')
     return new
 
 
@@ -150,13 +167,17 @@ def make_schematic(files, s):
 
 
 def make_body(files, kind, s):
-    """icon / 面包板：去掉**色环**（电阻的标记 ✗），本体改成**米黄陶瓷** ✓；
-    再去掉阴影/高光 ✗（仓规 §1 不许加装饰 ✓）。
+    """icon：去掉**色环**（电阻的标记 ✗），本体改成**米黄陶瓷** ✓；
+    再去掉阴影/高光 ✗（仓规 §1 不许加装饰 ✓）；面包板见函数体开头（直接 = core 电容 ✓）。
 
     ★ 为什么要改本体颜色 ✗：电阻件那套是 core 老件 ✓ —— 中间那块是**深色体**（75% 黑 ✗），
       那是厚膜电阻的真实外观 ✓；**陶瓷电容**是**米黄体 + 两端银** ✓（真实外观 ✓）
       ⇒ 不改就画出一颗“深灰方糖” ✗（渲图看过 ✓，不是猜 ✗）。
     """
+    if kind == "breadboard":
+        # ★ 2026-10-02 用户定 ✓：面包板直接 = Fritzing 自带电容（C2）的面包板 ✓
+        #   （蓝色陶瓷电容 + 两根下插引线、2.54mm 脚距 ✓ —— 逐字沿用 core 素材 ✓）
+        return open(ASSET_BB, encoding="utf-8").read()
     new = files[[n for n in files if ".%s." % kind in n][0]]
     for rid in ("gold_band", "band_rd_multiplier", "band_2_nd", "band_1_st",
                 "Shadow", "ShadowExtra", "ReflexRight", "ReflexLeft",
