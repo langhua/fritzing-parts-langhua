@@ -207,3 +207,61 @@ def box_of(part_svg_text, g_el, A=None):
            for cx, cy in ((bb[0], bb[1]), (bb[2], bb[1]), (bb[0], bb[3]), (bb[2], bb[3]))]
     return ((min(p[0] for p in pts), min(p[1] for p in pts),
              max(p[0] for p in pts), max(p[1] for p in pts)), A, note)
+
+
+# ── ★★ 2026-10-03 新增：**脚在哪** ✓（唯一实现 ✓ —— 从 `render_sch.py` 逐字搬来 ✓，一行未改 ✓）
+def anchors(root):
+    """零件 svg 里每个脚的**连接点**（根用户单位 ✓，走完祖先 transform ✓）
+
+    ★ 优先 `connectorNterminal` ✓（原理图的连接点在这儿 ✓）；
+      退回 `connectorNpin` 线的**中点** ✓（并标明用的是哪种 ✓，不静默 ✓）。
+
+    ★ 为什么要搬过来 ✗：`sch_straighten.py`（把直线拉直的**后处理** ✓ 2026-10-03 ✓）
+      也要"脚在哪" ✓ —— 各写一份 ⇒ 又变成两把尺子 ✗（本文件的头号教训 ✓）。
+    """
+    term, pin, bad = {}, {}, []
+
+    def walk(el, m):
+        if tag(el) == "defs":
+            return
+        for c in el:
+            t = c.get("transform")
+            mc = PB.mul(m, PB.parse_tf(t)) if t else m
+            eid = c.get("id") or ""
+            mt, mp = re.match(r"^(connector\d+)terminal$", eid), re.match(r"^(connector\d+)pin$", eid)
+            if mt or mp:
+                if tag(c) == "rect":
+                    p = (enum(c, "x") + enum(c, "width") / 2.0,
+                         enum(c, "y") + enum(c, "height") / 2.0)
+                elif tag(c) in ("line", "polyline"):
+                    p = ((enum(c, "x1") + enum(c, "x2")) / 2.0,
+                         (enum(c, "y1") + enum(c, "y2")) / 2.0)
+                elif tag(c) == "circle":
+                    p = (enum(c, "cx"), enum(c, "cy"))
+                else:
+                    p = None
+                if p is None:
+                    bad.append("%s=<%s>（认不出参考点 ✗）" % (eid, tag(c)))
+                else:
+                    (term if mt else pin)[(mt or mp).group(1)] = PB.apply(mc, p[0], p[1])
+            walk(c, mc)
+
+    walk(root, (1.0, 0.0, 0.0, 1.0, 0.0, 0.0))
+    return term, pin, bad
+
+
+def pins_of(svg_text):
+    """零件 svg **文本** ⇒ `(pins, kind, bad)` ✓ —— 一步拿到"这个件的脚在哪" ✓
+
+    `kind`：`terminal` ✓ / `pin`（退回线中点 ✓，调用方应据此放宽判据 ✓）/ `none`（没解析到 ✗）。
+    """
+    try:
+        root = ET.fromstring(svg_text)
+    except Exception as ex:                    # ★ 解析不了要**吭声** ✓ 不静默 ✗
+        return {}, "none", ["<svg 解析不了：%s>" % ex]
+    term, pin, bad = anchors(root)
+    if term:
+        return term, "terminal", bad
+    if pin:
+        return pin, "pin", bad
+    return {}, "none", bad

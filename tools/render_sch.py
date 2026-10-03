@@ -57,7 +57,8 @@ import sch_box as SB                                             # ★ “本体
 #    两边差 **0.43 单位** ✗ ⇒ 布线器的硬闸门物理上看不见判据报的那一段 ✗✗）。
 #   ⇒ 这里只 import ✓，**不再本地定义** ✗（本地定义会盖掉共享实现 ✗ = 又是两套尺子 ✗）。
 from sch_box import (tag, num, enum, attrs, inner, head_of,      # noqa: E402
-                     viewbox_of, scale_of, layer_of, to_sketch, UMM, SK_U_PER_MM)
+                     viewbox_of, scale_of, layer_of, to_sketch, UMM, SK_U_PER_MM,
+                     pins_of)                                    # ★ 脚位唯一实现 ✓（2026-10-03 搬去 sch_box ✓）
 # ★★ `px` = **1/90 in**（= 0.8 × 1/72 ✓）—— 2026-09-27 **实测**定的 ✓，不是查文档 ✗：
 #   把 v6 的导出与我的渲染逐件比"**同一零件内两个脚的向量**" ✓（这个量**不需要任何标定** ✓）
 #   ⇒ 只有 `LED2`（`width="48px"`）与 `D3`（`width="66px"`）对不上 ✗，比值恰好 **0.64 / 0.8 = 0.8** ✓
@@ -67,43 +68,6 @@ from sch_box import (tag, num, enum, attrs, inner, head_of,      # noqa: E402
 UMM_MOVED_NOTE = True      # ★ 常量与小工具已搬去 `sch_box.py` ✓（见上面 import 那段 ✓）
 #   ✗ 搬家时多动手碰坏过一次 ✓：`layer_of` 的尾巴被切掉了一段 ✗（它现在整段在 `sch_box.py` ✓）
 #   ⇒ 教训（本仓旧规矩 ✓）：**一次只改一处** ✓ + 改完**读回** ✓ —— 这次是靠读回抓到的 ✓。
-
-
-def anchors(txt_root):
-    """零件 svg 里每个脚的**连接点**（根用户单位 ✓，走完祖先 transform ✓）
-
-    ★ 优先 `connectorNterminal` ✓（原理图的连接点在这儿 ✓）；
-      退回 `connectorNpin` 线的**中点** ✓（并标明用的是哪种 ✓，不静默 ✓）。
-    """
-    term, pin, bad = {}, {}, []
-
-    def walk(el, m):
-        if tag(el) == "defs":
-            return
-        for c in el:
-            t = c.get("transform")
-            mc = PB.mul(m, PB.parse_tf(t)) if t else m
-            eid = c.get("id") or ""
-            mt, mp = re.match(r"^(connector\d+)terminal$", eid), re.match(r"^(connector\d+)pin$", eid)
-            if mt or mp:
-                if tag(c) == "rect":
-                    p = (enum(c, "x") + enum(c, "width") / 2.0,
-                         enum(c, "y") + enum(c, "height") / 2.0)
-                elif tag(c) in ("line", "polyline"):
-                    p = ((enum(c, "x1") + enum(c, "x2")) / 2.0,
-                         (enum(c, "y1") + enum(c, "y2")) / 2.0)
-                elif tag(c) == "circle":
-                    p = (enum(c, "cx"), enum(c, "cy"))
-                else:
-                    p = None
-                if p is None:
-                    bad.append("%s=<%s>（认不出参考点 ✗）" % (eid, tag(c)))
-                else:
-                    (term if mt else pin)[(mt or mp).group(1)] = PB.apply(mc, p[0], p[1])
-            walk(c, mc)
-
-    walk(txt_root, (1.0, 0.0, 0.0, 1.0, 0.0, 0.0))
-    return term, pin, bad
 
 
 resolve = SB.resolve_parts_svg       # ★ 唯一实现已搬去 `sch_box.py` ✓（本地不再定义 ✗）
@@ -362,10 +326,9 @@ for el in root.iter("instance"):
     #   ★ `A` 里已经含了「减 viewBox 原点」✓（A = M·(k,0,0,k,−k·原点) ✓）
     #     ⇒ 映射就是 `geom + A·p` ✓ —— **不要再减一次原点** ✗（我在草稿里就重复扣减过 ✗）。
     try:
-        term, pin, bad = anchors(ET.fromstring(txt))
+        pins, kind, bad = SB.pins_of(txt)        # ★ 唯一实现 ✓（`sch_box.pins_of` ✓）
     except Exception as ex:
-        term, pin, bad = {}, {}, ["<svg 解析不了：%s>" % ex]
-    pins, kind = (term, "terminal") if term else (pin, "pin")
+        pins, kind, bad = {}, "none", ["<svg 解析不了：%s>" % ex]
     for cid, p in pins.items():
         PIN_SK.append((ttl, cid, to_sketch(g, A, p)))
     # 本体包围盒（sketch ✓）—— ★ 只调共享实现 ✓（原来这里和布线器**各算一套** ✗）
