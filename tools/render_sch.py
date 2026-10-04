@@ -600,12 +600,14 @@ JTOL = 0.01
 
 
 GRP = []
-for _p in (p for _t, a, b, _c, _w in wires for p in (a, b)):
-    _hit = next((g for g in GRP if math.dist(_p, g[0]) < JTOL), None)
-    if _hit:
-        _hit[1] += 1
-    else:
-        GRP.append([_p, 1])
+for _t, a, b, _c, _w in wires:
+    for p in (a, b):
+        _hit = next((g for g in GRP if math.dist(p, g[0]) < JTOL), None)
+        if _hit:
+            _hit[1] += 1
+            _hit[2].append(_c)          # ★ 记下**这根线的颜色** ✓（画圆点用 ✓）
+        else:
+            GRP.append([p, 1, [_c]])
 SEGS = [(a, b) for _t, a, b, _c, _w in wires]
 # ★★ 接点圆点判据：**该处 ≥2 个导线端点，且不在引脚上** ⇒ 画点 ✓
 #   证据（导出实测 ✓）：
@@ -624,12 +626,32 @@ SEGS = [(a, b) for _t, a, b, _c, _w in wires]
 #     ② **点多大**：**该处的“连接数”** ✓ = 导线端点 + **脚** ✓ ⇒ = 2 ⇒ 小 ✓、≥3 ⇒ 大 ✓。
 #        依据：`R1` 的两个脚 `(162,108)/(126,108)` 处只有 2 根线端 ✗ 而导出画的是**大点** ✓
 #        ⇒ 把“脚”算进去正好 3 ✓（修正前我在这两处画成小点 ✗ = 唯一残留的 2 处 ✗）。
-dots = []
-for p, n_end in GRP:
+# ★★★ 2026-10-04 ✓ **接点圆点的颜色 = 线色** ✓（用户点名 ✓：「Fritzing 的原理图中，5V 线上的
+#   大小圆点都是红色的，其它也是线色与圆点颜色一致」✓）——
+#   ★ **依据是源码** ✓（`AGENTS §13`：判据先读源码 ✓）：
+#     · 屏幕上 ✓：`src/connectors/nonconnectoritem.cpp` 的 `paint()` —— 对**导线**的接头
+#       （`forWire()` 分支 ✓）是 `painter->setBrush(brush())` + `drawEllipse(...)` ✓
+#       ⇒ **圆点用这根线自己的 brush** ✓；而 `brush()` 由 `Wire::getConnectedColor`
+#       （`src/items/wire.cpp:1544` ✓）给出 ⇒ 就是**线色** ✓。
+#     · 大点 ✓：`wire.cpp:1544` 的 `setBigDot(true)` + `src/sketch/schematicsketchwidget.cpp:374`
+#       的 `isBigDot()` ✓（半径 = `connector->rect().width()` ✓）。
+#   ✗ 而 Fritzing **导出 SVG** 那条路写的是 `fill="black"` ✗
+#     （`schematicsketchwidget.cpp:396` ✓）⇒ **导出与屏幕不一致** ✗（它自己的毛病 ✓）。
+#     本渲染器**照屏幕** ✓（用户看到的那个 ✓）—— 与「判据要与 Fritzing **同一个声音**」
+#     一致 ✓（`AGENTS §13` ✓：以**用户能看到的**为准 ✓）。
+#   ★ 同一点上多色（少见 ✓）：屏幕上 Fritzing 是**每根线各画一个** ✓、半径相同、
+#     **完全重叠** ✗ ⇒ 谁在上面谁赢 ✗ = **不是良定义** ✓ ⇒ 这里取**多数票** ✓
+#     （并列取先出现的 ✓），并把“有几种颜色”如实报出来 ✓。
+dots, DOTCOL, _nmix = [], {}, 0
+for p, n_end, _cols in GRP:
     if n_end < 2:
         continue
     _np = sum(1 for q in PIN_SK if math.dist(p, q[2]) < 0.05)
+    _k = (round(p[0], 3), round(p[1], 3))
     dots.append((p, DOT_R_BIG if (n_end + _np) >= 3 else DOT_R))
+    if len(set(_cols)) > 1:
+        _nmix += 1
+    DOTCOL[_k] = collections.Counter(_cols).most_common(1)[0][0]
 
 
 _dq = {}
@@ -637,9 +659,10 @@ for _p, _r in dots:
     _dq[(round(_p[0], 3), round(_p[1], 3))] = max(_r, _dq.get((round(_p[0], 3), round(_p[1], 3)), 0.0))
 dots = sorted(_dq.items())
 print("   接点圆点 %d 个 ✓（小 %d / 大 %d ✓；判据 = 该处 **≥2 个导线端点** ✓；"
-      "大小 = 导线端点 + **脚** ≥ 3 ⇒ 大 ✓；半径 = 导出 0.72 / 1.44 ÷ 0.8 ✓）"
+      "大小 = 导线端点 + **脚** ≥ 3 ⇒ 大 ✓；半径 = 导出 0.72 / 1.44 ÷ 0.8 ✓；"
+      "**颜色 = 该点线色的多数票** ✓，多色点 %d 个 ✓）"
       % (len(dots), sum(1 for _p, _r in dots if _r < DOT_R_BIG),
-         sum(1 for _p, _r in dots if _r >= DOT_R_BIG)))
+         sum(1 for _p, _r in dots if _r >= DOT_R_BIG), _nmix))
 
 # ── ③ 位号文本 ──
 labels = []
@@ -1106,8 +1129,9 @@ for ttl, a, b, col, wd in wires:
     body.append('<line x1="%.4f" y1="%.4f" x2="%.4f" y2="%.4f" stroke="%s" '
                 'stroke-width="%.4f" stroke-linecap="round"/>' % (a[0], a[1], b[0], b[1], col, wd))
 for (cx, cy), _rr in dots:                            # ★ 接点圆点画在导线**之上** ✓
-    body.append('<circle cx="%.4f" cy="%.4f" r="%.4f" fill="#000000" stroke="none"/>'
-                % (cx, cy, _rr))
+    # ★ 颜色 = 该点的**线色** ✓（2026-10-04 ✓；依据见上面那段 ✓）—— 查不到 ⇒ 回退黑 ✓
+    body.append('<circle cx="%.4f" cy="%.4f" r="%.4f" fill="%s" stroke="none"/>'
+                % (cx, cy, _rr, DOTCOL.get((round(cx, 3), round(cy, 3)), "#000000")))
 for ttl, (lx, ly), fs, col, lines in labels:
     body.append('<g font-family="DroidSans" font-size="%.3f" fill="%s">' % (fs, col))
     for i, s_ in enumerate(lines):
@@ -1519,8 +1543,14 @@ if "verify-export" in opts:
     print("   ⇒ 几何（零件/导线/位号位置 **+ 引脚 + 标签**）：%s"
           % ("✓✓ **与 Fritzing 逐点一致** ✓✓（含引脚与标签 ✓；Δ 全部 ≤0.001 单位 = 0.0003 mm ✓）"
              if geo_ok else "✗ 有几何不一致项 ✗（上面已逐条列出 ✓ 别默认它没事 ✗）"))
+    # ★ 2026-10-04 ✓ 这一项只比**位置与半径** ✓ —— **不比颜色** ✗（颜色**故意**与导出不同 ✓：
+    #   导出的圆点是 `fill="black"` ✗（`schematicsketchwidget.cpp:396` ✓），而**屏幕**是**线色** ✓
+    #   （`nonconnectoritem.cpp` `paint()` ⇒ `setBrush(brush())` ✓）⇒ 本渲染器照**屏幕** ✓
+    #   （用户 2026-10-04 定 ✓）⇒ 拿导出当尺子时，**颜色这一项对不上是预期的** ✓，别去"修"它 ✗。
     print("   ⇒ 装饰（接点圆点）：%s"
-          % ("✓ 一致 ✓" if dot_ok else "⚠ 差 %d 个（纯装饰 ✓，半径 0.9 单位 = 0.25mm ✓；"
-             "原因未定 ✓ 已如实记录 ✓）" % (len(dmiss) + len(dextra))))
+          % ("✓ 一致 ✓（**位置与半径** ✓；颜色**故意**照屏幕而不照导出 ✓ 见上 ✓）"
+             if dot_ok else
+             "⚠ 差 %d 个（纯装饰 ✓，半径 0.9 单位 = 0.25mm ✓；原因未定 ✓ 已如实记录 ✓）"
+             % (len(dmiss) + len(dextra))))
     print("   ⇒ 文本（位号内容）：%s"
           % ("全同 ✓" if not lbad else "%d 处差异 ⚠（不影响几何 ✓）" % len(lbad)))
