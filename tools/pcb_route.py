@@ -673,7 +673,34 @@ def bfs_path(grid, lay0, start, goals, no_via=(), via_at_start=False, via_at_end
     return list(reversed(path))
 
 
+def escape_shadow(grid, pads, net_pads, net, r_mm=None):
+    """别人的脚口**影子格** ✓ = 距**别网焊盘** ≤ `r_mm` 的格子 ✓（按**格号**给 ✓）
+
+    ✗ 为什么要它（像素板**实测** ✓）：光板上那些"差网"的目标脚**本来就在主区域里** ✓
+      （34350／35114 格 ✓）⇒ 口袋是**线切出来的** ✗ ⇒ 走别人脚口附近时要**加钱** ✓
+      （✗ 不是禁死 ✓）⇒ 宁可绕一点 ✓，别把那只脚关进小口袋 ✗。
+    ★ 只针对**别的网**的盘 ✓（本网的盘自己会挖开 ✓）；格号用**库自己的 `grid.rc`** ✓
+      （✗ 不自己拍 "x/sketch" 的换算 ✗）。
+    """
+    if not ESCAPE_COST_MM:
+        return None
+    r = U(r_mm if r_mm is not None else ESCAPE_R_MM)
+    mine = set(net_pads.get(net) or ())
+    cells = set()
+    for k, q in pads.items():
+        if k in mine or not q.get("box"):
+            continue
+        b = q["box"]
+        i0, j0 = grid.rc(b[0] - r, b[1] - r)
+        i1, j1 = grid.rc(b[2] + r, b[3] + r)
+        for i in range(min(i0, i1), max(i0, i1) + 1):
+            for j in range(min(j0, j1), max(j0, j1) + 1):
+                cells.add((i, j))
+    return cells or None
+
+
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
+          avoid2=None, avoid2_w=0.0,
           no_via=(), turn=0.0, pen_layer=None, pen=0.0, via_at_start=False, via_at_end=False):
     """两层 A* ✓：`start`/`goals` = `(lay, (x, y))` ✓ ⇒ 路径 `[(lay, (x,y)), …]` 或 None ✓
 
@@ -758,6 +785,9 @@ def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, av
             ng = g0 + w
             if avoid is not None and (jx, jy) in avoid:
                 ng += avoid_w          # ★ 「留路」加罚 ✓（不是禁死 ✓，仍能走到 ✓）
+            if avoid2 is not None and (jx, jy) in avoid2:
+                ng += avoid2_w         # ★ **脚口影子**加罚 ✓（2026-10-05 ✓）——
+                #   走别人脚口附近要加钱 ✓ ⇒ 宁可绕一点 ✓，别把那只脚关进口袋 ✗。
             if ng < seen.get(nxt, 1e18):
                 seen[nxt] = ng
                 prev[nxt] = cur
@@ -910,6 +940,14 @@ RIP_BY_WIRES = False
 #   ⇒ **规则与实物相容** ✓（闸门没有把已接受的成品判死 ✓）。
 #   ⇒ 打分时多一维：**被封成小口袋的脚数越少越好** ✓（接在连通数之后、长度之前 ✓）。
 ESCAPE_PENALTY = False
+# ★★ 2026-10-05 加 ✓（**默认关** ✗，本项目选 ② 时打开 ✓）：**逐路径**的脚口代价 ✓
+#   —— 走"**别人脚口附近**"的每一格加 `ESCAPE_COST_MM` ✓（✗ 不是禁死 ✓）
+#   ⇒ 宁可绕一点 ✓，也别把那只脚关进小口袋 ✗（见 `escape_shadow` ✓）。
+#   ★ 为什么必须**逐路径**✗（2026-10-05 实测 ✓）：接在**候选解打分**上（`ESCAPE_PENALTY` ✓）
+#     **没用** ✗ —— 打分第一维是连通数 ✓，它一旦不同 ✓ 后面的维就轮不上说话 ✓
+#     （实测仍 7/9 ✗）⇒ 只能进**每步代价** ✓。
+ESCAPE_COST_MM = 0.0          # 每格加价（mm ✓；0 = 关 ✓）
+ESCAPE_R_MM = 0.45            # 影子半径（mm ✓）—— 比过孔禁落 0.55 稍小 ✓
 _GATE = {}            # `route_ripup` 设一次 ✓ ⇒ `_score` 里读 ✓（两处打分自动一致 ✓）
 
 
@@ -1576,6 +1614,8 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                              [(lb, pads[b]["c"]) for lb in pads[b]["lays"]], vc,
                              avoid=keep_cells if net in tuple(mid_keep) else None,
                              avoid_w=MID_KEEP_W, no_via=no_via,
+                             avoid2=escape_shadow(grid, pads, net_pads, net),
+                             avoid2_w=U(ESCAPE_COST_MM),
                              turn=TURN_COST, pen_layer=other, pen=LAYER_PEN,
                              via_at_start=via_s, via_at_end=via_e)
                 if path:
@@ -1894,6 +1934,14 @@ def main(argv):
     if "--escape-penalty" in argv:        # ★ 2026-10-05 加 ✓（默认关 ✗）：打分多一维脚口 ✓
         global ESCAPE_PENALTY
         ESCAPE_PENALTY = True
+    if any(a.startswith("--escape-cost=") for a in argv):
+        global ESCAPE_COST_MM              # ★ 2026-10-05 加 ✓（默认关 ✗）：逐路径脚口代价 ✓
+        ESCAPE_COST_MM = float(next(a.split("=", 1)[1] for a in argv
+                                    if a.startswith("--escape-cost=")))
+    if any(a.startswith("--escape-r=") for a in argv):
+        global ESCAPE_R_MM                 # ★ 影子半径（mm ✓）
+        ESCAPE_R_MM = float(next(a.split("=", 1)[1] for a in argv
+                                 if a.startswith("--escape-r=")))
     model = PC.collect(fzz)
     r = model["board"]
     pads = pad_index(model)
