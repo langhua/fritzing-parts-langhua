@@ -3,7 +3,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="152mm" height="105mm" viewBox="0 0 152 105">
   <rect x="0" y="0" width="152" height="105" fill="#ffffff"/>
   <text x="8" y="14" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="5.0" fill="#202020">面包板（去粘版：孔只在面包板视图声明 ✓）</text>
-  <svg id="p0" x="10.00" y="26.50" width="30.00" height="22.00" viewBox="455.0 0.0 42.8458 127.333" preserveAspectRatio="xMidYMid meet">
+  <svg id="p0" x="10.00" y="26.50" width="30.00" height="22.00" viewBox="370.5127992 0.0 127.33300079999998 127.333" preserveAspectRatio="xMidYMid meet">
     <defs
          id="p0_defs21266" /><g
          id="p0_breadboardbreadboard"
@@ -12379,7 +12379,7 @@
                    stroke-width="9.99999" /></g></g></g></g></g>
   </svg>
   <text x="25.00" y="53.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SYB-118</text>
-  <text x="25.00" y="56.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.12×44.92mm</text>
+  <text x="25.00" y="56.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">44.92×44.92mm</text>
   <svg id="p1" x="44.00" y="26.50" width="30.00" height="22.00" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet">
     <g id="p1_icon">
     	<g id="p1_background">
