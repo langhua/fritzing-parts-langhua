@@ -147,6 +147,7 @@ def rect_gap_mm(a, b):
     return (dx * dx + dy * dy) ** 0.5 * 25.4 / 90.0
 
 
+HOLE_GAP_MM = 0.25          # 孔 ↔ 孔（**孔壁到孔壁** ✓）—— 2026-10-05 用户定 ✗（新规则 ✓）
 VIA_SAFE_MM = 0.25
 # ★★ EPAD（裸露焊盘）上的**同网 via-in-pad 是允许的** ✓（2026-10-01 用户定 ✓）：
 #   用户原话：「是在 EPAD 上开通孔接 GND 吗？这个必须允许」✓
@@ -201,6 +202,24 @@ class UF(object):
 
 
 # ── 读模型 ─────────────────────────────────────────────────────────────────
+def d_pt_pad(p, q):
+    """点到**焊盘真铜**的距离 ✓（内部单位 ✓；落在铜里 ⇒ 0 ✓）
+
+    ★★ 2026-10-05 立 ✗（**量出来的** ✓）：⑥/⑦ 原来按 `q["box"]`（**轴对齐方框** ✓）算 ✗ ——
+      而**通孔盘的铜是圆的** ✗（`circle` ✓）⇒ 方框的**四角**在铜外 ✗ ⇒ 从角上量出来的
+      "净距"**比真值小** ✗ ⇒ **假报** ✓。
+      实测 ✓：`过孔 @(42.80,19.40)` 对 `L1.connector0`（心 (43.731,20.522)、铜半径 0.800 ✓）——
+      按圆量 **0.358 mm** ✓（合规 ✓），按方框角量 **0.047 mm** ✗（假报"离得太近" ✗）。
+    """
+    if q.get("circle"):
+        (cx, cy), r = q["circle"]
+        return max(0.0, math.hypot(p[0] - cx, p[1] - cy) - r)
+    b = q["box"]
+    dx = max(b[0] - p[0], 0.0, p[0] - b[2])
+    dy = max(b[1] - p[1], 0.0, p[1] - b[3])
+    return math.hypot(dx, dy)
+
+
 def is_epad(nm):
     """这个焊盘是不是**裸露焊盘** ✓（判据写在 `EPAD_EXEMPT` 的注释里 ✓）—— 不猜 ✗"""
     s = str(nm or "").lower()
@@ -452,17 +471,68 @@ def check(model, expect=None):
                          % (kind, i, "、".join(sorted(na)), j, "、".join(sorted(nb)),
                             ti["layer"]))
 
+    # ④b ★★ 2026-10-05 补 ✗：「**线身**压到**别的网**的盘」✓ —— ④ 只管**线↔线** ✗、
+    #   ① 只管**线端**落在盘里 ✗ ⇒ 「**中段过盘**」是个**盲区** ✗。
+    #   实测（就是它漏报的 ✓）：`v65` 里 `BR+` 的一根线**贴着** `L1.connector0`（COIL_A ✓）
+    #   的**环**走 ⇒ 铜叠进 **1.6 µm** ✗（真有铜 ✓ = 短路 ✗），而 ④/① 两边都没报 ✗。
+    #   根因（量出来的 ✓）：布线器的障碍表当时把通孔盘按**孔**算 ✗（少挡 0.25 mm/边 ✗，
+    #   已在 `pcb_pads.absbox` 修 ✓）——**但闸门不能指望上游做对** ✗，所以这里补一层 ✓。
+    for i, t in enumerate(traces):
+        hw = (t.get("mils") or 12.0) * 0.0254 / 2.0 / PW.SK
+        na = _nets_of(uf.find(end(i, 0)))
+        if not na:
+            continue
+        for q in pads:
+            if t["layer"] not in pad_layers(q):
+                continue
+            qn = net_of.get("%s.%s" % (q["title"], q["cid"]))
+            if qn is None or qn in na:
+                continue
+            if q.get("circle"):
+                (cx, cy), r = q["circle"]
+                if d_pt_seg((cx, cy), t["a"], t["b"]) <= r + hw + 1e-9:
+                    ov = (r + hw - d_pt_seg((cx, cy), t["a"], t["b"])) * PW.SK
+                else:
+                    continue
+            else:
+                if not seg_rect(t["a"], t["b"], q["box"], hw):
+                    continue
+                ov = -1.0
+            probs.append("④b 线**中段**压到**别的网**的盘 ⇒ **短路桥** ✗：走线 #%d（网 %s）在 %s 层"
+                         "压住 `%s.%s`（网 %s）%s"
+                         % (i, "、".join(sorted(na)), t["layer"], q["title"], q["cid"], qn,
+                            "" if ov < 0 else "，叠 **%.4f mm** ✓" % ov))
+
     # ③ 过孔挨铜 ＋ 贯通两层 ✓
+    # ★★ 2026-10-05 修 ✗✓（**量出来的** ✓，不是猜 ✗）：判据从「**孔心**落在盘框/线段上」
+    #   改成「**铜真的碰上**」✓ —— ✗ 旧口径只说"孔心在不在铜上" ✗：
+    #   实测（用户手改件 ✓）`Via6` 的**铜与 `Via8` 叠了 0.200 mm** ✓、
+    #   与三根走线各叠 0.011 / 0.069 / 0.011 mm ✓ ⇒ **明明连着** ✓，
+    #   而孔心既不在任何盘框里、也不在任何线中心线上 ✗ ⇒ 旧口径报「**孤立过孔**」✗
+    #   ⇒ **假报** ✓（同一个坑在 2026-10-02 已经在 ① 上撞过一次 ✓）。
+    #   ⇒ 现在：盘按**真铜**（`d_pt_pad` ✓）、线按**半宽**（`mils` ✓）、孔按铜盘半径 ✓。
     for i, v in enumerate(vias):
+        hd, rg = v.get("hole_mm"), v.get("ring_mm")
+        rv = ((hd or 0.3) / 2.0 + (rg or 0.15)) / PW.SK      # 本孔铜盘半径 ✓（单位 ✓）
         touch = []
         for j, t in enumerate(traces):
-            if on_seg(v["p"], t["a"], t["b"]):
+            hw = (t.get("mils") or 12.0) * 0.0254 / 2.0 / PW.SK
+            if d_pt_seg(v["p"], t["a"], t["b"]) <= rv + hw + 1e-9:
                 uf.union(("via", i), end(j, 0))
                 touch.append(t["layer"])
         for q in pads:
-            if in_rect(v["p"], q["box"]):
+            if d_pt_pad(v["p"], q) <= rv + 1e-9:
                 uf.union(("via", i), ("pad", q["title"], q["cid"]))
                 touch.append("pad")
+        for j, w in enumerate(vias):
+            if j == i:
+                continue
+            hd2, rg2 = w.get("hole_mm"), w.get("ring_mm")
+            rw = ((hd2 or 0.3) / 2.0 + (rg2 or 0.15)) / PW.SK
+            if math.hypot(v["p"][0] - w["p"][0], v["p"][1] - w["p"][1]) \
+                    <= rv + rw + 1e-9:
+                uf.union(("via", i), ("via", j))
+                touch.append("via")
         if not touch:
             probs.append("③ 孤立过孔：过孔 #%d 在 (%.2f,%.2f) mm 没挨到任何铜 ✗"
                          % (i, v["p"][0] * PW.SK, v["p"][1] * PW.SK))
@@ -526,6 +596,31 @@ def check(model, expect=None):
                      "（**声明接上 ≠ 铜真碰上** ✗）；不合格 %d 条 ✓"
                      % (seen10, sum(1 for p in probs if p.startswith("⑩"))))
 
+    # ⑪ ★★ **孔 ↔ 孔** 的间距 ✓（2026-10-05 用户定 ✗，**新规则** ✓）：
+    #   探伤（实测 ✓，用户手改件）：`Via6`@(45.18,20.52) 与 `Via8`@(45.18,20.92) 孔心距
+    #     **0.40 mm** ✓ ⇒ 两颗 Ø0.30 的孔，**孔壁只差 0.10 mm** ✗ ⇒ 钻头/断刀风险 ✓。
+    #   判据 ✓：**孔壁到孔壁**（mm ✓）必须 ≥ `HOLE_GAP_MM` ✓；
+    #   比的是**每颗孔自己的直径** ✓（`hole size` 头一段 ✓）；
+    #   ★ 安装孔（核心孔件 ✓）也算孔 ✓ —— 它没有铜 ✗，所以只有这条管得着它 ✓。
+    hl = []
+    for (c, dia, _cup) in (model.get("holes") or ()):
+        hl.append(("安装孔Ø%.1f" % dia, c, dia))
+    for i, v in enumerate(vias):
+        hl.append(("过孔 %s" % (v.get("ttl") or "#%d" % i), v["p"], v.get("hole_mm")))
+    for i in range(len(hl)):
+        for j in range(i + 1, len(hl)):
+            n1, p1, d1 = hl[i]
+            n2, p2, d2 = hl[j]
+            if not d1 or not d2:
+                probs.append("⑪ %s 或 %s 没写孔径 ⇒ 孔距查不了 ✗（别静默 ✗）" % (n1, n2))
+                continue
+            g = (math.hypot(p1[0] - p2[0], p1[1] - p2[1])) * PW.SK - (d1 + d2) / 2.0
+            if g < HOLE_GAP_MM:
+                probs.append("⑪ 孔壁间距不够：%s @(%.2f,%.2f) 与 %s @(%.2f,%.2f) 只差 **%.3f mm** ✗"
+                             "（需要 ≥ %.2f mm ✓；孔径 %.2f / %.2f mm ✓）"
+                             % (n1, p1[0] * PW.SK, p1[1] * PW.SK, n2, p2[0] * PW.SK, p2[1] * PW.SK,
+                                g, HOLE_GAP_MM, d1, d2))
+
     # ⑥ ★★ 过孔**铜盘**压焊盘 ✓（2026-10-01 补 ✗，见文件头 ⑥ ✓）
     #   ✗ ③ 只问"孔心在不在盘框里" ✗ ⇒ 孔心在盘外、**环压在盘上**的情形它看不见 ✗✗
     #   ★ 判据（2026-10-01 晚定 ✗，与生成器的闸门**各自实现** ✓）：
@@ -542,10 +637,9 @@ def check(model, expect=None):
         r_edge = ((hd + rg) / 2.0 + rg / 2.0) / PW.SK        # mm → 内部单位 ✓
         hit = []
         for q in pads:
-            b = q["box"]
-            dx = max(b[0] - v["p"][0], 0.0, v["p"][0] - b[2])
-            dy = max(b[1] - v["p"][1], 0.0, v["p"][1] - b[3])
-            d = (dx * dx + dy * dy) ** 0.5
+            # ★★ 2026-10-05 修 ✗：一律用**真铜**（圆盘按圆 ✓）—— 旧版按 `box` ✗ ⇒
+            #   通孔盘的**方框四角**落在铜外 ✗ ⇒ 假报“压到盘”/“离得太近” ✓（见 `d_pt_pad` ✓）。
+            d = d_pt_pad(v["p"], q)
             if d < r_edge:
                 key = "%s.%s" % (q["title"], q["cid"])
                 hit.append((key, net_of.get(key), (r_edge - d) * PW.SK,
@@ -593,22 +687,17 @@ def check(model, expect=None):
         px, py = v["p"][0] * PW.SK, v["p"][1] * PW.SK
         worst = []
         for q in pads:                                         # ① 焊盘
-            b = [t * PW.SK for t in q["box"]]
+            # ★★ 2026-10-05 修 ✗：改用**真铜**（`d_pt_pad` ✓）——旧版按 `box` ✗ ⇒
+            #   实测把 **0.358 mm** 的真净距算成 **0.047 mm** ✗（方框角 ✗）⇒ 假报 ⑦ ✗。
+            d0 = d_pt_pad(v["p"], q) * PW.SK      # ✗ 这里一律按 **mm** 算 ⇒ 换算一下 ✓
             # ★★ EPAD / 细间距例外 ✓（2026-10-01 修 ✗）：判据 = **这两件事同时成立** ✓
             #     ① 该盘是 EPAD 或**细间距**盘 ✓（`fine` ✓）；
             #     ② 过孔铜盘**确实压在这块盘上** ✓（= ⑥ 判过的那种 ✓）。
             #   ⇒ 这正是“**同网** via-in-pad”✓（⑥ 要求压到的盘**全是同一张网** ✓ 才会放行 ✓）
             #     ⇒ 这里**整块跳过** ✓，由 ⑥ 负责 ✓（不重复判 ✗）。
-            #   ✗ 旧写法要求“孔心**落在**盘框内”才跳 ✗ ⇒ 中心在框外 0.09 mm 的**合法**细间距孔
-            #     （实测 `#4` 在 `D3.connector4` ✓）被报成“离焊盘 −0.210 mm” ✗ = **假报** ✗。
-            dx0 = max(b[0] - px, 0.0, px - b[2])
-            dy0 = max(b[1] - py, 0.0, py - b[3])
-            if (q.get("epad") or q.get("fine")) and \
-                    (dx0 * dx0 + dy0 * dy0) ** 0.5 < r_mm:
+            if (q.get("epad") or q.get("fine")) and d0 < r_mm:
                 continue
-            dx = max(b[0] - px, 0.0, px - b[2])
-            dy = max(b[1] - py, 0.0, py - b[3])
-            d = (dx * dx + dy * dy) ** 0.5 - r_mm
+            d = d0 - r_mm
             if d < VIA_SAFE_MM:
                 worst.append(("%s焊盘 %s.%s" % ("EPAD " if q.get("epad") else "",
                                                 q["title"], q["cid"]), d))
@@ -793,7 +882,9 @@ def main(argv):
         cnt[k] = cnt.get(k, 0) + 1
     names = {"①": "悬空端点", "②": "板外", "③": "孤立过孔", "④": "同层短接", "⑤": "网表",
              "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交", "⑨": "安装孔",
-             "⑩": "声明未兼现"}
+             "⑩": "声明未兼现",
+             # ★ 2026-10-05 补 ✓：新加/改过的两条也要有名有姓 ✓（❓ 看着像工具坏了 ✗）
+             "⑪": "孔↔孔间距"}
     if cnt:
         print("%s分类：%s" % (IND, "｜".join("%s%s %d" % (k, names.get(k, "?"), cnt[k])
                                      for k in sorted(cnt))))

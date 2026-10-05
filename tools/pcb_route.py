@@ -378,6 +378,49 @@ def obstacles(model, part_copper=True, owners=None):
                        labels=print_lab)
 
 
+KEEP_W_MM = 24 * 0.0254        # 保线**兜底**宽度 ✓（数据里没写 `mils` 时才用它 ✓）
+KEEP_STEP_MM = 0.2             # 保线**分段**步长 ✓（小方框贴着线走 ✓ 不外溢 ✓）
+
+
+def keep_obstacles(keep, keep_v, step_mm=KEEP_STEP_MM, default_mils=24.0):
+    """「保线」（用户自己画的铜 ✓）⇒ 障碍条目 ✓ —— **唯一实现** ✗（2026-10-05 立 ✓）
+
+    ⇒ `([(lay, box, grow, tag)], [label, …])` ✓（`labels` 与条目**逐条对齐** ✓）
+
+    ★★ 为什么抽出来 ✗：`gen_routes` 与诊断工具各写一份就**迟早会漂** ✗（本仓纪律 ✓）。
+
+    ★★ 两条口径（都是**量出来的** ✗，2026-10-05 ✓）：用户点名「布线器留距要**按线半宽**算」✓
+      · **宽度**用**每条线自己的** `mils` ✓ —— ✗ 旧写法一律拿 `KEEP_W_MM`（24 mil ✗）
+        当代理 ⇒ 一条 **8 mil** 的线被多封 **0.2 mm/边** ✗
+        （实测：`LED2.connector2` 的起步格就被这样封死 ✗、周围 ±2 格全无 ✗）；
+      · 每个折线段**再切成 ≤ `step_mm`** 的小框 ✓ —— ✗ 旧写法整段一个**外接框** ✗
+        ⇒ 斜线（45° 的线一大把 ✓）框得比线宽出好几倍 ✗ ⇒ 过度封锁 ✓。
+    """
+    items, labels = [], []
+    for row in keep:
+        net, lay, pts0 = row[0], row[1], row[2]
+        mils = row[3] if len(row) > 3 and row[3] else default_mils
+        g = U(1.0) * (mils * MIL_MM / 2.0 + CLEAR_MM)
+        for i in range(len(pts0) - 1):
+            ax, ay = pts0[i]
+            bx, by = pts0[i + 1]
+            seg = math.hypot(bx - ax, by - ay)
+            n = max(1, int(seg / (U(1.0) * step_mm)) + 1)
+            for k in range(n):
+                t0, t1 = k / float(n), (k + 1) / float(n)
+                x1, y1 = ax + (bx - ax) * t0, ay + (by - ay) * t0
+                x2, y2 = ax + (bx - ax) * t1, ay + (by - ay) * t1
+                items.append((lay, (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)),
+                              g, "__keep__"))
+                labels.append("保线:%s(%.0f mil)" % (net, mils))
+    gv = U(VIA_CLEAR_MM + VIA_SAFE_MM)
+    for row in keep_v:
+        net, p = row[0], row[1]
+        items.append(("both", (p[0], p[1], p[0], p[1]), gv, "__keep__"))
+        labels.append("保线过孔:%s" % net)
+    return items, labels
+
+
 def make_grid(rect, cell, items, extra=(), skip_tag=None, labels=None):
     """⇒ 基准栅格 ✓（障碍表全挡上 ✓；板边留边 ✓）
 
