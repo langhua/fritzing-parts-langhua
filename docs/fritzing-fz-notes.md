@@ -179,3 +179,15 @@ py -3.13 tools/fz_deglue_views.py <out.fzz> --check      # 0 条 ✓（退出码
   改后只剩 **10 条** ✓ —— 全是**既有**问题 ✓（打包 5 条 ＋ 电源轨 bus 重叠 5 条 ✓），
   **没有一条是这次引入的** ✓（拿 `git show HEAD:…` 的旧版并排跑过 ✓）。
 
+**批量克隆 core 的 7 件** ✓（2026-10-05 用户定："core 里面的所有面包板都需要克隆过来进行修改" ✓）：
+`tools/clone_core_breadboards.py` ✓（`--import-core` 一次性把 core 素材收进仓内
+`svg/_assets/core-bb/` ✓ ＋随附 CC-BY-SA 3.0 许可 ✓；之后生成**只读仓内** ✓）。
+7 件 = `RSR03MB102-LH`(830 孔) / `GenericBreadboard-LH`(840) / `HalfBreadboard-LH`(420) /
+`HalfBreadboardV2-LH`(400) / `BB301-LH`(270) / `TinyBreadboard-LH`(200) /
+`MiniBreadboard-LH`(170) ⇒ 合计 **3130 孔 / 6260 块** ✗ ⇒ **全部清零** ✓；
+★ 用**新 moduleId** ✓（与 core 不撞 ✓ ⇒ 老草图仍用原厂件 ✓、一点不受影响 ✓），
+标题一律 `<原厂标题> (BB only)` ✓。
+
+★★ **用户实测确认** ✓（2026-10-05 ✓，原话："修改后的面包板正确，实测**面包板跟 PCB 无关了** ✓，
+7 个面包板都可以使用" ✓）—— 这一步是**人眼在 Fritzing 里读的** ✓，我这边所有闸门都替代不了 ✓。
+

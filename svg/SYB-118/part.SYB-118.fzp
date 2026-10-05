@@ -6416,11 +6416,6 @@
       <nodeMember connectorId="pin15X"/>
       <nodeMember connectorId="pin16X"/>
       <nodeMember connectorId="pin17X"/>
-      <nodeMember connectorId="pin19X"/>
-      <nodeMember connectorId="pin20X"/>
-      <nodeMember connectorId="pin21X"/>
-      <nodeMember connectorId="pin22X"/>
-      <nodeMember connectorId="pin23X"/>
     </bus>
     <bus id="bus1-17Y">
       <nodeMember connectorId="pin1Y"/>
