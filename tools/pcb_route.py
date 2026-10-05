@@ -903,6 +903,14 @@ ORDER_DIFFICULTY = False
 #   （= 量出来的封口者 ✓），✗ 不再是 `near_net` 的"盘↔盘"猜测 ✓。
 #   起因：库自己的诊断点名 `线:DATA_IN` 封 `RC` 的出口 ✓、`线:COIL_A` 封 `GND` 的 ✓。
 RIP_BY_WIRES = False
+# ★★ 2026-10-05 加 ✓（**默认关** ✗）：把「**脚口闸门**」接进**候选解的打分** ✓。
+#   由来（像素板实测 ✓）：光板上那两只"差网"的目标脚本来在**主区域**里 ✓ ⇒
+#   口袋是**线切出来的** ✗ ⇒ 规则 = **布线不许切断别人的脚口** ✓。
+#   而人被确认过的交付件（`pixel-pcb-v69.fzz`）上该闸门报 **0 只** ✓
+#   ⇒ **规则与实物相容** ✓（闸门没有把已接受的成品判死 ✓）。
+#   ⇒ 打分时多一维：**被封成小口袋的脚数越少越好** ✓（接在连通数之后、长度之前 ✓）。
+ESCAPE_PENALTY = False
+_GATE = {}            # `route_ripup` 设一次 ✓ ⇒ `_score` 里读 ✓（两处打分自动一致 ✓）
 
 
 def _difficulty(net_pads, pads, items, rect=None, cell=None):
@@ -1035,11 +1043,58 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     return best[2]
 
 
+def escape_penalty(res, rect, pads, net_pads, cell, items, width_of=None, pct=3.0):
+    """⇒ **被关进小口袋的脚数** ✓（越小越好 ✓；口径与 `_work/escape_gate.py` 同 ✓）
+
+    · 障碍 = 基础障碍 `items` ✓ ＋ **本候选自己布的线/过孔** ✓
+      （当保线 ✓，逐段按**它自己的 mils** ✓ ⇒ 调库自己的 `keep_obstacles` ✓）；
+    · 每张网先 `carve_pads` ✓ ⇒ 用库自己的 `flood` ✓ 逐脚泛洪 ✓（✗ 不另写 BFS ✓）；
+    · 阈值 `pct`（默认 3% 的全板可走格 ✓）—— 低于它就当"被关进口袋" ✗。
+    """
+    w_of = width_of or (lambda n: TRACE_MM)
+    keep, keep_v = [], []
+    for n, d in (res or {}).items():
+        for (lay, p, q) in (d.get("segs") or ()):
+            keep.append((n, lay, [p, q], w_of(n) / MIL_MM))
+        for p in (d.get("vias") or ()):
+            keep_v.append((n, p))
+    ki, _kl = keep_obstacles(keep, keep_v)
+    its = list(items) + list(ki)
+    bad = 0
+    total = None
+    for n, mem in net_pads.items():
+        g = make_grid(rect, cell, its)
+        carve_pads(g, pads, mem, U(w_of(n) / 2.0 + CLEAR_MM))
+        if total is None:
+            total = sum(sum(1 for v in row if v) for row in g.g.values())
+            if not total:
+                return 0
+        for k in mem:
+            q = pads.get(k)
+            if not q:
+                continue
+            best = None
+            for lay in (q.get("lays") or ()):
+                if lay not in g.g:
+                    continue
+                r = len(flood(g, lay, q["c"]))
+                best = r if best is None else min(best, r)
+            if best is not None and best < pct * total / 100.0:
+                bad += 1
+    return bad
+
+
 def _score(res):
-    """打分 ✓（**先比连通网数 ✓，再比总长 ✓**）—— 拆线重布就靠它决定"接不接受" ✓"""
+    """打分 ✓（**先比连通网数 ✓，再比总长 ✓**）—— 拆线重布就靠它决定"接不接受" ✓
+
+    ★ 2026-10-05 ✓：`ESCAPE_PENALTY` 开着时，中间多一维
+      **「被封成小口袋的脚数」** ✓（越少越好 ✓）⇒ 次序/拆线会**自己挑**不封口的解 ✓。
+    """
     n_ok = sum(1 for d in res.values() if d["ok"])
     ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
              for d in res.values() for s in d["segs"])
+    if _GATE.get("on"):
+        return (n_ok, -escape_penalty(res, **_GATE["ctx"]), -ln)
     return (n_ok, -ln)
 
 
@@ -1155,10 +1210,14 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
                  width_of=width_of, first=first, last=last, mid_keep=mid_keep, ban_via=ban_via,
                  copper_keep=copper_keep, pre=pre, labels=labels)
+    if ESCAPE_PENALTY:
+        _GATE["on"] = True
+        _GATE["ctx"] = dict(rect=rect, pads=pads, net_pads=net_pads, cell=cell,
+                             items=items, width_of=width_of)
     best_s = _score(best)
     if verbose:
         print("   [拆线重布] 起点：连通 %d/%d ✓｜长 %.1f mm"
-              % (best_s[0], len(best), -best_s[1]))
+              % (best_s[0], len(best), -best_s[-1]))
 
     def near_net(net, other):
         """两张网最近的一对焊盘距离 ✓（用来猜"谁挡住了我" ✓）"""
@@ -1227,7 +1286,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                         DIAG["fails"].extend(_s2)
                     if verbose:
                         print("   [拆线重布] 第 %d 轮：拆《%s》⇒ 重布《%s》✓｜连通 %d/%d ✓｜长 %.1f mm"
-                              % (rnd, blk, net, s[0], len(trial), -s[1]))
+                              % (rnd, blk, net, s[0], len(trial), -s[-1]))
                     break
                 # ✗ 否决了 ⇒ 它的诊断**丢掉** ✗（那是没被采纳的中间状态 ✓）
                 if DIAG["on"]:
@@ -1832,6 +1891,9 @@ def main(argv):
     if "--rip-wires" in argv:             # ★ 2026-10-05 加 ✓（默认关 ✗）：拆封口者按线↔盘 ✓
         global RIP_BY_WIRES
         RIP_BY_WIRES = True
+    if "--escape-penalty" in argv:        # ★ 2026-10-05 加 ✓（默认关 ✗）：打分多一维脚口 ✓
+        global ESCAPE_PENALTY
+        ESCAPE_PENALTY = True
     model = PC.collect(fzz)
     r = model["board"]
     pads = pad_index(model)
