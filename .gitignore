@@ -17,3 +17,8 @@ __pycache__/
 *trace_overlay.svg
 
 **/gerber*/
+
+# 生成器/工具的备份与草稿（2026-10-05 起）
+*.bak-*
+_scratch/
+

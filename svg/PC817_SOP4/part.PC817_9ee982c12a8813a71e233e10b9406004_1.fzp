@@ -80,7 +80,7 @@
    <description>Emitter</description>
    <views>
     <breadboardView>
-     <p layer="breadboard" svgId="connector2pin"/>
+     <p layer="breadboard" svgId="connector2pin" terminalId="connector2terminal"/>
     </breadboardView>
     <schematicView>
      <p layer="schematic" svgId="connector2pin" terminalId="connector2terminal"/>
