@@ -1129,7 +1129,7 @@ def _net_keys(net_pads, pads, items=None, rect=None, cell=None):
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
           width_of=None, first=(), last=(), mid_keep=(), ban_via=(), copper_keep=(),
-          pre=None, labels=()):
+          pre=None, labels=(), seed=None):
     """⇒ **多种次序里最优的那份** ✓（先比连通网数 ✓，再比总长 ✓）
 
     `pre` = **已经布好、要钉住的网** ✓ `{net: d}` —— 它们既不重布 ✓、又照旧当障碍 ✓
@@ -1170,7 +1170,7 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
         _m = len(DIAG["fails"])
         res = _route_once(items, rect, net_pads, pads, cell, via_cost, order,
                           pre=pre, width_of=w_of, mid_keep=mid_keep, ban_via=ban_via,
-                          copper_keep=copper_keep, labels=labels)
+                          copper_keep=copper_keep, labels=labels, seed=seed)
         _snap = DIAG["fails"][_m:]              # 本次次序的诊断 ✓
         n_ok = sum(1 for d in res.values() if d["ok"])
         miss = sum(int(d.get("miss", 0)) for d in res.values())
@@ -1179,8 +1179,8 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
         if verbose:
             print("   次序《%-14s》：连通 %d/%d ✓｜还差 %2d 条连接 ✓｜长 %6.1f mm"
                   % (name, n_ok, len(res), miss, MM(ln)))
-        # ★ 同一把尺子 ✓（先连通网数 ✓ → 再"还差几条连接" ✓ → 后总长 ✓，同 `_score` ✓）
-        if best is None or (n_ok, -miss, -ln) > (best[0], -best[1], -best[2]):
+        # ★ 同一把尺子 ✓（**先"还差几条连接" ✓ → 再连通网数 ✓ → 后总长 ✓**，同 `_score` ✓）
+        if best is None or (-miss, n_ok, -ln) > (-best[1], best[0], -best[2]):
             best = (n_ok, miss, ln, res, name)
             _best_snap = list(_snap)            # ★ 记住**胜出那份**的诊断 ✓
     if verbose and best:
@@ -1236,26 +1236,24 @@ def escape_penalty(res, rect, pads, net_pads, cell, items, width_of=None, pct=3.
 
 
 def _score(res):
-    """打分 ✓（**先比连通网数 ✓ → 再比"还差几条连接" ✓ → 最后比总长 ✓**）—— 拆线重布就靠它决定"接不接受" ✓
+    """打分 ✓ ⇒ **先比"还差几条连接" ✓ → 再比连通网数 ✓ → 最后比总长 ✓**
 
-    ★★ 2026-10-05 加中段 ✓（**与 Fritzing 同义** ✓，仓规 §13 ✓）：
-      ✗ 原来只有 `(连通网数, -长)` ✗ ⇒ **分不清**这两种 8/9 ✗：
-        · 差的那张网**只差一口气**（9 只脚里差 1 段 ✓）；
-        · 差的那张网**几乎全断**（实测：8/9 那份里 `GND` **只布出 3 段、7 条连接没连上** ✗）；
-      两种都是 "8/9" ✓ ⇒ 拆线重布会把**差的那种**当成好解收下 ✗（实测 ✓）。
-      ✓ 现在多一维 `-Σ(每张网缺的段数)` ✓ —— 这正是 **Fritzing 状态栏那句** 数的东西 ✓
-      （`mainwindow.cpp:2298`：`%1 of %2 nets routed - %n connector(s) still to be routed` ✓ ——
-      它数的是 **connector** ✗ 不是网 ✗ ✓）。
-    ★ 2026-10-05 ✓：`ESCAPE_PENALTY` 开着时，中间还多一维
-      **「被封成小口袋的脚数」** ✓（越少越好 ✓）⇒ 次序/拆线会**自己挑**不封口的解 ✓。
+    ★★ 2026-10-05 定 ✓（**为什么它当第一维** ✓，实测把我说服的 ✓）：
+      **"还差几条连接 = 0" ⟺ 每张网都接完了 ⟺ 9/9** ✓✓ —— 它就是**离目标多远**的真尺子 ✓；
+      而"连通网数"**不是**（一张网差 1 条与差 7 条都算"没通" ✗）：
+        实测同一道题两种解 ✓ —— `8/9 差 7 条` ✗ 与 `7/9 差 2 条` ✓ —— **后者离 9/9 近得多** ✓。
+      ★ 它正是 **Fritzing 状态栏**那句数的东西 ✓（`mainwindow.cpp:2298` ✓：
+        `%1 of %2 nets routed - %n connector(s) still to be routed` ✓ —— 数的是 **connector** ✗）；
+      ⇒ 仓规 §13「**同一把尺子**」✓。
+    ★ `ESCAPE_PENALTY` 开着时，中间还夹一维**「被封成小口袋的脚数」** ✓（越少越好 ✓）。
     """
     n_ok = sum(1 for d in res.values() if d["ok"])
     miss = sum(int(d.get("miss", 0)) for d in res.values())
     ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
              for d in res.values() for s in d["segs"])
     if _GATE.get("on"):
-        return (n_ok, -miss, -escape_penalty(res, **_GATE["ctx"]), -ln)
-    return (n_ok, -miss, -ln)
+        return (-miss, n_ok, -escape_penalty(res, **_GATE["ctx"]), -ln)
+    return (-miss, n_ok, -ln)
 
 
 def _sgn(v):
@@ -1354,7 +1352,7 @@ def copper_clashes(res, width_of=None):
 
 def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 blockers=8, verbose=True, width_of=None, first=(), last=(), mid_keep=(),
-                ban_via=(), copper_keep=(), pre=None, labels=()):
+                ban_via=(), copper_keep=(), pre=None, labels=(), seed=None):
     """先多次序布 ✓，再对布不通的网**拆掉挡它的线**重来 ✓（rip-up & reroute ✓）
 
     ★ 为什么要它 ✓（实测 2026-09-30 ✓）：9 个网只连通 3 个 ✗，而线宽 8～32 mil 全一样 ✗
@@ -1369,7 +1367,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
     _mark0 = len(DIAG["fails"])              # ★ 诊断水位 ✓（只留最终这份 ✓）
     best = route(items, rect, net_pads, pads, cell, via_cost, verbose=verbose, tries=tries,
                  width_of=width_of, first=first, last=last, mid_keep=mid_keep, ban_via=ban_via,
-                 copper_keep=copper_keep, pre=pre, labels=labels)
+                 copper_keep=copper_keep, pre=pre, labels=labels, seed=seed)
     if ESCAPE_PENALTY:
         _GATE["on"] = True
         _GATE["ctx"] = dict(rect=rect, pads=pads, net_pads=net_pads, cell=cell,
@@ -1377,7 +1375,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
     best_s = _score(best)
     if verbose:
         print("   [拆线重布] 起点：连通 %d/%d ✓｜还差 %d 条连接 ✓｜长 %.1f mm"
-              % (best_s[0], len(best), -best_s[1], -best_s[-1]))
+              % (best_s[1], len(best), -best_s[0], -best_s[-1]))
 
     def near_net(net, other):
         """两张网最近的一对焊盘距离 ✓（用来猜"谁挡住了我" ✓）"""
@@ -1435,7 +1433,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 trial = _route_once(items, rect, net_pads, pads, cell, via_cost,
                                     [net, blk], pre=pre, width_of=width_of,
                                     mid_keep=mid_keep, ban_via=ban_via,
-                                    copper_keep=copper_keep, labels=labels)
+                                    copper_keep=copper_keep, labels=labels, seed=seed)
                 _s2 = DIAG["fails"][_m2:]
                 s = _score(trial)
                 if s > best_s:
@@ -1447,7 +1445,7 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                     if verbose:
                         print("   [拆线重布] 第 %d 轮：拆《%s》⇒ 重布《%s》✓｜连通 %d/%d ✓"
                               "｜还差 %d 条连接 ✓｜长 %.1f mm"
-                              % (rnd, blk, net, s[0], len(trial), -s[1], -s[-1]))
+                              % (rnd, blk, net, s[1], len(trial), -s[0], -s[-1]))
                     break
                 # ✗ 否决了 ⇒ 它的诊断**丢掉** ✗（那是没被采纳的中间状态 ✓）
                 if DIAG["on"]:
@@ -1491,10 +1489,17 @@ def _snap_ends(sg, pa, pb):
 
 
 def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, width_of=None,
-                mid_keep=(), ban_via=(), copper_keep=(), labels=()):
+                mid_keep=(), ban_via=(), copper_keep=(), labels=(), seed=None):
     """按给定次序贪心布一遍 ✓ ⇒ `{net: dict(ok, segs, vias, note)}`
 
     `pre` = **已经布好**的 `{net: d}` ✓ —— 它们既不重布 ✓、又照旧当障碍 ✓（拆线重布用 ✓）。
+
+    ★★ `seed` ✓（2026-10-05 加 ✓）：**已经铺好的铜箔** ✓（格式与 `pre` 同 ✓）——
+      与 `pre` 只差一点 ✗：`pre` 里的网**会被跳过** ✗（当它布完了 ✓），
+      而 `seed` 里的网**照样要布** ✓（那些铜是它已经**占住的地盘** ✓，比如**扇出存根** ✓）。
+      ★ 它**天然**对本网不设障碍 ✓ —— "挡别人线"那一步本来就 `if net2 == net: continue` ✓
+        （同网铜相碰合法 ✓）⇒ **不用另写一份逻辑** ✓。
+      ★ 交付时注意 ✗：`seed` 的段**不在** `out[net]["segs"]` 里 ✗ ⇒ 调用方要把两边**并起来** ✓。
 
     ★★ 每**段**重建栅格 ✓：**只挡别人网**的线 ✓（同网铜相碰合法 ✓；
       把自己挡死会让多脚网再也接不上剩下的脚 ✗ —— 实测 GND 1 段之后 7 段全败 ✗）。
@@ -1520,6 +1525,12 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             traces.setdefault(net2, []).append(
                 ("both", (p[0], p[1], p[0], p[1]), U(0.45), "过孔:%s" % net2))
     base = make_grid(rect, cell, items, labels=labels)
+    # ★★ `seed`（**扇出存根** ✓）—— 收进 `traces` ✓ 而不是 `pre` ✗：
+    #   · 进了 `traces` ⇒ ①**当障碍** ✓（别的网要绕 ✓）②**本网不被跳过** ✓；
+    #   · 格式与 `pre` 逐字相同 ✓ ⇒ 后面那支"挡别人线"的代码**原样**能用 ✓（一份实现 ✓）。
+    for net2, tlist in (seed or {}).items():
+        for lay, box, gr, lab in tlist:
+            traces.setdefault(net2, []).append((lay, box, gr, lab))
     # ★★ 「留路」✓（2026-09-30 ✓）：把"中间"那圈子算出来 —— `mid_keep` 里的网
     #   （电源/地 ✓）走它们要加罚 ✓ ⇒ 中间走廊留给后面的信号线 ✓。
     keep_cells = set()
