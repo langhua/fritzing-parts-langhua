@@ -237,10 +237,28 @@ def main(argv):
             print("包内成员: %s" % ", ".join(names))
             if any("/" in n or "\\" in n for n in names):
                 fails.append("FAIL 包里不该有子目录（要平铺，AGENTS §4）")
-            want = {"part.%s.fzp" % part} | {"svg.%s.%s_%s.svg" % (v, part, v) for v in VIEWS}
+            # ★ 期望的成员名 = **fzp 自己声明的 `image=`** ✓（`<view>/<名>` ⇒ 平铺成
+            #   `svg.<view>.<名>` ✓，就是 §10 那条"部署/打包按 fzp 自己的声明反推" ✓）。
+            #   ✗ 别按"我们的命名习惯"去猜 ✗：老件 `SYB-118` 的图形就叫
+            #   `svg.breadboard.SYB-118_1.svg` ✓，fzp 指的也正是它 ✓ ⇒ 包是对的 ✓
+            #  （文件名不合规那条只**提示** ✓，见上面 ①）。
+            want = {os.path.basename(fzp_path)}          # ★ = 磁盘上那个真名字 ✓
+            #   （✗ 别写死 `part.<目录名>.fzp` ✗：`3Pin-LED` 这类件的 fzp 是按 moduleId
+            #     命名的 ✓，目录名跟它不一样 ✓ —— 老规矩"按 fzp 自己的声明反推" ✓。）
+            vw = root.find("views")
+            for e in (list(vw) if vw is not None else []):
+                lay = e.find("layers")
+                if lay is None or not lay.get("image"):
+                    continue
+                # ★ `image="breadboard/8205HA_breadboard.svg"` ⇒ 包内平铺名
+                #   `svg.breadboard.8205HA_breadboard.svg` ✓ —— **要用 basename** ✓
+                #   （✗ 把 `image` 整串拼进去会得到 `svg.breadboard.breadboard.…` ✗）
+                want.add("svg.%s.%s" % (e.tag.replace("View", ""),
+                                        os.path.basename(lay.get("image"))))
             if is_bb:
                 # ★ 面包板：schematic/pcb 共用面包板图（原厂同形 ✓）⇒ 不要求那两份独立成员 ✓
-                want -= {"svg.%s.%s_%s.svg" % (v, part, v) for v in ("schematic", "pcb")}
+                want = {w for w in want
+                        if not any(w.startswith("svg.%s." % v) for v in ("schematic", "pcb"))}
             if set(names) != want:
                 fails.append("FAIL 包内成员与预期不符（多: %s；少: %s）"
                              % (sorted(set(names) - want), sorted(want - set(names))))

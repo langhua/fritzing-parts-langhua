@@ -10,6 +10,9 @@
             </iconView>
         </views>
         </instance>
+        <instance moduleIdRef="Breadboard-SYB118-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SYB-118.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="Breadboard-RSR03MB102-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Breadboard-RSR03MB102-LH-ModuleID.fzp">
             <views/>
         </instance>

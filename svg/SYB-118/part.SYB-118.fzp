@@ -17,7 +17,7 @@
   <description>A breadboard for easily prototyping circuits</description>
   <views>
     <iconView>
-      <layers image="breadboard/SYB-118_1.svg">
+      <layers image="icon/SYB-118_icon.svg">
         <layer layerId="icon"/>
       </layers>
     </iconView>

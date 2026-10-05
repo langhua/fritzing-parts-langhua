@@ -130,7 +130,7 @@ SECTIONS = {
     ],
     "breadboards": [
         ("面包板（去粘版：孔只在面包板视图声明）",
-         ["RSR03MB102-LH", "GenericBreadboard-LH", "HalfBreadboard-LH",
+         ["SYB-118", "RSR03MB102-LH", "GenericBreadboard-LH", "HalfBreadboard-LH",
           "HalfBreadboardV2-LH", "BB301-LH", "TinyBreadboard-LH",
           "MiniBreadboard-LH"]),
     ],
