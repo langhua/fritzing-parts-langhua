@@ -1804,10 +1804,15 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                     _bad = trapped_pins(grid_for, pend, net, net_pads, pads, novia_for,
                                         watch=_watch, cap=ESCAPE_WALL_CAP)
                     if _bad:
+                        # ★★ 名字要**分清两件事** ✗（2026-10-05 ✓）：`n2` = **网名** ✓、
+                        #   `k2` = **焊盘的 key** = `(位号, connectorN)` ✓ ⇒ 写成
+                        #   `U1.connector1（网 RC）` ✓。
+                        #   ✗ 我第一版印成 `RC.connector1` ✗ —— 把**网名**当成**位号** ✗
+                        #     （读起来还像个合理名字 ✓ ⇒ 正是仓规 §13 说的"两个声音" ✗）。
                         print("   ⚠ [判官] 网 %s 的这一段（%s.%s → %s.%s）把**还没布完**的脚"
                               "切断了 ✗：%s"
                               % (net, a[0], a[1], b[0], b[1],
-                                 "、".join("%s.%s" % (n2, k2[1])
+                                 "、".join("%s.%s（网 %s）" % (k2[0], k2[1], n2)
                                            for n2, k2, _b, _a in _bad[:4])))
             if not path:
                 # ★★ 兜底 ✓（2026-10-01 ✓）：A* 没搜到 ⇒ 用**不带任何代价**的 BFS 再来一次 ✓
