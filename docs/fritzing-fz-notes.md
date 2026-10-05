@@ -94,3 +94,49 @@
   **不是 netlabel** ✗ ⇒ 所以"9 个网 vs 它 7 个网"还不能归因到 netlabel ✓（**待核** ✗，别写死 ✗）。
 - 核法 ✓：`_work/probe_netlabel.py <fzz>` ✓（打印每个 netlabel 的视图、脚、连接 ✓）。
 
+## 10. ★★ 面包板的**孔在 PCB / 原理图视图里也"存在"** ⇒ 会把网并掉 ✗（2026-10-05 取证 ✓，用户实测三视图确认 ✓）
+
+**病** ✓（用户 2026-10-05 实测 ✓）：同一草图里既有面包板、又有 PCB 时，**PCB 视图报
+「还有 N 个连接件没布线」＋画鼠线虚线** ✗ —— 而 PCB 的铜其实是通的 ✓（9 张网各 1 块铜 ✓）。
+把面包板**整个删掉** ⇒ 立刻「布线完成」✓（**消融实验** ✓）⇒ 是面包板在**偷偷并网** ✗。
+
+**机理**（读源码 ✓）：
+
+1. 核心面包板件 `breadboard2.fzp` 给**每个孔**都声明了
+   `<pcbView><p layer="breadboardbreadboard" svgId="pin1A"/></pcbView>`
+   （实测 **831 条** ✓）⇒ **面包板的孔在 PCB 视图里也有连接器项** ✗。它**看不见** ✗
+   （`breadboardbreadboard` 层在 PCB 视图里不画 ✓），但它在**网表**里 ✓ —— 这正是它难查的原因 ✗。
+2. 恢复 `<connect>` 记录的目标项时走 `ItemBase::findConnectorItemWithSharedID()`
+   = `connector->connectorItem(m_viewID)` ⇒ **只在"当前视图"里找** ✓
+   （调用点 `SketchWidget::handleConnect()` ✓）。
+3. ⇒ 面包板实例 `pcbView` 段里那些 `pin14F → U1(90011204) layer=copper0` 记录 ✓
+   在 **PCB 视图里是"真"连接** ✗ ⇒ 面包板内部 **130 条 bus**（5 孔一列 ✓）把 PCB 的网
+   **并掉** ✗ ⇒ `GraphUtils::scoreOneNet()` 判出「还有 N 个连接件没布线」✗。
+
+**怎么核** ✓（逐条可复现 ✓）：
+
+```bash
+py -3.13 tools/fz_deglue_views.py <改前的.fzz> --check   # 报 86 条 ✗（退出码 1）
+py -3.13 tools/fz_deglue_views.py <in.fzz> <out.fzz>     # 去粘
+py -3.13 tools/fz_deglue_views.py <out.fzz> --check      # 0 条 ✓（退出码 0）
+```
+
+★ 这条**只能靠人在 Fritzing 里读三个视图**才算数 ✗（我这边所有闸门都是**间接**判 ✓）——
+2026-10-05 实测 ✓：改前 PCB 报「还剩 2 个」✗，改后**三视图都正确** ✓。
+
+**为什么只删记录不稳** ✗：
+
+- 连接报在 **Connector 级** ✓（`Connector::connectTo()` → `m_toConnectors` ✓）⇒
+  Fritzing 另存时**按视图**把记录**再写回来** ✗；
+- 记录是**双向**的 ✓（面包板那侧写 `…→U1 layer=copper0` ✗，**看着像铜** ✗）⇒
+  只删"零件 → 面包板"那一半**一点用都没有** ✗（实测仍报 2 个 ✗ —— 我第一版就栽在这 ✗）。
+
+⇒ 稳的修法 = **让那个视图里根本没有这个元件** ✓：加载逻辑
+`QDomElement view = views.firstChildElement(viewName); if (view.isNull()) continue;`
+⇒ **该视图没有段落 ⇒ 不创建元件** ✓ ⇒ 桥**根本建不起来** ✓。
+
+**顺带发现（我们的生成器也有同类残留 ✗）**：via / 导线在**面包板段、原理图段**里还留着
+**77 条**"源层写成 `copper0`"的记录 ✗（项目侧 `_work/why21.py` 量的 ✓）——
+它们**不并网** ✓（两端本来就是同一张网 ✓），但会让"互指完整性"（项目侧 `_work/sym.py` ✓）
+报 **21 条单向残缺** ✗ ⇒ 待清 ✓（同一族 ✓，下一轮一起办 ✓）。
+
