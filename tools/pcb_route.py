@@ -302,6 +302,12 @@ def obstacles(model, part_copper=True, owners=None):
         #   ✓ 按 `NECK_MIL`（10 mil ⇒ 净空 0.277 ✓）算 ⇒ 缝还在 ✓
         #     而进去的那一段由写回器**真的变成 10 mil** ✓（`gen_routes.split_neck` ✓）
         #     ⇒ 模型与实际铜面一致 ✓。
+        # ★★ 2026-10-05 **试过按实际线宽取小，实测零效果 ⇒ 已回退** ✗（照实记 ✓）：
+        #   动机 ✓：本板全程 8 mil（`--mil=8` ✓），而 `split_neck` **只缩不涨** ✓
+        #     ⇒ 实际铜面是 8 mil ✗，模型却按 10 mil 封 ✗ ⇒ 每边多封 0.0254 mm ✓。
+        #   实测 ✗：改成 `min(NECK_W_MM, TRACE_MM)` ⇒ 四个次序的**连通数（4/7/4/6）与线长各不相同**
+        #     全部**一模一样** ✗ ⇒ 那 0.0254 mm **没跨过 0.15 mm 的格边界** ✓ ⇒ **零收益** ✗。
+        #   ⇒ 回退（✗ 不留无实测收益的改动 ✓；与“6 mil / 净空 0.127”两次同样处理 ✓）。
         gp = U(NECK_W_MM / 2 + CLEAR_MM) if q.get("tight") else grow
         for lay in lays:
             if lay in LAYERS:
@@ -895,31 +901,37 @@ def pad_index(model):
 ORDER_DIFFICULTY = False
 
 
-def _difficulty(net_pads, pads, items, halo_mm=None):
-    """网的**拥挤度** ✓ = 各脚 0.55 mm 光晕里压着的障碍块数之和 ✓（越大越难 ✓）"""
-    g = U(halo_mm if halo_mm is not None else VIA_PAD_KEEPOUT_MM)
-    score = {}
+def _difficulty(net_pads, pads, items, rect=None, cell=None):
+    """网的**难度** ✓ = 它各脚里**最小的那片可走区格数** ✓（越小越难 ✓）
+
+    ✗ 上一版（用"0.55 光晕里压着几块障碍"当拥挤度 ✓）**实测不帮忙** ✗：
+      像素板⇒《难先》**5/9** ✗ 而《脚数↑》**7/9** ✓（⇒ 已改成现在这版 ✓）。
+    ★ 现在用**真口袋大小** ✓：直接调库自己的 `flood` ✓（✗ 不另写 BFS ✓），
+      每只脚在本层洪水一遍 ✓ 取最小 ✓（本板 ~9×几×3 万格 ✓，几秒 ✓）。
+    """
+    if rect is None or cell is None:
+        return {}
+    g0 = make_grid(rect, cell, items)
+    out = {}
     for n, mem in net_pads.items():
-        s = 0.0
+        worst = None
         for k in mem:
             q = pads.get(k)
             if not q or not q.get("box"):
                 continue
-            b = q["box"]
-            bx = (b[0] - g, b[1] - g, b[2] + g, b[3] + g)
-            for (lay, box, grow, _t) in items:
-                if _t == n:
-                    continue                    # 本网的铜不算挤自己 ✓
-                if lay not in q.get("lays", ()) and lay != "both":
+            best = None
+            for lay in (q.get("lays") or ()):
+                if lay not in g0.g:
                     continue
-                if (bx[0] <= box[2] + grow and box[0] - grow <= bx[2]
-                        and bx[1] <= box[3] + grow and box[1] - grow <= bx[3]):
-                    s += 1.0
-        score[n] = s
-    return score
+                r = len(flood(g0, lay, q["c"]))
+                best = r if best is None else min(best, r)
+            if best is not None:
+                worst = best if worst is None else min(worst, best)
+        out[n] = worst if worst is not None else 0
+    return out
 
 
-def _net_keys(net_pads, pads, items=None):
+def _net_keys(net_pads, pads, items=None, rect=None, cell=None):
     """几种**排序键** ✓（= \"先布哪张网\"的几种策略 ✓）—— 单次序不稳 ✗，多种取优 ✓
 
     ✗ 实测教训（2026-09-30 ✓）：**先布 GND/5V** ⇒ 中间走廊被抢光 ✗ ⇒ 小网接不上 ✗；
@@ -949,10 +961,10 @@ def _net_keys(net_pads, pads, items=None):
             ("多脚先（脚数↓）", lambda n: -len(net_pads[n])),
             ("周长↓", lambda n: -span(n))]
     if ORDER_DIFFICULTY and items:
-        _d = _difficulty(net_pads, pads, items)
-        # ★ 开的时候**排在最前** ✓ —— 因为 `route()` 用 `[:tries]` 截断 ✓，
-        #   排第 7 就等于**没跑** ✗（这一坑先记下 ✓）
-        keys.insert(0, ("难先（拥挤↓）", lambda n: -_d.get(n, 0.0)))
+        _d = _difficulty(net_pads, pads, items, rect=rect, cell=cell)
+        # ★ 升序 ✓（**最小的口袋先布** ✓）；开了就**排最前** ✓ —— `route()` 用
+        #   `[:tries]` **截断** ✓ ⇒ 排第 7 等于**没跑** ✗（2026-10-05 踩过 ✓）。
+        keys.insert(0, ("难先（口袋↑）", lambda n: _d.get(n, 0)))
     return keys
 
 
@@ -981,7 +993,7 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     best = None
     _mark0 = len(DIAG["fails"])                 # ★ 诊断起点的水位 ✓（下面只留胜者的 ✓）
     _best_snap = []
-    for name, key in _net_keys(net_pads, pads, items)[:tries]:
+    for name, key in _net_keys(net_pads, pads, items, rect, cell)[:tries]:
         # ★★ 2026-10-03 修 ✗：`last` **必须先判** ✓ —— ✗ 旧写法 `(0 if in first else 2 if in last …)`
         #   在一张网**同时**出现在 `first` 与 `last` 里时让 `first` 赢 ✗ ⇒ `last` **静默失效** ✗
         #   （实测撞到 ✓：`--signals-first` 忘了不再传 `first=power` ✓ ⇒ 开关成了 **no-op** ✗，
