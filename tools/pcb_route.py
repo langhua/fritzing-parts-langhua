@@ -899,6 +899,10 @@ def pad_index(model):
 #   ★ 判据取**便宜的那个** ✓（不求精确 ✓）：每只脚的 `VIA_PAD_KEEPOUT_MM` 光晕里
 #     压着几块**障碍** ✓，按网求和 ✓，越大越先 ✓（无洪水 ✓、纯几何 ✓，本板 ~3.6 万次比较 ✓）。
 ORDER_DIFFICULTY = False
+# ★★ 2026-10-05 加 ✓（**默认关** ✗）：拆线重布时"**拆谁**"按**线↔盘**距离排 ✓
+#   （= 量出来的封口者 ✓），✗ 不再是 `near_net` 的"盘↔盘"猜测 ✓。
+#   起因：库自己的诊断点名 `线:DATA_IN` 封 `RC` 的出口 ✓、`线:COIL_A` 封 `GND` 的 ✓。
+RIP_BY_WIRES = False
 
 
 def _difficulty(net_pads, pads, items, rect=None, cell=None):
@@ -1170,6 +1174,31 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                 bestd = min(bestd, d)
         return bestd
 
+    def wire_near(net, other, segs):
+        """候选网的**线**离本网焊盘的最近距离 ✓（**量出来的封口者** ✓）
+
+        ✗ 为什么要它（2026-10-05 ✓，像素板实测 ✓）：挑"拆谁"原先用 `near_net`
+          —— 那是"**盘↔盘**"的猜测 ✗；而库自己的诊断把真正的封口者**点名**了 ✓：
+          `线:DATA_IN` 封住 `RC` 的目标口袋 ✓、`线:COIL_A` 封住 `GND` 的 ✓
+          ⇒ 封口的是**线** ✗ ⇒ 就该按"**线↔盘**"距离排序 ✓。
+        """
+        bestd = 1e18
+        for (_lay, p, q) in (segs or ()):
+            vx, vy = q[0] - p[0], q[1] - p[1]
+            L2 = vx * vx + vy * vy
+            for k in net_pads[net]:
+                if k not in pads:
+                    continue
+                c = pads[k]["c"]
+                if L2 <= 0:
+                    d = math.hypot(c[0] - p[0], c[1] - p[1])
+                else:
+                    t = max(0.0, min(1.0, ((c[0] - p[0]) * vx + (c[1] - p[1]) * vy) / L2))
+                    d = math.hypot(c[0] - (p[0] + t * vx), c[1] - (p[1] + t * vy))
+                if d < bestd:
+                    bestd = d
+        return bestd
+
     for rnd in range(1, passes + 1):
         fails = sorted([n for n in best if not best[n]["ok"]], key=lambda n: len(net_pads[n]))
         if not fails:
@@ -1178,7 +1207,10 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
         for net in fails:
             cand = [n for n in best if n != net and best[n]["ok"] and best[n]["segs"]
                     and n not in (pre or {})]
-            for blk in sorted(cand, key=lambda n: near_net(net, n))[:blockers]:
+            for blk in sorted(cand, key=(lambda n: (wire_near(net, n, best[n]["segs"]),
+                                                      near_net(net, n)))
+                              if RIP_BY_WIRES else (lambda n: near_net(net, n))
+                              )[:blockers]:
                 pre = {k: v for k, v in best.items() if k not in (net, blk)}
                 _m2 = len(DIAG["fails"])
                 trial = _route_once(items, rect, net_pads, pads, cell, via_cost,
@@ -1797,6 +1829,9 @@ def main(argv):
     if "--order-diff" in argv:            # ★ 2026-10-05 加 ✓（默认关 ✗）：难先次序 ✓
         global ORDER_DIFFICULTY
         ORDER_DIFFICULTY = True
+    if "--rip-wires" in argv:             # ★ 2026-10-05 加 ✓（默认关 ✗）：拆封口者按线↔盘 ✓
+        global RIP_BY_WIRES
+        RIP_BY_WIRES = True
     model = PC.collect(fzz)
     r = model["board"]
     pads = pad_index(model)
