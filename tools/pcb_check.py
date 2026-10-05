@@ -596,6 +596,40 @@ def check(model, expect=None):
                      "（**声明接上 ≠ 铜真碰上** ✗）；不合格 %d 条 ✓"
                      % (seen10, sum(1 for p in probs if p.startswith("⑩"))))
 
+    # ⑫ ★★ **悬空声明** ✓（2026-10-06 加 ✓，起因 = `docs/pr-candidates.md` 的 **P1** ✓）
+    #   ✗ ⑩ 的洞：它只遍历**走线**上声明的连接 ✗（`for i, t in enumerate(traces)` ✓）
+    #     ⇒ **线根本不存在时它无从可查** ✗ —— 而幽灵正是这种形态 ✓：
+    #     实测 `pixel-pcb-v70.fzz` 里 `RC` 三只脚**一条线都没有** ✗，
+    #     可 Fritzing 状态栏**照样显示「布线完成」** ✓（它顺着文件里的 `<connect>` 走 ✓）。
+    #   ✓ 这一条**不看几何** ✗，只问一句 ✓：
+    #     文件里**每一条** `<connect … modelIndex="…"/>` 指的对象**还在不在** ✓？
+    #     不在 ⇒ 那条声明是**幽灵** ✗ —— 人眼看不见 ✗、可 Fritzing 看得见 ✓ ⇒ 它会当成已连通 ✓。
+    #   ★ 与 ⑩ 分工 ✓：⑩ = “声明的**几何**兼不兼现” ✓；⑫ = “声明指的**东西**还存不存在” ✓。
+    _t12 = model.get("text") or ""
+    _have12 = set()
+    for _q12 in pads:
+        if _q12.get("mi"):
+            _have12.add(_q12["mi"])
+    for _t in traces:
+        if _t.get("inst"):
+            _have12.add(_t["inst"])
+    for _v in vias:
+        if _v.get("inst"):
+            _have12.add(_v["inst"])
+    for _m12 in re.finditer(r'<instance\b[^>]*\bmodelIndex="(\d+)"', _t12):
+        _have12.add(_m12.group(1))
+    _dang12 = {}
+    for _m12 in re.finditer(r'<connect\b[^>]*\bmodelIndex="(\d+)"', _t12):
+        if _m12.group(1) not in _have12:
+            _dang12[_m12.group(1)] = _dang12.get(_m12.group(1), 0) + 1
+    if _dang12:
+        probs.append("⑫ **悬空声明** ✗：%d 条 `<connect>` 指向的对象**文件里不存在** ✗"
+                     "（例：modelIndex=%s ✓）⇒ Fritzing 会顺着它**当成已连通** ✓，"
+                     "而**铜并不在** ✗ ⇒ 它会显示「布线完成」✓ —— 这样的文件**不能出厂** ✗"
+                     % (sum(_dang12.values()), "、".join(list(_dang12)[:4])))
+    else:
+        notes.append("⑫ 悬空声明 **0 条** ✓（每一条 `<connect>` 指的对象都在文件里 ✓）")
+
     # ⑪ ★★ **孔 ↔ 孔** 的间距 ✓（2026-10-05 用户定 ✗，**新规则** ✓）：
     #   探伤（实测 ✓，用户手改件）：`Via6`@(45.18,20.52) 与 `Via8`@(45.18,20.92) 孔心距
     #     **0.40 mm** ✓ ⇒ 两颗 Ø0.30 的孔，**孔壁只差 0.10 mm** ✗ ⇒ 钻头/断刀风险 ✓。
@@ -882,7 +916,7 @@ def main(argv):
         cnt[k] = cnt.get(k, 0) + 1
     names = {"①": "悬空端点", "②": "板外", "③": "孤立过孔", "④": "同层短接", "⑤": "网表",
              "⑥": "过孔压盘", "⑦": "过孔安全距离", "⑧": "同面元件相交", "⑨": "安装孔",
-             "⑩": "声明未兼现",
+             "⑩": "声明未兼现", "⑫": "悬空声明",
              # ★ 2026-10-05 补 ✓：新加/改过的两条也要有名有姓 ✓（❓ 看着像工具坏了 ✗）
              "⑪": "孔↔孔间距"}
     if cnt:
