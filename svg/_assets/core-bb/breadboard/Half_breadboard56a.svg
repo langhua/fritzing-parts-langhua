@@ -1,0 +1,2050 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="292.41" height="189" version="1.1" viewBox="0 0 292.41 189" xmlns="http://www.w3.org/2000/svg">
+ <g id="icon">
+  <g id="breadboardbreadboard" transform="translate(.25 2.0479e-6)">
+   <rect x="2.7756e-17" y="-.00047721" width="292.16" height="189" fill="#d9d9d9"/>
+   <rect x="-.25" y="26.165" width="285.94" height=".5" fill="#b3b0b0"/>
+   <rect x="-.25" y="161.84" width="288.23" height=".5" fill="#b3b0b0"/>
+   <rect x="-.25" y="24" width="281.04" height=".5" fill="#f00"/>
+   <rect x="-.25" y="186" width="281.69" height=".5" fill="#f00"/>
+   <rect x="-.25" y="2.9995" width="280.71" height=".5" fill="#00f"/>
+   <rect x="-.25" y="165" width="282.67" height=".5" fill="#00f"/>
+   <rect x="-.25" y="89" width="279.07" height="9" fill="#ccc9c9"/>
+   <g id="pin1A" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="144" r="1.496" fill="#383838"/>
+   </g>7
+   <g id="pin1B" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1C" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1D" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1E" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1F" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1G" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1H" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1I" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin1J" transform="translate(-.25 -.00047902)">
+    <path d="m10.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m16.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="13.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2A" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2B" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2C" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2D" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2E" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2F" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2G" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2H" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2I" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin2J" transform="translate(-.25 -.00047902)">
+    <path d="m19.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m25.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="22.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3A" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3B" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3C" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3D" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3E" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3F" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3G" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3H" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3I" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3J" transform="translate(-.25 -.00047902)">
+    <path d="m28.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m34.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4A" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4B" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4C" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4D" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4E" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4F" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4G" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4H" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4I" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4J" transform="translate(-.25 -.00047902)">
+    <path d="m37.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m43.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5A" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5B" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5C" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5D" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5E" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5F" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5G" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5H" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5I" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5J" transform="translate(-.25 -.00047902)">
+    <path d="m46.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m52.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6A" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6B" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6C" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6D" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6E" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6F" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6G" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6H" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6I" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6J" transform="translate(-.25 -.00047902)">
+    <path d="m55.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m61.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7A" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7B" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7C" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7D" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7E" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7F" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7G" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7H" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7I" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7J" transform="translate(-.25 -.00047902)">
+    <path d="m64.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m70.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8A" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8B" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8C" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8D" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8E" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8F" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8G" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8H" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8I" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin8J" transform="translate(-.25 -.00047902)">
+    <path d="m73.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m79.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="76.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9A" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9B" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9C" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9D" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9E" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9F" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9G" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9H" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9I" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9J" transform="translate(-.25 -.00047902)">
+    <path d="m82.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m88.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10A" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10B" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10C" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10D" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10E" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10F" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10G" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10H" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10I" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10J" transform="translate(-.25 -.00047902)">
+    <path d="m91.658 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m97.642 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11A" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11B" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11C" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11D" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11E" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11F" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11G" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11H" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11I" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11J" transform="translate(-.25 -.00047902)">
+    <path d="m100.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m106.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12A" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12B" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12C" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12D" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12E" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12F" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12G" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12H" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12I" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12J" transform="translate(-.25 -.00047902)">
+    <path d="m109.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m115.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13A" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13B" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13C" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13D" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13E" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13F" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13G" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13H" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13I" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13J" transform="translate(-.25 -.00047902)">
+    <path d="m118.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m124.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14A" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14B" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14C" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14D" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14E" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14F" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14G" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14H" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14I" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin14J" transform="translate(-.25 -.00047902)">
+    <path d="m127.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m133.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="130.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15A" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15B" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15C" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15D" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15E" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15F" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15G" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15H" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15I" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15J" transform="translate(-.25 -.00047902)">
+    <path d="m136.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m142.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16A" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16B" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16C" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16D" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16E" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16F" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16G" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16H" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16I" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16J" transform="translate(-.25 -.00047902)">
+    <path d="m145.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m151.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17A" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17B" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17C" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17D" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17E" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17F" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17G" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17H" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17I" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17J" transform="translate(-.25 -.00047902)">
+    <path d="m154.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m160.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18A" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18B" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18C" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18D" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18E" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18F" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18G" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18H" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18I" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18J" transform="translate(-.25 -.00047902)">
+    <path d="m163.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m169.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19A" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19B" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19C" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19D" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19E" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19F" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19G" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19H" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19I" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19J" transform="translate(-.25 -.00047902)">
+    <path d="m172.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m178.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20A" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20B" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20C" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20D" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20E" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20F" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20G" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20H" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20I" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin20J" transform="translate(-.25 -.00047902)">
+    <path d="m181.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m187.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="184.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21A" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21B" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21C" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21D" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21E" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21F" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21G" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21H" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21I" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21J" transform="translate(-.25 -.00047902)">
+    <path d="m190.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m196.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22A" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22B" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22C" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22D" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22E" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22F" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22G" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22H" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22I" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22J" transform="translate(-.25 -.00047902)">
+    <path d="m199.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m205.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23A" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23B" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23C" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23D" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23E" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23F" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23G" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23H" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23I" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23J" transform="translate(-.25 -.00047902)">
+    <path d="m208.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m214.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24A" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24B" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24C" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24D" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24E" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24F" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24G" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24H" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24I" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24J" transform="translate(-.25 -.00047902)">
+    <path d="m217.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m223.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25A" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25B" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25C" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25D" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25E" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25F" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25G" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25H" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25I" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25J" transform="translate(-.25 -.00047902)">
+    <path d="m226.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m232.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26A" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26B" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26C" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26D" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26E" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26F" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26G" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26H" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26I" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin26J" transform="translate(-.25 -.00047902)">
+    <path d="m235.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m241.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="238.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27A" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27B" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27C" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27D" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27E" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27F" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27G" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27H" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27I" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27J" transform="translate(-.25 -.00047902)">
+    <path d="m244.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m250.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28A" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28B" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28C" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28D" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28E" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28F" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28G" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28H" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28I" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28J" transform="translate(-.25 -.00047902)">
+    <path d="m253.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m259.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29A" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29B" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29C" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29D" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29E" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29F" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29G" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29H" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29I" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29J" transform="translate(-.25 -.00047902)">
+    <path d="m262.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m268.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30A" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 144a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 144a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="144" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30B" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 135a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 135a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="135" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30C" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 126a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 126a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="126" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30D" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 117a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 117a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="117" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30E" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 108a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 108a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="108" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30F" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 81a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 81a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="81" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30G" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 72a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 72a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="72" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30H" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 63a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 63a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="63" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30I" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 54a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 54a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="54" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30J" transform="translate(-.25 -.00047902)">
+    <path d="m271.66 45a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m277.64 45a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274.65" cy="45" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3W" transform="translate(-14.25 -.00047902)">
+    <path d="m28.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m33.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3X" transform="translate(-14.25 -.00047902)">
+    <path d="m28.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m33.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3Y" transform="translate(-14.25 -.00047902)">
+    <path d="m28.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m33.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin3Z" transform="translate(-14.25 -.00047902)">
+    <path d="m28.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m33.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="31" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4W" transform="translate(-14.25 -.00047902)">
+    <path d="m37.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m42.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4X" transform="translate(-14.25 -.00047902)">
+    <path d="m37.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m42.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4Y" transform="translate(-14.25 -.00047902)">
+    <path d="m37.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m42.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin4Z" transform="translate(-14.25 -.00047902)">
+    <path d="m37.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m42.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="40" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5W" transform="translate(-14.25 -.00047902)">
+    <path d="m46.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m51.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5X" transform="translate(-14.25 -.00047902)">
+    <path d="m46.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m51.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5Y" transform="translate(-14.25 -.00047902)">
+    <path d="m46.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m51.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin5Z" transform="translate(-14.25 -.00047902)">
+    <path d="m46.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m51.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="49" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6W" transform="translate(-14.25 -.00047902)">
+    <path d="m55.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m60.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6X" transform="translate(-14.25 -.00047902)">
+    <path d="m55.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m60.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6Y" transform="translate(-14.25 -.00047902)">
+    <path d="m55.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m60.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin6Z" transform="translate(-14.25 -.00047902)">
+    <path d="m55.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m60.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="58" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7W" transform="translate(-14.25 -.00047902)">
+    <path d="m64.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m69.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7X" transform="translate(-14.25 -.00047902)">
+    <path d="m64.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m69.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7Y" transform="translate(-14.25 -.00047902)">
+    <path d="m64.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m69.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin7Z" transform="translate(-14.25 -.00047902)">
+    <path d="m64.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m69.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="67" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9W" transform="translate(-14.25 -.00047902)">
+    <path d="m82.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m87.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9X" transform="translate(-14.25 -.00047902)">
+    <path d="m82.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m87.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9Y" transform="translate(-14.25 -.00047902)">
+    <path d="m82.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m87.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin9Z" transform="translate(-14.25 -.00047902)">
+    <path d="m82.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m87.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="85" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10W" transform="translate(-14.25 -.00047902)">
+    <path d="m91.008 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m96.992 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10X" transform="translate(-14.25 -.00047902)">
+    <path d="m91.008 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m96.992 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10Y" transform="translate(-14.25 -.00047902)">
+    <path d="m91.008 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m96.992 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin10Z" transform="translate(-14.25 -.00047902)">
+    <path d="m91.008 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m96.992 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="94" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11W" transform="translate(-14.25 -.00047902)">
+    <path d="m100.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m105.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11X" transform="translate(-14.25 -.00047902)">
+    <path d="m100.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m105.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11Y" transform="translate(-14.25 -.00047902)">
+    <path d="m100.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m105.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin11Z" transform="translate(-14.25 -.00047902)">
+    <path d="m100.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m105.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="103" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12W" transform="translate(-14.25 -.00047902)">
+    <path d="m109.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m114.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12X" transform="translate(-14.25 -.00047902)">
+    <path d="m109.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m114.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12Y" transform="translate(-14.25 -.00047902)">
+    <path d="m109.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m114.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin12Z" transform="translate(-14.25 -.00047902)">
+    <path d="m109.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m114.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="112" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13W" transform="translate(-14.25 -.00047902)">
+    <path d="m118.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m123.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13X" transform="translate(-14.25 -.00047902)">
+    <path d="m118.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m123.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13Y" transform="translate(-14.25 -.00047902)">
+    <path d="m118.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m123.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin13Z" transform="translate(-14.25 -.00047902)">
+    <path d="m118.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m123.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="121" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15W" transform="translate(-14.25 -.00047902)">
+    <path d="m136.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m141.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15X" transform="translate(-14.25 -.00047902)">
+    <path d="m136.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m141.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15Y" transform="translate(-14.25 -.00047902)">
+    <path d="m136.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m141.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin15Z" transform="translate(-14.25 -.00047902)">
+    <path d="m136.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m141.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="139" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16W" transform="translate(-14.25 -.00047902)">
+    <path d="m145.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m150.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16X" transform="translate(-14.25 -.00047902)">
+    <path d="m145.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m150.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16Y" transform="translate(-14.25 -.00047902)">
+    <path d="m145.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m150.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin16Z" transform="translate(-14.25 -.00047902)">
+    <path d="m145.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m150.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="148" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17W" transform="translate(-14.25 -.00047902)">
+    <path d="m154.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m159.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17X" transform="translate(-14.25 -.00047902)">
+    <path d="m154.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m159.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17Y" transform="translate(-14.25 -.00047902)">
+    <path d="m154.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m159.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin17Z" transform="translate(-14.25 -.00047902)">
+    <path d="m154.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m159.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="157" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18W" transform="translate(-14.25 -.00047902)">
+    <path d="m163.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m168.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18X" transform="translate(-14.25 -.00047902)">
+    <path d="m163.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m168.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18Y" transform="translate(-14.25 -.00047902)">
+    <path d="m163.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m168.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin18Z" transform="translate(-14.25 -.00047902)">
+    <path d="m163.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m168.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="166" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19W" transform="translate(-14.25 -.00047902)">
+    <path d="m172.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m177.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19X" transform="translate(-14.25 -.00047902)">
+    <path d="m172.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m177.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19Y" transform="translate(-14.25 -.00047902)">
+    <path d="m172.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m177.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin19Z" transform="translate(-14.25 -.00047902)">
+    <path d="m172.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m177.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="175" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21W" transform="translate(-14.25 -.00047902)">
+    <path d="m190.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m195.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21X" transform="translate(-14.25 -.00047902)">
+    <path d="m190.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m195.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21Y" transform="translate(-14.25 -.00047902)">
+    <path d="m190.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m195.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin21Z" transform="translate(-14.25 -.00047902)">
+    <path d="m190.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m195.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="193" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22W" transform="translate(-14.25 -.00047902)">
+    <path d="m199.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m204.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22X" transform="translate(-14.25 -.00047902)">
+    <path d="m199.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m204.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22Y" transform="translate(-14.25 -.00047902)">
+    <path d="m199.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m204.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin22Z" transform="translate(-14.25 -.00047902)">
+    <path d="m199.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m204.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="202" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23W" transform="translate(-14.25 -.00047902)">
+    <path d="m208.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m213.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23X" transform="translate(-14.25 -.00047902)">
+    <path d="m208.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m213.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23Y" transform="translate(-14.25 -.00047902)">
+    <path d="m208.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m213.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin23Z" transform="translate(-14.25 -.00047902)">
+    <path d="m208.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m213.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="211" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24W" transform="translate(-14.25 -.00047902)">
+    <path d="m217.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m222.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24X" transform="translate(-14.25 -.00047902)">
+    <path d="m217.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m222.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24Y" transform="translate(-14.25 -.00047902)">
+    <path d="m217.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m222.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin24Z" transform="translate(-14.25 -.00047902)">
+    <path d="m217.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m222.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="220" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25W" transform="translate(-14.25 -.00047902)">
+    <path d="m226.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m231.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25X" transform="translate(-14.25 -.00047902)">
+    <path d="m226.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m231.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25Y" transform="translate(-14.25 -.00047902)">
+    <path d="m226.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m231.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin25Z" transform="translate(-14.25 -.00047902)">
+    <path d="m226.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m231.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="229" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27W" transform="translate(-14.25 -.00047902)">
+    <path d="m244.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m249.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27X" transform="translate(-14.25 -.00047902)">
+    <path d="m244.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m249.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27Y" transform="translate(-14.25 -.00047902)">
+    <path d="m244.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m249.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin27Z" transform="translate(-14.25 -.00047902)">
+    <path d="m244.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m249.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="247" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28W" transform="translate(-14.25 -.00047902)">
+    <path d="m253.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m258.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28X" transform="translate(-14.25 -.00047902)">
+    <path d="m253.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m258.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28Y" transform="translate(-14.25 -.00047902)">
+    <path d="m253.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m258.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin28Z" transform="translate(-14.25 -.00047902)">
+    <path d="m253.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m258.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="256" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29W" transform="translate(-14.25 -.00047902)">
+    <path d="m262.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m267.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29X" transform="translate(-14.25 -.00047902)">
+    <path d="m262.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m267.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29Y" transform="translate(-14.25 -.00047902)">
+    <path d="m262.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m267.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin29Z" transform="translate(-14.25 -.00047902)">
+    <path d="m262.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m267.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="265" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30W" transform="translate(-14.25 -.00047902)">
+    <path d="m271.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m276.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30X" transform="translate(-14.25 -.00047902)">
+    <path d="m271.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m276.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30Y" transform="translate(-14.25 -.00047902)">
+    <path d="m271.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m276.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin30Z" transform="translate(-14.25 -.00047902)">
+    <path d="m271.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m276.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="274" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin31W" transform="translate(-14.25 -.00047902)">
+    <path d="m280.01 180a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m285.99 180a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="283" cy="180" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin31X" transform="translate(-14.25 -.00047902)">
+    <path d="m280.01 171a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m285.99 171a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="283" cy="171" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin31Y" transform="translate(-14.25 -.00047902)">
+    <path d="m280.01 18a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m285.99 18a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="283" cy="18" r="1.496" fill="#383838"/>
+   </g>
+   <g id="pin31Z" transform="translate(-14.25 -.00047902)">
+    <path d="m280.01 9a2.992 2.992 0 0 1 5.984 0" fill="#bfbfbf"/>
+    <path d="m285.99 9a2.992 2.992 0 1 1-5.984 0" fill="#e6e6e6"/>
+    <circle cx="283" cy="9" r="1.496" fill="#383838"/>
+   </g>
+   <text transform="rotate(-90)" x="-37.999519" y="15.750005" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">1</text>
+   <text transform="rotate(-90)" x="-157.99953" y="15.750005" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">1</text>
+   <text transform="rotate(-90)" x="-37.999519" y="51.750004" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">5</text>
+   <text transform="rotate(-90)" x="-157.99953" y="51.750004" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">5</text>
+   <text transform="rotate(-90)" x="-37.999519" y="96.750008" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">10</text>
+   <text transform="rotate(-90)" x="-157.99953" y="96.750008" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">10</text>
+   <text transform="rotate(-90)" x="-37.999519" y="141.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">15</text>
+   <text transform="rotate(-90)" x="-157.99953" y="141.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">15</text>
+   <text transform="rotate(-90)" x="-37.999519" y="186.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">20</text>
+   <text transform="rotate(-90)" x="-157.99953" y="186.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">20</text>
+   <text transform="rotate(-90)" x="-37.999519" y="231.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">25</text>
+   <text transform="rotate(-90)" x="-157.99953" y="231.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">25</text>
+   <text transform="rotate(-90)" x="-37.999519" y="276.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">30</text>
+   <text transform="rotate(-90)" x="-157.99953" y="276.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">30</text>
+   <text transform="rotate(-90)" x="-145.99953" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">A</text>
+   <text transform="rotate(-90)" x="-145.99953" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">A</text>
+   <text transform="rotate(-90)" x="-136.99953" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">B</text>
+   <text transform="rotate(-90)" x="-136.99953" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">B</text>
+   <text transform="rotate(-90)" x="-127.99952" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">C</text>
+   <text transform="rotate(-90)" x="-127.99952" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">C</text>
+   <text transform="rotate(-90)" x="-118.99952" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">D</text>
+   <text transform="rotate(-90)" x="-118.99952" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">D</text>
+   <text transform="rotate(-90)" x="-109.99952" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">E</text>
+   <text transform="rotate(-90)" x="-109.99952" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">E</text>
+   <text transform="rotate(-90)" x="-82.999519" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">F</text>
+   <text transform="rotate(-90)" x="-82.999519" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">F</text>
+   <text transform="rotate(-90)" x="-73.999519" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">G</text>
+   <text transform="rotate(-90)" x="-73.999519" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">G</text>
+   <text transform="rotate(-90)" x="-64.999519" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">H</text>
+   <text transform="rotate(-90)" x="-64.999519" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">H</text>
+   <text transform="rotate(-90)" x="-54.999519" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">I</text>
+   <text transform="rotate(-90)" x="-54.999519" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">I</text>
+   <text transform="rotate(-90)" x="-45.999519" y="6.7500048" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">J</text>
+   <text transform="rotate(-90)" x="-45.999519" y="285.75" fill="#b3b0b0" font-family="Droid Sans" font-size="5.7545">J</text>
+  </g>
+ </g>
+</svg>

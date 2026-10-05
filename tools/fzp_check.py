@@ -50,6 +50,18 @@ def main(argv):
     print("文件: %s" % os.path.relpath(fzp_path, os.path.dirname(part_dir)))
     print("moduleId=%s label=%s" % (root.get("moduleId"), (root.findtext("label") or "").strip()))
 
+    # ★ 面包板家族例外 ✓（2026-10-05 用户定，机理见 docs/fritzing-fz-notes.md §10 ✓）：
+    #   · 面包板件**故意**让 schematic/pcb 两个视图共用面包板图（原厂件就是这么写的 ✓）
+    #     ⇒ “image 要子目录路径” / “缺 schematic/pcb 的 svg”那两条对它们**不适用** ✓
+    #     （否则永远是假报警 ✗）；
+    #   · 面包板真正该守的是**另一条** ✓：**孔不许在那两个视图里声明连接器** ✗
+    #     （否则会把上百条孔 bus 灌进那两个视图的网表 ✗）⇒ 见文末那条新规则 ✓。
+    fam = ""
+    for p in root.findall("./properties/property"):
+        if p.get("name") == "family":
+            fam = (p.text or "").strip()
+    is_bb = fam.lower() == "breadboard"
+
     # ① 视图 → 实际 svg 文件
     svg_of, files = {}, {}
     for v in VIEWS:
@@ -64,9 +76,19 @@ def main(argv):
         if not img.startswith(v + "/"):
             msg = "%sView 的 image=%r 不是子目录路径（应为 %s/…，AGENTS §4）" % (v, img, v)
             # icon 视图复用面包板图是既有做法（FPC05 等）→ 只提示，不算 FAIL
-            (notes if v == "icon" else fails).append(("注: " if v == "icon" else "FAIL ") + msg)
+            if v == "icon":
+                notes.append("注: " + msg)
+            elif is_bb and v in ("schematic", "pcb"):
+                notes.append("注: （面包板 ✓）%sView 与面包板视图共用同一张图 ✓ 属既有做法 ✓"
+                             % v)
+            else:
+                fails.append("FAIL " + msg)
         if files[v] is None:
-            fails.append("FAIL 缺 %s 视图的 svg（svg.%s.%s_%s.svg）" % (v, v, part, v))
+            if is_bb and v in ("schematic", "pcb"):
+                notes.append("注: （面包板 ✓）没有 %s 视图的 svg ✓（那两视图共用面包板图 ✓）"
+                             % v)
+            else:
+                fails.append("FAIL 缺 %s 视图的 svg（svg.%s.%s_%s.svg）" % (v, v, part, v))
     print("视图: %s" % ", ".join("%s=%s" % (v, os.path.basename(files[v]) if files[v] else "缺")
                                 for v in VIEWS))
 
@@ -180,6 +202,22 @@ def main(argv):
                 fails.append("FAIL 面包板里 %d 个同名焊盘「%s」没在同一条总线里（各自属于 %s）"
                              % (len(members), nm, sorted(str(x) for x in b)))
 
+    # ★★ 面包板专用硬规矩 ✓（2026-10-05 用户定，机理见 docs/fritzing-fz-notes.md §10 ✓）：
+    #   孔的连接器**只许**在 breadboard 视图里声明 ✗ —— 一旦在 schematic/pcb 里也声明，
+    #   那两个视图就会给孔**建连接器项** ⇒ 上百条孔 bus 被塞进它们的网表 ✗（而且看不见 ✗）
+    #   ⇒ Fritzing 状态栏假报「还有 N 个连接件没布线」✗。机器守同源 = breadboard_only_views.py ✓
+    if is_bb:
+        nbad = 0
+        for c in root.iter("connector"):
+            v = c.find("views")
+            for vn in ("schematicView", "pcbView"):
+                if v is not None and v.find(vn) is not None:
+                    nbad += 1
+        if nbad:
+            fails.append("FAIL 面包板的孔在 schematic/pcb 视图里也声明了连接器：**%d 块** ✗"
+                         "（会把孔 bus 塞进那两个视图的网表 ✗；用 tools/breadboard_only_views.py "
+                         "修 ✓，见 docs/fritzing-fz-notes.md §10 ✓）" % nbad)
+
     # ⑥ fzpz
     if "--fzpz" in argv:
         z = os.path.abspath(argv[argv.index("--fzpz") + 1])
@@ -192,6 +230,9 @@ def main(argv):
             if any("/" in n or "\\" in n for n in names):
                 fails.append("FAIL 包里不该有子目录（要平铺，AGENTS §4）")
             want = {"part.%s.fzp" % part} | {"svg.%s.%s_%s.svg" % (v, part, v) for v in VIEWS}
+            if is_bb:
+                # ★ 面包板：schematic/pcb 共用面包板图（原厂同形 ✓）⇒ 不要求那两份独立成员 ✓
+                want -= {"svg.%s.%s_%s.svg" % (v, part, v) for v in ("schematic", "pcb")}
             if set(names) != want:
                 fails.append("FAIL 包内成员与预期不符（多: %s；少: %s）"
                              % (sorted(set(names) - want), sorted(want - set(names))))

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_breadboards.png">
+    <title>面包板（去粘版：孔只在面包板视图声明 ✓）</title>
+    <instances>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="面包板（去粘版：孔只在面包板视图声明）">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="Breadboard-RSR03MB102-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Breadboard-RSR03MB102-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="GenericBreadboard-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/GenericBreadboard-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HalfBreadboard-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/HalfBreadboard-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HalfBreadboardV2-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/HalfBreadboardV2-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HalfMinusBreadboard-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/HalfMinusBreadboard-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TinyBreadboard-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TinyBreadboard-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="MiniBreadboard-LH-ModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MiniBreadboard-LH-ModuleID.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

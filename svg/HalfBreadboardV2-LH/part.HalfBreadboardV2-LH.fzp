@@ -1,0 +1,3786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="1.0.3" moduleId="HalfBreadboardV2-LH-ModuleID">
+    <version>5</version>
+    <title>Half breadboard (BB only)</title>
+    <label>Breadboard</label>
+    <history date="2011-07-09" author="Alan Smith"> Initial version </history>
+    <history date="2024-02-13" author="Kjell">Set a BreadboardModuleID, so the part behaves as a breadboard</history>
+    <tags>
+        <tag>breadboard</tag>
+    </tags>
+    <properties>
+        <property name="size">half+</property>
+        <property name="family">Breadboard</property>
+    </properties>
+    <description>Same as the core "Half breadboard", but the socket connectors exist only in the breadboard view: the holes are not part of the PCB / schematic netlist (no invisible cross-view glue).</description>
+    <views>
+        <breadboardView>
+            <layers image="breadboard/HalfBreadboardV2-LH_breadboard.svg">
+                <layer layerId="breadboardbreadboard"/>
+            </layers>
+        </breadboardView>
+        <schematicView>
+            <layers image="breadboard/HalfBreadboardV2-LH_breadboard.svg">
+                <layer layerId="breadboardbreadboard"/>
+            </layers>
+        </schematicView>
+        <pcbView>
+            <layers image="breadboard/HalfBreadboardV2-LH_breadboard.svg">
+                <layer layerId="breadboardbreadboard"/>
+            </layers>
+        </pcbView>
+        <iconView>
+            <layers image="icon/HalfBreadboardV2-LH_icon.svg">
+                <layer layerId="icon"/>
+            </layers>
+        </iconView>
+    </views>
+    <connectors IgnoreTerminalPoints="true">
+      <connector id="pin1A" type="female" name="pin1A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1B" type="female" name="pin1B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1C" type="female" name="pin1C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1D" type="female" name="pin1D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1E" type="female" name="pin1E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1F" type="female" name="pin1F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1G" type="female" name="pin1G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1H" type="female" name="pin1H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1I" type="female" name="pin1I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin1J" type="female" name="pin1J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin1J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2A" type="female" name="pin2A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2B" type="female" name="pin2B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2C" type="female" name="pin2C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2D" type="female" name="pin2D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2E" type="female" name="pin2E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2F" type="female" name="pin2F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2G" type="female" name="pin2G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2H" type="female" name="pin2H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2I" type="female" name="pin2I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin2J" type="female" name="pin2J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin2J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3A" type="female" name="pin3A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3B" type="female" name="pin3B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3C" type="female" name="pin3C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3D" type="female" name="pin3D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3E" type="female" name="pin3E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3F" type="female" name="pin3F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3G" type="female" name="pin3G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3H" type="female" name="pin3H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3I" type="female" name="pin3I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3J" type="female" name="pin3J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4A" type="female" name="pin4A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4B" type="female" name="pin4B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4C" type="female" name="pin4C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4D" type="female" name="pin4D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4E" type="female" name="pin4E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4F" type="female" name="pin4F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4G" type="female" name="pin4G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4H" type="female" name="pin4H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4I" type="female" name="pin4I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4J" type="female" name="pin4J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5A" type="female" name="pin5A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5B" type="female" name="pin5B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5C" type="female" name="pin5C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5D" type="female" name="pin5D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5E" type="female" name="pin5E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5F" type="female" name="pin5F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5G" type="female" name="pin5G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5H" type="female" name="pin5H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5I" type="female" name="pin5I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5J" type="female" name="pin5J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6A" type="female" name="pin6A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6B" type="female" name="pin6B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6C" type="female" name="pin6C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6D" type="female" name="pin6D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6E" type="female" name="pin6E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6F" type="female" name="pin6F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6G" type="female" name="pin6G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6H" type="female" name="pin6H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6I" type="female" name="pin6I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6J" type="female" name="pin6J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7A" type="female" name="pin7A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7B" type="female" name="pin7B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7C" type="female" name="pin7C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7D" type="female" name="pin7D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7E" type="female" name="pin7E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7F" type="female" name="pin7F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7G" type="female" name="pin7G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7H" type="female" name="pin7H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7I" type="female" name="pin7I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7J" type="female" name="pin7J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8A" type="female" name="pin8A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8B" type="female" name="pin8B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8C" type="female" name="pin8C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8D" type="female" name="pin8D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8E" type="female" name="pin8E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8F" type="female" name="pin8F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8G" type="female" name="pin8G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8H" type="female" name="pin8H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8I" type="female" name="pin8I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin8J" type="female" name="pin8J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin8J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9A" type="female" name="pin9A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9B" type="female" name="pin9B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9C" type="female" name="pin9C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9D" type="female" name="pin9D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9E" type="female" name="pin9E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9F" type="female" name="pin9F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9G" type="female" name="pin9G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9H" type="female" name="pin9H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9I" type="female" name="pin9I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9J" type="female" name="pin9J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10A" type="female" name="pin10A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10B" type="female" name="pin10B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10C" type="female" name="pin10C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10D" type="female" name="pin10D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10E" type="female" name="pin10E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10F" type="female" name="pin10F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10G" type="female" name="pin10G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10H" type="female" name="pin10H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10I" type="female" name="pin10I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10J" type="female" name="pin10J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11A" type="female" name="pin11A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11B" type="female" name="pin11B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11C" type="female" name="pin11C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11D" type="female" name="pin11D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11E" type="female" name="pin11E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11F" type="female" name="pin11F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11G" type="female" name="pin11G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11H" type="female" name="pin11H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11I" type="female" name="pin11I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11J" type="female" name="pin11J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12A" type="female" name="pin12A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12B" type="female" name="pin12B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12C" type="female" name="pin12C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12D" type="female" name="pin12D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12E" type="female" name="pin12E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12F" type="female" name="pin12F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12G" type="female" name="pin12G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12H" type="female" name="pin12H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12I" type="female" name="pin12I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12J" type="female" name="pin12J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13A" type="female" name="pin13A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13B" type="female" name="pin13B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13C" type="female" name="pin13C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13D" type="female" name="pin13D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13E" type="female" name="pin13E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13F" type="female" name="pin13F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13G" type="female" name="pin13G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13H" type="female" name="pin13H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13I" type="female" name="pin13I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13J" type="female" name="pin13J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14A" type="female" name="pin14A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14B" type="female" name="pin14B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14C" type="female" name="pin14C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14D" type="female" name="pin14D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14E" type="female" name="pin14E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14F" type="female" name="pin14F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14G" type="female" name="pin14G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14H" type="female" name="pin14H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14I" type="female" name="pin14I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin14J" type="female" name="pin14J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin14J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15A" type="female" name="pin15A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15B" type="female" name="pin15B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15C" type="female" name="pin15C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15D" type="female" name="pin15D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15E" type="female" name="pin15E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15F" type="female" name="pin15F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15G" type="female" name="pin15G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15H" type="female" name="pin15H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15I" type="female" name="pin15I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15J" type="female" name="pin15J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16A" type="female" name="pin16A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16B" type="female" name="pin16B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16C" type="female" name="pin16C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16D" type="female" name="pin16D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16E" type="female" name="pin16E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16F" type="female" name="pin16F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16G" type="female" name="pin16G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16H" type="female" name="pin16H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16I" type="female" name="pin16I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16J" type="female" name="pin16J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17A" type="female" name="pin17A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17B" type="female" name="pin17B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17C" type="female" name="pin17C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17D" type="female" name="pin17D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17E" type="female" name="pin17E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17F" type="female" name="pin17F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17G" type="female" name="pin17G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17H" type="female" name="pin17H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17I" type="female" name="pin17I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17J" type="female" name="pin17J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18A" type="female" name="pin18A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18B" type="female" name="pin18B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18C" type="female" name="pin18C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18D" type="female" name="pin18D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18E" type="female" name="pin18E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18F" type="female" name="pin18F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18G" type="female" name="pin18G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18H" type="female" name="pin18H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18I" type="female" name="pin18I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18J" type="female" name="pin18J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19A" type="female" name="pin19A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19B" type="female" name="pin19B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19C" type="female" name="pin19C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19D" type="female" name="pin19D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19E" type="female" name="pin19E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19F" type="female" name="pin19F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19G" type="female" name="pin19G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19H" type="female" name="pin19H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19I" type="female" name="pin19I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19J" type="female" name="pin19J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20A" type="female" name="pin20A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20B" type="female" name="pin20B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20C" type="female" name="pin20C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20D" type="female" name="pin20D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20E" type="female" name="pin20E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20F" type="female" name="pin20F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20G" type="female" name="pin20G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20H" type="female" name="pin20H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20I" type="female" name="pin20I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin20J" type="female" name="pin20J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin20J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21A" type="female" name="pin21A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21B" type="female" name="pin21B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21C" type="female" name="pin21C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21D" type="female" name="pin21D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21E" type="female" name="pin21E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21F" type="female" name="pin21F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21G" type="female" name="pin21G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21H" type="female" name="pin21H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21I" type="female" name="pin21I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21J" type="female" name="pin21J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22A" type="female" name="pin22A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22B" type="female" name="pin22B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22C" type="female" name="pin22C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22D" type="female" name="pin22D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22E" type="female" name="pin22E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22F" type="female" name="pin22F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22G" type="female" name="pin22G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22H" type="female" name="pin22H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22I" type="female" name="pin22I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22J" type="female" name="pin22J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23A" type="female" name="pin23A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23B" type="female" name="pin23B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23C" type="female" name="pin23C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23D" type="female" name="pin23D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23E" type="female" name="pin23E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23F" type="female" name="pin23F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23G" type="female" name="pin23G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23H" type="female" name="pin23H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23I" type="female" name="pin23I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23J" type="female" name="pin23J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24A" type="female" name="pin24A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24B" type="female" name="pin24B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24C" type="female" name="pin24C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24D" type="female" name="pin24D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24E" type="female" name="pin24E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24F" type="female" name="pin24F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24G" type="female" name="pin24G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24H" type="female" name="pin24H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24I" type="female" name="pin24I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24J" type="female" name="pin24J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25A" type="female" name="pin25A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25B" type="female" name="pin25B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25C" type="female" name="pin25C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25D" type="female" name="pin25D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25E" type="female" name="pin25E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25F" type="female" name="pin25F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25G" type="female" name="pin25G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25H" type="female" name="pin25H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25I" type="female" name="pin25I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25J" type="female" name="pin25J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26A" type="female" name="pin26A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26B" type="female" name="pin26B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26C" type="female" name="pin26C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26D" type="female" name="pin26D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26E" type="female" name="pin26E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26F" type="female" name="pin26F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26G" type="female" name="pin26G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26H" type="female" name="pin26H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26I" type="female" name="pin26I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin26J" type="female" name="pin26J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin26J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27A" type="female" name="pin27A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27B" type="female" name="pin27B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27C" type="female" name="pin27C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27D" type="female" name="pin27D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27E" type="female" name="pin27E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27F" type="female" name="pin27F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27G" type="female" name="pin27G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27H" type="female" name="pin27H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27I" type="female" name="pin27I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27J" type="female" name="pin27J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28A" type="female" name="pin28A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28B" type="female" name="pin28B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28C" type="female" name="pin28C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28D" type="female" name="pin28D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28E" type="female" name="pin28E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28F" type="female" name="pin28F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28G" type="female" name="pin28G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28H" type="female" name="pin28H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28I" type="female" name="pin28I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28J" type="female" name="pin28J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29A" type="female" name="pin29A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29B" type="female" name="pin29B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29C" type="female" name="pin29C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29D" type="female" name="pin29D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29E" type="female" name="pin29E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29F" type="female" name="pin29F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29G" type="female" name="pin29G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29H" type="female" name="pin29H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29I" type="female" name="pin29I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29J" type="female" name="pin29J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30A" type="female" name="pin30A">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30A"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30B" type="female" name="pin30B">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30B"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30C" type="female" name="pin30C">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30C"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30D" type="female" name="pin30D">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30D"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30E" type="female" name="pin30E">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30E"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30F" type="female" name="pin30F">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30F"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30G" type="female" name="pin30G">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30G"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30H" type="female" name="pin30H">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30H"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30I" type="female" name="pin30I">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30I"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30J" type="female" name="pin30J">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30J"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3W" type="female" name="pin3W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3X" type="female" name="pin3X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3Y" type="female" name="pin3Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin3Z" type="female" name="pin3Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin3Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4W" type="female" name="pin4W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4X" type="female" name="pin4X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4Y" type="female" name="pin4Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin4Z" type="female" name="pin4Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin4Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5W" type="female" name="pin5W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5X" type="female" name="pin5X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5Y" type="female" name="pin5Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin5Z" type="female" name="pin5Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin5Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6W" type="female" name="pin6W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6X" type="female" name="pin6X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6Y" type="female" name="pin6Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin6Z" type="female" name="pin6Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin6Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7W" type="female" name="pin7W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7X" type="female" name="pin7X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7Y" type="female" name="pin7Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin7Z" type="female" name="pin7Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin7Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9W" type="female" name="pin9W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9X" type="female" name="pin9X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9Y" type="female" name="pin9Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin9Z" type="female" name="pin9Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin9Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10W" type="female" name="pin10W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10X" type="female" name="pin10X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10Y" type="female" name="pin10Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin10Z" type="female" name="pin10Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin10Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11W" type="female" name="pin11W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11X" type="female" name="pin11X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11Y" type="female" name="pin11Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin11Z" type="female" name="pin11Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin11Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12W" type="female" name="pin12W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12X" type="female" name="pin12X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12Y" type="female" name="pin12Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin12Z" type="female" name="pin12Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin12Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13W" type="female" name="pin13W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13X" type="female" name="pin13X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13Y" type="female" name="pin13Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin13Z" type="female" name="pin13Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin13Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15W" type="female" name="pin15W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15X" type="female" name="pin15X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15Y" type="female" name="pin15Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin15Z" type="female" name="pin15Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin15Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16W" type="female" name="pin16W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16X" type="female" name="pin16X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16Y" type="female" name="pin16Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin16Z" type="female" name="pin16Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin16Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17W" type="female" name="pin17W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17X" type="female" name="pin17X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17Y" type="female" name="pin17Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin17Z" type="female" name="pin17Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin17Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18W" type="female" name="pin18W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18X" type="female" name="pin18X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18Y" type="female" name="pin18Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin18Z" type="female" name="pin18Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin18Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19W" type="female" name="pin19W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19X" type="female" name="pin19X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19Y" type="female" name="pin19Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin19Z" type="female" name="pin19Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin19Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21W" type="female" name="pin21W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21X" type="female" name="pin21X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21Y" type="female" name="pin21Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin21Z" type="female" name="pin21Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin21Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22W" type="female" name="pin22W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22X" type="female" name="pin22X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22Y" type="female" name="pin22Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin22Z" type="female" name="pin22Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin22Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23W" type="female" name="pin23W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23X" type="female" name="pin23X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23Y" type="female" name="pin23Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin23Z" type="female" name="pin23Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin23Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24W" type="female" name="pin24W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24X" type="female" name="pin24X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24Y" type="female" name="pin24Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin24Z" type="female" name="pin24Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin24Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25W" type="female" name="pin25W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25X" type="female" name="pin25X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25Y" type="female" name="pin25Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin25Z" type="female" name="pin25Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin25Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27W" type="female" name="pin27W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27X" type="female" name="pin27X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27Y" type="female" name="pin27Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin27Z" type="female" name="pin27Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin27Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28W" type="female" name="pin28W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28X" type="female" name="pin28X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28Y" type="female" name="pin28Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin28Z" type="female" name="pin28Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin28Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29W" type="female" name="pin29W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29X" type="female" name="pin29X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29Y" type="female" name="pin29Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin29Z" type="female" name="pin29Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin29Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30W" type="female" name="pin30W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30X" type="female" name="pin30X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30Y" type="female" name="pin30Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin30Z" type="female" name="pin30Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin30Z"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin31W" type="female" name="pin31W">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin31W"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin31X" type="female" name="pin31X">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin31X"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin31Y" type="female" name="pin31Y">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin31Y"/>
+           </breadboardView>
+         </views>
+      </connector>
+      <connector id="pin31Z" type="female" name="pin31Z">
+         <description>breadboard socket</description>
+         <views>
+           <breadboardView>
+             <p layer = "breadboardbreadboard" svgId="pin31Z"/>
+           </breadboardView>
+         </views>
+      </connector>    
+    </connectors>
+    <buses>
+      <bus id="bus1-a">
+        <nodeMember connectorId="pin1A"/>
+           <nodeMember connectorId="pin1B"/>
+           <nodeMember connectorId="pin1C"/>
+           <nodeMember connectorId="pin1D"/>
+           <nodeMember connectorId="pin1E"/>
+      </bus>
+      <bus id="bus1-f">
+           <nodeMember connectorId="pin1F"/>
+           <nodeMember connectorId="pin1G"/>
+           <nodeMember connectorId="pin1H"/>
+           <nodeMember connectorId="pin1I"/>
+           <nodeMember connectorId="pin1J"/>     
+      </bus>
+      <bus id="bus2-a">
+        <nodeMember connectorId="pin2A"/>
+           <nodeMember connectorId="pin2B"/>
+           <nodeMember connectorId="pin2C"/>
+           <nodeMember connectorId="pin2D"/>
+           <nodeMember connectorId="pin2E"/>
+      </bus>
+      <bus id="bus2-f">
+           <nodeMember connectorId="pin2F"/>
+           <nodeMember connectorId="pin2G"/>
+           <nodeMember connectorId="pin2H"/>
+           <nodeMember connectorId="pin2I"/>
+           <nodeMember connectorId="pin2J"/>     
+      </bus>
+      <bus id="bus3-a">
+        <nodeMember connectorId="pin3A"/>
+           <nodeMember connectorId="pin3B"/>
+           <nodeMember connectorId="pin3C"/>
+           <nodeMember connectorId="pin3D"/>
+           <nodeMember connectorId="pin3E"/>
+      </bus>
+      <bus id="bus3-f">
+           <nodeMember connectorId="pin3F"/>
+           <nodeMember connectorId="pin3G"/>
+           <nodeMember connectorId="pin3H"/>
+           <nodeMember connectorId="pin3I"/>
+           <nodeMember connectorId="pin3J"/>     
+      </bus>
+      <bus id="bus4-a">
+        <nodeMember connectorId="pin4A"/>
+           <nodeMember connectorId="pin4B"/>
+           <nodeMember connectorId="pin4C"/>
+           <nodeMember connectorId="pin4D"/>
+           <nodeMember connectorId="pin4E"/>
+      </bus>
+      <bus id="bus4-f">
+           <nodeMember connectorId="pin4F"/>
+           <nodeMember connectorId="pin4G"/>
+           <nodeMember connectorId="pin4H"/>
+           <nodeMember connectorId="pin4I"/>
+           <nodeMember connectorId="pin4J"/>     
+      </bus>
+      <bus id="bus5-a">
+        <nodeMember connectorId="pin5A"/>
+           <nodeMember connectorId="pin5B"/>
+           <nodeMember connectorId="pin5C"/>
+           <nodeMember connectorId="pin5D"/>
+           <nodeMember connectorId="pin5E"/>
+      </bus>
+      <bus id="bus5-f">
+           <nodeMember connectorId="pin5F"/>
+           <nodeMember connectorId="pin5G"/>
+           <nodeMember connectorId="pin5H"/>
+           <nodeMember connectorId="pin5I"/>
+           <nodeMember connectorId="pin5J"/>     
+      </bus>
+      <bus id="bus6-a">
+        <nodeMember connectorId="pin6A"/>
+           <nodeMember connectorId="pin6B"/>
+           <nodeMember connectorId="pin6C"/>
+           <nodeMember connectorId="pin6D"/>
+           <nodeMember connectorId="pin6E"/>
+      </bus>
+      <bus id="bus6-f">
+           <nodeMember connectorId="pin6F"/>
+           <nodeMember connectorId="pin6G"/>
+           <nodeMember connectorId="pin6H"/>
+           <nodeMember connectorId="pin6I"/>
+           <nodeMember connectorId="pin6J"/>     
+      </bus>
+      <bus id="bus7-a">
+        <nodeMember connectorId="pin7A"/>
+           <nodeMember connectorId="pin7B"/>
+           <nodeMember connectorId="pin7C"/>
+           <nodeMember connectorId="pin7D"/>
+           <nodeMember connectorId="pin7E"/>
+      </bus>
+      <bus id="bus7-f">
+           <nodeMember connectorId="pin7F"/>
+           <nodeMember connectorId="pin7G"/>
+           <nodeMember connectorId="pin7H"/>
+           <nodeMember connectorId="pin7I"/>
+           <nodeMember connectorId="pin7J"/>     
+      </bus>
+      <bus id="bus8-a">
+        <nodeMember connectorId="pin8A"/>
+           <nodeMember connectorId="pin8B"/>
+           <nodeMember connectorId="pin8C"/>
+           <nodeMember connectorId="pin8D"/>
+           <nodeMember connectorId="pin8E"/>
+      </bus>
+      <bus id="bus8-f">
+           <nodeMember connectorId="pin8F"/>
+           <nodeMember connectorId="pin8G"/>
+           <nodeMember connectorId="pin8H"/>
+           <nodeMember connectorId="pin8I"/>
+           <nodeMember connectorId="pin8J"/>     
+      </bus>
+      <bus id="bus9-a">
+        <nodeMember connectorId="pin9A"/>
+           <nodeMember connectorId="pin9B"/>
+           <nodeMember connectorId="pin9C"/>
+           <nodeMember connectorId="pin9D"/>
+           <nodeMember connectorId="pin9E"/>
+      </bus>
+      <bus id="bus9-f">
+           <nodeMember connectorId="pin9F"/>
+           <nodeMember connectorId="pin9G"/>
+           <nodeMember connectorId="pin9H"/>
+           <nodeMember connectorId="pin9I"/>
+           <nodeMember connectorId="pin9J"/>     
+      </bus>
+      <bus id="bus10-a">
+        <nodeMember connectorId="pin10A"/>
+           <nodeMember connectorId="pin10B"/>
+           <nodeMember connectorId="pin10C"/>
+           <nodeMember connectorId="pin10D"/>
+           <nodeMember connectorId="pin10E"/>
+      </bus>
+      <bus id="bus10-f">
+           <nodeMember connectorId="pin10F"/>
+           <nodeMember connectorId="pin10G"/>
+           <nodeMember connectorId="pin10H"/>
+           <nodeMember connectorId="pin10I"/>
+           <nodeMember connectorId="pin10J"/>     
+      </bus>
+      <bus id="bus11-a">
+        <nodeMember connectorId="pin11A"/>
+           <nodeMember connectorId="pin11B"/>
+           <nodeMember connectorId="pin11C"/>
+           <nodeMember connectorId="pin11D"/>
+           <nodeMember connectorId="pin11E"/>
+      </bus>
+      <bus id="bus11-f">
+           <nodeMember connectorId="pin11F"/>
+           <nodeMember connectorId="pin11G"/>
+           <nodeMember connectorId="pin11H"/>
+           <nodeMember connectorId="pin11I"/>
+           <nodeMember connectorId="pin11J"/>     
+      </bus>
+      <bus id="bus12-a">
+        <nodeMember connectorId="pin12A"/>
+           <nodeMember connectorId="pin12B"/>
+           <nodeMember connectorId="pin12C"/>
+           <nodeMember connectorId="pin12D"/>
+           <nodeMember connectorId="pin12E"/>
+      </bus>
+      <bus id="bus12-f">
+           <nodeMember connectorId="pin12F"/>
+           <nodeMember connectorId="pin12G"/>
+           <nodeMember connectorId="pin12H"/>
+           <nodeMember connectorId="pin12I"/>
+           <nodeMember connectorId="pin12J"/>     
+      </bus>
+      <bus id="bus13-a">
+        <nodeMember connectorId="pin13A"/>
+           <nodeMember connectorId="pin13B"/>
+           <nodeMember connectorId="pin13C"/>
+           <nodeMember connectorId="pin13D"/>
+           <nodeMember connectorId="pin13E"/>
+      </bus>
+      <bus id="bus13-f">
+           <nodeMember connectorId="pin13F"/>
+           <nodeMember connectorId="pin13G"/>
+           <nodeMember connectorId="pin13H"/>
+           <nodeMember connectorId="pin13I"/>
+           <nodeMember connectorId="pin13J"/>     
+      </bus>
+      <bus id="bus14-a">
+        <nodeMember connectorId="pin14A"/>
+           <nodeMember connectorId="pin14B"/>
+           <nodeMember connectorId="pin14C"/>
+           <nodeMember connectorId="pin14D"/>
+           <nodeMember connectorId="pin14E"/>
+      </bus>
+      <bus id="bus14-f">
+           <nodeMember connectorId="pin14F"/>
+           <nodeMember connectorId="pin14G"/>
+           <nodeMember connectorId="pin14H"/>
+           <nodeMember connectorId="pin14I"/>
+           <nodeMember connectorId="pin14J"/>     
+      </bus>
+      <bus id="bus15-a">
+        <nodeMember connectorId="pin15A"/>
+           <nodeMember connectorId="pin15B"/>
+           <nodeMember connectorId="pin15C"/>
+           <nodeMember connectorId="pin15D"/>
+           <nodeMember connectorId="pin15E"/>
+      </bus>
+      <bus id="bus15-f">
+           <nodeMember connectorId="pin15F"/>
+           <nodeMember connectorId="pin15G"/>
+           <nodeMember connectorId="pin15H"/>
+           <nodeMember connectorId="pin15I"/>
+           <nodeMember connectorId="pin15J"/>     
+      </bus>
+      <bus id="bus16-a">
+        <nodeMember connectorId="pin16A"/>
+           <nodeMember connectorId="pin16B"/>
+           <nodeMember connectorId="pin16C"/>
+           <nodeMember connectorId="pin16D"/>
+           <nodeMember connectorId="pin16E"/>
+      </bus>
+      <bus id="bus16-f">
+           <nodeMember connectorId="pin16F"/>
+           <nodeMember connectorId="pin16G"/>
+           <nodeMember connectorId="pin16H"/>
+           <nodeMember connectorId="pin16I"/>
+           <nodeMember connectorId="pin16J"/>     
+      </bus>
+      <bus id="bus17-a">
+        <nodeMember connectorId="pin17A"/>
+           <nodeMember connectorId="pin17B"/>
+           <nodeMember connectorId="pin17C"/>
+           <nodeMember connectorId="pin17D"/>
+           <nodeMember connectorId="pin17E"/>
+      </bus>
+      <bus id="bus17-f">
+           <nodeMember connectorId="pin17F"/>
+           <nodeMember connectorId="pin17G"/>
+           <nodeMember connectorId="pin17H"/>
+           <nodeMember connectorId="pin17I"/>
+           <nodeMember connectorId="pin17J"/>     
+      </bus>
+      <bus id="bus18-a">
+        <nodeMember connectorId="pin18A"/>
+           <nodeMember connectorId="pin18B"/>
+           <nodeMember connectorId="pin18C"/>
+           <nodeMember connectorId="pin18D"/>
+           <nodeMember connectorId="pin18E"/>
+      </bus>
+      <bus id="bus18-f">
+           <nodeMember connectorId="pin18F"/>
+           <nodeMember connectorId="pin18G"/>
+           <nodeMember connectorId="pin18H"/>
+           <nodeMember connectorId="pin18I"/>
+           <nodeMember connectorId="pin18J"/>     
+      </bus>
+      <bus id="bus19-a">
+        <nodeMember connectorId="pin19A"/>
+           <nodeMember connectorId="pin19B"/>
+           <nodeMember connectorId="pin19C"/>
+           <nodeMember connectorId="pin19D"/>
+           <nodeMember connectorId="pin19E"/>
+      </bus>
+      <bus id="bus19-f">
+           <nodeMember connectorId="pin19F"/>
+           <nodeMember connectorId="pin19G"/>
+           <nodeMember connectorId="pin19H"/>
+           <nodeMember connectorId="pin19I"/>
+           <nodeMember connectorId="pin19J"/>     
+      </bus>
+      <bus id="bus20-a">
+        <nodeMember connectorId="pin20A"/>
+           <nodeMember connectorId="pin20B"/>
+           <nodeMember connectorId="pin20C"/>
+           <nodeMember connectorId="pin20D"/>
+           <nodeMember connectorId="pin20E"/>
+      </bus>
+      <bus id="bus20-f">
+           <nodeMember connectorId="pin20F"/>
+           <nodeMember connectorId="pin20G"/>
+           <nodeMember connectorId="pin20H"/>
+           <nodeMember connectorId="pin20I"/>
+           <nodeMember connectorId="pin20J"/>     
+      </bus>
+      <bus id="bus21-a">
+        <nodeMember connectorId="pin21A"/>
+           <nodeMember connectorId="pin21B"/>
+           <nodeMember connectorId="pin21C"/>
+           <nodeMember connectorId="pin21D"/>
+           <nodeMember connectorId="pin21E"/>
+      </bus>
+      <bus id="bus21-f">
+           <nodeMember connectorId="pin21F"/>
+           <nodeMember connectorId="pin21G"/>
+           <nodeMember connectorId="pin21H"/>
+           <nodeMember connectorId="pin21I"/>
+           <nodeMember connectorId="pin21J"/>     
+      </bus>
+      <bus id="bus22-a">
+        <nodeMember connectorId="pin22A"/>
+           <nodeMember connectorId="pin22B"/>
+           <nodeMember connectorId="pin22C"/>
+           <nodeMember connectorId="pin22D"/>
+           <nodeMember connectorId="pin22E"/>
+      </bus>
+      <bus id="bus22-f">
+           <nodeMember connectorId="pin22F"/>
+           <nodeMember connectorId="pin22G"/>
+           <nodeMember connectorId="pin22H"/>
+           <nodeMember connectorId="pin22I"/>
+           <nodeMember connectorId="pin22J"/>     
+      </bus>
+      <bus id="bus23-a">
+        <nodeMember connectorId="pin23A"/>
+           <nodeMember connectorId="pin23B"/>
+           <nodeMember connectorId="pin23C"/>
+           <nodeMember connectorId="pin23D"/>
+           <nodeMember connectorId="pin23E"/>
+      </bus>
+      <bus id="bus23-f">
+           <nodeMember connectorId="pin23F"/>
+           <nodeMember connectorId="pin23G"/>
+           <nodeMember connectorId="pin23H"/>
+           <nodeMember connectorId="pin23I"/>
+           <nodeMember connectorId="pin23J"/>     
+      </bus>
+      <bus id="bus24-a">
+        <nodeMember connectorId="pin24A"/>
+           <nodeMember connectorId="pin24B"/>
+           <nodeMember connectorId="pin24C"/>
+           <nodeMember connectorId="pin24D"/>
+           <nodeMember connectorId="pin24E"/>
+      </bus>
+      <bus id="bus24-f">
+           <nodeMember connectorId="pin24F"/>
+           <nodeMember connectorId="pin24G"/>
+           <nodeMember connectorId="pin24H"/>
+           <nodeMember connectorId="pin24I"/>
+           <nodeMember connectorId="pin24J"/>     
+      </bus>
+      <bus id="bus25-a">
+        <nodeMember connectorId="pin25A"/>
+           <nodeMember connectorId="pin25B"/>
+           <nodeMember connectorId="pin25C"/>
+           <nodeMember connectorId="pin25D"/>
+           <nodeMember connectorId="pin25E"/>
+      </bus>
+      <bus id="bus25-f">
+           <nodeMember connectorId="pin25F"/>
+           <nodeMember connectorId="pin25G"/>
+           <nodeMember connectorId="pin25H"/>
+           <nodeMember connectorId="pin25I"/>
+           <nodeMember connectorId="pin25J"/>     
+      </bus>
+      <bus id="bus26-a">
+        <nodeMember connectorId="pin26A"/>
+           <nodeMember connectorId="pin26B"/>
+           <nodeMember connectorId="pin26C"/>
+           <nodeMember connectorId="pin26D"/>
+           <nodeMember connectorId="pin26E"/>
+      </bus>
+      <bus id="bus26-f">
+           <nodeMember connectorId="pin26F"/>
+           <nodeMember connectorId="pin26G"/>
+           <nodeMember connectorId="pin26H"/>
+           <nodeMember connectorId="pin26I"/>
+           <nodeMember connectorId="pin26J"/>     
+      </bus>
+      <bus id="bus27-a">
+        <nodeMember connectorId="pin27A"/>
+           <nodeMember connectorId="pin27B"/>
+           <nodeMember connectorId="pin27C"/>
+           <nodeMember connectorId="pin27D"/>
+           <nodeMember connectorId="pin27E"/>
+      </bus>
+      <bus id="bus27-f">
+           <nodeMember connectorId="pin27F"/>
+           <nodeMember connectorId="pin27G"/>
+           <nodeMember connectorId="pin27H"/>
+           <nodeMember connectorId="pin27I"/>
+           <nodeMember connectorId="pin27J"/>     
+      </bus>
+      <bus id="bus28-a">
+        <nodeMember connectorId="pin28A"/>
+           <nodeMember connectorId="pin28B"/>
+           <nodeMember connectorId="pin28C"/>
+           <nodeMember connectorId="pin28D"/>
+           <nodeMember connectorId="pin28E"/>
+      </bus>
+      <bus id="bus28-f">
+           <nodeMember connectorId="pin28F"/>
+           <nodeMember connectorId="pin28G"/>
+           <nodeMember connectorId="pin28H"/>
+           <nodeMember connectorId="pin28I"/>
+           <nodeMember connectorId="pin28J"/>     
+      </bus>
+      <bus id="bus29-a">
+        <nodeMember connectorId="pin29A"/>
+           <nodeMember connectorId="pin29B"/>
+           <nodeMember connectorId="pin29C"/>
+           <nodeMember connectorId="pin29D"/>
+           <nodeMember connectorId="pin29E"/>
+      </bus>
+      <bus id="bus29-f">
+           <nodeMember connectorId="pin29F"/>
+           <nodeMember connectorId="pin29G"/>
+           <nodeMember connectorId="pin29H"/>
+           <nodeMember connectorId="pin29I"/>
+           <nodeMember connectorId="pin29J"/>     
+      </bus>
+      <bus id="bus30-a">
+        <nodeMember connectorId="pin30A"/>
+           <nodeMember connectorId="pin30B"/>
+           <nodeMember connectorId="pin30C"/>
+           <nodeMember connectorId="pin30D"/>
+           <nodeMember connectorId="pin30E"/>
+      </bus>
+      <bus id="bus30-f">
+           <nodeMember connectorId="pin30F"/>
+           <nodeMember connectorId="pin30G"/>
+           <nodeMember connectorId="pin30H"/>
+           <nodeMember connectorId="pin30I"/>
+           <nodeMember connectorId="pin30J"/>     
+      </bus>
+      <bus id="bus-W">
+        <nodeMember connectorId="pin3W"/>
+        <nodeMember connectorId="pin4W"/>
+        <nodeMember connectorId="pin5W"/>
+        <nodeMember connectorId="pin6W"/>
+        <nodeMember connectorId="pin7W"/>    
+
+        <nodeMember connectorId="pin9W"/>
+        <nodeMember connectorId="pin10W"/>
+        <nodeMember connectorId="pin11W"/>
+        <nodeMember connectorId="pin12W"/>
+        <nodeMember connectorId="pin13W"/>   
+        
+        <nodeMember connectorId="pin15W"/>
+        <nodeMember connectorId="pin16W"/>
+        <nodeMember connectorId="pin17W"/>
+        <nodeMember connectorId="pin18W"/>
+        <nodeMember connectorId="pin19W"/> 
+        
+        <nodeMember connectorId="pin21W"/>
+        <nodeMember connectorId="pin22W"/>
+        <nodeMember connectorId="pin23W"/>
+        <nodeMember connectorId="pin24W"/>
+        <nodeMember connectorId="pin25W"/>
+        
+        <nodeMember connectorId="pin27W"/>
+        <nodeMember connectorId="pin28W"/>
+        <nodeMember connectorId="pin29W"/>
+        <nodeMember connectorId="pin30W"/>
+        <nodeMember connectorId="pin31W"/>                 
+      </bus>
+      <bus id="bus-X">
+        <nodeMember connectorId="pin3X"/>
+           <nodeMember connectorId="pin4X"/>
+           <nodeMember connectorId="pin5X"/>
+           <nodeMember connectorId="pin6X"/>
+           <nodeMember connectorId="pin7X"/>    
+
+           <nodeMember connectorId="pin9X"/>
+           <nodeMember connectorId="pin10X"/>
+           <nodeMember connectorId="pin11X"/>
+           <nodeMember connectorId="pin12X"/>
+           <nodeMember connectorId="pin13X"/>   
+              
+           <nodeMember connectorId="pin15X"/>
+           <nodeMember connectorId="pin16X"/>
+           <nodeMember connectorId="pin17X"/>
+           <nodeMember connectorId="pin18X"/>
+           <nodeMember connectorId="pin19X"/> 
+              
+           <nodeMember connectorId="pin21X"/>
+           <nodeMember connectorId="pin22X"/>
+           <nodeMember connectorId="pin23X"/>
+           <nodeMember connectorId="pin24X"/>
+           <nodeMember connectorId="pin25X"/>
+              
+           <nodeMember connectorId="pin27X"/>
+           <nodeMember connectorId="pin28X"/>
+           <nodeMember connectorId="pin29X"/>
+           <nodeMember connectorId="pin30X"/>
+           <nodeMember connectorId="pin31X"/>                 
+      </bus>
+      <bus id="bus-Y">
+        <nodeMember connectorId="pin3Y"/>
+           <nodeMember connectorId="pin4Y"/>
+           <nodeMember connectorId="pin5Y"/>
+           <nodeMember connectorId="pin6Y"/>
+           <nodeMember connectorId="pin7Y"/>    
+
+           <nodeMember connectorId="pin9Y"/>
+           <nodeMember connectorId="pin10Y"/>
+           <nodeMember connectorId="pin11Y"/>
+           <nodeMember connectorId="pin12Y"/>
+           <nodeMember connectorId="pin13Y"/>   
+              
+           <nodeMember connectorId="pin15Y"/>
+           <nodeMember connectorId="pin16Y"/>
+           <nodeMember connectorId="pin17Y"/>
+           <nodeMember connectorId="pin18Y"/>
+           <nodeMember connectorId="pin19Y"/> 
+              
+           <nodeMember connectorId="pin21Y"/>
+           <nodeMember connectorId="pin22Y"/>
+           <nodeMember connectorId="pin23Y"/>
+           <nodeMember connectorId="pin24Y"/>
+           <nodeMember connectorId="pin25Y"/>
+              
+           <nodeMember connectorId="pin27Y"/>
+           <nodeMember connectorId="pin28Y"/>
+           <nodeMember connectorId="pin29Y"/>
+           <nodeMember connectorId="pin30Y"/>
+           <nodeMember connectorId="pin31Y"/>                 
+      </bus>
+      <bus id="bus-Z">
+        <nodeMember connectorId="pin3Z"/>
+           <nodeMember connectorId="pin4Z"/>
+           <nodeMember connectorId="pin5Z"/>
+           <nodeMember connectorId="pin6Z"/>
+           <nodeMember connectorId="pin7Z"/>    
+
+           <nodeMember connectorId="pin9Z"/>
+           <nodeMember connectorId="pin10Z"/>
+           <nodeMember connectorId="pin11Z"/>
+           <nodeMember connectorId="pin12Z"/>
+           <nodeMember connectorId="pin13Z"/>   
+              
+           <nodeMember connectorId="pin15Z"/>
+           <nodeMember connectorId="pin16Z"/>
+           <nodeMember connectorId="pin17Z"/>
+           <nodeMember connectorId="pin18Z"/>
+           <nodeMember connectorId="pin19Z"/> 
+              
+           <nodeMember connectorId="pin21Z"/>
+           <nodeMember connectorId="pin22Z"/>
+           <nodeMember connectorId="pin23Z"/>
+           <nodeMember connectorId="pin24Z"/>
+           <nodeMember connectorId="pin25Z"/>
+              
+           <nodeMember connectorId="pin27Z"/>
+           <nodeMember connectorId="pin28Z"/>
+           <nodeMember connectorId="pin29Z"/>
+           <nodeMember connectorId="pin30Z"/>
+           <nodeMember connectorId="pin31Z"/>                 
+      </bus>
+    </buses>
+</module>

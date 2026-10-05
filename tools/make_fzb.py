@@ -128,6 +128,12 @@ SECTIONS = {
         ("MOSFET", ["8205HA", "8205S"]),
         ("排阻", ["YC164"]),
     ],
+    "breadboards": [
+        ("面包板（去粘版：孔只在面包板视图声明）",
+         ["RSR03MB102-LH", "GenericBreadboard-LH", "HalfBreadboard-LH",
+          "HalfBreadboardV2-LH", "BB301-LH", "TinyBreadboard-LH",
+          "MiniBreadboard-LH"]),
+    ],
 }
 
 # 箱图标：**必须是文件名** —— `icon="<名字>.png"`，且同目录里要有 `<名字>.png` 与 `<名字>-mono.png`。
