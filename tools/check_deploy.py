@@ -208,11 +208,22 @@ def main():
             else:
                 alias = [n for n in mine_idx.get(mid, []) if n != mine_fzp_name]
                 if alias:
-                    # ★ 不是故障 ✗：Fritzing 导入 .fzpz 时**自己**也会写成 `<moduleId>_<hash>_<ver>.fzp`
-                    #   甚至 `SYB-118.fzp`（moduleId 叫 Breadboard-SYB118-ModuleID ✗）—— 实测它在用 ✓。
-                    #   真正致命的是 **fzp 引用到的图形文件不在那儿** ✗（见 ②）。
-                    notes.append(f"fzp 文件名与 moduleId 不一致（应为 {mine_fzp_name}，实际 {', '.join(alias)}）"
-                                 " —— Fritzing 自己导入时也会这样命名，能用 ✓")
+                    # ★ 2026-10-05 修掉一个**瞎点** ✗：原来只打一句"文件名不一致、能用 ✓"就放过，
+                    #   **从不比内容** ✗ ⇒ MINE 里那份**旧的别名 fzp**（Fritzing 真正在读的那份 ✗）
+                    #   永远查不出来 ✗（实测 SYB-118：别名 `SYB-118.fzp` 还是 08-30 的老版 ✗、
+                    #   里面 691 处 `<schematicView>` ✗ ⇒ 去粘根本没进 Fritzing ✗，工具却报"一致" ✗）。
+                    #   ⇒ 别名**也要逐字节比** ✓；不一致就是**致命** ✗（别名叫什么名，Fritzing 就读什么 ✓）。
+                    stale = [n for n in alias
+                             if sha1(os.path.join(user_dir, n)) != sha1(fzp_repo)]
+                    if stale:
+                        tgt = os.path.join(user_dir, stale[0])
+                        problems.append(("fzp", "旧（别名）",
+                                         f"{stale[0]}  (仓库 {mtime_str(fzp_repo)} / MINE {mtime_str(tgt)})",
+                                         tgt, fzp_repo))
+                    else:
+                        notes.append("fzp 文件名与 moduleId 不一致（应为 %s，实际 %s）"
+                                     " —— Fritzing 自己导入时也会这样命名 ✓，内容与仓库一致 ✓"
+                                     % (mine_fzp_name, ", ".join(alias)))
                 else:
                     problems.append(("fzp", "缺", mine_fzp_name, mine_fzp, fzp_repo))
 
