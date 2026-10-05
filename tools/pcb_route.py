@@ -1173,21 +1173,25 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
                           copper_keep=copper_keep, labels=labels)
         _snap = DIAG["fails"][_m:]              # 本次次序的诊断 ✓
         n_ok = sum(1 for d in res.values() if d["ok"])
+        miss = sum(int(d.get("miss", 0)) for d in res.values())
         ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
                  for d in res.values() for s in d["segs"])
         if verbose:
-            print("   次序《%-14s》：连通 %d/%d ✓｜长 %6.1f mm" % (name, n_ok, len(res), MM(ln)))
-        if best is None or (n_ok, -ln) > (best[0], -best[1]):
-            best = (n_ok, ln, res, name)
+            print("   次序《%-14s》：连通 %d/%d ✓｜还差 %2d 条连接 ✓｜长 %6.1f mm"
+                  % (name, n_ok, len(res), miss, MM(ln)))
+        # ★ 同一把尺子 ✓（先连通网数 ✓ → 再"还差几条连接" ✓ → 后总长 ✓，同 `_score` ✓）
+        if best is None or (n_ok, -miss, -ln) > (best[0], -best[1], -best[2]):
+            best = (n_ok, miss, ln, res, name)
             _best_snap = list(_snap)            # ★ 记住**胜出那份**的诊断 ✓
     if verbose and best:
-        print("   ⇒ 取《%s》那份 ✓（连通 %d/%d ✓）" % (best[3], best[0], len(best[2])))
+        print("   ⇒ 取《%s》那份 ✓（连通 %d/%d ✓｜还差 %d 条连接 ✓）"
+              % (best[4], best[0], len(best[3]), best[1]))
     # ★★ 2026-10-03 只留胜者 ✓：6 种次序各报一遍 ✗ ⇒ 日志里 6 倍噪音 ✗，
     #   而且**最后那遍未必是胜者** ✗ ⇒ 会把不存在的病报给用户 ✗。
     if DIAG["on"]:
         del DIAG["fails"][_mark0:]
         DIAG["fails"].extend(_best_snap)
-    return best[2]
+    return best[3]
 
 
 def escape_penalty(res, rect, pads, net_pads, cell, items, width_of=None, pct=3.0):
@@ -1232,17 +1236,26 @@ def escape_penalty(res, rect, pads, net_pads, cell, items, width_of=None, pct=3.
 
 
 def _score(res):
-    """打分 ✓（**先比连通网数 ✓，再比总长 ✓**）—— 拆线重布就靠它决定"接不接受" ✓
+    """打分 ✓（**先比连通网数 ✓ → 再比"还差几条连接" ✓ → 最后比总长 ✓**）—— 拆线重布就靠它决定"接不接受" ✓
 
-    ★ 2026-10-05 ✓：`ESCAPE_PENALTY` 开着时，中间多一维
+    ★★ 2026-10-05 加中段 ✓（**与 Fritzing 同义** ✓，仓规 §13 ✓）：
+      ✗ 原来只有 `(连通网数, -长)` ✗ ⇒ **分不清**这两种 8/9 ✗：
+        · 差的那张网**只差一口气**（9 只脚里差 1 段 ✓）；
+        · 差的那张网**几乎全断**（实测：8/9 那份里 `GND` **只布出 3 段、7 条连接没连上** ✗）；
+      两种都是 "8/9" ✓ ⇒ 拆线重布会把**差的那种**当成好解收下 ✗（实测 ✓）。
+      ✓ 现在多一维 `-Σ(每张网缺的段数)` ✓ —— 这正是 **Fritzing 状态栏那句** 数的东西 ✓
+      （`mainwindow.cpp:2298`：`%1 of %2 nets routed - %n connector(s) still to be routed` ✓ ——
+      它数的是 **connector** ✗ 不是网 ✗ ✓）。
+    ★ 2026-10-05 ✓：`ESCAPE_PENALTY` 开着时，中间还多一维
       **「被封成小口袋的脚数」** ✓（越少越好 ✓）⇒ 次序/拆线会**自己挑**不封口的解 ✓。
     """
     n_ok = sum(1 for d in res.values() if d["ok"])
+    miss = sum(int(d.get("miss", 0)) for d in res.values())
     ln = sum(math.hypot(s[1][0] - s[2][0], s[1][1] - s[2][1])
              for d in res.values() for s in d["segs"])
     if _GATE.get("on"):
-        return (n_ok, -escape_penalty(res, **_GATE["ctx"]), -ln)
-    return (n_ok, -ln)
+        return (n_ok, -miss, -escape_penalty(res, **_GATE["ctx"]), -ln)
+    return (n_ok, -miss, -ln)
 
 
 def _sgn(v):
@@ -1363,8 +1376,8 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                              items=items, width_of=width_of)
     best_s = _score(best)
     if verbose:
-        print("   [拆线重布] 起点：连通 %d/%d ✓｜长 %.1f mm"
-              % (best_s[0], len(best), -best_s[-1]))
+        print("   [拆线重布] 起点：连通 %d/%d ✓｜还差 %d 条连接 ✓｜长 %.1f mm"
+              % (best_s[0], len(best), -best_s[1], -best_s[-1]))
 
     def near_net(net, other):
         """两张网最近的一对焊盘距离 ✓（用来猜"谁挡住了我" ✓）"""
@@ -1432,8 +1445,9 @@ def route_ripup(items, rect, net_pads, pads, cell, via_cost, tries=6, passes=4,
                         del DIAG["fails"][_mark0:]
                         DIAG["fails"].extend(_s2)
                     if verbose:
-                        print("   [拆线重布] 第 %d 轮：拆《%s》⇒ 重布《%s》✓｜连通 %d/%d ✓｜长 %.1f mm"
-                              % (rnd, blk, net, s[0], len(trial), -s[-1]))
+                        print("   [拆线重布] 第 %d 轮：拆《%s》⇒ 重布《%s》✓｜连通 %d/%d ✓"
+                              "｜还差 %d 条连接 ✓｜长 %.1f mm"
+                              % (rnd, blk, net, s[0], len(trial), -s[1], -s[-1]))
                     break
                 # ✗ 否决了 ⇒ 它的诊断**丢掉** ✗（那是没被采纳的中间状态 ✓）
                 if DIAG["on"]:
@@ -1629,7 +1643,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         mem = [(t, c) for t, c in net_pads[net] if (t, c) in pads]
         miss = ["%s.%s" % (t, c) for t, c in net_pads[net] if (t, c) not in pads]
         if len(mem) < 2:
-            out[net] = dict(ok=len(mem) == 1, segs=[], vias=[],
+            out[net] = dict(ok=len(mem) == 1, segs=[], vias=[], miss=0,
                             note="单脚网 ✓" if mem else "无脚 ✗")
             continue
         # ★★ 每张网的**主层** ✓（2026-09-30 用户要求"图要能看懂能改" ✓）：
@@ -2016,7 +2030,7 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         note = "" if not fails else "有 %d 段没连上 ✗（%s）" % (fails, "；".join(why))
         if miss:
             note = (note + "；网表里的 %s 在板上找不到 ✗" % ",".join(miss)).strip("；")
-        out[net] = dict(ok=not fails, segs=segs, vias=vias, note=note)
+        out[net] = dict(ok=not fails, segs=segs, vias=vias, miss=fails, note=note)
         # ★ 布完的网 ⇒ **移出保护集** ✓（失败的留着 ✓，它还有机会重来 ✓，见 `ESCAPE_PROTECT` ✓）
         if pend is not None and not fails:
             pend.discard(net)
