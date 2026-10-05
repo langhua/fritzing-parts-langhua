@@ -601,7 +601,8 @@ def reach_bbox(grid, reach):
 
 
 
-def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via_at_end=False):
+def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via_at_end=False,
+                cap=None):
     """泛洪内核 ✓ —— **唯一实现** ✓：`flood`（要可达集 ✓）与 `bfs_path`（要一条路 ✓）都走它 ✓
 
     ★ 邻居规则 = `astar` 那一套 ✓（四邻 ✓ + 换层 ✓），**并且**照 `astar` 的过孔规矩：
@@ -610,6 +611,9 @@ def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via
       ⇒ 两边口径不一致 ✗（2026-10-01 实测 `5V` 就卡在这个矛盾上 ✓，查了很久 ✗）。
     ★★ 2026-10-03 ✓：`via_at_start`/`via_at_end` = 细间距/裸露焊盘**允许盘上打孔** ✗
       （QFN 扇出 ✓，见 `VIA_AT_PAD` ✓）—— 只在 `VIA_AT_PAD` 开时由调用方传入 ✓。
+    ★★ `cap` ✓（2026-10-05 加 ✓）：“泛洪到 `cap` 个状态就**停** ✓（只用来回答
+      "这只脚的脚口**够不够大**" ✓，不需要整个区域 ✓）—— 健康时早停 ✓ ⇒ 快 ✓。
+      返回的是**截断过**的 `seen` ✓（大小 = 至少 `cap` ✓），调用方按 `≥ cap` 解释 ✓。
     ⇒ 返回 `(seen, prev, hit)` ✓（`hit` = 撞到的目标状态 ✓，没给 `want` 就是 `None` ✓）
     """
     s = (lay0, grid.rc(*start))
@@ -623,6 +627,8 @@ def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via
         cl, (ix, iy) = cur
         if cur in want:
             return seen, prev, cur
+        if cap is not None and len(seen) >= cap:
+            return seen, prev, None        # ★ 够大了 ⇒ 不用再泛 ✓（调用方只看"够不够大"✓）
         nl = "copper1" if cl == "copper0" else "copper0"
         nbrs = [(cl, (ix + dx, iy + dy)) for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1))]
         _can_via = (ix, iy) not in no_via and (
@@ -640,14 +646,19 @@ def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via
     return seen, prev, None
 
 
-def flood(grid, lay0, start, no_via=(), via_at_start=False, via_at_end=False):
+def flood(grid, lay0, start, no_via=(), via_at_start=False, via_at_end=False, cap=None,
+          want=None):
     """从起点泛洪 ✓ ⇒ 可达状态集 `{(层, (ix, iy))}` ✓（与 `astar` 同口径 ✓，见 `_flood_core` ✓）
 
     ★ 返回**集合** ✓（2026-10-01 修 ✗）：`_flood_core` 内部用 `{状态: 代价}` 记 seen ✓，
       ✗ 直接把它当集合返回 ⇒ 调用方一碰 `&` / `|` 就 TypeError ✗（实测 `_work/probe_reach.py` ✓）。
+    ★ `cap` ✓（2026-10-05 ✓）：泛到 `cap` 个状态就停 ✓ ⇒ 返回的集合**至少** `cap` 个 ✓
+      （用来问"这只脚的脚口够不够大" ✓，见 `trapped_pins` ✓）。
+    ★ `want` ✓（2026-10-05 ✓）：泛到其中**任意一个**就**立刻返回** ✓ ——
+      "**它还能不能连上**"这一问 ✓ 在**能**的时候**很快** ✓（广度优先 ⇒ 先碰最近的那个 ✓）。
     """
-    return set(_flood_core(grid, lay0, start, no_via,
-                           via_at_start=via_at_start, via_at_end=via_at_end)[0])
+    return set(_flood_core(grid, lay0, start, no_via, want=want,
+                           via_at_start=via_at_start, via_at_end=via_at_end, cap=cap)[0])
 
 
 def bfs_path(grid, lay0, start, goals, no_via=(), via_at_start=False, via_at_end=False):
@@ -673,7 +684,7 @@ def bfs_path(grid, lay0, start, goals, no_via=(), via_at_start=False, via_at_end
     return list(reversed(path))
 
 
-def escape_shadow(grid, pads, net_pads, net, r_mm=None):
+def escape_shadow(grid, pads, net_pads, net, r_mm=None, protect=None):
     """别人的脚口**影子格** ✓ = 距**别网焊盘** ≤ `r_mm` 的格子 ✓（按**格号**给 ✓）
 
     ✗ 为什么要它（像素板**实测** ✓）：光板上那些"差网"的目标脚**本来就在主区域里** ✓
@@ -681,15 +692,31 @@ def escape_shadow(grid, pads, net_pads, net, r_mm=None):
       （✗ 不是禁死 ✓）⇒ 宁可绕一点 ✓，别把那只脚关进小口袋 ✗。
     ★ 只针对**别的网**的盘 ✓（本网的盘自己会挖开 ✓）；格号用**库自己的 `grid.rc`** ✓
       （✗ 不自己拍 "x/sketch" 的换算 ✗）。
+
+    ★★ `protect` = **只保护这些网**的脚口 ✓（2026-10-05 加 ✓，默认 None = 全保护 ✓）：
+      像素板**实测**的病 ✓ —— `GND` 与 `RC` **抢同一个"早布"的位子** ✗：谁先谁活 ✓、
+      谁后就死 ✗，总数卡在 8/9 ✓。根因是**已经布完的网**根本不需要保护 ✓
+      （它的脚已经连上了 ✓，再被围住也不影响通断 ✓）⇒ 保护集应当**随布线推进而缩小** ✓
+      （只剩"还没布完的网" ✓ = 那些**后来者** ✓）。见 `ESCAPE_PROTECT` ✓。
     """
     if not ESCAPE_COST_MM:
         return None
     r = U(r_mm if r_mm is not None else ESCAPE_R_MM)
     mine = set(net_pads.get(net) or ())
+    # ★ `protect` 给定时：盘 → 网 反查 ✓（表从 `net_pads` 现建 ✓，✗ 不另存字段 ✗）
+    owners = None
+    if protect is not None:
+        owners = {}
+        for n2, ps2 in net_pads.items():
+            if n2 in protect:
+                for k2 in ps2:
+                    owners.setdefault(k2, n2)
     cells = set()
     for k, q in pads.items():
         if k in mine or not q.get("box"):
             continue
+        if owners is not None and k not in owners:
+            continue                 # ★ 这家的网**已经布完**（或不在保护集 ✓）⇒ 不占影子 ✓
         b = q["box"]
         i0, j0 = grid.rc(b[0] - r, b[1] - r)
         i1, j1 = grid.rc(b[2] + r, b[3] + r)
@@ -697,6 +724,65 @@ def escape_shadow(grid, pads, net_pads, net, r_mm=None):
             for j in range(min(j0, j1), max(j0, j1) + 1):
                 cells.add((i, j))
     return cells or None
+
+
+def trapped_pins(grid_for, pend, net, net_pads, pads, novia_for,
+                 watch=None, cap=None):
+    """★★「**这一段线把谁切断了**」✓（2026-10-05 加 ✓ = 仓规「布线不许切断别人的脚口」✓）
+
+    判据 ✓（**量**出来的 ✓，而且**与 Fritzing 同义** ✓，见 §13 ✓）：
+      某只**还没布完**的网的脚 ✓ ——
+      · 在 `grid_for(n2, False)`（试放之前 ✓）上**能**连到它自己的伙伴脚 ✓；
+      · 在 `grid_for(n2, True)`（试放之后 ✓）上**连不上**了 ✗；
+      ⇒ 就是**这一段线**切的 ✗ ⇒ 返回 `[(网, 脚, 1, 0), …]` ✓。
+
+    ✗ 为什么不用"脚口格数 < 400"那个判据 ✓（**实测** ✓，像素板 ✓）：`RC.connector1`
+      还剩 **431 格** ✓（> 400 ⇒ 判"健康" ✗）**可是它已经连不上 `C1.connector0` 了** ✗
+      —— 格数是个**代理量** ✗，代理量总会在某一处对不上真问题 ✓；
+      而"**能不能连上**" ① 直接就是 Fritzing 的语义 ✓（§13 ✓）② 还是**早停**的 ✓
+      （能连上时泛洪一碰伙伴脚就返回 ✓ ⇒ 比数格子还快 ✓）。
+    ★ 只要**穿过那一步**就会被抓住 ✓ —— 封口常是一刀一刀累积的 ✓（20000 → … → 431 → 断 ✓），
+      "通→断"那一刀就是它 ✓。
+    ★ `grid_for(n2, after)` = **按 `n2` 自己的口径**摆好的栅格 ✓（**关键** ✓，见 `_route_once` 里那支 ✓）——
+      ✗ 拿"**正在布那张网**"的栅格去量别人的脚 ✗ 量不准（**实测** ✓：`--escape-wall`
+      跑了 18 次、0 次命中 ✓，就是因为①本网已布的线没算上 ✗、②别人的盘没挖开 ✗）；
+    ★ `watch` = 只查**离新线够近**的脚 ✓（性能 ✓）；`cap` ✓ = 泛洪上限 ✓
+      （**本来就连不上**或地方特别大的脚会泛到上限 ✓ ⇒ 那时**不赖这一刀** ✗，`continue` ✓）；
+    ★ `novia_for(net)` = **按网**的过孔禁落区 ✓ —— 用**别人的网**自己的口径 ✓。
+    """
+    hits = []
+    for n2 in sorted(pend):
+        if n2 == net:
+            continue
+        nv = novia_for(n2)
+        partners = [k for k in net_pads[n2] if k in pads and pads[k].get("box")]
+        if len(partners) < 2:
+            continue
+        for k2 in partners:
+            q = pads[k2]
+            c = q["c"]
+            if watch and not (watch[0] <= c[0] <= watch[2]
+                              and watch[1] <= c[1] <= watch[3]):
+                continue
+            vs_ = bool(VIA_AT_PAD and (q.get("fine") or q.get("epad")))
+
+            def _can(g, _c=c, _q=q, _vs=vs_, _nv=nv, _k2=k2):
+                """按 `g` 量：这只脚**还能不能**碰到同网别的脚 ✓"""
+                want = set()
+                for kk in partners:
+                    if kk == _k2:
+                        continue
+                    for lb in pads[kk]["lays"]:
+                        want.add((lb, g.rc(*pads[kk]["c"])))
+                reach = _flood_core(g, _q["lays"][0], _c, _nv, want=want,
+                                    via_at_start=_vs, via_at_end=_vs, cap=cap)[0]
+                return bool(want & set(reach))
+
+            if not _can(grid_for(n2, False)):
+                continue              # 本来就连不上 ✗（别的锅 ✓）/ 泛到上限没碰上 ✓ ⇒ 不赖这一刀 ✗
+            if not _can(grid_for(n2, True)):
+                hits.append((n2, k2, 1, 0))
+    return hits
 
 
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
@@ -948,6 +1034,29 @@ ESCAPE_PENALTY = False
 #     （实测仍 7/9 ✗）⇒ 只能进**每步代价** ✓。
 ESCAPE_COST_MM = 0.0          # 每格加价（mm ✓；0 = 关 ✓）
 ESCAPE_R_MM = 0.45            # 影子半径（mm ✓）—— 比过孔禁落 0.55 稍小 ✓
+# ★★ 「只保护**还没布完的网**的脚口」✓（2026-10-05 加 ✓，默认关 ✗，CLI `--escape-protect` ✓）：
+#   ✗ 病的模样（像素板实测 ✓）：`GND` 与 `RC` **抢同一个早布位** ✓ ⇒ 谁先谁活 ✓、谁后就死 ✗，
+#     总数卡在 8/9 ✓。根因 = 保护集里混进了**已经布完的网** ✗ —— 它们已经连上了 ✓，
+#     再被围住也不影响通断 ✓ ⇒ 白占影子 ✓、把后来者逼得没路走 ✗。
+#   ✓ 改法：每段布线前重算影子 ✓，**只**把"还没布完的网"的盘算进去 ✓（有界 ✓、一处调用 ✓）。
+#   ★ 随布线推进，保护集**单调缩小** ✓；失败的网**留在集合里** ✓（还有机会重来 ✓）。
+ESCAPE_PROTECT = False
+# ★★ 「**不许切断别人的脚口**」✓（2026-10-05 加 ✓，默认关 ✗，CLI `--escape-wall` ✓）：
+#   规则正文 = 仓规 §5b「布线不许把**还没布完的网**的脚关进小口袋」✓。
+#   ✗ 为什么"影子加价"那条路走不通 ✓（像素板**实测** ✓）：`--escape-cost` 只在**盘外 0.45 mm**
+#     那一圈加价 ✗，而**围住脚的那道墙通常在外圈** ✗（`R1.connector1` 的墙离它 > 0.45 mm ✓）
+#     ⇒ 半径扫到 **2.0 mm 也还是 7/9** ✗ —— 封口者**根本没被罚到** ✓。
+#   ✓ 改法：**直接量**（不估 ✗）—— 把这一段线**试放上去** ✓（`simulate_commit` ✓），
+#     再对"还没布完的网"的脚**泛洪** ✓（`trapped_pins` ✓）：
+#     某只脚**从"够大"掉成"小口袋"** ✓ ⇒ 就是这段线切的 ✗ ⇒ **禁掉这条走廊重搜** ✓。
+#   ★ 有界 ✓：只看新线 `WATCH_MM` 以内的脚 ✓、泛洪带上限 ✓（够大就早停 ✓）、最多改道几次 ✓。
+ESCAPE_WALL = False
+ESCAPE_WALL_TRIES = 4        # 最多改道几次 ✓（每改一次多搜一次 A* ✓）
+ESCAPE_WALL_CAP = 30000      # 量"还能不能连上"时的泛洪上限 ✓（够不着就是够不着 ✓，但**别泛全板** ✗）
+# ★ `WATCH_MM` 一开始是 **3.0** ✗ —— **实测**（像素板 ✓）：`RC.connector1` 所在那块
+#   口袋的中心**刚好落在 3 mm 框外** ✗ ⇒ 一刀都没量到它 ✓（只有极少数命中 ✓）⇒ 放宽到 **8.0** ✓。
+#   ★ 代价可控 ✓：这只是**先筛一遍坐标** ✓，真正的量（泛洪）在"能连上"时**早停** ✓。
+ESCAPE_WALL_WATCH_MM = 8.0
 _GATE = {}            # `route_ripup` 设一次 ✓ ⇒ `_score` 里读 ✓（两处打分自动一致 ✓）
 
 
@@ -1494,6 +1603,26 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         for ix in range(i0, i1 + 1):
             for jy in range(j0, j1 + 1):
                 novia.add((ix, jy))
+    # ★★ 「只保护**还没布完的网**的脚口」✓（见 `ESCAPE_PROTECT` ✓）：
+    #   起点 = **所有网** − **已经布好的**（`pre` ✓）✓；每布完一张网就**移出** ✓。
+    #   ✗ `pre is None` 时也给同一份集合 ✓（`route()` 单趟也走这条路 ✓）。
+    #   ★ `ESCAPE_WALL`（切脚口检查 ✓）也要这份表 ✓ ⇒ 两个开关**共用**同一份 ✓（口径一致 ✓）。
+    pend = None
+    if (ESCAPE_PROTECT and ESCAPE_COST_MM) or ESCAPE_WALL:
+        pend = set(net_pads) - set(pre or {})
+    # ★ 按网的过孔禁落区 ✓（`trapped_pins` 要按**别人的口径**量别人的脚 ✓，见该函数头注 ✓）
+    _nv_cache = {}
+
+    def novia_for(n2):
+        st = _nv_cache.get(n2)
+        if st is None:
+            mk = set(net_pads.get(n2) or ())
+            st = set(novia)
+            for k2, s2 in halo.items():
+                st |= (halo_own[k2] if k2 in mk else s2)
+            _nv_cache[n2] = st
+        return st
+
     for net in order:
         if net in (pre or {}):
             continue
@@ -1531,6 +1660,35 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         # ★★ 细间距区：只按**缩宽后**的净空挖盘 ✓（否则粗线能借“挖盘”穿过别人盘 ✗，
         #   见 `carve_pads` 的注释 ✓ —— 实测就是 `GND`↔`PA2` 短路的机制 ✓）
         neck_grow = U(min(w_of(net), NECK_W_MM) / 2 + CLEAR_MM)
+        # ★★ 「量**别人的脚**」要用的那套口径 ✓（2026-10-05 ✓，见 `trapped_pins` 头注 ✓）：
+        #   ✗ 不能拿 `grid` 直接量 ✗（它是"**正在布这张网**"的视角 ✓）——
+        #     ① `grid` **故意不挡自己已布的线** ✗（否则多脚网接不上后面的脚 ✓）
+        #       ⇒ 这张网前几段的铜**不存在** ✗ ⇒ 累积出来的封口量不出来 ✗；
+        #     ② `carve_pads` 只为**本网**挖出口 ✗ ⇒ 别人那只脚**自己口都没挖开** ✗
+        #       ⇒ 泛洪只有几十格 ✓ ⇒ 一律判成"本来就小" ✗（**实测**：命中 0 次 ✓）。
+        #   ✓ 所以：挡上**所有**线（含本网已布的 ✓）＋ 挖开**它自己**的盘 ✓。
+        _seg = [None, None]        # ★ 本段"试放"的候选 ✓（判官量"放上之后"时读它 ✓）
+
+        def grid_for(n2, after=False):
+            o = grid.clone()
+            for _lay5, _box5, _gr5, _lb5 in (traces.get(net) or ()):
+                _g5 = max(_gr5, _gr5 - U(CLEAR_MM) + U(max(CLEAR_MM, PITCH_MIN_MM)))
+                for _l6 in (LAYERS if _lay5 == "both" else (_lay5,)):
+                    o.block_box(_l6, _box5, _g5, owner="线:%s" % net)
+            if after and _seg[0]:
+                for _lay6, _p6, _q6 in _seg[0]:
+                    o.block_box(_lay6, (min(_p6[0], _q6[0]), min(_p6[1], _q6[1]),
+                                        max(_p6[0], _q6[0]), max(_p6[1], _q6[1])),
+                                grow, owner="试:线")
+                for _p6 in (_seg[1] or ()):
+                    for _l7 in LAYERS:
+                        o.block_box(_l7, (_p6[0], _p6[1], _p6[0], _p6[1]),
+                                    U(0.45), owner="试:孔")
+            carve_pads(o, pads, net_pads.get(n2) or (),
+                       U(w_of(n2) / 2 + CLEAR_MM),
+                       U(min(w_of(n2), NECK_W_MM) / 2 + CLEAR_MM))
+            return o
+
         while todo:
             best = None
             for a in linked:
@@ -1606,6 +1764,19 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             #   默认关 ✗（`VIA_AT_PAD` ✓）；开时只对 `fine`/`epad` 盘放行 ✓（其它盘照旧 ✗）。
             via_s = VIA_AT_PAD and (pads[a].get("fine") or pads[a].get("epad"))
             via_e = VIA_AT_PAD and (pads[b].get("fine") or pads[b].get("epad"))
+            # ★★ 「**不许切断别人的脚口**」✓（`ESCAPE_WALL` ✓，见它的定义 ✓）——
+            #   ★ 它现在是个**判官** ✓（**只报不改** ✓）：每段选好之后**量一遍** ✓ ——
+            #   这段线有没有把某只**还没布完**的脚**从"能连上"变成"连不上"** ✗（= Fritzing 语义 ✓）。
+            #   ✗ 为什么不做"改道" ✗（**实测** ✓，像素板 ✓）：试过 **两种** ──
+            #     ① **禁掉这条走廊再搜** ✗：命中 **100%** 落进"**搜不到别的路**" ✓ ⇒
+            #        因为被切的那一段往往是**必须连**的那条 ✓ ⇒ 禁了就没路 ✓ ⇒ 只能退回 ✓；
+            #     ② **把"未布完的脚从它自己出发的前 2000 格"整片加价** ✗（"留路"的实测版 ✓）：
+            #        连通**没涨** ✗（还是 7/9 ✓），而**质量塌了** ✗ —— 线长 **271.7 → 473.0 mm** ✗、
+            #        过孔 **11 → 47** ✗（价把线逼得到处绕 ✓）。
+            #   ⇒ 按仓规 §0 第 3 条（要靠叠补偿才成立 = 方向错了 ✓）**停手回退** ✗✓；
+            #     但**判官留着** ✓ —— 它能**精确点名**"哪一段切了哪只脚" ✓（实测 ✓：
+            #     `GND` 的某段 ⇒ `RC.connector1 通→断` ✓），这正是**下一步该改哪里**的入口 ✓。
+            #   ★ 判官**不改结果** ✗ ⇒ 报出来的东西和"没开这个开关"**必须逐字节一样** ✓（可自检 ✓）。
             path = None
             for la in pads[a]["lays"]:
                 # ★ 本网**已用几颗过孔** ⇒ 下一颗贵多少 ✓（递增 ✓，见 `VIA_ESCALATE` ✓）
@@ -1614,12 +1785,30 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                              [(lb, pads[b]["c"]) for lb in pads[b]["lays"]], vc,
                              avoid=keep_cells if net in tuple(mid_keep) else None,
                              avoid_w=MID_KEEP_W, no_via=no_via,
-                             avoid2=escape_shadow(grid, pads, net_pads, net),
+                             avoid2=escape_shadow(grid, pads, net_pads, net,
+                                                  protect=pend if ESCAPE_PROTECT else None),
                              avoid2_w=U(ESCAPE_COST_MM),
                              turn=TURN_COST, pen_layer=other, pen=LAYER_PEN,
                              via_at_start=via_s, via_at_end=via_e)
                 if path:
                     break
+            if path and ESCAPE_WALL and pend:
+                _sg3, _vs3 = path_to_segments(path, grid)
+                if _sg3:
+                    _seg[0], _seg[1] = _sg3, _vs3
+                    # ★ 只查**离这条线够近**的脚 ✓（性能 ✓；远处的脚不会被这一段切 ✓）
+                    _wx = [grid.xy(i, j) for _l, (i, j) in path]
+                    _wm = U(ESCAPE_WALL_WATCH_MM)
+                    _watch = (min(p[0] for p in _wx) - _wm, min(p[1] for p in _wx) - _wm,
+                              max(p[0] for p in _wx) + _wm, max(p[1] for p in _wx) + _wm)
+                    _bad = trapped_pins(grid_for, pend, net, net_pads, pads, novia_for,
+                                        watch=_watch, cap=ESCAPE_WALL_CAP)
+                    if _bad:
+                        print("   ⚠ [判官] 网 %s 的这一段（%s.%s → %s.%s）把**还没布完**的脚"
+                              "切断了 ✗：%s"
+                              % (net, a[0], a[1], b[0], b[1],
+                                 "、".join("%s.%s" % (n2, k2[1])
+                                           for n2, k2, _b, _a in _bad[:4])))
             if not path:
                 # ★★ 兜底 ✓（2026-10-01 ✓）：A* 没搜到 ⇒ 用**不带任何代价**的 BFS 再来一次 ✓
                 #   出处（实测 ✓）：`5V` 四个目标 `flood` 说可达 ✓、起点格也空 ✓，
@@ -1823,6 +2012,9 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         if miss:
             note = (note + "；网表里的 %s 在板上找不到 ✗" % ",".join(miss)).strip("；")
         out[net] = dict(ok=not fails, segs=segs, vias=vias, note=note)
+        # ★ 布完的网 ⇒ **移出保护集** ✓（失败的留着 ✓，它还有机会重来 ✓，见 `ESCAPE_PROTECT` ✓）
+        if pend is not None and not fails:
+            pend.discard(net)
     return out
 
 
@@ -1942,6 +2134,12 @@ def main(argv):
         global ESCAPE_R_MM                 # ★ 影子半径（mm ✓）
         ESCAPE_R_MM = float(next(a.split("=", 1)[1] for a in argv
                                  if a.startswith("--escape-r=")))
+    if "--escape-protect" in argv:         # ★ 2026-10-05 加 ✓（默认关 ✗）：只保护没布完的网 ✓
+        global ESCAPE_PROTECT
+        ESCAPE_PROTECT = True
+    if "--escape-wall" in argv:            # ★ 2026-10-05 加 ✓（默认关 ✗）：不许切别人的脚口 ✓
+        global ESCAPE_WALL
+        ESCAPE_WALL = True
     model = PC.collect(fzz)
     r = model["board"]
     pads = pad_index(model)
