@@ -156,7 +156,15 @@ def main(argv):
             if m not in declared:
                 fails.append("FAIL 总线 %s 引用了不存在的 %s" % (bid, m))
             elif m in in_bus:
-                fails.append("FAIL %s 同时在总线 %s 和 %s 里" % (m, in_bus[m], bid))
+                msg = "%s 同时在总线 %s 和 %s 里" % (m, in_bus[m], bid)
+                if is_bb:
+                    # ★ 面包板例外 ✓（2026-10-05 用户定）：面包板可以用**两段轨共用几只孔**
+                    #   来表达“这段是连着的” ✓ —— `SYB-118` 就是这样 ✓，用户实测确认
+                    #   “之前的电源轨分组才是正确的，不能改” ✓（我按“X 应与 Y 对称”推错了 ✗）。
+                    #   ⇒ 对面包板只**提示** ✓；对别的件仍然是 **FAIL** ✗（那是真错 ✓）。
+                    notes.append("注: （面包板 ✓）" + msg + " ✓ 属既有做法 ✓")
+                else:
+                    fails.append("FAIL " + msg)
             else:
                 in_bus[m] = bid
     print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))

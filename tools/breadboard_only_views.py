@@ -114,10 +114,32 @@ def transform(text, n_conn):
     return head + part_block + tail, stat
 
 
+def pack(d):
+    """把部件目录按**平铺名**重打成顶层 `fzpz/<目录名>.fzpz` ✓（不带 `.bak*` ✓），
+    并核对"包内文本 == 磁盘" ✓。"""
+    name = os.path.basename(d)
+    dst = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(d))), "fzpz",
+                       name + ".fzpz")
+    files = sorted(f for f in os.listdir(d)
+                   if not f.startswith(".") and ".bak" not in f)
+    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as z:
+        for f in files:
+            z.write(os.path.join(d, f), f)
+    zz = zipfile.ZipFile(dst)
+    for f in files:
+        if zz.read(f) != open(os.path.join(d, f), "rb").read():
+            raise SystemExit("✗ 包里的 %s 与磁盘不一致 ⇒ 重打失败 ✗" % f)
+    print("   ✓ 重打 %s ⇒ 包内 %s ✓（逐条与磁盘一致 ✓）"
+          % (os.path.relpath(dst, os.path.dirname(dst)), zz.namelist()))
+
+
 def main():
     d = sys.argv[1].rstrip("\\/")
     do = "--do" in sys.argv
-    pack = "--pack" in sys.argv
+    pack_ = "--pack" in sys.argv
+    if "--pack-only" in sys.argv:                      # ★ 只重打包（数据不改 ✓）
+        pack(d)
+        return 0
     path = read_fzp(d)
     # ★ `newline=""`：**原样保留行尾** ✓（✗ 不然 CRLF 会被换成 LF ✗ ⇒ 整个 fzp 出现
     #   全文件级的假 diff ✗，本仓的"字节级 diff"纪律会被噪掉 ✗）
@@ -178,18 +200,8 @@ def main():
     print("     删块：孔里 %d ✓（= 2×connector %d ✓）｜部件级 `<views>`／connector 数／`<buses>`／面包板视图块都**逐字不变** ✓"
           % (stat["conn"], n_conn))
 
-    if pack:
-        name = os.path.basename(d)
-        dst = os.path.join(os.path.dirname(os.path.dirname(d)), "fzpz", name + ".fzpz")
-        files = sorted(os.listdir(d))
-        files = [f for f in files if not f.endswith(".bak-onlyviews")]
-        with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as z:
-            for f in files:
-                z.write(os.path.join(d, f), f)
-        zz = zipfile.ZipFile(dst)
-        print("     ✓ 重打 %s ⇒ 包内 %s ✓" % (dst, zz.namelist()))
-        if zz.read(os.path.basename(path)) != out.encode("utf-8"):
-            raise SystemExit("✗ 包里的 fzp 与磁盘不一致 ⇒ 重打失败 ✗")
+    if pack_:
+        pack(d)
     return 0
 
 
