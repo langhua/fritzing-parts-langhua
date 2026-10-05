@@ -883,7 +883,43 @@ def pad_index(model):
     return out
 
 
-def _net_keys(net_pads, pads):
+# ★★ 2026-10-05 加 ✓（**默认关** ✗；本项目实测要开 ✓）：
+#   病（**量出来的** ✓，`_work/diag_ripup.py` ✓）：终点脚被困在小口袋里 ✗，
+#   而封口的是**别的网先布下去的线 / 过孔** ✓——
+#     · `RC` 的 `U1.connector1` 口袋 **33 格** ✗，封口：`线:DATA_IN×10` ✓、`盘:U1.connector0×9` ✓ …
+#     · `GND` 的 `C1.connector1` 口袋 **109 格** ✗，封口：`线:COIL_A×16` ✓、`过孔:LED_DIN×11` ✓ …
+#   而默认次序把 `RC` 排第 7 ✗、`GND` 排**最后** ✗ ⇒ 轮到它们时那条缝已经没了 ✓。
+#   ⇒ 新键 = **先布「被围得最死」的脚** ✓。
+#   ★ 判据取**便宜的那个** ✓（不求精确 ✓）：每只脚的 `VIA_PAD_KEEPOUT_MM` 光晕里
+#     压着几块**障碍** ✓，按网求和 ✓，越大越先 ✓（无洪水 ✓、纯几何 ✓，本板 ~3.6 万次比较 ✓）。
+ORDER_DIFFICULTY = False
+
+
+def _difficulty(net_pads, pads, items, halo_mm=None):
+    """网的**拥挤度** ✓ = 各脚 0.55 mm 光晕里压着的障碍块数之和 ✓（越大越难 ✓）"""
+    g = U(halo_mm if halo_mm is not None else VIA_PAD_KEEPOUT_MM)
+    score = {}
+    for n, mem in net_pads.items():
+        s = 0.0
+        for k in mem:
+            q = pads.get(k)
+            if not q or not q.get("box"):
+                continue
+            b = q["box"]
+            bx = (b[0] - g, b[1] - g, b[2] + g, b[3] + g)
+            for (lay, box, grow, _t) in items:
+                if _t == n:
+                    continue                    # 本网的铜不算挤自己 ✓
+                if lay not in q.get("lays", ()) and lay != "both":
+                    continue
+                if (bx[0] <= box[2] + grow and box[0] - grow <= bx[2]
+                        and bx[1] <= box[3] + grow and box[1] - grow <= bx[3]):
+                    s += 1.0
+        score[n] = s
+    return score
+
+
+def _net_keys(net_pads, pads, items=None):
     """几种**排序键** ✓（= \"先布哪张网\"的几种策略 ✓）—— 单次序不稳 ✗，多种取优 ✓
 
     ✗ 实测教训（2026-09-30 ✓）：**先布 GND/5V** ⇒ 中间走廊被抢光 ✗ ⇒ 小网接不上 ✗；
@@ -906,12 +942,18 @@ def _net_keys(net_pads, pads):
             return 0.0
         return ((max(q[0] for q in p) - min(q[0] for q in p))
                 + (max(q[1] for q in p) - min(q[1] for q in p)))
-    return [("短网先（面积↑）", lambda n: area(n)),
+    keys = [("短网先（面积↑）", lambda n: area(n)),
             ("脚数↑", lambda n: len(net_pads[n])),
             ("周长↑", lambda n: span(n)),
             ("长网先（面积↓）", lambda n: -area(n)),
             ("多脚先（脚数↓）", lambda n: -len(net_pads[n])),
             ("周长↓", lambda n: -span(n))]
+    if ORDER_DIFFICULTY and items:
+        _d = _difficulty(net_pads, pads, items)
+        # ★ 开的时候**排在最前** ✓ —— 因为 `route()` 用 `[:tries]` 截断 ✓，
+        #   排第 7 就等于**没跑** ✗（这一坑先记下 ✓）
+        keys.insert(0, ("难先（拥挤↓）", lambda n: -_d.get(n, 0.0)))
+    return keys
 
 
 def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=True, tries=6,
@@ -939,7 +981,7 @@ def route(items, rect, net_pads, pads, cell=CELL_MM, via_cost=K_VIA, verbose=Tru
     best = None
     _mark0 = len(DIAG["fails"])                 # ★ 诊断起点的水位 ✓（下面只留胜者的 ✓）
     _best_snap = []
-    for name, key in _net_keys(net_pads, pads)[:tries]:
+    for name, key in _net_keys(net_pads, pads, items)[:tries]:
         # ★★ 2026-10-03 修 ✗：`last` **必须先判** ✓ —— ✗ 旧写法 `(0 if in first else 2 if in last …)`
         #   在一张网**同时**出现在 `first` 与 `last` 里时让 `first` 赢 ✗ ⇒ `last` **静默失效** ✗
         #   （实测撞到 ✓：`--signals-first` 忘了不再传 `first=power` ✓ ⇒ 开关成了 **no-op** ✗，
@@ -1740,6 +1782,9 @@ def main(argv):
                          % "、".join("%s %d" % (MIL_TIERS[k], k) for k in sorted(MIL_TIERS)))
     global TRACE_MM
     TRACE_MM = mil * MIL_MM
+    if "--order-diff" in argv:            # ★ 2026-10-05 加 ✓（默认关 ✗）：难先次序 ✓
+        global ORDER_DIFFICULTY
+        ORDER_DIFFICULTY = True
     model = PC.collect(fzz)
     r = model["board"]
     pads = pad_index(model)
