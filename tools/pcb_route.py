@@ -2028,6 +2028,19 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
             #   判据函数 `pads_covered`/`seg_hits_rect` **保留** ✓（供**独立核对**脚本用 ✓，
             #   布线期不用 ✗）—— “一份实现、两处调用” ✓。
             segs += sg
+            # ★★ 过孔**去重** ✓（2026-10-06 修 ✗，实测 v70 踩到 ✓）：
+            #   一张网的**多段**常常**共用同一个换层点** ✓ ⇒ 同一颗孔会被记两遍 ✗
+            #   ⇒ 写进文件就是**两颗孔叠在同一点** ✗（`pcb_check` 第 ⑪ 条实测点名
+            #     `Via7`/`Via8` 坐标**完全相同** ✗）—— 孔是**物理对象** ✗ ⇒ 必须唯一 ✓。
+            #   ★ 只去**完全同点**的 ✓（同一点不同层对不可能出现 ✓：换层点是"两层的接点" ✓）。
+            _seen_v = set(tuple(p) for p in vias)
+            _vs_new = []
+            for _p in vs:
+                if tuple(_p) in _seen_v:
+                    continue
+                _seen_v.add(tuple(_p))
+                _vs_new.append(_p)
+            vs = _vs_new
             vias += vs
             for lay, p, q in sg:
                 traces.setdefault(net, []).append(
