@@ -119,7 +119,9 @@ def main():
     do = "--do" in sys.argv
     pack = "--pack" in sys.argv
     path = read_fzp(d)
-    text = open(path, encoding="utf-8").read()
+    # ★ `newline=""`：**原样保留行尾** ✓（✗ 不然 CRLF 会被换成 LF ✗ ⇒ 整个 fzp 出现
+    #   全文件级的假 diff ✗，本仓的"字节级 diff"纪律会被噪掉 ✗）
+    text = open(path, encoding="utf-8", newline="").read()
     bad, info, root, n_conn = problems(text)
     print("== %s ✓ connector %d 个 ✓ ==" % (os.path.relpath(path, os.path.dirname(d)),
                                           n_conn))
