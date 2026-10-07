@@ -945,6 +945,8 @@ def _biggest_part(svg):
     """
     import xml.etree.ElementTree as ET
     import part_box as PB
+    fx, fy, fw, fh = _frame_box(svg)
+    fare = abs(fw * fh) or 1.0                     # 画布面积 ✓（块面积比它 ✓）
     best, bi = 0.0, -1
     for i, (cls, txt) in enumerate(_top_split(svg)):
         if cls != CLS_PART:
@@ -955,12 +957,34 @@ def _biggest_part(svg):
         except Exception:                            # noqa: BLE001  形状怪就算 0 ✓
             continue
         a = abs((x1 - x0) * (y1 - y0))
+        if a / fare < 0.60:                          # ★★ 判据：**盖住画布大半**才算"当画布的那件" ✓
+            continue                                 #   ✗ 少了这条就会把**原理图的 IC** 当成板 ✗
         if a > best:
             best, bi = a, i
+    if bi >= 0:
+        print("    （背景件 = 第 %d 块 ✓，占画布 %.0f%% ✓）" % (bi, 100.0 * best / fare))
     return bi
 
 
-def _paint(svg, pal, mode="A", skip=None):
+def _matrix_ef(svg, i):
+    """取第 `i` 个顶层块里第一个 `matrix(a b c d e f)` 的 **(e, f)** ✓（没有就 `None` ✓）。
+
+    ★ 用途：**背景件那块板**在两版里挪没挪 ✓ —— 只看坐标 ✓（面包板渲染里
+      `matrix` 的 (e,f) 就是实例的 `geometry (x, y)` ✓，2026-10-07 实测逐位相符 ✓）。
+    """
+    if i is None or i < 0:
+        return None
+    blk = _top_split(svg)
+    if i >= len(blk):
+        return None
+    mm = re.search(r"matrix\(([^)]*)\)", blk[i][1])
+    if not mm:
+        return None
+    nn = [float(v) for v in re.findall(r"-?\d+\.?\d*", mm.group(1))]
+    return (round(nn[4], 2), round(nn[5], 2)) if len(nn) >= 6 else None
+
+
+def _paint(svg, pal, mode="A", skip=None, drop=None):
     """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
 
     · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
@@ -977,12 +1001,17 @@ def _paint(svg, pal, mode="A", skip=None):
     · 换色共用 `render_pcb.remap_colors` ✓（属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）；
     · **背景那件**（面包板本体 ✓，`skip` 传下标 ✓）：**原样不动** ✗（既不上色也不抹填充 ✓）
       —— 否则整块板蒙灰 ✗（用户 2026-10-08 原话 ✓）；用 `_biggest_part()` 认它 ✓。
+    · `drop`（另一个下标 ✓）：这一块**整块不画** ✓ —— 板只该在 **A 侧**画一次 ✓：
+      B 层叠在 A 层上面 ✓ ⇒ B 侧的板会把 **A 的元件全盖住** ✗（用户 2026-10-08 原话：
+      「可能是面包板盖住了整个 A 图」✓ ⇒ 「改成只显示 A 图的面包板」✓）。
     """
     import render_pcb as R
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
     parts, cnt = [], {}
     for i, (cls, txt) in enumerate(_top_split(svg)):
         cnt[cls] = cnt.get(cls, 0) + 1
+        if i == drop:                                # ★ 背景件：整块不画 ✓（B 侧 ✓）
+            continue
         if i == skip:                                # ★ 背景件：原样保留 ✓
             parts.append(txt)
             continue
@@ -1340,12 +1369,21 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     # ★ 背景件（面包板本体 ✓）：不上色 ✗、不参与动画 ✗ —— 用户 2026-10-08：
     #   「面包板上蒙了一层灰」✗ ＋「面包板中的图例不用参与动画」✓
     ska, skb = _biggest_part(sa), _biggest_part(sb)
-    print("✓ 背景件（画布那一件 ✓）：A = 第 %d 块 / B = 第 %d 块 ⇒ **不上色 ✗、不参与动画 ✗**"
-          % (ska, skb))
+    # ★★ 板**只在 A 侧画一次** ✓（用户 2026-10-08 定 ✓）—— B 层压在 A 层上面 ✓、
+    #   板又大又不透明 ⇒ B 侧的板会把 A 的元件全盖住 ✗（用户原话：「可能是面包板
+    #   盖住了整个 A 图」✓）。⇒ B 侧那块**整块不画** ✓。
+    #   ★ 但它俩的**几何要对账** ✗：若两版的板**真挪了** ✓，光画 A 的就把 B 的位置藏了 ✗
+    #   ⇒ 当场报出来 ✓（可机器守 ✓）。
+    ma, mb = _matrix_ef(sa, ska), _matrix_ef(sb, skb)
+    print("✓ 背景件（画布那一件 ✓）：只在 A 侧画一次 ✓；A = 第 %d 块 %s / B = 第 %d 块 %s ⇒ %s"
+          % (ska, ma, skb, mb,
+             "两版位置**相同** ✓（只画一次没有信息损失 ✓）" if ma == mb
+             else "两版位置**不同** ✗ ⇒ 只画一次会藏住 B 的位置 ✓，请留意 ✗"))
     pa, ka = _tag_elements(_paint(sa, pal[0], "A", skip=ska)[0], refs, a_fzz, vname, "a",
                            skip=ska)
-    pb, kb = _tag_elements(_paint(sb, pal[1], "B", skip=skb)[0], refs, b_fzz, vname, "b",
-                           skip=skb)
+    # ★ B 侧：`drop=skb` ⇒ 板不画 ✓；而**块号会往前串** ✗（少了那一块 ✓）
+    #   ⇒ `skip` 必须传 None ✗（传 skb 会误跳下一块 ✓）
+    pb, kb = _tag_elements(_paint(sb, pal[1], "B", drop=skb)[0], refs, b_fzz, vname, "b")
     lose = refs - (ka | kb)
     print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
           % (len(refs), len(ka), len(kb), not lose,
