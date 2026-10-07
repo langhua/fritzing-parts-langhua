@@ -89,26 +89,37 @@ else {
 	if (h.indexOf('<h1>') < 0 || h.indexOf('<li>') < 0) fail('HTML 里没有标题或列表');
 
 	// ④ 「点行 ⇒ 高亮」的对应关系（端到端：清单里的脚名 ↔ svg 里的隐藏组 id）
-	const svgPath = md.replace(/\.md$/, '.svg');
-	if (!fs.existsSync(svgPath)) fail('旁边没有 svg（先跑一次 diff_revs.py）');
-	else {
-		const svg = fs.readFileSync(svgPath, 'utf8');
+	// ★ 2026-10-07 修 ✗：**不是每份清单都有脚名行** ✓ —— 实测 `diff-v57-v59.md` 只有
+	//   ① 摆位「没动」✓ ＋ ② 网 ✓ ＋ ③ 过孔 ✓ ⇒ 一个 `.connectorN` 都没有 ✓
+	//   （那是**真实内容** ✓，不是功能坏了 ✗；原版测试认定"最新那份必有脚名行" ✗ ⇒ 误报 ✗）。
+	// ⇒ 改成**更强**的判据：本目录里凡**带脚名行**的清单，**每一份都验** ✓
+	//   （一份过 ✗ ⇒ 不代表都对 ✓），一份都没有才报 ✗。
+	const dd = path.join(PIX, 'diff');
+	const mds = fs.existsSync(dd) ? fs.readdirSync(dd).filter((n) => /^diff.*\.md$/.test(n)) : [];
+	let files = 0, groups = 0, hit = 0, miss = 0;
+	for (const f of mds) {
+		const p = path.join(dd, f);
+		const svgP = p.replace(/\.md$/, '.svg');
+		if (!fs.existsSync(svgP)) continue;
+		const textHtml = mdToHtml(fs.readFileSync(p, 'utf8')).replace(/<[^>]+>/g, ' ');
+		const RE = new RegExp(PAD_RE_SRC, 'g');       // ★ 用扩展里**那一条**正则（不是另写一条 ✗）
+		const seen = new Set();
+		let mm;
+		while ((mm = RE.exec(textHtml))) seen.add(mm[1]);
+		if (!seen.size) continue;                     // 这份清单没有脚名行 ✓（合法 ✓）
+		files++;
+		const svg = fs.readFileSync(svgP, 'utf8');
 		const ids = new Set((svg.match(/<g id="pd-[^"]+"/g) || [])
 			.map((s) => /id="([^"]+)"/.exec(s)[1]));
-		const RE = new RegExp(PAD_RE_SRC, 'g');           // ★ 用扩展里**那一条**正则（不是另写一条 ✗）
-		const textHtml = h.replace(/<[^>]+>/g, ' ');     // ≈ 浏览器里的 textContent ✓
-		const seen = new Set();
-		let hit = 0, miss = 0, mm;
-		while ((mm = RE.exec(textHtml))) {
-			if (seen.has(mm[1])) continue;
-			seen.add(mm[1]);
-			if (ids.has('pd-' + mm[1])) hit++;
-			else { miss++; console.log('   ✗ 文字里的 %s 在 svg 里没有对应组', mm[1]); }
+		groups = Math.max(groups, ids.size);
+		for (const pad of seen) {
+			if (ids.has('pd-' + pad)) hit++;
+			else { miss++; console.log('   ✗ %s 里的 %s 在 svg 里没有对应组', f, pad); }
 		}
-		console.log('④ 点行 ⇒ 高亮：svg 里 %d 组；文字里认出 %d 个脚、对不上 %d 个',
-			ids.size, hit, miss);
-		if (!ids.size || !hit || miss) fail('点行与高亮组的对应关系不成立');
 	}
+	console.log('④ 点行 ⇒ 高亮：带脚名行的清单 %d 份（最多 %d 组）；认出 %d 个脚、对不上 %d 个',
+		files, groups, hit, miss);
+	if (!files || !hit || miss) fail('点行与高亮组的对应关系不成立');
 }
 // ⑤ 目录发现（工具已搬去库仓 ⇒ 要**同时**认出项目目录与库仓根）
 //   ★ 路径都从**已知的两个目录**推 ✓（✗ 别再数层级 ✗ —— 我数错过一次 ✓）：
