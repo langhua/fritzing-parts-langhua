@@ -783,10 +783,17 @@ def _cls_of(el):
         return CLS_TEXT
     if t.startswith("<g"):
         head = el[:el.find(">") + 1]
-        if "matrix(" in head:                        # ★ 每个零件一个 matrix 组 ✓
+        # ★★ 判据只能是这两个，而且要在**整块**里找 ✗（不能只看第一个标签 ✗ ——
+        #   2026-10-07 实测：`render_sch.py` 的零件是
+        #     `<g partID="900127260"><g transform="matrix(3.543300 …)">…`
+        #   ⇒ `matrix` 在**第二层**标签里 ✗ ⇒ 只看第一层就判成“含 text ⇒ 文字” ✗
+        #   （实测 A 那版 `文字 17 / 元件 0` ✗✗，全歪了 ✓）。
+        if "matrix(" in el:                          # 两个渲染器的零件组都带 matrix ✓
             return CLS_PART
-        if "font-family" in head:                    # 位号组 ✓
+        if "font-family" in head:                    # 位号组（`<g font-family=…><text>` ✓）
             return CLS_TEXT
+        if "partID=" in head:                        # 不带 matrix 的核心件（如 via 的 translate ✓）
+            return CLS_PART
         return CLS_TEXT if "<text" in el else CLS_WIRE
     return CLS_PART
 
@@ -1088,6 +1095,18 @@ def _place(fzz, view):
     return out
 
 
+def _kind_hint(ttl):
+    """位号 ⇒ 一句说明 ✓（用户 2026-10-07 问「为什么有 Via1~Via4？」✓ ——
+    过孔 / 接地符号都是**核心件** ✓，它们出现在原理图里是**正常的 Fritzing 用法** ✓
+    （在原理图里放过孔 = “这里接上” ✓）⇒ 在清单里点一句，别让人猜 ✗）。
+    """
+    if ttl.startswith("Via"):
+        return "（过孔：原理图里放过孔是 Fritzing 的正常用法 ✓）"
+    if ttl.startswith("Ground"):
+        return "（接地符号 ✓）"
+    return ""
+
+
 def _centers(fzz, view):
     """`{位号: (盒心 x, 盒心 y)}`（sketch 单位 ✓）—— 用 `part_box` 那套盒数学 ✓（不另写 ✗）。
 
@@ -1113,12 +1132,30 @@ def _centers(fzz, view):
             continue
         try:
             layers = ET.parse(fzp).getroot().find(".//%s/layers" % view)
-            box = PB.body_box(PB.resolve_svg(fzp, layers.get("image") if layers is not None else None))
+            svgp = PB.resolve_svg(fzp, layers.get("image") if layers is not None else None)
             loc = (float(g.get("x") or 0.0), float(g.get("y") or 0.0))
-            x0, y0, x1, y1 = PB.place(loc, PB.tf_of(g), box)
+            m = PB.tf_of(g)
+            box = PB.body_box(svgp)
+            x0, y0, x1, y1 = PB.place(loc, m, box)
+            # ★ 盒退化（宽或高 0 单位以下）⇒ **不信它** ✗ —— 用户 2026-10-07 实测：
+            #   `C1/C2` 的锚点对 ✓，而 `Ground1/Ground2` 偏 ✗（接地符号是**核心件** ✓，
+            #   fzp 指向 Fritzing 安装目录 ✗ ⇒ 本体盒算不出/不可信 ✓）。
+            if abs(x1 - x0) < 1.0 or abs(y1 - y0) < 1.0:
+                raise ValueError("body box degenerate")
             out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
-        except Exception:                      # 认不出 ⇒ 不写 ✓（调用方退回原点 ✓，不静默画错位置 ✗）
-            continue
+        except Exception:
+            # ★ 退回：拿**脚位**当盒 ✓（同一套 pin 数学 ✓ —— 算不出来就不写 ✓，
+            #   宁可让调用方退回原点 ✓，也不静默画一个看着对、其实错的位置 ✗）。
+            try:
+                pts, _bad = PB.pin_points(ET.fromstring(open(svgp, encoding="utf-8").read()))
+                if not pts:
+                    continue
+                xs = [p[0] for p in pts.values()]
+                ys = [p[1] for p in pts.values()]
+                x0, y0, x1, y1 = PB.place(loc, m, (min(xs), min(ys), max(xs), max(ys)))
+                out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
+            except Exception:
+                continue
     return out
 
 
@@ -1143,10 +1180,10 @@ def report_view(a_fzz, b_fzz):
         if ttl.startswith("Wire") or ttl.startswith("TXT"):
             continue
         if ttl not in ga:
-            rows.append("- **%s**：B 里**新增** ✓" % ttl)
+            rows.append("- **%s**：B 里**新增** ✓%s" % (ttl, _kind_hint(ttl)))
             continue
         if ttl not in gb:
-            rows.append("- **%s**：B 里**没了** ✗" % ttl)
+            rows.append("- **%s**：B 里**没了** ✗%s" % (ttl, _kind_hint(ttl)))
             continue
         xa, ya = ga[ttl].get("x"), ga[ttl].get("y")
         xb, yb = gb[ttl].get("x"), gb[ttl].get("y")
