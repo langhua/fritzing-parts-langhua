@@ -1285,7 +1285,11 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     css, anim, dur, sec, tail = _anim_css(ka, kb, refs, token)
     for (side, key), nm in anim.items():
         gid = '<g id="%s-%s"' % (side, re.sub(r"[^\w.-]", "_", key))
-        st = gid + ' style="animation:%s %.3fs linear infinite">' % (nm, dur)
+        # ★★ 只播一遍 ✓（2026-10-07 用户定 ✓：「可以只播一遍，不循环播放吗？」✓）
+        #   ⇒ 计数写 **1** ✓；★ 而且**必须带 `forwards`** ✗ —— 不写的话，动画一结束元素
+        #   就**弹回**它自己的初始状态 ✗（A 又全亮 ✓、B 又全灭 ✓）⇒ 「结尾 = B 图」这句
+        #   当场作废 ✓（这一条是"只播一遍"最容易漏的一步 ✓）。
+        st = gid + ' style="animation:%s %.3fs linear 1 forwards">' % (nm, dur)
         pa = pa.replace(gid + ">", st)
         pb = pb.replace(gid + ">", st)
     if css:
