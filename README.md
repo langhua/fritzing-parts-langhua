@@ -8,7 +8,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 123 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 116 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -56,7 +56,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（127 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（120 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -123,8 +123,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | SOD-123 / SOD-323 / SOD-523 | 肖特基整流二极管（1N5819，SMD） | `fzpz/SOD-*.fzpz` |
 | SOD-123FL | 瞬态电压抑制 TVS 二极管（SMD） | `fzpz/SOD-123FL.fzpz` |
 | SY8089 | Silergy 同步降压 DC-DC（SOT-23-5） | `fzpz/SY8089.fzpz` |
-| SYB-118 | 面包板（简易搭电路用） | `fzpz/SYB-118.fzpz` |
-| `*-LH`（7 件：`BB301-LH`、`GenericBreadboard-LH`、`HalfBreadboard-LH`、`HalfBreadboardV2-LH`、`MiniBreadboard-LH`、`RSR03MB102-LH`、`TinyBreadboard-LH`） | **面包板（去粘版）**：与 core 同名件**同形同尺寸**，但**孔只在面包板视图里声明** ⇒ 不会把上百条孔 bus 悄悄塞进 PCB／原理图的网表（7 件合计 **3130 孔／6260 块** ✗ ⇒ 已清零 ✓）。机理见 `docs/fritzing-fz-notes.md` §10；由 `tools/clone_core_breadboards.py` 从仓内 `svg/_assets/core-bb/` 生成（core 素材 CC-BY-SA 3.0，许可随附 ✓） | `fzpz/*-LH.fzpz` |
+| SYB-118 | 面包板（690 孔；孔只在面包板视图里声明 ✓） | `fzpz/SYB-118.fzpz` |
 | T-Halow-RJ45 | 泰芯 HaLow + RJ45 参考板（T-Halow-RJ45 仓的参考件；不进本库预览图/元件箱） | `fzpz/T-Halow-RJ45.fzpz` |
 | TFTSPI1.9in | 8 脚 1.9 寸 TFT LCD（SPI） | `fzpz/TFTSPI1.9in.fzpz` |
 | TM1637 / TM1638 | LED 驱动控制 IC（带键盘扫描，sop20/sop28） | `fzpz/TM1637.fzpz`、`TM1638.fzpz` |

@@ -129,14 +129,8 @@ SHEETS = {
         ("BAS70BRW", "BAS70BRW"), ("BAS70DW-04", "BAS70DW-04"),
         ("8205HA", "8205HA"), ("8205S", "8205S"), ("YC164", "YC164"),
     ]),
-    "breadboards": ("面包板（去粘版：孔只在面包板视图声明 ✓）", 4, [
+    "breadboards": ("面包板（孔只在面包板视图声明 ✓）", 4, [
         ("SYB-118", "SYB-118"),
-        ("RSR03MB102-LH", "RSR03MB102-LH"),
-        ("GenericBreadboard-LH", "GenericBreadboard-LH"),
-        ("HalfBreadboard-LH", "HalfBreadboard-LH"),
-        ("HalfBreadboardV2-LH", "HalfBreadboardV2-LH"),
-        ("BB301-LH", "BB301-LH"), ("TinyBreadboard-LH", "TinyBreadboard-LH"),
-        ("MiniBreadboard-LH", "MiniBreadboard-LH"),
     ]),
 }
 

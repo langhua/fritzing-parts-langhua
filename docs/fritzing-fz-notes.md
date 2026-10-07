@@ -239,3 +239,32 @@ Get-FileHash <仓库>\part.<X>.fzp, <MINE>\user\<X>.fzp -Algorithm SHA1
 8 件（`SYB-118` ＋ 7 件克隆）一起过新口径 ⇒ **一致 8/8** ✓。
 ★ 这条与 §10 清单里那句\"**执行过部署命令 ≠ Fritzing 里就是新的**\"是同一件事 ✗ ——
 这次是**工具本身**给了假绿灯 ✗（\"自检不算数\"的又一例 ✓）。
+
+
+## §11 面包板件的**视图口径** ✓（2026-10-07 用户问 → 定案 ✓）＋ 一次清理 ✓
+
+★★ **面包板件天生就是「三个视图共用一张图」** ✓ —— 它**不是**"面包板专属件" ✗、
+也**不是**"缺视图" ✗。核这类件**最快的办法 = 拿官方 core 的同名件并排比** ✓（今天就是这么定案的 ✓）：
+
+| | 我们 `SYB-118` ✓ | 官方 core `breadboard2` ✓ |
+|---|---|---|
+| 元件级 `<views>` ✓ | `iconView` + `breadboardView` + `schematicView` + `pcbView` ✓ | **一模一样** ✓ |
+| 各视图的 `image=` ✓ | 三视图**共用** `breadboard/SYB-118_1.svg` ✓ | 三视图**共用** `breadboard/breadboard2.svg` ✓ |
+| 层 ✓ | `layerId="breadboardbreadboard"` ✓ | 同 ✓ |
+| connector 的 `<views>` ✓ | 只写 `<breadboardView>` ✓（孔只出现在面包板视图 ✓） | 同 ✓ |
+
+⇒ 「在 Fritzing 的**原理图/PCB 视图里也能看见那块灰面包板**」✓ **就是这个机制** ✓
+⇒ ✗ 别把它误判成"要去掉原理图/PCB 视图"的病 ✗。
+
+### 顺带：删掉 7 件与 core 重复的克隆面包板 ✓（2026-10-07 用户定 ✓）
+
+- **删** ✓：`svg/{RSR03MB102,GenericBreadboard,HalfBreadboard,HalfBreadboardV2,BB301,TinyBreadboard,MiniBreadboard}-LH/`
+  ＋ `fzpz/*-LH.fzpz`（7 个）＋ `svg/_assets/core-bb/` ✓；
+- **留** ✓：`SYB-118`（**690 孔** ✓ —— 我们自己的件 ✓、**不在** core 里 ✓）；
+- ★★ **删之前的关键一查** ✓：草图的 `moduleIdRef` = **`Breadboard-RSR03MB102-ModuleID`** ✓
+  = **官方 core `breadboard2`** 的模块号 ✓；而我们那 7 件克隆件**故意带 `-LH`** ✓
+  （`…-LH-ModuleID` ✓）⇒ **它们从来没被任何草图用过** ✓ ⇒ 删掉**不会丢件** ✓✓。
+  ⇒ 教训 ✓：**删"重复件"之前，先查草图的 `moduleIdRef` 到底引的是哪一份** ✗
+  （✗ 不能只看名字像 ✗ —— 今天差一点就把草图在用的那件删了 ✓）。
+- 登记三处一起改 ✓：README 表 ✓、`tools/make_preview.py` 的 `SHEETS` ✓、
+  `tools/make_fzb.py` 的 `SECTIONS` ✓ ⇒ 再跑 `tools/check_readme_table.py` ✓（**116 / 120 全部通过** ✓）。

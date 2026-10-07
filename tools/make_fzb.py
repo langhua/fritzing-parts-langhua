@@ -129,10 +129,7 @@ SECTIONS = {
         ("排阻", ["YC164"]),
     ],
     "breadboards": [
-        ("面包板（去粘版：孔只在面包板视图声明）",
-         ["SYB-118", "RSR03MB102-LH", "GenericBreadboard-LH", "HalfBreadboard-LH",
-          "HalfBreadboardV2-LH", "BB301-LH", "TinyBreadboard-LH",
-          "MiniBreadboard-LH"]),
+        ("面包板（孔只在面包板视图声明）", ["SYB-118"]),
     ],
 }
 
