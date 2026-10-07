@@ -238,5 +238,42 @@ if (viewMd.length) {
 	console.log('⑩ 没有 bb/sch 清单可验（先跑一次 --view bb）✓');
 }
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十项都过', bad || '');
+// ⑪ ★★ 可点名字**不再靠图案猜** ✓（2026-10-08 修 ✗）：可点名字 = 图上 `pd-*` 组名 ✓
+//   —— 验**用户报的那一类** ✓：面包板清单里「新增：Wire…、Wire…」那种**导线名** ✓，
+//   必须在**渲染后的文字**里确实出现 ✓（原来那两条图案都认不出这类 ⇒ 一整串点不动 ✗）。
+//   ★ 顺带把**真合并视图 HTML** 写出来 ✓ ⇒ 能用浏览器**真点一下**验收 ✓（不是自证 ✓）。
+const bbMds = fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-bb-.*\.md$/.test(n))
+	.map((n) => ({ n, t: fs.statSync(path.join(PIX, 'diff', n)).mtimeMs }))
+	.sort((a, b) => b.t - a.t);
+if (bbMds.length) {
+	const mp = path.join(PIX, 'diff', bbMds[0].n), svgp = mp.replace(/\.md$/, '.svg');
+	const svg = fs.readFileSync(svgp, 'utf8');
+	const keys = [...new Set((svg.match(/<g id="pd-[^"]+"/g) || [])
+		.map((s) => /id="pd-([^"]+)"/.exec(s)[1]))];
+	const text = mdToHtml(fs.readFileSync(mp, 'utf8')).replace(/<[^>]+>/g, ' ');
+	const wireKeys = keys.filter((k) => /^Wire\d/.test(k));
+	const okWire = wireKeys.filter((k) => text.indexOf(k) >= 0);
+	console.log('⑪ %s：图上可点名字 %d 个（导线名 %d 个）⇒ 文字里出现 %d 个；**导线名可点 %d 个**',
+		bbMds[0].n, keys.length, wireKeys.length,
+		keys.filter((k) => text.indexOf(k) >= 0).length, okWire.length);
+	if (!wireKeys.length || !okWire.length) fail('导线名在清单文字里认不出来（会点不动）');
+	const stub = { cspSource: 'vscode-webview://x', asWebviewUri: (u) => u };
+	const page = html(stub, fs.readFileSync(mp, 'utf8'), svg, 'img.png', 'diff-bb.png', '', 'NONCE');
+	// ★ 写到**仓库内的 `_scratch/`** ✓（不是系统 Temp ✗）：浏览器对 Temp 里的文件报
+	//   `Forbidden. File does not reside within a trusted folder.` ✗ ⇒ 点不动 ✓
+	//   （2026-10-07 实测 ✓）；`_scratch/` 在 .gitignore 里 ✓ ⇒ 不污染仓库 ✓。
+	const scratch = path.join(__dirname, '..', '..', '_scratch');
+	if (!fs.existsSync(scratch)) fs.mkdirSync(scratch, { recursive: true });
+	const out = path.join(scratch, 'merged-' + bbMds[0].n.replace(/\.md$/, '') + '.html');
+	// ★ 只在**导出样张**里拆掉 CSP 那条 meta ✓ —— file:// 下浏览器不认 VS Code 的 nonce ✗
+	//   ⇒ 脚本被拦 ✗（实测报 `Executing inline script violates … 'script-src 'nonce-NONCE''` ✓）⇒
+	//   手点验收就做不成 ✓。★ VS Code 里的 webview **一个字不动** ✓（它会给对的 nonce ✓）。
+	const pageNoCsp = page.replace(/<meta[^>]*[Cc]ontent-[Ss]ecurity-[Pp]olicy[^>]*>/g, '');
+	fs.writeFileSync(out, pageNoCsp, 'utf8');
+	console.log('   合并视图 HTML 已写出 ⇒ %s（可用浏览器真点一下 ✓）', out);
+} else {
+	console.log('⑪ 没有 bb 清单可验（先跑一次 --view bb）✓');
+}
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十一项都过', bad || '');
 process.exit(bad ? 1 : 0);

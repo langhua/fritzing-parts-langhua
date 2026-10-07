@@ -235,9 +235,59 @@ const ROW_RE_SRC = '^\\s*([A-Za-z][\\w.-]*)[：:]';
  */
 function reLit(src) { return src.replace(/\//g, '\\/'); }
 const RE_INJECT = 'var RE = /' + reLit(PAD_RE_SRC) + '/, RE2 = /' + reLit(ROW_RE_SRC) + '/;';
+
+/** ★★ 「点名字 ⇒ 图上高亮」的脚本 ✓ —— 自定义编辑器与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+ *
+ *  ★★ 2026-10-08 修 ✗：原来靠两条**图案**去文字里猜（`X.connectorN` ✗ / `行首标识符＋冒号` ✗）
+ *    ⇒ 面包板/原理图清单里那种「新增：Wire90013119、Wire90013121、…」**两条都不像** ✗
+ *    ⇒ 一整串导线名字点不动 ✗（用户截图当场指出 ✗）。
+ *    ⇒ 改成**别猜** ✓：谁可点，**图上说了算** ✓ —— 可点名字 = `pd-*` 隐藏组的组名 ✓（与工具同一份数据 ✓）；
+ *      文字里出现哪个名字就点哪个 ✓（**逐个**包成 `span.pd-hit` ✓ —— 一条 `li` 里有十多个名字时各点各的 ✓）。
+ *  ★ 键**长的在前** ✓（`RC.2` 必须先于 `RC` 去比 ✓），且**全程不用正则** ✗（省掉一层转义坑 ✓）。
+ */
+function markJs(pane) {
+	return [
+		'  (function(){',
+		'    var pane = document.querySelector(' + JSON.stringify(pane) + ');',
+		'    if (!pane) return;',
+		'    var KEYS = [], g = document.querySelectorAll("#pd-hits > g");',
+		'    for (var i = 0; i < g.length; i++) { var id = g[i].id || ""; if (id.indexOf("pd-") === 0) KEYS.push(id.slice(3)); }',
+		'    KEYS.sort(function(a,b){ return b.length - a.length; });',
+		'    function markNode(tn){',
+		'      var t = tn.nodeValue || "", i = 0, frag = null, buf = "";',
+		'      while (i < t.length) {',
+		'        var hit = null;',
+		'        for (var k = 0; k < KEYS.length; k++) { var kk = KEYS[k]; if (t.substr(i, kk.length) === kk) { hit = kk; break; } }',
+		'        if (!hit) { if (frag) buf += t.charAt(i); i++; continue; }',
+		'        if (!frag) frag = document.createDocumentFragment();',
+		'        if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }',
+		'        var s = document.createElement("span");',
+		'        s.className = "pd-hit"; s.setAttribute("data-k", "pd-" + hit); s.textContent = hit;',
+		'        frag.appendChild(s); i += hit.length;',
+		'      }',
+		'      if (frag) { if (buf) frag.appendChild(document.createTextNode(buf)); if (tn.parentNode) tn.parentNode.replaceChild(frag, tn); }',
+		'    }',
+		'    var w = document.createTreeWalker(pane, NodeFilter.SHOW_TEXT, null), ns = [], n;',
+		'    while ((n = w.nextNode())) ns.push(n);',
+		'    for (var q = 0; q < ns.length; q++) markNode(ns[q]);',
+		'    pane.addEventListener("click", function(e){',
+		'      var t = e.target;',
+		'      while (t && t !== pane && !(t.className && ("" + t.className).indexOf("pd-hit") >= 0)) t = t.parentNode;',
+		'      if (!t || t === pane) return;',
+		'      var el = document.getElementById(t.getAttribute("data-k"));',
+		'      clear();',
+		'      var sel = document.querySelectorAll(".pd-hit.sel");',
+		'      for (var z = 0; z < sel.length; z++) sel[z].classList.remove("sel");',
+		'      if (!el) return;',
+		'      if (SVG) SVG.classList.add("pd-focus");',
+		'      el.style.display = ""; t.classList.add("sel");',
+		'    });',
+		'  })();'
+	].join('\n');
+}
 const JS = [
 	'(function(){',
-	'  var SVG = document.getElementById("pd-svg");',
+	'  var SVG = document.getElementById("pd-svg") || document.querySelector(".left svg") || document.querySelector("svg");',
 	'  var li = Array.prototype.slice.call(document.querySelectorAll("li"));',
 	RE_INJECT,
 	'  function clear(){',
@@ -246,21 +296,7 @@ const JS = [
 	'    for (var i = 0; i < g.length; i++) g[i].style.display = "none";',
 	'    li.forEach(function(x){ x.classList.remove("sel"); });',
 	'  }',
-	'  li.forEach(function(x){',
-	'    var txt = x.textContent || "";',
-	'    var m = RE.exec(txt) || RE2.exec(txt);',
-	'    if (!m) return;',
-	'    var tgt = "pd-" + m[1];',
-	'    if (!document.getElementById(tgt)) return;',   // ★ 图上没这组 ⇒ 不当可点 ✗（免得骗人 ✓）
-	'    x.classList.add("clickable");',
-	'    x.title = "点一下：在图上高亮 " + m[1];',
-	'    x.addEventListener("click", function(){',
-	'      clear();',
-	'      if (SVG) SVG.classList.add("pd-focus");',
-	'      var t = document.getElementById(tgt);',
-	'      if (t) { t.style.display = ""; x.classList.add("sel"); }',
-	'    });',
-	'  });',
+	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
 	'})();'
@@ -284,6 +320,10 @@ const CSS = `
   li.clickable { cursor:pointer; border-radius:3px; }
   li.clickable:hover { background: var(--vscode-list-hoverBackground); }
   li.sel { background: var(--vscode-list-activeSelectionBackground); }
+  /* ★ 清单里的**单个名字**（由图上 pd-* 数据标出来 ✓）：点了就在图上亮那一条 ✓ */
+  .pd-hit { cursor:pointer; border-radius:3px; padding:0 1px; }
+  .pd-hit:hover { background: var(--vscode-list-hoverBackground); }
+  .pd-hit.sel { background: var(--vscode-list-activeSelectionBackground); }
   .hint { color: var(--vscode-errorForeground); }
 `;
 
@@ -360,7 +400,7 @@ const SLIDE_JS = [
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
 	'  function bindHighlight(){',
-	'    var SVG = $("pd-svg");',
+	'    var SVG = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
 	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
 	RE_INJECT,
 	'    function clear(){',
@@ -369,21 +409,7 @@ const SLIDE_JS = [
 	'      for (var i = 0; i < g.length; i++) g[i].style.display = "none";',
 	'      li.forEach(function(x){ x.classList.remove("sel"); });',
 	'    }',
-	'    li.forEach(function(x){',
-	'      var txt = x.textContent || "";',
-	'      var m = RE.exec(txt) || RE2.exec(txt);',
-	'      if (!m) return;',
-	'      var tgt = "pd-" + m[1];',
-	'      if (!document.getElementById(tgt)) return;',
-	'      x.classList.add("clickable");',
-	'      x.title = "点一下：在图上高亮 " + m[1];',
-	'      x.addEventListener("click", function(){',
-	'        clear();',
-	'        if (SVG) SVG.classList.add("pd-focus");',
-	'        var t = $("pd-" + tgt.slice(3));',
-	'        if (t) { t.style.display = ""; x.classList.add("sel"); }',
-	'      });',
-	'    });',
+	markJs('#list'),
 	'    document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'    if (SVG) SVG.addEventListener("click", clear);',
 	'  }',
