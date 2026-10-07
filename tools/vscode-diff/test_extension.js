@@ -42,7 +42,7 @@ const EXTDIR = __dirname;
 const PIX = path.resolve(process.argv[2] || process.cwd());
 const ext = require(path.join(EXTDIR, 'extension.js'));
 const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
-        CSS, slideshowHtml, html } = ext._pure;
+        CSS, slideshowHtml, html, patRe } = ext._pure;
 
 // ★ 设置就用**项目自己的** `.vscode/settings.json` ✓（不是编一份假设置 ✓）——
 //   这样"项目用设置钉住 `pixel-pcb-v*`"这件事本身也被验到了 ✓。
@@ -118,12 +118,16 @@ if (!dd.proj || !dd.tool) fail('dirs() 没能同时找到项目目录与库仓�
 //   ＋ 两处必须是**同一套容器结构** ✓（幻灯片曾把 svg 直接塞进 .pane.left ✗ ⇒
 //     `.art svg{max-width:100%}` 不命中 ✗ ⇒ 图上下各多一大块空白 ✓）
 const pl = pageList(PIX);
+const ORD = { pcb: 0, bb: 1, sch: 2 };
+// ★ 页序 = （视图 ①⇒②⇒③，版本 A，版本 B）✓ —— 名字多了**视图段** ✓
+//   （`diff-bb-v100-v104.md` ✓；没视图段 = 老的 PCB ✓）。
 const seq = pl.map((p) => {
-	const m = /diff-v(\d+)[^-]*-v(\d+)/.exec(path.basename(p));
-	return m ? [Number(m[1]), Number(m[2])] : [1e9, 1e9];
+	const m = /^diff-(pcb-|bb-|sch-)?v(\d+)[^-]*-v(\d+)/.exec(path.basename(p));
+	return m ? [ORD[(m[1] || 'pcb-').slice(0, -1)], Number(m[2]), Number(m[3])]
+		: [9e9, 9e9, 9e9];
 });
-const inc = seq.every((v, i) => i === 0
-	|| seq[i - 1][0] < v[0] || (seq[i - 1][0] === v[0] && seq[i - 1][1] <= v[1]));
+const cmpk = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+const inc = seq.every((v, i) => i === 0 || cmpk(seq[i - 1], v) <= 0);
 const withSvg = pl.filter((p) => readPage(p).svg).length;
 const slideHtml = slideshowHtml({ cspSource: '' }, 'n', pl.length);
 const ART = '<div class="art"';
@@ -179,5 +183,15 @@ console.log('⑧ 模式生效：钉住老模式 %d 个（都在模式内 = %s，
 	old.length, old.every((n) => new RegExp(PAT_OLD).test(n)), old.every((n) => allSet.has(n)), all.length);
 if (!old.length || !old.every((n) => new RegExp(PAT_OLD).test(n) && allSet.has(n))) fail('模式没生效');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 八项都过', bad || '');
+// ⑨ 三个视图各自的模式都得能用 ✓ —— 设置就从项目的 `.vscode/settings.json` 来 ✓
+//   （本项目实测：pcb 76 个 / 面包板 20 个 / 原理图 57 个 ✓，三个都非空 ✓）
+let bad9 = 0;
+for (const v of ['pcb', 'bb', 'sch']) {
+	const re = patRe(v), lst = listVersions(PIX, re.source);
+	console.log('⑨ %s：模式 %s ⇒ %d 个%s', v, re.source, lst.length, lst.length ? '' : ' ✗');
+	if (!lst.length) bad9++;
+}
+if (bad9) fail('有视图的 fzzPattern 没配好（空名单）');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 九项都过', bad || '');
 process.exit(bad ? 1 : 0);

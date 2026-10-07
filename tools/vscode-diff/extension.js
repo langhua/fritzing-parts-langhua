@@ -45,7 +45,9 @@ function log(s) {
  */
 function dirs() {
 	const folders = (vscode.workspace.workspaceFolders || []).map((f) => f.uri.fsPath);
-	const re = fzzRe();
+	// ★ 找项目目录用**通用** fzz 规则 ✓（✗ 别用某个视图的模式 ✗ —— 这一层只要回答
+	//   “哪个文件夹里放着电路稿” ✓，跟这次要比哪个视图无关 ✓）。
+	const re = /\.fzz$/;
 	let tool = null;
 	for (const root of folders) {
 		if (!tool && fs.existsSync(path.join(root, 'tools', 'diff_revs.py'))) tool = root;
@@ -89,14 +91,22 @@ function pinRoots(pinned, folders) {
 
 function cfg() { return vscode.workspace.getConfiguration('pixelDiff'); }
 
-/** `pixelDiff.fzzPattern` ⇒ 正则 ✓（写了非法正则 ⇒ 退回默认 ＋ 记一笔 ✓，不进 br。）。 */
-function fzzRe() {
-	const s = String(cfg().get('fzzPattern') || '\.fzz$');
-	try { return new RegExp(s); } catch (e) {
-		log('设置里 pixelDiff.fzzPattern 不是合法正则 ⇒ 用默认 \.fzz$ ：' + s);
+/** 视图 ⇒ 设置项名 ✓（一份实现管三个视图 ✓）。 */
+const VIEW_PAT = { pcb: 'fzzPattern', bb: 'bbPattern', sch: 'schPattern' };
+const VIEW_NAME = { pcb: 'PCB', bb: '面包板', sch: '原理图' };
+
+/** `pixelDiff.<view>Pattern` ⇒ 正则 ✓（空/非法 ⇒ 退回 `\.fzz$` ＋ 记一笔 ✓）。 */
+function patRe(view) {
+	const key = VIEW_PAT[view] || 'fzzPattern';
+	const raw = String(cfg().get(key) || '').trim() || '\\.fzz$';
+	try { return new RegExp(raw); } catch (e) {
+		log(`设置里 pixelDiff.${key} 不是合法正则 ⇒ 用默认 \\.fzz$ ：` + raw);
 		return /\.fzz$/;
 	}
 }
+
+/** PCB 的文件名模式 ✓（老名字，保留 ✓ —— 内部就是 `patRe('pcb')` ✓，不再有第二套 ✓）。 */
+function fzzRe() { return patRe('pcb'); }
 
 /** 这层目录里**有没有**符合模式的 fzz 文件 ✓（读不到就当没有 ✓）。 */
 function hasFzz(dir, re) {
@@ -136,10 +146,11 @@ function listVersions(dir, pattern) {
  *  ★ `--pattern` 跟设置同步 ✓（工具只拿它去列 `have` ✓，传绝对路径后不影响结果 ✓）。
  *  日志进输出通道；`PYTHONIOENCODING` 必须给 —— 否则中文/✓ 会撞 GBK 控制台。
  */
-function runDiff(toolDir, projDir, a, b) {
+function runDiff(toolDir, projDir, a, b, view) {
 	const tool = path.join(toolDir, 'tools', 'diff_revs.py');
 	const abs = (p) => (path.isAbsolute(p) ? p : path.join(projDir, p));
-	const args = [tool, '--pattern', fzzRe().source, abs(a), abs(b)];
+	const v = view || 'pcb';
+	const args = [tool, '--view', v, '--pattern', patRe(v).source, abs(a), abs(b)];
 	return new Promise((resolve) => {
 		log(`\n> ${PY} ${args.map((s) => `"${s}"`).join(' ')}   （cwd=${projDir}）`);
 		cp.execFile(PY, args, {
@@ -293,14 +304,19 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 function pageList(proj) {
 	const d = path.join(proj, 'diff');
 	if (!fs.existsSync(d)) return [];
+	// ★ 2026-10-07：名字多了**视图段** ✓ —— `diff-bb-v100-v104.md` / `diff-sch-v29-v40.md`
+	//   （没视图段的就是老的 PCB ✓）。✗ 不改这条 ⇒ 新页会排在最后、顺序乱 ✗。
+	const ORD = { pcb: 0, bb: 1, sch: 2 };
 	const key = (n) => {
-		const m = /^diff-v(\d+)([^-]*)-v(\d+)([^.]*)\.md$/.exec(n);
-		return m ? [Number(m[1]), Number(m[3]), n] : [1e9, 1e9, n];   // 认不出号的排最后 ✓
+		const m = /^diff-(pcb-|bb-|sch-)?v(\d+)([^-]*)-v(\d+)([^.]*)\.md$/.exec(n);
+		if (!m) return [9e8, 9e8, 9e8, n];                 // 认不出 ⇒ 排最后 ✓
+		return [ORD[(m[1] || 'pcb-').slice(0, -1)], Number(m[2]), Number(m[4]), n];
 	};
 	return fs.readdirSync(d).filter((n) => /^diff-.*\.md$/.test(n))
 		.sort((a, b) => {
 			const x = key(a), y = key(b);
-			return (x[0] - y[0]) || (x[1] - y[1]) || String(x[2]).localeCompare(String(y[2]));
+			return (x[0] - y[0]) || (x[1] - y[1]) || (x[2] - y[2])
+				|| String(x[3]).localeCompare(String(y[3]));
 		})
 		.map((n) => path.join(d, n));
 }
@@ -473,18 +489,24 @@ async function cmdCompare(context) {
 			'没找到项目目录（工作区里含 fzz 的那层，也可用设置 pixelDiff.projectDir 指定）'
 			+ '或库仓 tools/diff_revs.py（库仓要加进工作区）');
 	}
-	const vers = listVersions(proj);
+	// ★ 先选**看哪个视图** ✓（2026-10-07 加 ✓）：PCB / 面包板 / 原理图
+	//   ✗ 三个命令会挤满命令面板 ✗ ⇒ 用一个选择框（默认 PCB ✓）。
+	const pickView = await vscode.window.showQuickPick(
+		[{ label: 'PCB', v: 'pcb' }, { label: '面包板', v: 'bb' }, { label: '原理图', v: 'sch' }],
+		{ placeHolder: '比哪个视图？（默认 PCB）' });
+	const view = pickView ? pickView.v : 'pcb';
+	const vers = listVersions(proj, patRe(view).source);
 	if (vers.length < 2) {
 		return void vscode.window.showErrorMessage(
-			`这个目录里符合 pixelDiff.fzzPattern 的文件少于两个（现在 ${vers.length} 个）`
-			+ `：${proj}`);
+			`${VIEW_NAME[view]}：这个目录里符合 pixelDiff.${VIEW_PAT[view]} 的文件少于两个`
+			+ `（现在 ${vers.length} 个）：${proj}`);
 	}
 	const pick = (def) => vscode.window.showQuickPick(vers, { placeHolder: `选一版（默认 ${def}）` })
 		.then((v) => v || def);
 	const a = await pick(vers[vers.length - 2]);
 	const b = await pick(vers[vers.length - 1]);
-	await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `差异图：${a} ⇒ ${b}` },
-		() => runDiff(tool, proj, a, b));
+	await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${VIEW_NAME[view]}差异图：${a} ⇒ ${b}` },
+		() => runDiff(tool, proj, a, b, view));
 	const md = newestDiffMd(proj);
 	if (!md) return void vscode.window.showErrorMessage('跑完了但没有 diff-*.md，见「Pixel 差异」输出通道');
 	await vscode.commands.executeCommand('vscode.openWith', vscode.Uri.file(md), VIEW);
@@ -543,5 +565,5 @@ function deactivate() { }
 module.exports = {
 	activate, deactivate,
 	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
-	         CSS, slideshowHtml, html }
+	         CSS, slideshowHtml, html, patRe }
 };

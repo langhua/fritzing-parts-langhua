@@ -51,6 +51,16 @@
 					"default": "\\.fzz$",
 					"markdownDescription": "哪些文件算「一版」：拿这个正则筛项目目录里的文件名。默认 `\\.fzz$`（所有 fzz 都算）。名字带前缀的项目（如 `pixel-pcb-v76.fzz` ＋ 一堆 `pixel-breadboard*.fzz`）就钉成 `^pixel-pcb-v\\d+.*\\.fzz$`，免得别的稿混进选择框。"
 				},
+				"pixelDiff.bbPattern": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "**面包板**比较用哪个文件名模式（正则；留空 = `\\.fzz$`）。本项目：`^pixel-breadboard\\d+.*\\.fzz$`。"
+				},
+				"pixelDiff.schPattern": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "**原理图**比较用哪个文件名模式（正则；留空 = `\\.fzz$`）。本项目：`^pixel-schematic-v\\d+.*\\.fzz$`。"
+				},
 				"pixelDiff.projectDir": {
 					"type": "string",
 					"default": "",
