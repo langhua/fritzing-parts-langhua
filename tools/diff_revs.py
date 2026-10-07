@@ -764,7 +764,16 @@ VIEW_PAL = {"wire": (A_TOP, B_TOP), "part": (A_BOT, B_BOT), "text": (A_OTH, B_OT
 
 
 def _cls_of(el):
-    """顶层元素原文 ⇒ 类别 ✓（认不出 ⇒ 元件 ✓ —— 宁可当元件，也别把它当导线 ✓）。"""
+    """顶层元素原文 ⇒ 类别 ✓。
+
+    ★★ 2026-10-07 实测修 ✗（用户：「导线B 没有应用」✓，而分类计数直接把它揭出来了 ✓：
+      `A 导线 82 / 文字 9` ✓ 对 `B 导线 0 / 文字 0 / 元件 12` ✗）——
+      ✗ 原来只按 **顶层标签** 认（`<line>` = 导线 ✗），而 `render_sch.py` 对 v40 那版把
+      **导线与位号包进了普通 `<g>`** ✓ ⇒ 全被当成“元件”染成蓝 ✗（连颜色都没轮到 ✗）。
+      ⇒ 改成**按组里的内容**认 ✓：`matrix(` ⇒ 零件组 ✓（两个渲染器都这么画零件 ✓）、
+        `font-family` 或有 `<text>` ⇒ 文字 ✓、其余普通 `<g>` ⇒ **导线** ✓。
+      “认不出 ⇒ 当元件” ✓ 仍然保留（宁可当元件，也别把零件当线画成导线色 ✗）。
+    """
     t = el.lstrip()[:6].lower()
     if t.startswith("<rect"):
         return CLS_BOARD
@@ -772,8 +781,13 @@ def _cls_of(el):
         return CLS_WIRE
     if t.startswith("<text"):
         return CLS_TEXT
-    if t.startswith("<g") and "font-family" in el[:200]:
-        return CLS_TEXT
+    if t.startswith("<g"):
+        head = el[:el.find(">") + 1]
+        if "matrix(" in head:                        # ★ 每个零件一个 matrix 组 ✓
+            return CLS_PART
+        if "font-family" in head:                    # 位号组 ✓
+            return CLS_TEXT
+        return CLS_TEXT if "<text" in el else CLS_WIRE
     return CLS_PART
 
 
@@ -931,6 +945,11 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     """
     vw = {"bb": "breadboardView", "sch": "schematicView"}[view]
     ga, gb = _place(a_fzz, vw), _place(b_fzz, vw)
+    # ★★ 锚点 = 零件**本体盒的中心** ✓（✗ 不是实例原点 ✗ —— 用户 2026-10-07：「位置似乎有偏差」✓）：
+    #   实例的 `geometry x/y` 只是那个零件的**原点** ✓，而渲染器画的是**本体盒** ✓
+    #   ⇒ 两者差一个“盒心 − 原点”的偏移 ✓（小件就是半个身位 ✓）。
+    #   盒数学**不另写** ✗：直接调 `part_box` 那套（与渲染器算包围盒同一份 ✓）。
+    ca, cb = _centers(a_fzz, vw), _centers(b_fzz, vw)
     x0, y0, w, h = frame
     r = max(3.0, w * 0.010)                       # 圈多大：按画布宽定 ✓（不然小的视图看不见 ✓）
     fs = r * 1.7
@@ -939,6 +958,13 @@ def _hit_view(a_fzz, b_fzz, view, frame):
 
     def xy(t):
         return (float(t.get("x") or 0.0), float(t.get("y") or 0.0))
+
+    def p_of(tbl, org, ttl):
+        """有本体盒就用**盒心** ✓；算不出来（认不出零件 svg 等）⇒ 退回**实例原点** ✓ 并记一笔 ✓。"""
+        c = tbl.get(ttl)
+        if c is not None:
+            return c
+        return xy(org[ttl]) if ttl in org else None
 
     def circles(ttl, pa, pb, label):
         pid = re.sub(r"[^\w.-]", "_", ttl)
@@ -965,11 +991,13 @@ def _hit_view(a_fzz, b_fzz, view, frame):
         if ttl.startswith("Wire") or ttl.startswith("TXT"):
             continue
         if ttl not in ga:
-            circles(ttl, None, xy(gb[ttl]), "新增")
+            circles(ttl, None, p_of(cb, gb, ttl), "新增")
         elif ttl not in gb:
-            circles(ttl, xy(ga[ttl]), None, "没了")
+            circles(ttl, p_of(ca, ga, ttl), None, "没了")
         else:
-            pa, pb = xy(ga[ttl]), xy(gb[ttl])
+            pa, pb = p_of(ca, ga, ttl), p_of(cb, gb, ttl)
+            if pa is None or pb is None:
+                continue
             d = (((pb[0] - pa[0]) ** 2 + (pb[1] - pa[1]) ** 2) ** 0.5) * SK
             if d >= JOINT:
                 circles(ttl, pa, pb, "Δ %.3f mm" % d)
@@ -1003,7 +1031,12 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     stem = "diff-%s-%s-%s" % (VIEW, na, nb)
     svg_p = os.path.join(out, stem + ".svg")
     frame = _union_frame(sa, sb)
-    body = overlay(sa, sb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb))
+    # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
+    #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
+    #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
+    #   而 A 的浅橙 `#f0a868` = `rgb(240,168,104)` ✓ ⇒ **两个几乎分不出来** ✗。
+    body = overlay(sa, sb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb),
+                   op=(0.6, 0.95))
     # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
     #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
     hits = _hit_view(a_fzz, b_fzz, VIEW, frame)
@@ -1052,6 +1085,40 @@ def _place(fzz, view):
         if g is None:
             continue
         out[ttl] = g
+    return out
+
+
+def _centers(fzz, view):
+    """`{位号: (盒心 x, 盒心 y)}`（sketch 单位 ✓）—— 用 `part_box` 那套盒数学 ✓（不另写 ✗）。
+
+    ★ 实测（2026-10-07 用户：「位置似乎有偏差」✓）：实例的 `geometry x/y` 是零件的**原点** ✓，
+      而渲染器画的是**本体盒** ✓ ⇒ 拿原点当锚点会偏半个身位 ✗（小件尤其明显 ✓）。
+    """
+    import xml.etree.ElementTree as ET
+    import zipfile
+    import part_box as PB
+    z = zipfile.ZipFile(fzz)
+    name = [n for n in z.namelist() if n.endswith(".fz")][0]
+    root = ET.fromstring(z.read(name))
+    out = {}
+    for e in root.iter("instance"):
+        ttl = (e.findtext("title") or "").strip()
+        vw = next((c for c in e if c.tag.split("}")[-1] == "views"), None)
+        sub = next((c for c in vw if c.tag.split("}")[-1] == view), None) if vw is not None else None
+        g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
+        if g is None:
+            continue
+        fzp = (e.get("path") or "").replace("/", os.sep)
+        if not os.path.isfile(fzp):
+            continue
+        try:
+            layers = ET.parse(fzp).getroot().find(".//%s/layers" % view)
+            box = PB.body_box(PB.resolve_svg(fzp, layers.get("image") if layers is not None else None))
+            loc = (float(g.get("x") or 0.0), float(g.get("y") or 0.0))
+            x0, y0, x1, y1 = PB.place(loc, PB.tf_of(g), box)
+            out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
+        except Exception:                      # 认不出 ⇒ 不写 ✓（调用方退回原点 ✓，不静默画错位置 ✗）
+            continue
     return out
 
 
@@ -1221,7 +1288,7 @@ def _legend_rows(name_a, name_b):
             (A_OTH, "grey: A light (silk/board)"), (B_OTH, "grey: B dark")]
 
 
-def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None):
+def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0.75, 0.55)):
     """两版叠合 ✓：A 浅、B 深、重合更深 ✓。
 
     ★ 2026-10-07 加了三个口（面包板/原理图用 ✓，**PCB 那条路一个字不改** ✓）：
@@ -1280,12 +1347,12 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None):
         '<svg xmlns="http://www.w3.org/2000/svg" width="%.0f" height="%.0f" '
         'viewBox="%.1f %.1f %.1f %.1f">\n'
         '<rect width="100%%" height="100%%" fill="#ffffff"/>\n'
-        '<g id="A" opacity="0.75">%s</g>\n'
-        '<g id="B" opacity="0.55">%s</g>\n'
+        '<g id="A" opacity="%.2f">%s</g>\n'
+        '<g id="B" opacity="%.2f">%s</g>\n'
         '%s\n'
         '<g id="legend" transform="translate(%.1f,%.1f)">%s</g>\n'
         '</svg>\n'
-    ) % (wa, H2, vx, vy, wa, H2, ia, ib, fig, vx, vy + ha, leg)
+    ) % (wa, H2, vx, vy, wa, H2, op[0], ia, op[1], ib, fig, vx, vy + ha, leg)
 
 
 def main(argv):
