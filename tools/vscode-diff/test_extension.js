@@ -29,7 +29,8 @@ Module._load = function (req, parent, isMain) {
 const EXTDIR = __dirname;
 const PIX = path.resolve(process.argv[2] || process.cwd());
 const ext = require(path.join(EXTDIR, 'extension.js'));
-const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage } = ext._pure;
+const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
+        CSS, slideshowHtml, html } = ext._pure;
 
 let bad = 0;
 const fail = (s, ...a) => { console.log('   ✗ ' + s, ...a); bad++; };
@@ -91,6 +92,8 @@ console.log('⑤ 目录发现：项目 = %s；库仓 = %s', dd.proj || '（没�
 if (!dd.proj || !dd.tool) fail('dirs() 没能同时找到项目目录与库仓工具');
 
 // ⑥ 幻灯片：页面列表（按版本号递增 ✓）＋ 单页读取（至少一页带 svg 图 ✓）
+//   ＋ 两处必须是**同一套容器结构** ✓（幻灯片曾把 svg 直接塞进 .pane.left ✗ ⇒
+//     `.art svg{max-width:100%}` 不命中 ✗ ⇒ 图上下各多一大块空白 ✓）
 const pl = pageList(PIX);
 const seq = pl.map((p) => {
 	const m = /diff-v(\d+)[^-]*-v(\d+)/.exec(path.basename(p));
@@ -99,9 +102,15 @@ const seq = pl.map((p) => {
 const inc = seq.every((v, i) => i === 0
 	|| seq[i - 1][0] < v[0] || (seq[i - 1][0] === v[0] && seq[i - 1][1] <= v[1]));
 const withSvg = pl.filter((p) => readPage(p).svg).length;
-console.log('⑥ 幻灯片：%d 页；版本序递增 = %s；带图 %d 页（最后一页：%s）',
-	pl.length, inc, withSvg, pl.length ? path.basename(pl[pl.length - 1]) : '—');
-if (!pl.length || !inc || !withSvg) fail('幻灯片页面列表不对');
+const slideHtml = slideshowHtml({ cspSource: '' }, 'n', pl.length);
+const ART = '<div class="art"';
+// ★ 编辑器那份 HTML 也用**真函数**生成 ✓（✗ 不手写一份来比 ✗ —— 那就成了跟自己比 ✓）
+const edHtml = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg,
+	'', '', '', 'n');
+const sameArt = edHtml.indexOf(ART) >= 0 && slideHtml.indexOf(ART) >= 0;
+console.log('⑥ 幻灯片：%d 页；版本序递增 = %s；带图 %d 页；两处 .art 容器一致 = %s（最后一页：%s）',
+	pl.length, inc, withSvg, sameArt, pl.length ? path.basename(pl[pl.length - 1]) : '—');
+if (!pl.length || !inc || !withSvg || !sameArt) fail('幻灯片页面列表 / 容器结构不对');
 
 console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 六项都过', bad || '');
 process.exit(bad ? 1 : 0);

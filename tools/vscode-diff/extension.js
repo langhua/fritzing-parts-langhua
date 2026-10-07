@@ -330,7 +330,7 @@ function slideshowHtml(webview, nonce, n) {
   <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点清单一条 高亮</span>
 </div>
 <div class="wrap">
-  <div class="pane left" id="art"></div>
+  <div class="pane left"><div class="art" id="art"></div></div>
   <div class="pane right" id="list"></div>
 </div>
 <script nonce="${nonce}">${SLIDE_JS}</script>
@@ -458,5 +458,6 @@ function deactivate() { }
 // 这几件是纯逻辑，能单独验 —— 免得只靠"装上去点一下看看"。
 module.exports = {
 	activate, deactivate,
-	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage }
+	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
+	         CSS, slideshowHtml, html }
 };
