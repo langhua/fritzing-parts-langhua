@@ -1263,9 +1263,21 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                      % (pa[0], pa[1], pb[0], pb[1], A_COLOR_HI, r * 0.3, r * 0.5, r * 0.4))
         if label:
             ax, ay = pb if pb is not None else pa
+            lx, ly = ax + r * 1.2, ay - r * 1.2
+            # ★★ 标签**别跑出画布** ✗（2026-10-08 修 ✗）：实测右缘那两条
+            #   「新增跳线 / 没了跳线」写到了 x=597.5 ✓，而画布右边界是 611 ✓
+            #   ⇒ 被 viewBox 裁掉、用户看不到 ✗（原话：「右侧的图例文字没有显示出来」✓）。
+            #   ⇒ 先算一个**够用的宽度估计** ✓（中日韩字符算 1 个字宽 ✓、其余 0.62 ✓，
+            #     宁可估宽一点也没有害处 ✓ —— 这里只是收边 ✓）；放不下就翻到**圈的左边** ✓，
+            #     再放不下就贴到画布里侧 ✓。
+            cjk = sum(1 for ch in label if ord(ch) > 0x2E80)
+            wtxt = (cjk + 0.62 * (len(label) - cjk)) * fs
+            if lx + wtxt > x0 + w - r:
+                lx = ax - r * 1.2 - wtxt
+            lx = max(x0 + r, min(lx, x0 + w - wtxt - r))
             s.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
                      'fill="%s">%s</text>'
-                     % (ax + r * 1.2, ay - r * 1.2, fs, A_COLOR_HI, esc(label)))
+                     % (lx, ly, fs, A_COLOR_HI, esc(label)))
         s.append("</g>")
         out.append("".join(s))
 

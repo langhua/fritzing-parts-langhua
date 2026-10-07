@@ -299,6 +299,15 @@ const JS = [
 	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
+	// ★★ 工具条上的「重放」✓（2026-10-08 加 ✓）：svg 里那个按钮只在**把 svg 当文档**打开时
+	//   能点 ✓ —— 在 VS Code 的**图片预览**里它是 `<img>` ✗（脚本一律不跑 ✗）、
+	//   在**合并视图**里又会被 webview 的 CSP（nonce ✓）挡掉 ✗ ⇒ 用户点着没反应 ✗。
+	//   ⇒ 在**外面**给一个按钮 ✓：它只管把动画的 `currentTime` 拨回 0 ✓（只播一遍 + forwards ✓）。
+	'  var rp = document.getElementById("pd-replay");',
+	'  if (rp) rp.addEventListener("click", function(){',
+	'    var as = document.getAnimations();',
+	'    for (var i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
+	'  });',
 	'})();'
 ].join('\n');
 
@@ -313,6 +322,8 @@ const CSS = `
   .art svg { cursor:default; }
   .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border); }
   .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border); }
+  .bar button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
+                border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
   h1 { font-size:1.15em; } h2 { font-size:1.05em; margin-top:1.1em; } h3 { font-size:1em; }
   code { background: var(--vscode-textCodeBlock-background); padding:0 3px; border-radius:3px; }
   blockquote { margin:.4em 0; padding-left:8px; border-left:3px solid var(--vscode-panel-border); opacity:.85; }
@@ -349,7 +360,7 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 <div class="wrap">
   <div class="pane left">${art}</div>
   <div class="pane right">
-    <div class="bar">${svgText ? '点 ① 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
+    <div class="bar">${svgText ? '<button id="pd-replay">▶ 重放动画</button>　点 ① 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
 		: (imgUri ? esc(imgName) : '（无图）')}</div>
     ${mdToHtml(mdText)}
   </div>
