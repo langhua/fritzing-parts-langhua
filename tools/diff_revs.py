@@ -1004,12 +1004,89 @@ def _render_view(fzz, view, out):
     return open(svgp, encoding="utf-8").read()
 
 
+def _tag_elements(svg, refs, fzz, view, side):
+    """把**变化处**的顶层元素包成 `<g id="a-<key>">` / `<g id="b-<key>">` ✓。
+
+    ★ 钥匙（2026-10-07 实测 ✓，见 `docs/diff-animation.md` ✓）：
+      · **零件**：渲染出的 `<g partID="X">` ⇔ sketch 实例 `modelIndex` ✓，关系是
+        **`X = modelIndex × 10`** ✓（三例逐位相符 ✓）；
+      · **导线**：渲染里没有 id ✗ ⇒ 按**坐标**精确匹配 ✓（两个渲染器都画在**绝对
+        sketch 坐标**上 ✓ ⇒ 逐位相同 ✓）。
+
+    ⇒ 返回 `(新 svg, 打上钥匙的个数)` ✓ —— 个数由调用方拿去自检 ✓
+      （= 该侧**真画出来且真变了**的件数 ✓；✗ 少包一个就报错，不许静默 ✗）。
+    """
+    import xml.etree.ElementTree as ET
+    import zipfile
+    z = zipfile.ZipFile(fzz)
+    root = ET.fromstring(z.read([n for n in z.namelist() if n.endswith(".fz")][0]))
+    tgl = lambda e: e.tag.split("}")[-1]                    # noqa: E731
+    by_mi, by_seg = {}, {}
+    for e, key in _seq_keys(root):
+        if key not in refs:
+            continue                                   # ★ 只给**变化处**打 ✓（省体积 ✓）
+        vw = next((c for c in e if tgl(c) == "views"), None)
+        sub = next((c for c in vw if tgl(c) == view), None) if vw is not None else None
+        g = next((c for c in sub if tgl(c) == "geometry"), None) if sub is not None else None
+        if g is None:
+            continue
+        mi = e.get("modelIndex")
+        if mi:
+            by_mi[str(mi)] = key
+        # ★ 零件的钥匙改按**坐标**认 ✓（2026-10-07 实测 ✓）：渲染里那个
+        #   `matrix(a b c d e f)` 的 **(e, f) 就等于实例的 geometry (x, y)** ✓ ——
+        #   实测 L1：渲染 `25.577900 71.562400` ↔ geometry `(25.58, 71.56)` ✓ 逐位相符 ✓。
+        #   ✗ 不用 `partID ÷ 10` ✗：那条只对**部分**件成立 ✓（自检当场报`A 包了 0`✗），
+        #   且 Fritzing 的 partID 并非严格 = modelIndex×10 ✗。
+        gx, gy = g.get("x"), g.get("y")
+        if gx is not None and gy is not None:
+            by_mi[("loc", round(float(gx), 2), round(float(gy), 2))] = key
+        # 导线：渲染成一条 `<line x1,y1,x2,y2>`（相对量 x2/y2 ⇒ 这里先绝对化 ✓）
+        x, y = float(g.get("x") or 0.0), float(g.get("y") or 0.0)
+        x2, y2 = float(g.get("x2") or 0.0), float(g.get("y2") or 0.0)
+        if abs(x2) + abs(y2) > 1e-9:
+            pts = [(x, y), (x + x2, y + y2)]
+            by_seg[tuple(round(v, 2) for p in pts for v in p)] = key
+    head = svg[:svg.find(">", svg.find("<svg")) + 1]
+    out, got = [], set()
+    for cls, txt in _top_split(svg):
+        key = None
+        # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
+        #   —— 实测两个渲染器都逐位相符 ✓（`L1: -2.020000 42.448800` ↔ `x=-2.02 y=42.4488` ✓）。
+        #   ✗ 别拿 `partID` 当门槛 ✗ —— 那是 **sch** 渲染器才写的 ✓（`<g partID=…><g transform=matrix>` ✓），
+        #   而 **bb** 渲染器只写 `<g transform="matrix(…)">` ✓ 没有 partID ✗ ⇒ 设了门槛就一个也匹配不上 ✓
+        #   （自检当场报 `A 包了 0 / B 包了 0` ✗）。
+        mm = re.search(r"matrix\(([^)]*)\)", txt)
+        if mm:
+            nn = [float(v) for v in re.findall(r"-?\d+\.?\d*", mm.group(1))]
+            if len(nn) >= 6:
+                key = by_mi.get(("loc", round(nn[4], 2), round(nn[5], 2)))
+        if key is None and cls == CLS_WIRE:
+            nums = [float(v) for v in re.findall(r'-?\d+\.?\d*', txt[:220])]
+            if len(nums) >= 4:
+                cand = [(nums[i], nums[i + 1], nums[i + 2], nums[i + 3]) for i in range(len(nums) - 3)]
+                for (ax, ay, bx, by) in cand:
+                    for kk in ((ax, ay, bx, by), (bx, by, ax, ay)):
+                        if kk in by_seg:
+                            key = by_seg[kk]
+                            break
+                    if key:
+                        break
+        if key:
+            out.append('<g id="%s-%s">%s</g>' % (side, re.sub(r"[^\w.-]", "_", key), txt))
+            got.add(key)
+        else:
+            out.append(txt)
+    return head + "".join(out) + "</svg>", got
+
+
 def _hit_view(a_fzz, b_fzz, view, frame):
     """面包板 / 原理图的**隐藏高亮组** ✓ ⇒ 清单里点一条就能在图上亮出来 ✓。
 
     ★ 词汇与 PCB 那套**一致** ✓（用户已经认过 ✓）：空心圈 = A 旧 ✓、实心圈 = B 新 ✓
       、虚线连起来 ＋ 标签写 Δ ✓；`新增` / `没了` 只画一个圈 ✓。
-    ★ 组 id = `pd-<位号>` ✓（与 `pd-<脚名>` 同一形状 ✓ ⇒ 扩展那边一套正则就够 ✓）。
+    ★ 返回 `(隐藏高亮组 svg, 变化处的 key 集合)` ✓ —— 后者给 `_tag_elements()` 用 ✓
+      （✗ 不让打钥匙那边再算一遍差异 ✗：判据只留这一份 ✓）。
     ★ 坐标：实例的 `geometry x/y` 就是 sketch 绝对坐标 ✓ ⇒ 与叠合图**同一坐标系** ✓（不用换算 ✓）。
     """
     vw = {"bb": "breadboardView", "sch": "schematicView"}[view]
@@ -1023,6 +1100,7 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     x0, y0, w, h = frame
     r = max(3.0, w * 0.010)                       # 圈多大：按画布宽定 ✓（不然小的视图看不见 ✓）
     fs = r * 1.7
+    refs = set()                                  # ★ 变了哪些（给动画打钥匙用 ✓）
     out = ['<g id="pd-hits">']                    # ★ 包在 `pd-hits` 里 ✓ —— 扩展的 Esc/点图
     #   清空靠 `#pd-hits > g` ✓（与 PCB 那份**同一形状** ✓，✗ 别自己另起一套 ✗）。
 
@@ -1037,6 +1115,7 @@ def _hit_view(a_fzz, b_fzz, view, frame):
         return xy(org[ttl]) if ttl in org else None
 
     def circles(ttl, pa, pb, label):
+        refs.add(ttl)                              # ★ 这处变了 ✓
         pid = re.sub(r"[^\w.-]", "_", ttl)
         s = ['<g id="pd-%s" style="display:none">' % pid]
         if pa is not None:
@@ -1085,7 +1164,7 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                 circles(k, A[k].pts[0], None, "没了跳线")
             else:
                 circles(k, A[k].pts[0], B[k].pts[0], "线路变了")
-    return "".join(out) + "</g>"
+    return "".join(out) + "</g>", refs
 
 
 def _view_diff(a_fzz, b_fzz, out, na, nb):
@@ -1101,15 +1180,28 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     stem = "diff-%s-%s-%s" % (VIEW, na, nb)
     svg_p = os.path.join(out, stem + ".svg")
     frame = _union_frame(sa, sb)
+    # ★★ 动画钥匙（2026-10-07 ✓，规格见 `docs/diff-animation.md` ✓）：
+    #   先向 `_hit_view` 要“变了哪些” ✓（判据只留那一份 ✓），再给那几处的元素包上
+    #   `a-<key>` / `b-<key>` ✓ ⇒ CSS 动画（下一步）就能闪**本体** ✓。
+    hits, refs = _hit_view(a_fzz, b_fzz, VIEW, frame)
+    # ★ 注意：`_tag_elements` 收的是**视图名**（`schematicView` / `breadboardView` ✓），
+    #   ✗ 不是 `sch` / `bb` 那个短名 ✗ —— 我第一次就传错了 ✓ ⇒ 一个实例都匹配不上 ✓
+    #   ⇒ 自检当场报 `A 包了 0` ✓（这条自检值了 ✓）。
+    vname = {"bb": "breadboardView", "sch": "schematicView"}[VIEW]
+    pa, ka = _tag_elements(_paint(sa, pal[0], "A")[0], refs, a_fzz, vname, "a")
+    pb, kb = _tag_elements(_paint(sb, pal[1], "B")[0], refs, b_fzz, vname, "b")
+    lose = refs - (ka | kb)
+    print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
+          % (len(refs), len(ka), len(kb), not lose,
+             "" if not lose else " ✗ 漏了：%s" % "、".join(sorted(lose))))
     # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
     #   而 A 的浅橙 `#f0a868` = `rgb(240,168,104)` ✓ ⇒ **两个几乎分不出来** ✗。
-    body = overlay(sa, sb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb),
-                   op=(0.6, 0.95))
+    body = overlay(pa, pb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb),
+                   op=(0.6, 0.95), pre=True)
     # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
     #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
-    hits = _hit_view(a_fzz, b_fzz, VIEW, frame)
     if hits:
         body = body.replace("</svg>", '<style>svg.pd-focus #A, svg.pd-focus #B '\
                             '{opacity:.16}</style>\n' + hits + "\n</svg>")
@@ -1511,7 +1603,8 @@ def _legend_rows(name_a, name_b):
             (A_OTH, "grey: A light (silk/board)"), (B_OTH, "grey: B dark")]
 
 
-def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0.75, 0.55)):
+def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0.75, 0.55),
+            pre=False):
     """两版叠合 ✓：A 浅、B 深、重合更深 ✓。
 
     ★ 2026-10-07 加了三个口（面包板/原理图用 ✓，**PCB 那条路一个字不改** ✓）：
@@ -1547,8 +1640,11 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0
         ia = R.remap_colors(ia, ta, oa)
         ib = R.remap_colors(ib, tb, ob)
     else:
-        ia = _inner(_paint(svg_a, pal[0], "A")[0])
-        ib = _inner(_paint(svg_b, pal[1], "B")[0])
+        if pre:                       # ★ 已经上过色/打过钥匙 ✓ ⇒ ✗ 别再来一遍 ✗（会把钥匙冲掉 ✓）
+            ia, ib = _inner(svg_a), _inner(svg_b)
+        else:
+            ia = _inner(_paint(svg_a, pal[0], "A")[0])
+            ib = _inner(_paint(svg_b, pal[1], "B")[0])
     # ★ 字号**按画布比例** ✓（✗ 写死 ⇒ 在这个渲染器的画布里看不见 ✗）；图例**放在板子下面**
     #   的空白带里 ✓（画布高度加一条 ✓ ⇒ 单独打开 svg 也看得见 ✓，不再压在图上 ✓）。
     fs = max(13.0, wa * 0.0105)
