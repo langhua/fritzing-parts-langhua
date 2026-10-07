@@ -798,44 +798,29 @@ def _cls_of(el):
     return CLS_PART
 
 
+_TAG_RE = re.compile(r"<(/?)([A-Za-z][\w:.-]*)((?:[^>\"']|\"[^\"]*\"|'[^']*')*?)(/?)>", re.S)
+
+
 def _top_split(svg):
     """`<svg>` 的**顶层**子元素 ⇒ `[(类别, 原文), …]` ✓。
 
-    ★ 为什么不用 `ElementTree` ✗：这些 svg 里有 DOCTYPE/实体 ✓（`render_bb.py` 自己也只敢用
-      正则取 inner ✓）⇒ 用"**只配平 `<g>`**"的扫描 ✓ —— 顶层就三种：自闭合的
-      `rect/line/circle/path` ✓、`<g>…</g>`（零件组 / 位号组 ✓）。
+    ★★ 2026-10-07 实测修 ✗（用户：「导线B 的颜色仍然没有看到」✓）：上一版用
+      “只数 `<g` / `</g>`”自己配平 ✗ —— 碰到**自闭合** `<g … />` / 属性引号里带 `>` 时
+      **深度回不到 0** ✗ ⇒ 后面所有顶层元素被**一口吞进最后一个组** ✗。
+      实测（v40 原理图 ✓）：渲染里 **123 条 `<line>`** ✓ 而顶层只切出 13 个、**0 条导线** ✗✗。
+      ⇒ 改用**真正的标签扫描**（认引号 ✓、认自闭合 ✓）。
     """
-    i = svg.find(">", svg.find("<svg")) + 1
-    body = svg[i:svg.rfind("</svg>")]
-    out, p = [], 0
-    while True:
-        m = re.search(r"<(g|rect|line|circle|path|text)\b", body[p:])
-        if not m:
-            break
-        s = p + m.start()
-        if m.group(1) != "g":
-            k = body.find(">", s)
-            if k < 0:
-                break
-            out.append((_cls_of(body[s:k + 1]), body[s:k + 1]))
-            p = k + 1
-            continue
-        depth, q = 0, s
-        while True:                                    # 只数 `<g` / `</g>` ✓（顶层没有别的嵌套 ✗）
-            o, c = body.find("<g", q), body.find("</g>", q)
-            if c < 0:
-                q = len(body)
-                break
-            if 0 <= o < c:
-                depth += 1
-                q = o + 2
-            else:
-                depth -= 1
-                q = c + 4
-                if depth == 0:
-                    break
-        out.append((_cls_of(body[s:q]), body[s:q]))
-        p = q
+    body = svg[svg.find(">", svg.find("<svg")) + 1:svg.rfind("</svg>")]
+    out, depth, start = [], 0, None
+    for m in _TAG_RE.finditer(body):
+        closing, name, selfclose = m.group(1), m.group(2).lower(), bool(m.group(4))
+        if depth == 0 and start is None and not closing:
+            start = m.start()
+        if name == "g" and not selfclose:
+            depth += -1 if closing else 1
+        if depth == 0 and start is not None and (selfclose or closing):
+            out.append((_cls_of(body[start:m.end()]), body[start:m.end()]))
+            start = None
     return out
 
 
@@ -951,7 +936,8 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     ★ 坐标：实例的 `geometry x/y` 就是 sketch 绝对坐标 ✓ ⇒ 与叠合图**同一坐标系** ✓（不用换算 ✓）。
     """
     vw = {"bb": "breadboardView", "sch": "schematicView"}[view]
-    ga, gb = _place(a_fzz, vw), _place(b_fzz, vw)
+    ga, _ska = _place(a_fzz, vw)
+    gb, _skb = _place(b_fzz, vw)
     # ★★ 锚点 = 零件**本体盒的中心** ✓（✗ 不是实例原点 ✗ —— 用户 2026-10-07：「位置似乎有偏差」✓）：
     #   实例的 `geometry x/y` 只是那个零件的**原点** ✓，而渲染器画的是**本体盒** ✓
     #   ⇒ 两者差一个“盒心 − 原点”的偏移 ✓（小件就是半个身位 ✓）。
@@ -1072,27 +1058,57 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     return 0
 
 
-def _place(fzz, view):
-    """`{(位号, 脚id): (x, y)}`（sketch 坐标 ✓）—— 只读该视图的 geometry ✓。
+VIEW_BIT = {"breadboardView": 64, "schematicView": 128, "pcbView": 4}
 
-    ★ 与渲染器同一口径 ✓：`geometry` 的 `x/y` 就是 sketch 绝对坐标 ✓
-      （换算成 mm 才乘 `SK` ✓ —— 与 `pcb_check`/`pcb_wire` 同一套 ✓）。
+
+def _place(fzz, view):
+    """⇒ `({位号: geometry}, [没显示的位号…])`（sketch 坐标 ✓）。
+
+    ★★ 2026-10-07 用户实测两条（都对 ✓），两条合起来就是一句：**只列这个视图真的看得见的** ✓：
+      ① 「原理图不应有 Via，是不是来自 PCB？」✓ —— **是** ✓。看探针输出：
+         `Via1 schematicView:(x=-201.4 y=-120.4 flags=0)` ✓、`Via3 … flags=32` ✓
+         ⇒ `wireFlags` 的位**不含本视图** ✗ ⇒ 按 Fritzing 自己的规矩它在本视图里**不算数** ✓
+         （`render_bb.py` 同一口径 ✓：位不对就直接跳过、不画 ✓）。
+      ② 「Ground1/2 的位置仍然错误」✓ —— 它们的 path 是 `:/resources/parts/core/ground.fzp` ✓
+         （**核心件**，在 Fritzing 安装目录里 ✗）⇒ 我们**没渲染它** ✗ ⇒ 锚点只能退回原点 ✗
+         ⇒ 红点落在**空地上** ✓。⇒ 零件 svg 取不到 = 本视图里没画 ⇒ **也不该列** ✗。
     """
     import xml.etree.ElementTree as ET
     import zipfile
+    import part_box as PB
     z = zipfile.ZipFile(fzz)
     name = [n for n in z.namelist() if n.endswith(".fz")][0]
     root = ET.fromstring(z.read(name))
-    out = {}
+    out, skipped = {}, []
     for e in root.iter("instance"):
         ttl = (e.findtext("title") or "").strip()
         vw = next((c for c in e if c.tag.split("}")[-1] == "views"), None)
         sub = next((c for c in vw if c.tag.split("}")[-1] == view), None) if vw is not None else None
         g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
         if g is None:
+            continue                                   # 这个视图里根本没它 ✓ 正常 ✓
+        fl = g.get("wireFlags")
+        if fl is not None and not (int(fl) & VIEW_BIT[view]):
+            skipped.append("%s（不在本视图 ✓）" % ttl)
+            continue
+        fzp = (e.get("path") or "").replace("/", os.sep)
+        # ★ 导线（`Wire*`）是**渲染器照 geometry 自己画的** ✓，没有零件 svg ✓
+        #   ⇒ ✗ 别拿“取不到 svg”去判它 ✗（否则上百根线全被当成“没画”列进略过清单 ✗）。
+        if ttl.startswith("Wire"):
+            out[ttl] = g
+            continue
+        drawn = False
+        if os.path.isfile(fzp):
+            try:
+                lay = ET.parse(fzp).getroot().find(".//%s/layers" % view)
+                drawn = PB.resolve_svg(fzp, lay.get("image") if lay is not None else None) is not None
+            except Exception:
+                drawn = False
+        if not drawn:
+            skipped.append("%s（核心件/取不到 svg ⇒ 本视图里没画 ✗）" % ttl)
             continue
         out[ttl] = g
-    return out
+    return out, skipped
 
 
 def _kind_hint(ttl):
@@ -1162,7 +1178,8 @@ def _centers(fzz, view):
 def report_view(a_fzz, b_fzz):
     """清单：① 元件摆位 Δ mm（三视图共用 ✓）＋ ② 该视图专属那一节 ✓。"""
     view = {"bb": "breadboardView", "sch": "schematicView"}[VIEW]
-    ga, gb = _place(a_fzz, view), _place(b_fzz, view)
+    ga, skipped_a = _place(a_fzz, view)
+    gb, skipped_b = _place(b_fzz, view)
     mm = lambda v: v * SK
     L = []
     L.append("# %s 差异清单：%s ⇒ %s" % (VIEW, _vtxt(a_fzz), _vtxt(b_fzz)))
@@ -1201,6 +1218,10 @@ def report_view(a_fzz, b_fzz):
     L += rows
     L.append("")
     L.append("（没动 %d 个 ✓ / 动了或增删 %d 个 ✓）" % (same, moved))
+    sk = sorted(set(skipped_a) | set(skipped_b))
+    if sk:
+        L.append("")
+        L.append("> 本视图里**不显示**、已略过的：%s" % "、".join(sk))
     L.append("")
     if VIEW == "bb":
         L += _bb_section(a_fzz, b_fzz)
