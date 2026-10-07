@@ -155,6 +155,32 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 另：`svg/NFC-Coil/coil_4x4_array.svg` 为 φ19mm 4×4 阵列铜层 SVG（非独立元件）。
 
+## ★ 配套工具：PCB 版本差异视图（VS Code 扩展）
+
+改板子时最想知道的一句话是「**这一版跟上一版到底差在哪儿**」✓ —— 本库自带一套工具回答它：
+
+- `tools/diff_revs.py` ⇒ **一张叠合差异图**（**色相 = 层**：顶层橙 ✓ / 底层蓝 ✓；
+  **深浅 = 版**：浅 = 旧 ✓ / 深 = 新 ✓；丝印/板框/位号 = 中性灰 ✓）＋ **差异清单**
+  （哪个脚挪了几毫米 ✓、每张网被分成几块铜 ✓、过孔 ✓）；
+- `tools/render_revs.py` ⇒ 把每一版都渲成图 ⇒ 也能用 VS Code 原生「比较选中的文件」并排看 ✓；
+- 配套 **VS Code 扩展**把「图」和「清单」合成**一个界面** ✓，而且**点清单里一条 ⇒ 图上高亮那处变化** ✓
+  （旧位置空心圈 ✓ / 新位置实心圈 ✓ / 虚线 ＋ Δmm ✓ / 其余变淡 ✓）：
+
+![差异视图示例](tools/vscode-diff/sample-diff.png)
+
+**装**（一条命令装进你的 VS Code ✓，不用打包 `.vsix` ✓）：
+
+```
+tools\install_diff_ext.cmd          # 装完 Ctrl+Shift+P → Reload Window 即生效
+```
+
+**用**：资源管理器里**双击** `diff\diff-*.md` ✓，或命令面板 → `Pixel 差异: 比较两版` ✓
+（要不要清单 ⇒ 给两个 `.fzz` ✓；含 **Fritzing 导出的 svg** 也能比 ✓，那种只出图 ✓）。
+
+★ 工具细节、参数（`--dir` / `--pattern` / `--nets` ✓）、以及"坐标换算只有一份"等规矩，
+见 [`tools/README.md`](tools/README.md) 的「VS Code 扩展」与「版本对比 / 长跑」两节 ✓。
+卸载：`tools\install_diff_ext.cmd uninstall` ✓。
+
 ## 开发指南
 
 做新部件（TS3A44159 等）前必读：[Fritzing 自定义部件开发指南](docs/part-dev-guide.md)
