@@ -67,7 +67,15 @@ console.log('① 版本排序：共 %d 版，最后 4 个 = %s；单调递增 = 
 if (!vers.length || !sorted) fail('版本排序不对');
 
 // ② 找最新清单
-const md = newestDiffMd(PIX);
+// ★ 2026-10-07 修 ✗：`diff/` 里现在还有 bb / sch 的清单（`diff-bb-*` / `diff-sch-*` ✓），
+//   它们常常比 PCB 那份**更新** ✗ ⇒ ②③④ 会拿它们当样本 ⇒ ④（`.connectorN` 那套）
+//   必然对不上 ✗。⇒ ②③④ 固定挑 **PCB** 那份（无视图段 ✓）；没有才退回最新的 ✓。
+const pcbs = fs.existsSync(path.join(PIX, 'diff'))
+	? fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-v\d.*\.md$/.test(n))
+		.map((n) => ({ n, t: fs.statSync(path.join(PIX, 'diff', n)).mtimeMs }))
+		.sort((a, b) => b.t - a.t)
+	: [];
+const md = pcbs.length ? path.join(PIX, 'diff', pcbs[0].n) : newestDiffMd(PIX);
 console.log('② 最新清单：%s', md ? path.basename(md) : '（没有）');
 if (!md) fail('找不到 diff-*.md');
 else {
