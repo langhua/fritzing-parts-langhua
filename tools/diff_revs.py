@@ -71,6 +71,9 @@ A_OTH, B_OTH = "#cfcfcf", "#5a5a5a"      # 丝印/板框/位号/孔：浅灰 ⇒
 # ★ 「点清单一条 ⇒ 图上高亮」用的**强调色** ✓（2026-10-07 用户要的 ✓）——
 #   得跟上面六种颜色都分得开 ✓ ⇒ 取玫红 ✓（蓝/橙/灰都不是它 ✓）。
 A_COLOR_HI = "#d81b60"
+# ★ 动画节奏（一处几秒 / 收尾几秒 ✓）—— 要调速就改这一行 ✓（用户 2026-10-08 问过 ✗
+#   「末态看到的是 B，开始也不是从 A 开始」✓ ⇒ 把一处调小就能一眼看完整个来回 ✓）。
+ANIM_SEC, ANIM_TAIL = 2.0, 2.0
 # ★ svg 路径里给板框留的边距 ✓（同一处既用于 `tf()` 的摆放 ✓、又用于图例的左缘 ✓ ——
 #   ✗ 别一边写 20 一边写别的 ✗，那样图例就不跟板框对齐了 ✓）。
 MARGIN = 20.0
@@ -908,7 +911,7 @@ def _shade_svg(xml, mode):
     return _COL_STYLE_RE.sub(lambda m: m.group(1) + _shade_hex(m.group(2), mode), x)
 
 
-def _common_fill(svg):
+def _common_fill(svg, skip=None):
     """挑一个**零件**里最常见的**非近白**填充色 ⇒ 当图例里「元件」那两格的样例 ✓。
 
     ★ 为什么要选 ✗：元件现在是**按各自原色**变浅/变深 ✓ ⇒ 图例没法只用一个固定色 ✓
@@ -916,8 +919,8 @@ def _common_fill(svg):
       ⇒ 是实测的样例 ✓，不是我拍的 ✗。
     """
     n = {}
-    for cls, txt in _top_split(svg):
-        if cls != CLS_PART:
+    for i, (cls, txt) in enumerate(_top_split(svg)):
+        if cls != CLS_PART or i == skip:              # ★ 不拿背景件当样例 ✓
             continue
         for h in re.findall(r'fill\s*[:=]\s*"?#([0-9a-fA-F]{6})', txt):
             c = int(h, 16)
@@ -929,7 +932,35 @@ def _common_fill(svg):
     return "#%06x" % max(n.items(), key=lambda kv: kv[1])[0]
 
 
-def _paint(svg, pal, mode="A"):
+def _biggest_part(svg):
+    """渲染里**面积最大的那个零件块** ⇒ 它的下标 ✓（= 当背景的那件 ✓，面包板本体 ✓）。
+
+    ★ 为什么要认它 ✗（2026-10-08 用户实测 ✓，两句原话合起来看就明白了 ✓）：
+      · 「面包板上蒙了一层灰」✗ —— 给整块板也按“浅/深”上色 ⇒ 板身被压成灰 ✗
+        （它本来是浅色底板 ✓，两版一叠就成了灰 ✓）；
+      · 「面包板中的图例不用参与动画」✓ —— 板是**画布** ✓，不是“变化的那一件” ✗。
+      ⇒ 板：**不上色 ✗、不包进动画 ✗**（保持原样 ✓）。
+    ★ 判据按**画出来的包围盒**算 ✓（`part_box.shape_bbox` ✓ 与渲染器算本体盒同一套 ✓），
+      ✗ 不按 svg 的 `width/height` ✗（画布留白会骗人 ✓）。
+    """
+    import xml.etree.ElementTree as ET
+    import part_box as PB
+    best, bi = 0.0, -1
+    for i, (cls, txt) in enumerate(_top_split(svg)):
+        if cls != CLS_PART:
+            continue
+        try:
+            r = ET.fromstring("<svg xmlns='http://www.w3.org/2000/svg'>" + txt + "</svg>")
+            x0, y0, x1, y1 = PB.shape_bbox(r)
+        except Exception:                            # noqa: BLE001  形状怪就算 0 ✓
+            continue
+        a = abs((x1 - x0) * (y1 - y0))
+        if a > best:
+            best, bi = a, i
+    return bi
+
+
+def _paint(svg, pal, mode="A", skip=None):
     """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
 
     · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
@@ -943,13 +974,18 @@ def _paint(svg, pal, mode="A"):
       ⇒ 正解 = **既不染也不删** ✓：保留原色相 ✓、只把**明度**分两档（A 浅 / B 深 ✓）
       ⇒ 图形在 ✓、A/B 又分得开 ✓。
     · 导线 / 文字：描边与填充都上色 ✓（导线那个 `<circle>` 接点靠 fill ✓，文字靠 fill ✓）；
-    · 换色共用 `render_pcb.remap_colors` ✓（属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）。
+    · 换色共用 `render_pcb.remap_colors` ✓（属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）；
+    · **背景那件**（面包板本体 ✓，`skip` 传下标 ✓）：**原样不动** ✗（既不上色也不抹填充 ✓）
+      —— 否则整块板蒙灰 ✗（用户 2026-10-08 原话 ✓）；用 `_biggest_part()` 认它 ✓。
     """
     import render_pcb as R
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
     parts, cnt = [], {}
-    for cls, txt in _top_split(svg):
+    for i, (cls, txt) in enumerate(_top_split(svg)):
         cnt[cls] = cnt.get(cls, 0) + 1
+        if i == skip:                                # ★ 背景件：原样保留 ✓
+            parts.append(txt)
+            continue
         if cls == CLS_BOARD:
             txt = re.sub(r'\bfill\s*=\s*"[^"]*"', 'fill="none"', txt, count=1)
         elif cls == CLS_WIRE:
@@ -1029,14 +1065,18 @@ def _render_view(fzz, view, out):
     return open(svgp, encoding="utf-8").read()
 
 
-def _tag_elements(svg, refs, fzz, view, side):
+def _tag_elements(svg, refs, fzz, view, side, skip=None):
     """把**变化处**的顶层元素包成 `<g id="a-<key>">` / `<g id="b-<key>">` ✓。
 
     ★ 钥匙（2026-10-07 实测 ✓，见 `docs/diff-animation.md` ✓）：
-      · **零件**：渲染出的 `<g partID="X">` ⇔ sketch 实例 `modelIndex` ✓，关系是
-        **`X = modelIndex × 10`** ✓（三例逐位相符 ✓）；
-      · **导线**：渲染里没有 id ✗ ⇒ 按**坐标**精确匹配 ✓（两个渲染器都画在**绝对
-        sketch 坐标**上 ✓ ⇒ 逐位相同 ✓）。
+      · **零件（面包板）**：块头第一个 `matrix(a b c d e f)` 的 **(e, f)** = 实例
+        `geometry (x, y)` ✓（实测逐位相符 ✓）；
+      · **零件（原理图）**：`matrix(e,f)` **不等于** geometry ✗ ⇒ 用渲染器自己的依据
+        `partID`（普通件 `%s0` ✓ / 网标签 `%s1` ✓）⇒ `partID[:-1]` = `modelIndex` ✓；
+      · **接地符号**：渲染器**不给它** `partID` ✗ ⇒ 按 `sch_net.ground_pin` 的脚位坐标认 ✓；
+      · **导线**：按坐标 ✓，但**必须按属性名**取值 ✓（✗ 全文扫数字会把 `x1/y1/y2` 里的
+        数字也扫进来 ✗）。
+    ★ `skip` = **背景件**的下标 ✓ ⇒ 它**不包**（= 不参与动画 ✓，板是画布 ✓）。
 
     ⇒ 返回 `(新 svg, 打上钥匙的个数)` ✓ —— 个数由调用方拿去自检 ✓
       （= 该侧**真画出来且真变了**的件数 ✓；✗ 少包一个就报错，不许静默 ✗）。
@@ -1095,7 +1135,10 @@ def _tag_elements(svg, refs, fzz, view, side):
         """
         m = re.search(r'\b%s="(-?[\d.eE+-]+)"' % a, txt)
         return float(m.group(1)) if m else None
-    for cls, txt in _top_split(svg):
+    for i, (cls, txt) in enumerate(_top_split(svg)):
+        if i == skip:                              # ★ 背景件不包 ✓（板是画布 ✓）
+            out.append(txt)
+            continue
         key = None
         # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
         #   —— 实测两个渲染器都逐位相符 ✓（`L1: -2.020000 42.448800` ↔ `x=-2.02 y=42.4488` ✓）。
@@ -1228,7 +1271,7 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     return "".join(out) + "</g>", refs
 
 
-def _anim_css(ka, kb, refs, token, sec=2.0, tail=2.0):
+def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
     """★ 动画第二步（2026-10-07 ✓）：给每一处变化排一个**时段** ✓，写 `@keyframes`
     ＋ 每个元素一句 `animation:` ✓ —— ✗ 不用选择器 ✗（幻灯片会把多张图拼在一页里
     ✓，而 id / class 是**文档级**的 ✗ ⇒ 第一页的规则会去管第二页的元素 ✗）；
@@ -1294,8 +1337,15 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     #   ✗ 不是 `sch` / `bb` 那个短名 ✗ —— 我第一次就传错了 ✓ ⇒ 一个实例都匹配不上 ✓
     #   ⇒ 自检当场报 `A 包了 0` ✓（这条自检值了 ✓）。
     vname = {"bb": "breadboardView", "sch": "schematicView"}[VIEW]
-    pa, ka = _tag_elements(_paint(sa, pal[0], "A")[0], refs, a_fzz, vname, "a")
-    pb, kb = _tag_elements(_paint(sb, pal[1], "B")[0], refs, b_fzz, vname, "b")
+    # ★ 背景件（面包板本体 ✓）：不上色 ✗、不参与动画 ✗ —— 用户 2026-10-08：
+    #   「面包板上蒙了一层灰」✗ ＋「面包板中的图例不用参与动画」✓
+    ska, skb = _biggest_part(sa), _biggest_part(sb)
+    print("✓ 背景件（画布那一件 ✓）：A = 第 %d 块 / B = 第 %d 块 ⇒ **不上色 ✗、不参与动画 ✗**"
+          % (ska, skb))
+    pa, ka = _tag_elements(_paint(sa, pal[0], "A", skip=ska)[0], refs, a_fzz, vname, "a",
+                           skip=ska)
+    pb, kb = _tag_elements(_paint(sb, pal[1], "B", skip=skb)[0], refs, b_fzz, vname, "b",
+                           skip=skb)
     lose = refs - (ka | kb)
     print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
           % (len(refs), len(ka), len(kb), not lose,
@@ -1327,7 +1377,7 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
     #   而 A 的浅橙 `#f0a868` = `rgb(240,168,104)` ✓ ⇒ **两个几乎分不出来** ✗。
     body = overlay(pa, pb, na, nb, pal=pal, frame=frame,
-                   rows=_view_rows(na, nb, _common_fill(sa)),
+                   rows=_view_rows(na, nb, _common_fill(sa, skip=ska)),
                    op=(0.6, 0.95), pre=True)
     # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
     #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
