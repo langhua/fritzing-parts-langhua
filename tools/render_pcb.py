@@ -145,6 +145,42 @@ def layer_inner(svg_text, layer):
     return "".join(out)
 
 
+def remap_colors(xml, table=None, default=None):
+    """按**颜色值**逐项换色 ✓（★ 与 `repaint_colors` **共用这一份实现** ✓，2026-10-07 加 ✓）
+
+    · `table`：`{"#f9a435": "#8ab4f8", …}` ✓ —— **认得出**的颜色按表换 ✓（大小写不敏感 ✓）；
+    · `default`：表里**没写到**的颜色换成它 ✓；`None` ⇒ **原样保留** ✗（默认 ✓）。
+
+    ★ 为什么要有它 ✗（用户原话 ✓）：「双面板的**颜色差异看不出来了**」✓ ——
+      `repaint_colors` 是"**全部**刷成一个色" ✓（画单版预览正好 ✓），
+      但它把 **copper0 / copper1 也刷成一色** ✗ ⇒ 差异图里就分不出顶层/底层了 ✗。
+      差异图要的是「**色相 = 层**、**深浅 = 版**」✓ ⇒ 必须先**认得**层色 ✗：
+      本渲染器给层的颜色是**固定常量** ✓ ——
+        面：`C_CU0` 底橘 ✓ / `C_CU1` 顶黄 ✓；线：`C_W0` 底 ✓ / `C_W1` 顶 ✓；过孔同样两色 ✓
+      ⇒ 按这张表逐项换，层就不会糊在一起 ✓。
+    """
+    tab = {str(k).strip().lower(): v for k, v in (table or {}).items()}
+
+    def pick(c):
+        v = tab.get(str(c).strip().lower(), default)
+        return None if v is None else str(v)
+
+    def rep(m):
+        if m.group(2).strip().lower() == "none":
+            return m.group(0)
+        v = pick(m.group(2))
+        return m.group(0) if v is None else '%s="%s"' % (m.group(1), v)
+
+    def rep2(m):
+        if m.group(2).strip().lower() == "none":
+            return m.group(0)
+        v = pick(m.group(2))
+        return m.group(0) if v is None else '%s:%s' % (m.group(1), v)
+
+    x = re.sub(r'\b(stroke|fill)\s*=\s*"([^"]*)"', rep, xml)
+    return re.sub(r'\b(stroke|fill)\s*:\s*([a-zA-Z#0-9]+)', rep2, x)
+
+
 def repaint_colors(xml, color):
     """把原文里**自带的颜色**换成 `color` ✓ —— **丝印**✗ / **铜层** ✓ 共用这一个 ✓
 
@@ -155,17 +191,10 @@ def repaint_colors(xml, color):
       （那个是"这块不画"的意思 ✓，改了反而画出一个色块 ✗）。
     ★ 两种写法都要盖 ✗：属性式 `stroke="#…"` ✓ 与 内联式 `style="…stroke:#…"` ✓；
       注意 `stroke-width="…"` / `stroke-width:…` 不能被误伤 ✓（正则要求后面紧跟 `=` 或 `:` ✓）。
+    ★★ 2026-10-07 ✓：实现**只剩** `remap_colors` 一份 ✓（这里就是"表为空 + 兜底 = color" ✓）——
+      ✗ 别在这里再抄一遍正则 ✗（抄一份就多一个错处 ✓）。
     """
-    def rep(m):
-        return m.group(0) if m.group(2).strip().lower() == "none" \
-            else '%s="%s"' % (m.group(1), color)
-
-    def rep2(m):
-        return m.group(0) if m.group(2).strip().lower() == "none" \
-            else '%s:%s' % (m.group(1), color)
-
-    x = re.sub(r'\b(stroke|fill)\s*=\s*"([^"]*)"', rep, xml)
-    return re.sub(r'\b(stroke|fill)\s*:\s*([a-zA-Z#0-9]+)', rep2, x)
+    return remap_colors(xml, {}, color)
 
 
 def holes_of(text):
