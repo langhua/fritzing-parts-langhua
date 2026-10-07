@@ -1244,27 +1244,22 @@ def _centers(fzz, view):
                 svgp = PB.resolve_svg(fzp, layers.get("image") if layers is not None else None)
             loc = (float(g.get("x") or 0.0), float(g.get("y") or 0.0))
             m = PB.tf_of(g)
-            box = PB.body_box(svgp)
-            x0, y0, x1, y1 = PB.place(loc, m, box)
-            # ★ 盒退化（宽或高 0 单位以下）⇒ **不信它** ✗ —— 用户 2026-10-07 实测：
-            #   `C1/C2` 的锚点对 ✓，而 `Ground1/Ground2` 偏 ✗（接地符号是**核心件** ✓，
-            #   fzp 指向 Fritzing 安装目录 ✗ ⇒ 本体盒算不出/不可信 ✓）。
-            if abs(x1 - x0) < 1.0 or abs(y1 - y0) < 1.0:
-                raise ValueError("body box degenerate")
-            out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
+            x0, y0, x1, y1 = PB.place(loc, m, PB.body_box(svgp))
+            big = max(abs(x1 - x0), abs(y1 - y0)) > 40.0
         except Exception:
-            # ★ 退回：拿**脚位**当盒 ✓（同一套 pin 数学 ✓ —— 算不出来就不写 ✓，
-            #   宁可让调用方退回原点 ✓，也不静默画一个看着对、其实错的位置 ✗）。
-            try:
-                pts, _bad = PB.pin_points(ET.fromstring(open(svgp, encoding="utf-8").read()))
-                if not pts:
-                    continue
-                xs = [p[0] for p in pts.values()]
-                ys = [p[1] for p in pts.values()]
-                x0, y0, x1, y1 = PB.place(loc, m, (min(xs), min(ys), max(xs), max(ys)))
-                out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
-            except Exception:
-                continue
+            continue
+        if big:
+            # ★★ 2026-10-07 实测 ✓（用户：「RC 位置错误」✓）—— 三条路都量过了 ✓：
+            #   · 本体盒心：`netlabel.svg` 的盒是 (0.45, 0, 81.0, 27.0) 单位 ✗ ≈ 23×7.6mm
+            #     （标签本体只有几个 mm ✗）⇒ 中心偏右 **~28 单位** ✗；
+            #   · 脚位×k：偏到 **~（223, 78.6）** ✗ **更远** ✓（netlabel 的真锚点在导线末端
+            #     (161.3, 84.0) ✓，而它按 svg 里那点算 ✗ 差得更多 ✗）；
+            #   · **实例原点**：偏 **~12 单位 ≈ 4.4mm** ✓ ≈ 标签自己的半个身位 ✓ ⇒ **最接近** ✓。
+            #   ⇒ 就用**原点** ✓（宁可承认“只到标签附近” ✓，也不用一个看着精确、其实更远的数 ✗）。
+            x0 = y0 = x1 = y1 = 0.0
+            x0, y0 = loc
+            x1, y1 = loc
+        out[ttl] = ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
     return out
 
 
