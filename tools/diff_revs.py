@@ -1107,16 +1107,23 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
         数字也扫进来 ✗）。
     ★ `skip` = **背景件**的下标 ✓ ⇒ 它**不包**（= 不参与动画 ✓，板是画布 ✓）。
 
-    ⇒ 返回 `(新 svg, 打上钥匙的个数)` ✓ —— 个数由调用方拿去自检 ✓
+    ⇒ 返回 `(新 svg, 打上钥匙的 key 集合, 裸在外面没进组的线)` ✓ —— 三个都拿去自检 ✓
       （= 该侧**真画出来且真变了**的件数 ✓；✗ 少包一个就报错，不许静默 ✗）。
+      ★ 第三个（`leak` ✓）是 2026-10-08 加的：**属于变化处、却没进组的线** ⇒ 它们在动画里
+      **撤不掉** ✓（用户报的「箭头所指的红横线仍然没有被删除」✓ 就是这一类 ✓）。
     """
     import xml.etree.ElementTree as ET
     import zipfile
     z = zipfile.ZipFile(fzz)
     root = ET.fromstring(z.read([n for n in z.namelist() if n.endswith(".fz")][0]))
     tgl = lambda e: e.tag.split("}")[-1]                    # noqa: E731
+    # ★★ 2026-10-08 修 ✗：**导线按「整条跳线」给 key** ✓（`_wid_key()` ✓，与 `_hit_view()`
+    #   同一份口径 ✓）—— 一条跳线可能是**几段 Wire** 串起来的 ✓，渲染出来是**几根 `<line>`** ✓；
+    #   ✗ 按实例名打钥匙 ⇒ 只包第一段 ⇒ 其余各段**不参与动画** ✓（动画撤不掉它们 ✓）。
+    wid2key = _wid_key(fzz) if view == "breadboardView" else {}
     by_mi, by_seg = {}, {}
-    for e, key in _seq_keys(root):
+    for e, ttl in _seq_keys(root):
+        key = wid2key.get(ttl, ttl)                # ★ 导线：同一条跳线的几段 ⇒ **同一个** key ✓
         if key not in refs:
             continue                                   # ★ 只给**变化处**打 ✓（省体积 ✓）
         vw = next((c for c in e if tgl(c) == "views"), None)
@@ -1154,7 +1161,19 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
             pts = [(x, y), (x + x2, y + y2)]
             by_seg[tuple(round(v, 2) for p in pts for v in p)] = key
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
-    out, got = [], set()
+    out, got, leak = [], set(), []
+    buf, buf_key = [], None
+
+    def flush():
+        """把攒着的一串**同一个 key** 的顶层元素包成**一个**组 ✓。
+
+        ★★ 2026-10-08：一条跳线的几段**只包一层** ✓ —— ✗ 别一段一个 `<g id="a-…">` ✗
+          （那会写出**重复 id** ✓）。渲染器是按 sketch 顺序画线的 ✓ ⇒ 同一条跳线的几段
+          **挨着** ✓（实测：`a-Wire90013116` 的竖段与横段就是前后脚 ✓）。
+        """
+        if buf_key is not None:
+            out.append('<g id="%s-%s">%s</g>'
+                       % (side, re.sub(r"[^\w.-]", "_", buf_key), "".join(buf)))
 
     def _at(a):
         """取一个**属性**的值 ✓ —— ✗ 不许拿全文扫数字 ✗：
@@ -1166,6 +1185,8 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
         return float(m.group(1)) if m else None
     for i, (cls, txt) in enumerate(_top_split(svg)):
         if i == skip:                              # ★ 背景件不包 ✓（板是画布 ✓）
+            flush()
+            buf, buf_key = [], None
             out.append(txt)
             continue
         key = None
@@ -1206,15 +1227,60 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
                         key = by_seg[kk]
                         break
         if key:
-            out.append('<g id="%s-%s">%s</g>' % (side, re.sub(r"[^\w.-]", "_", key), txt))
+            if key != buf_key:                     # ★ 同一个 key 的**几段合成一个组** ✓
+                flush()
+                buf, buf_key = [], key
+            buf.append(txt)
             got.add(key)
         else:
+            # ★★ 自检（2026-10-08 加 ✓）：**按坐标能认出属于变化处、却没进组**的线 ✗ ——
+            #   它们不参与动画 ⇒ 动画把那一版撤掉了、它们**却一直都在** ✓
+            #   （用户报的「箭头所指的红横线仍然没有被删除」✓ 就是这一类 ✓）。
+            if cls == CLS_WIRE:
+                ax, ay, bx, by = _at("x1"), _at("y1"), _at("x2"), _at("y2")
+                if None not in (ax, ay, bx, by) and (((ax, ay, bx, by) in by_seg)
+                                                     or ((bx, by, ax, ay) in by_seg)):
+                    leak.append("(%.0f,%.0f)→(%.0f,%.0f)" % (ax, ay, bx, by))
+            flush()
+            buf, buf_key = [], None
             out.append(txt)
-    return head + "".join(out) + "</svg>", got
+    flush()
+    return head + "".join(out) + "</svg>", got, leak
+
+
+def _link_key(lk):
+    r"""一条跳线的 key ✓ = `min(lk.wids)` ✓ —— **只在这一处算** ✗（`_hit_view` 与 `_tag_elements` 共用 ✓）。
+
+    ★★ 2026-10-08 修 ✗（用户原话：「箭头所指的红横线仍然没有被删除」✓）：一**条**跳线常常是
+      几**段** Wire 串起来的 ✓（`bb_compare.Link.wids` ✓；实测 v100 的 `Wire90013116`
+      = `[Wire90013116, Wire90013117]` ✓）⇒ 图上它就是**几根 `<line>`** ✓。
+      ✗ 原来按**实例名**打钥匙 ⇒ 只有 `min(wids)` 那段进了动画组 ✗ ⇒ 其余各段**不参与动画** ✓：
+      动画把 A 那一版撤掉了，它们**却一直都在** ✓ —— 用户指的就是它 ✓
+      （实测：`Wire90013116` 的第二段 `(333,117)→(288,117)` 就裸在 `a-Wire90013116`
+      组**外面** ✓，颜色还是 A 的浅红 ✓）。
+    """
+    return min(lk.wids)
+
+
+def _wid_key(fzz):
+    r"""⇒ `{每个 Wire 实例名: 它那条跳线的 key}` ✓（只有**导线**进这张表 ✓）。
+
+    ★ 「几段算一条跳线」这件事**只有 `bb_compare.load()` 一份** ✓ —— ✗ 别在这儿再写一遍 ✗。
+    """
+    import bb_compare as BC
+    links, _plugged = BC.load(fzz)
+    return {w: _link_key(lk) for lk in links for w in lk.wids}
 
 
 def _hit_view(a_fzz, b_fzz, view, frame):
     """面包板 / 原理图的**隐藏高亮组** ✓ ⇒ 清单里点一条就能在图上亮出来 ✓。
+
+    ★★ 2026-10-08：**标签另放一层** ✓（`<g id="pd-labels">` ✓、**不隐藏** ✓）——
+      用户原话：「右下角那些『新增跳线 / 没了跳线』的标签，没有显示出来」✓。
+      实测 ✓：那 28 条标签**全都在** `pd-*` 组里 ✓，而那些组是 `display:none` ✓
+      ⇒ 只有**点了清单那一条**才亮 ✓、不点就一条看不见 ✗（上一版按"标签跑出画布"去挪坐标 ✗
+      —— `597.5 ⇒ 540.16` ✓ —— 没有治到根 ✓）。⇒ 标签搬去可见层 ✓，
+      隐藏组里只留圈 / 连线 ✓（点行高亮那一套**一个字不动** ✓）。
 
     ★ 词汇与 PCB 那套**一致** ✓（用户已经认过 ✓）：空心圈 = A 旧 ✓、实心圈 = B 新 ✓
       、虚线连起来 ＋ 标签写 Δ ✓；`新增` / `没了` 只画一个圈 ✓。
@@ -1236,6 +1302,8 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     refs = set()                                  # ★ 变了哪些（给动画打钥匙用 ✓）
     out = ['<g id="pd-hits">']                    # ★ 包在 `pd-hits` 里 ✓ —— 扩展的 Esc/点图
     #   清空靠 `#pd-hits > g` ✓（与 PCB 那份**同一形状** ✓，✗ 别自己另起一套 ✗）。
+    lab = []                                      # ★ 标签**另放一层** ✓（可见 ✓，见函数头 ✓）
+    placed = []                                   # ★ 已放下的标签框 (x0, x1, y) ✓ ⇒ 撞了就往下让 ✓
 
     def xy(t):
         return (float(t.get("x") or 0.0), float(t.get("y") or 0.0))
@@ -1263,21 +1331,50 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                      % (pa[0], pa[1], pb[0], pb[1], A_COLOR_HI, r * 0.3, r * 0.5, r * 0.4))
         if label:
             ax, ay = pb if pb is not None else pa
-            lx, ly = ax + r * 1.2, ay - r * 1.2
+            ly = ay - r * 1.2
             # ★★ 标签**别跑出画布** ✗（2026-10-08 修 ✗）：实测右缘那两条
             #   「新增跳线 / 没了跳线」写到了 x=597.5 ✓，而画布右边界是 611 ✓
             #   ⇒ 被 viewBox 裁掉、用户看不到 ✗（原话：「右侧的图例文字没有显示出来」✓）。
             #   ⇒ 先算一个**够用的宽度估计** ✓（中日韩字符算 1 个字宽 ✓、其余 0.62 ✓，
-            #     宁可估宽一点也没有害处 ✓ —— 这里只是收边 ✓）；放不下就翻到**圈的左边** ✓，
-            #     再放不下就贴到画布里侧 ✓。
+            #     宁可估宽一点也没有害处 ✓ —— 这里只是收边 ✓）。
             cjk = sum(1 for ch in label if ord(ch) > 0x2E80)
             wtxt = (cjk + 0.62 * (len(label) - cjk)) * fs
-            if lx + wtxt > x0 + w - r:
-                lx = ax - r * 1.2 - wtxt
-            lx = max(x0 + r, min(lx, x0 + w - wtxt - r))
-            s.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
-                     'fill="%s">%s</text>'
-                     % (lx, ly, fs, A_COLOR_HI, esc(label)))
+            # ★★ 2026-10-08：**先放圈的右边 ✓，被占了就放左边 ✓，还挤就再往左挪一个身位 ✓** ——
+            #   同一处常常**既有「没了」又有「新增」** ✓（实测这份 bb 图 **14 对** ✓：同一根跳线
+            #   两版编号不同 ✓，`pts[0]` 一模一样 ✓）⇒ 两条标签会**叠在一点**、谁也看不清 ✗。
+            #   ✗ 光"往下让"不够 ✓：这一列本来就 12 单位一条 ✓，让一格正好撞在邻条上 ⇒ 连锁 ✓
+            #   （实测：近 20 条挤在 x≈562 这一列上 ⇒ 越挤越乱 ✗）。⇒ **横着也让** ✓。
+            #   ★ 收边：右边放不下就贴画布里侧 ✓；上下都别出画面 ✓（图外那条带子是**图例**的地盘 ✗）。
+            rcand = max(x0 + r, min(ax + r * 1.2, x0 + w - wtxt - r))
+            lcand = ax - r * 1.2 - wtxt
+            xs = [rcand] + ([lcand] if lcand >= x0 + r else [])
+            for _k in range(1, 7):
+                nx = rcand - _k * (wtxt + fs * 1.2)
+                if nx < x0 + r:
+                    break
+                xs.append(nx)
+            step = fs * 1.05
+            ly0 = ay - r * 1.2
+            lo, hi = y0 + fs * 0.6, y0 + h + fs * 0.4
+
+            def _free(x, y):
+                """这个位置放得下吗 ✓（与已放下的框比：**横竖都压着**才算撞 ✓）。"""
+                return not any(abs(y - p_y) < fs * 1.1 and x < p_x1 and p_x0 < x + wtxt
+                               for p_x0, p_x1, p_y in placed)
+
+            def _pick():
+                """⇒ 第一个放得下的位置 ✓；实在挤不下 ⇒ `None` ✓（宁可就地叠着 ✓，绝不越界 ✗）。"""
+                for cx in xs:
+                    for k in range(19):
+                        for cy in ((ly0,) if k == 0 else (ly0 + k * step, ly0 - k * step)):
+                            if lo <= cy <= hi and _free(cx, cy):
+                                return cx, cy
+                return None
+            lx, ly = _pick() or (rcand, ly0)
+            placed.append((lx, lx + wtxt, ly))
+            lab.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
+                       'fill="%s">%s</text>'
+                       % (lx, ly, fs, A_COLOR_HI, esc(label)))
         s.append("</g>")
         out.append("".join(s))
 
@@ -1299,9 +1396,8 @@ def _hit_view(a_fzz, b_fzz, view, frame):
         import bb_compare as BC
         la, _p1 = BC.load(a_fzz)
         lb, _p2 = BC.load(b_fzz)
-        key = lambda lk: min(lk.wids)
-        A = {key(lk): lk for lk in la}
-        B = {key(lk): lk for lk in lb}
+        A = {_link_key(lk): lk for lk in la}          # ★ key 口径与 `_tag_elements` **同一份** ✓
+        B = {_link_key(lk): lk for lk in lb}
         for k in sorted(set(A) | set(B)):
             if k not in A:
                 circles(k, None, B[k].pts[0], "新增跳线")
@@ -1309,7 +1405,10 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                 circles(k, A[k].pts[0], None, "没了跳线")
             else:
                 circles(k, A[k].pts[0], B[k].pts[0], "线路变了")
-    return "".join(out) + "</g>", refs
+    body = "".join(out) + "</g>"
+    if lab:                                            # ★ 标签层 ✓：**不隐藏** ✓ ⇒ 一打开就看得见 ✓
+        body += '<g id="pd-labels">%s</g>' % "".join(lab)
+    return body, refs
 
 
 def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
@@ -1420,15 +1519,22 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
           % (ska, ma, skb, mb,
              "两版位置**相同** ✓（只画一次没有信息损失 ✓）" if ma == mb
              else "两版位置**不同** ✗ ⇒ 只画一次会藏住 B 的位置 ✓，请留意 ✗"))
-    pa, ka = _tag_elements(_paint(sa, pal[0], "A", skip=ska)[0], refs, a_fzz, vname, "a",
-                           skip=ska)
+    pa, ka, leak_a = _tag_elements(_paint(sa, pal[0], "A", skip=ska)[0], refs, a_fzz, vname, "a",
+                                   skip=ska)
     # ★ B 侧：`drop=skb` ⇒ 板不画 ✓；而**块号会往前串** ✗（少了那一块 ✓）
     #   ⇒ `skip` 必须传 None ✗（传 skb 会误跳下一块 ✓）
-    pb, kb = _tag_elements(_paint(sb, pal[1], "B", drop=skb)[0], refs, b_fzz, vname, "b")
+    pb, kb, leak_b = _tag_elements(_paint(sb, pal[1], "B", drop=skb)[0], refs, b_fzz, vname, "b")
     lose = refs - (ka | kb)
     print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
           % (len(refs), len(ka), len(kb), not lose,
              "" if not lose else " ✗ 漏了：%s" % "、".join(sorted(lose))))
+    # ★★ 2026-10-08 自检 ✓：**属于变化处、却没进动画组**的线 = 动画里撤不掉的线 ✓
+    #   （用户原话：「箭头所指的红横线仍然没有被删除」✓ —— 实测就是 `Wire90013116`
+    #    的第二段 ✓：那条跳线是**两段 Wire 串起来**的 ✓，只包了第一段 ✓。）
+    leak = leak_a + leak_b
+    print("✓ 动画钥匙：**裸在外面、又属于变化处**的线 = %d 根 %s"
+          % (len(leak), "✓（动画里都撤得干净 ✓）" if not leak
+             else "✗ %s ⇒ 动画撤不掉它们 ✓" % "；".join(leak[:4])))
     # ★★ 动画第二步：关键帧 ＋ 逐元素内联 `animation` ✓（规格见 `docs/diff-animation.md` ✓）
     token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
     css, anim, dur, sec, tail = _anim_css(ka, kb, refs, token)
@@ -1463,8 +1569,10 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     if hits:
         body = body.replace("</svg>", '<style>svg.pd-focus #A, svg.pd-focus #B '\
                             '{opacity:.16}</style>\n' + hits + "\n</svg>")
-        print("✓ 高亮层：%d 组（点清单里 ① / ② 的条目 ⇒ 图上亮对应那组 ✓）"
-              % hits.count('<g id="pd-'))
+        print("✓ 高亮层：%d 组（点清单里 ① / ② 的条目 ⇒ 图上亮对应那组 ✓）；"
+              "另有标签层 %d 条 ✓（**不隐藏** ✓ —— 一打开就看得见 ✓）"
+              % (hits.count('<g id="pd-') - 1 - hits.count('<g id="pd-labels">'),
+                 hits.count('<text') if '<g id="pd-labels">' in hits else 0))
     if dur:
         # ★ 播放键（只播一遍 ⇒ 想再看就把动画拨回 0 ✓）：见 `_anim_button()` ✓
         body = body.replace("</svg>", _anim_button(frame) + "\n</svg>")

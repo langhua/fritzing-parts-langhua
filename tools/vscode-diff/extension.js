@@ -303,11 +303,14 @@ const JS = [
 	//   能点 ✓ —— 在 VS Code 的**图片预览**里它是 `<img>` ✗（脚本一律不跑 ✗）、
 	//   在**合并视图**里又会被 webview 的 CSP（nonce ✓）挡掉 ✗ ⇒ 用户点着没反应 ✗。
 	//   ⇒ 在**外面**给一个按钮 ✓：它只管把动画的 `currentTime` 拨回 0 ✓（只播一遍 + forwards ✓）。
+	//   ★ 同一份逻辑**幻灯片那边也有** ✓（`SLIDE_JS` 的 `#replay` ✓）—— 两处都别漏 ✗
+	//     （工具打印的那句「合并视图/幻灯片另有按钮」必须是**真的** ✓）。
 	'  var rp = document.getElementById("pd-replay");',
-	'  if (rp) rp.addEventListener("click", function(){',
+	'  if (rp) rp.addEventListener("click", function(){ replay(); });',
+	'  function replay(){',
 	'    var as = document.getAnimations();',
 	'    for (var i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
-	'  });',
+	'  }',
 	'})();'
 ].join('\n');
 
@@ -321,7 +324,10 @@ const CSS = `
   .left img, .art svg { max-width:100%; height:auto; }
   .art svg { cursor:default; }
   .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border); }
-  .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border); }
+  .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
+         /* ★★ 2026-10-08 修 ✗：工具条**钉在顶上** ✓ —— 它是「▶ 重放动画」唯一的落脚处 ✓，
+            而清单往往长过一屏 ✓ ⇒ 一滚就"看不到按钮"了 ✗（用户原话：「没有看到「▶ 重放动画」按钮」✓）。 */
+         position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
   .bar button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
                 border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
   h1 { font-size:1.15em; } h2 { font-size:1.05em; margin-top:1.1em; } h3 { font-size:1em; }
@@ -445,6 +451,12 @@ const SLIDE_JS = [
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
 	'    $("play").textContent = "⏸ 暂停";',
 	'  });',
+	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 桩与合并视图那份**同一套** ✓（`getAnimations()`
+	//   ＋ `currentTime = 0` ✓）：幻灯片一页只有一个 svg ✓ ⇒ 拨到的就是当前这页 ✓。
+	'  $("replay").addEventListener("click", function(){',
+	'    var as = document.getAnimations();',
+	'    for (var i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
+	'  });',
 	'  document.addEventListener("keydown", function(e){',
 	'    if (e.key === "ArrowRight" || e.key === "PageDown") go(idx + 1);',
 	'    else if (e.key === "ArrowLeft" || e.key === "PageUp") go(idx - 1);',
@@ -475,6 +487,7 @@ function slideshowHtml(webview, nonce, n) {
 <div class="top">
   <button id="prev">⟨ 上一条</button><button id="next">下一条 ⟩</button>
   <button id="play">▶ 自动播放</button><span>每</span><input id="sec" value="3"><span>秒</span>
+  <button id="replay">▶ 重放动画</button>
   <span id="pos">共 ${n} 条</span>
   <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点清单一条 高亮</span>
 </div>

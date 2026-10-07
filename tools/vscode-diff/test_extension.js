@@ -275,5 +275,21 @@ if (bbMds.length) {
 	console.log('⑪ 没有 bb 清单可验（先跑一次 --view bb）✓');
 }
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十一项都过', bad || '');
+// ⑫ ★★ 「▶ 重放动画」必须在**两个界面**里都有 ✓（2026-10-08 加 ✓）——
+//   用户原话：「没有看到「▶ 重放动画」按钮」✓。两个根都在这儿守着 ✓：
+//     ① 合并视图的按钮在**工具条**里 ✓（有图时才有 ✓ —— 名单里那行字说的就是它 ✓）；
+//     ② 幻灯片那条工具条**也得有** ✓（`diff_revs.py` 打印的那句「合并视图/幻灯片另有按钮 ✓」
+//        只有在两处都真有时才成立 ✗）；
+//     ③ 工具条**钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗ —— 一滚就"看不到"✓）。
+const edBar = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
+const slBar = slideshowHtml({ cspSource: '' }, 'N', 1);
+const hasId = (s, id) => s.indexOf('id="' + id + '"') >= 0;
+const sticky = CSS.indexOf('position:sticky') >= 0;
+console.log('⑫ 重放按钮：合并视图 = %s（工具条钉顶 = %s）；幻灯片 = %s',
+	hasId(edBar, 'pd-replay'), sticky, hasId(slBar, 'replay'));
+if (!hasId(edBar, 'pd-replay') || !hasId(slBar, 'replay') || !sticky) {
+	fail('「▶ 重放动画」按钮不在（或工具条没钉顶）');
+}
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十二项都过', bad || '');
 process.exit(bad ? 1 : 0);
