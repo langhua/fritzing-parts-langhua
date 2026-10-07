@@ -823,13 +823,33 @@ def _inner(svg):
     return svg[svg.find(">", svg.find("<svg")) + 1:svg.rfind("</svg>")]
 
 
+def _no_fill(xml):
+    """把**填充**去掉 ⇒ 只剩描边 ✓（`<text>` 例外 ✓ —— 文字靠 fill 才看得见 ✓）。
+
+    ★ 为什么必须去 ✗（2026-10-07 用户实测 ✓，原话：「面包板和元件的图形都丢失了，被蓝色色块填满」
+      ✓）：元件 svg 里**每个面都带 `fill`** ✓ ⇒ 一律染成类别色 ⇒ **整块板变成一块蓝** ✗。
+      叠合图要的是「**轮廓对轮廓**」✓ ⇒ 面**不填色** ✓（丝印文字保留 ✓）。
+    """
+    keep = []
+
+    def stash(m):
+        keep.append(m.group(0))
+        return "\x00%d\x00" % (len(keep) - 1)
+
+    xml = re.sub(r"<text\b[^>]*>.*?</text>", stash, xml, flags=re.S)   # 文字先收起来 ✓
+    xml = re.sub(r'(\bfill\s*=\s*")[^"]*(")', r"\1none\2", xml)
+    xml = re.sub(r"(\bfill\s*:\s*)[^;\"']+", r"\1none", xml)
+    return re.sub(r"\x00(\d+)\x00", lambda m: keep[int(m.group(1))], xml)
+
+
 def _paint(svg, pal):
     """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
 
     · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
       （与 PCB 那套「把 A 的板底换成 none」一个道理 ✓）；
-    · 其余三类：用 `render_pcb.remap_colors` ✓（**共用一份换色实现** ✓，
-      属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）。
+    · **元件**：先去填充（`_no_fill` ✓）再上色 ⇒ **只描边** ✓（✗ 否则整块板变蓝 ✗）；
+    · 导线 / 文字：描边与填充都上色 ✓（导线那个 `<circle>` 接点靠 fill ✓，文字靠 fill ✓）；
+    · 换色共用 `render_pcb.remap_colors` ✓（属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）。
     """
     import render_pcb as R
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
@@ -838,6 +858,8 @@ def _paint(svg, pal):
         cnt[cls] = cnt.get(cls, 0) + 1
         if cls == CLS_BOARD:
             txt = re.sub(r'\bfill\s*=\s*"[^"]*"', 'fill="none"', txt, count=1)
+        elif cls == CLS_PART:
+            txt = R.remap_colors(_no_fill(txt), {}, pal[cls])       # 只描边 ✓
         else:
             txt = R.remap_colors(txt, {}, pal[cls])
         parts.append(txt)
@@ -863,12 +885,16 @@ def _union_frame(sa, sb):
 
 
 def _view_rows(name_a, name_b):
-    """图例：三类 × 两版 ✓（+ 一行说明"重合更深 ✓"）。"""
+    """图例：三类 × 两版 = **6 行** ✓。
+
+    ★ 必须是 6 行 ✗（2026-10-07 修 ✓）：`_legend` 是**按列**摆的（每列
+      `ceil(行数/3)` 行 ✓）⇒ 7 行会变成 3/3/1 ✗ ⇒「元件A」在左列、「元件B」在中列
+      ✗（用户看到的「图例乱了」✓）⇒ 就 6 行、一列一个类别 ✓（跟 PCB 那份图例同排法 ✓）。
+    """
     rows = []
     for cls, label in ((CLS_WIRE, "导线"), (CLS_PART, "元件"), (CLS_TEXT, "文字/位号")):
         rows.append((VIEW_PAL[cls][0], "%sA %s" % (label, name_a)))
         rows.append((VIEW_PAL[cls][1], "%sB %s" % (label, name_b)))
-    rows.append((None, "重合处更深 = 两版一样"))
     return rows
 
 
@@ -895,6 +921,75 @@ def _render_view(fzz, view, out):
     return open(svgp, encoding="utf-8").read()
 
 
+def _hit_view(a_fzz, b_fzz, view, frame):
+    """面包板 / 原理图的**隐藏高亮组** ✓ ⇒ 清单里点一条就能在图上亮出来 ✓。
+
+    ★ 词汇与 PCB 那套**一致** ✓（用户已经认过 ✓）：空心圈 = A 旧 ✓、实心圈 = B 新 ✓
+      、虚线连起来 ＋ 标签写 Δ ✓；`新增` / `没了` 只画一个圈 ✓。
+    ★ 组 id = `pd-<位号>` ✓（与 `pd-<脚名>` 同一形状 ✓ ⇒ 扩展那边一套正则就够 ✓）。
+    ★ 坐标：实例的 `geometry x/y` 就是 sketch 绝对坐标 ✓ ⇒ 与叠合图**同一坐标系** ✓（不用换算 ✓）。
+    """
+    vw = {"bb": "breadboardView", "sch": "schematicView"}[view]
+    ga, gb = _place(a_fzz, vw), _place(b_fzz, vw)
+    x0, y0, w, h = frame
+    r = max(3.0, w * 0.010)                       # 圈多大：按画布宽定 ✓（不然小的视图看不见 ✓）
+    fs = r * 1.7
+    out = ['<g id="pd-hits">']                    # ★ 包在 `pd-hits` 里 ✓ —— 扩展的 Esc/点图
+    #   清空靠 `#pd-hits > g` ✓（与 PCB 那份**同一形状** ✓，✗ 别自己另起一套 ✗）。
+
+    def xy(t):
+        return (float(t.get("x") or 0.0), float(t.get("y") or 0.0))
+
+    def circles(ttl, pa, pb, label):
+        pid = re.sub(r"[^\w.-]", "_", ttl)
+        s = ['<g id="pd-%s" style="display:none">' % pid]
+        if pa is not None:
+            s.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
+                     'stroke-width="%.2f"/>' % (pa[0], pa[1], r, A_COLOR_HI, r * 0.35))
+        if pb is not None:
+            s.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s"/>'
+                     % (pb[0], pb[1], r * 0.75, A_COLOR_HI))
+        if pa is not None and pb is not None:
+            s.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
+                     'stroke-width="%.2f" stroke-dasharray="%.2f %.2f"/>'
+                     % (pa[0], pa[1], pb[0], pb[1], A_COLOR_HI, r * 0.3, r * 0.5, r * 0.4))
+        if label:
+            ax, ay = pb if pb is not None else pa
+            s.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
+                     'fill="%s">%s</text>'
+                     % (ax + r * 1.2, ay - r * 1.2, fs, A_COLOR_HI, esc(label)))
+        s.append("</g>")
+        out.append("".join(s))
+
+    for ttl in sorted(set(ga) | set(gb)):
+        if ttl.startswith("Wire") or ttl.startswith("TXT"):
+            continue
+        if ttl not in ga:
+            circles(ttl, None, xy(gb[ttl]), "新增")
+        elif ttl not in gb:
+            circles(ttl, xy(ga[ttl]), None, "没了")
+        else:
+            pa, pb = xy(ga[ttl]), xy(gb[ttl])
+            d = (((pb[0] - pa[0]) ** 2 + (pb[1] - pa[1]) ** 2) ** 0.5) * SK
+            if d >= JOINT:
+                circles(ttl, pa, pb, "Δ %.3f mm" % d)
+    if view == "bb":                                  # 跳线也让它能点 ✓（② 里的行 ✓）
+        import bb_compare as BC
+        la, _p1 = BC.load(a_fzz)
+        lb, _p2 = BC.load(b_fzz)
+        key = lambda lk: min(lk.wids)
+        A = {key(lk): lk for lk in la}
+        B = {key(lk): lk for lk in lb}
+        for k in sorted(set(A) | set(B)):
+            if k not in A:
+                circles(k, None, B[k].pts[0], "新增跳线")
+            elif k not in B:
+                circles(k, A[k].pts[0], None, "没了跳线")
+            else:
+                circles(k, A[k].pts[0], B[k].pts[0], "线路变了")
+    return "".join(out) + "</g>"
+
+
 def _view_diff(a_fzz, b_fzz, out, na, nb):
     """面包板 / 原理图：叠合图 ＋ 清单 ✓（PCB 那条路**一个字不动** ✓）。"""
     sa = _render_view(a_fzz, VIEW, out)
@@ -907,8 +1002,16 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
              cb.get(CLS_WIRE, 0), cb.get(CLS_PART, 0), cb.get(CLS_TEXT, 0)))
     stem = "diff-%s-%s-%s" % (VIEW, na, nb)
     svg_p = os.path.join(out, stem + ".svg")
-    body = overlay(sa, sb, na, nb, pal=pal, frame=_union_frame(sa, sb),
-                   rows=_view_rows(na, nb))
+    frame = _union_frame(sa, sb)
+    body = overlay(sa, sb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb))
+    # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
+    #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
+    hits = _hit_view(a_fzz, b_fzz, VIEW, frame)
+    if hits:
+        body = body.replace("</svg>", '<style>svg.pd-focus #A, svg.pd-focus #B '\
+                            '{opacity:.16}</style>\n' + hits + "\n</svg>")
+        print("✓ 高亮层：%d 组（点清单里 ① / ② 的条目 ⇒ 图上亮对应那组 ✓）"
+              % hits.count('<g id="pd-'))
     open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
     print("✓ 叠合差异图 %s（色相 = 类别：导线橙 ✓ 元件蓝 ✓ 文字灰 ✓；深浅 = 版 ✓）" % svg_p)
     try:

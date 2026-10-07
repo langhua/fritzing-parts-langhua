@@ -217,11 +217,25 @@ function mdToHtml(md) {
 //     ⇒ 这里只切 display，**不算任何坐标**（坐标只有工具一份）。
 // ★ 用**单引号字符串数组**拼，不用模板串 —— 免得里面的反斜杠/花括号跟外层 `${}` 打架。
 const PAD_RE_SRC = '([A-Za-z][\\w.-]*\\.connector\\d+)';   // 与单测共用这一份图案 ✓
+// ★ 第二类可点的行 ✓（2026-10-07 加 ✓）：面包板/原理图清单里的「**位号**：…」✓
+//   —— 那儿的行没有 `.connectorN` ✗ ⇒ 靠**加粗 + 冒号**这个形状认 ✓。
+const ROW_RE_SRC = '\\*\\*([^*]+)\\*\\*[：:]';
+
+/** 把图案源码变成**能嵌进 webview 的正则字面量** ✓（只转义 `/` ✓）。
+ *
+ *  ★★ 2026-10-07 修 ✗：原来嵌的是 `new RegExp(JSON.stringify(PAD_RE_SRC))` ✗ ——
+ *    `JSON.stringify` 会给源码**套上引号** ✓ ⇒ 正则就变成“要求两侧有字面量引号” ✗
+ *    ⇒ **一条也匹配不上、哪里都点不动** ✗（含 PCB ✗）。
+ *    而单测用的是 `new RegExp(PAD_RE_SRC)` ✗ ⇒ **抓不到这个错** ✗（正是“两套实现”的坑 ✓）
+ *    ⇒ 注入与单测**共用这一个 `reLit`** ✓。
+ */
+function reLit(src) { return src.replace(/\//g, '\\/'); }
+const RE_INJECT = 'var RE = /' + reLit(PAD_RE_SRC) + '/, RE2 = /' + reLit(ROW_RE_SRC) + '/;';
 const JS = [
 	'(function(){',
 	'  var SVG = document.getElementById("pd-svg");',
 	'  var li = Array.prototype.slice.call(document.querySelectorAll("li"));',
-	'  var RE = new RegExp(' + JSON.stringify(PAD_RE_SRC) + ');',
+	RE_INJECT,
 	'  function clear(){',
 	'    if (SVG) SVG.classList.remove("pd-focus");',
 	'    var g = document.querySelectorAll("#pd-hits > g");',
@@ -229,14 +243,17 @@ const JS = [
 	'    li.forEach(function(x){ x.classList.remove("sel"); });',
 	'  }',
 	'  li.forEach(function(x){',
-	'    var m = RE.exec(x.textContent || "");',
+	'    var txt = x.textContent || "";',
+	'    var m = RE.exec(txt) || RE2.exec(txt);',
 	'    if (!m) return;',
+	'    var tgt = "pd-" + m[1];',
+	'    if (!document.getElementById(tgt)) return;',   // ★ 图上没这组 ⇒ 不当可点 ✗（免得骗人 ✓）
 	'    x.classList.add("clickable");',
 	'    x.title = "点一下：在图上高亮 " + m[1];',
 	'    x.addEventListener("click", function(){',
 	'      clear();',
 	'      if (SVG) SVG.classList.add("pd-focus");',
-	'      var t = document.getElementById("pd-" + m[1]);',
+	'      var t = document.getElementById(tgt);',
 	'      if (t) { t.style.display = ""; x.classList.add("sel"); }',
 	'    });',
 	'  });',
@@ -341,7 +358,7 @@ const SLIDE_JS = [
 	'  function bindHighlight(){',
 	'    var SVG = $("pd-svg");',
 	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
-	'    var RE = new RegExp(' + JSON.stringify(PAD_RE_SRC) + ');',
+	RE_INJECT,
 	'    function clear(){',
 	'      if (SVG) SVG.classList.remove("pd-focus");',
 	'      var g = document.querySelectorAll("#pd-hits > g");',
@@ -349,14 +366,17 @@ const SLIDE_JS = [
 	'      li.forEach(function(x){ x.classList.remove("sel"); });',
 	'    }',
 	'    li.forEach(function(x){',
-	'      var m = RE.exec(x.textContent || "");',
+	'      var txt = x.textContent || "";',
+	'      var m = RE.exec(txt) || RE2.exec(txt);',
 	'      if (!m) return;',
+	'      var tgt = "pd-" + m[1];',
+	'      if (!document.getElementById(tgt)) return;',
 	'      x.classList.add("clickable");',
 	'      x.title = "点一下：在图上高亮 " + m[1];',
 	'      x.addEventListener("click", function(){',
 	'        clear();',
 	'        if (SVG) SVG.classList.add("pd-focus");',
-	'        var t = $("pd-" + m[1]);',
+	'        var t = $("pd-" + tgt.slice(3));',
 	'        if (t) { t.style.display = ""; x.classList.add("sel"); }',
 	'      });',
 	'    });',
@@ -564,6 +584,6 @@ function deactivate() { }
 // 这几件是纯逻辑，能单独验 —— 免得只靠"装上去点一下看看"。
 module.exports = {
 	activate, deactivate,
-	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
-	         CSS, slideshowHtml, html, patRe }
+	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, ROW_RE_SRC, reLit, dirs, pageList,
+	         readPage, CSS, slideshowHtml, html, patRe }
 };
