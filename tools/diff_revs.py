@@ -97,12 +97,17 @@ def _vnum(f):
 
 
 def _vtxt(f):
+    """版本标签 ✓：`pixel-pcb-v59.fzz` ⇒ `v59` ✓；
+    ✗ `pixel-breadboard100.fzz` 这种**没有 `-v`** 的 ⇒ 取**末尾那串数字** ✓（⇒ `v100` ✓）
+    —— 面包板/原理图的稿子就叫这个名 ✓（不取的话输出名会变成 `diff-bb-pixel-breadboard100-…` ✗）。
+    """
     stem = os.path.splitext(os.path.basename(f))[0]
     m = re.match(r"^.*?-v(\d+)(.*)$", stem)
-    if not m:
-        return stem
-    suf = m.group(2).strip("_-")
-    return "v%d%s" % (int(m.group(1)), ("_" + suf) if suf else "")
+    if m:
+        suf = m.group(2).strip(" _-")
+        return "v%d%s" % (int(m.group(1)), ("_" + suf) if suf else "")
+    m2 = re.search(r"(\d+)\D*$", stem)
+    return "v%s" % m2.group(1) if m2 else stem
 
 
 # ── 差异清单 ───────────────────────────────────────────────────────────────
@@ -741,6 +746,325 @@ def _inner(svg):
     return b.replace('<rect width="100%" height="100%" fill="#ffffff"/>', '')
 
 
+# ══ 视图：pcb | bb（面包板）| sch（原理图）✓（2026-10-07 加 ✓）══════════════
+#   ★ 颜色口径（用户 2026-10-07 定 ✓）：**色相 = 类别**（导线 / 元件 / 文字 ✓）、
+#     **深浅 = 版**（浅 = A 旧 ✓ / 深 = B 新 ✓）—— PCB 那套「色相 = 层」在这儿没意义 ✗
+#     （面包板/原理图没有层 ✓）。
+#   ★ 分类**只按结构**认 ✓（出图段我逐行核过两个渲染器 ✓，同一套写法 ✓）：
+#       `render_bb.py` ：底 = `<rect fill="#f7f7f7">` ✓；每个零件一个 `<g transform="matrix(…)">` ✓；
+#                        顶层 `<line stroke-width="2">` = 跳线 ✓。
+#       `render_sch.py`：底 = `<rect fill="#ffffff">` ✓；零件组 ✓；顶层 `<line>` = 导线 ✓；
+#                        顶层 `<circle>` = 接点 ✓；带 `font-family` 的 `<g>` 里是位号 ✓。
+#     ⇒ `_cls_of()` **一份实现**管两边 ✓（✗ 别在两个渲染器里各写一套 ✗）。
+VIEW = "pcb"
+VIEW_PX = {"bb": 1800.0, "sch": 1700.0}     # 子进程渲染的输出宽 px ✓（它们第 3 个参数 ✓）
+CLS_WIRE, CLS_PART, CLS_TEXT, CLS_BOARD = "wire", "part", "text", "board"
+#   三类在两版里的颜色 ✓（沿用 PCB 那套常量：橙系 / 蓝系 / 灰系 ✓ 六色互分得开 ✓）
+VIEW_PAL = {"wire": (A_TOP, B_TOP), "part": (A_BOT, B_BOT), "text": (A_OTH, B_OTH)}
+
+
+def _cls_of(el):
+    """顶层元素原文 ⇒ 类别 ✓（认不出 ⇒ 元件 ✓ —— 宁可当元件，也别把它当导线 ✓）。"""
+    t = el.lstrip()[:6].lower()
+    if t.startswith("<rect"):
+        return CLS_BOARD
+    if t.startswith("<line") or t.startswith("<circ") or t.startswith("<path"):
+        return CLS_WIRE
+    if t.startswith("<text"):
+        return CLS_TEXT
+    if t.startswith("<g") and "font-family" in el[:200]:
+        return CLS_TEXT
+    return CLS_PART
+
+
+def _top_split(svg):
+    """`<svg>` 的**顶层**子元素 ⇒ `[(类别, 原文), …]` ✓。
+
+    ★ 为什么不用 `ElementTree` ✗：这些 svg 里有 DOCTYPE/实体 ✓（`render_bb.py` 自己也只敢用
+      正则取 inner ✓）⇒ 用"**只配平 `<g>`**"的扫描 ✓ —— 顶层就三种：自闭合的
+      `rect/line/circle/path` ✓、`<g>…</g>`（零件组 / 位号组 ✓）。
+    """
+    i = svg.find(">", svg.find("<svg")) + 1
+    body = svg[i:svg.rfind("</svg>")]
+    out, p = [], 0
+    while True:
+        m = re.search(r"<(g|rect|line|circle|path|text)\b", body[p:])
+        if not m:
+            break
+        s = p + m.start()
+        if m.group(1) != "g":
+            k = body.find(">", s)
+            if k < 0:
+                break
+            out.append((_cls_of(body[s:k + 1]), body[s:k + 1]))
+            p = k + 1
+            continue
+        depth, q = 0, s
+        while True:                                    # 只数 `<g` / `</g>` ✓（顶层没有别的嵌套 ✗）
+            o, c = body.find("<g", q), body.find("</g>", q)
+            if c < 0:
+                q = len(body)
+                break
+            if 0 <= o < c:
+                depth += 1
+                q = o + 2
+            else:
+                depth -= 1
+                q = c + 4
+                if depth == 0:
+                    break
+        out.append((_cls_of(body[s:q]), body[s:q]))
+        p = q
+    return out
+
+
+def _inner(svg):
+    """去掉 `<svg …>` 头与尾 ✓。"""
+    return svg[svg.find(">", svg.find("<svg")) + 1:svg.rfind("</svg>")]
+
+
+def _paint(svg, pal):
+    """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
+
+    · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
+      （与 PCB 那套「把 A 的板底换成 none」一个道理 ✓）；
+    · 其余三类：用 `render_pcb.remap_colors` ✓（**共用一份换色实现** ✓，
+      属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）。
+    """
+    import render_pcb as R
+    head = svg[:svg.find(">", svg.find("<svg")) + 1]
+    parts, cnt = [], {}
+    for cls, txt in _top_split(svg):
+        cnt[cls] = cnt.get(cls, 0) + 1
+        if cls == CLS_BOARD:
+            txt = re.sub(r'\bfill\s*=\s*"[^"]*"', 'fill="none"', txt, count=1)
+        else:
+            txt = R.remap_colors(txt, {}, pal[cls])
+        parts.append(txt)
+    return head + "".join(parts) + "</svg>", cnt
+
+
+def _frame_box(svg):
+    """取该 svg 的取景窗 ⇒ `(x, y, w, h)` ✓。"""
+    va, w, h = _frame(svg)
+    v = [float(x) for x in re.findall(r"[-+0-9.eE]+", va or "")] if va else []
+    return (v[0], v[1], w, h) if len(v) == 4 else (0.0, 0.0, w, h)
+
+
+def _union_frame(sa, sb):
+    """两版的**并集**取景窗 ✓ —— 面包板/原理图的坐标**本来就是 sketch 坐标** ✓
+    （两个渲染器都把零件/导线画在**绝对 sketch 坐标**上 ✓，只是各自把窗口裁到内容 ✓）
+    ⇒ 叠合只需**取并集** ✓：不缩放、不平移 ✓，谁挪了就是挪了 ✓。
+    """
+    ax, ay, aw, ah = _frame_box(sa)
+    bx, by, bw, bh = _frame_box(sb)
+    x0, y0 = min(ax, bx), min(ay, by)
+    return (x0, y0, max(ax + aw, bx + bw) - x0, max(ay + ah, by + bh) - y0)
+
+
+def _view_rows(name_a, name_b):
+    """图例：三类 × 两版 ✓（+ 一行说明"重合更深 ✓"）。"""
+    rows = []
+    for cls, label in ((CLS_WIRE, "导线"), (CLS_PART, "元件"), (CLS_TEXT, "文字/位号")):
+        rows.append((VIEW_PAL[cls][0], "%sA %s" % (label, name_a)))
+        rows.append((VIEW_PAL[cls][1], "%sB %s" % (label, name_b)))
+    rows.append((None, "重合处更深 = 两版一样"))
+    return rows
+
+
+def _render_view(fzz, view, out):
+    """渲一版 ⇒ svg 文本 ✓。
+
+    ★ `render_bb.py` / `render_sch.py` 是**脚本式** ✗（模块级读 `sys.argv` ⇒ import 就执行 ✗）
+      ⇒ 只能**子进程**调 ✓；它们本来就**顺手写出 `.svg`** ✓（`<out>.svg` ✓）⇒ 读回来就是矢量 ✓。
+      ✗ 不许照它们再写一份渲染 ✗（那是重复实现 ✓）。
+    """
+    script = os.path.join(HERE, "render_%s.py" % view)
+    import subprocess
+    if not os.path.isfile(script):
+        raise SystemExit("库里没有 %s ✗（--view %s 需要它 ✓）" % (os.path.basename(script), view))
+    base = os.path.join(out, "_tmp_%s_%s" % (view, os.path.splitext(os.path.basename(fzz))[0]))
+    png = base + ".png"
+    cmd = [sys.executable, script, fzz, png, str(int(VIEW_PX.get(view, 1800.0)))]
+    r = subprocess.run(cmd, cwd=os.path.dirname(os.path.abspath(fzz)),
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    svgp = base + ".svg"
+    if r.returncode or not os.path.isfile(svgp):
+        raise SystemExit("渲 %s 失败 ✗：%s\n%s" % (view, " ".join(cmd),
+                                                 r.stdout.decode("utf-8", "replace")[-2000:]))
+    return open(svgp, encoding="utf-8").read()
+
+
+def _view_diff(a_fzz, b_fzz, out, na, nb):
+    """面包板 / 原理图：叠合图 ＋ 清单 ✓（PCB 那条路**一个字不动** ✓）。"""
+    sa = _render_view(a_fzz, VIEW, out)
+    sb = _render_view(b_fzz, VIEW, out)
+    pal = ({c: VIEW_PAL[c][0] for c in VIEW_PAL}, {c: VIEW_PAL[c][1] for c in VIEW_PAL})
+    ca = _paint(sa, pal[0])[1]
+    cb = _paint(sb, pal[1])[1]
+    print("✓ %s 渲染：A 导线 %d / 元件 %d / 文字 %d ✓　B 导线 %d / 元件 %d / 文字 %d ✓"
+          % (VIEW, ca.get(CLS_WIRE, 0), ca.get(CLS_PART, 0), ca.get(CLS_TEXT, 0),
+             cb.get(CLS_WIRE, 0), cb.get(CLS_PART, 0), cb.get(CLS_TEXT, 0)))
+    stem = "diff-%s-%s-%s" % (VIEW, na, nb)
+    svg_p = os.path.join(out, stem + ".svg")
+    body = overlay(sa, sb, na, nb, pal=pal, frame=_union_frame(sa, sb),
+                   rows=_view_rows(na, nb))
+    open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
+    print("✓ 叠合差异图 %s（色相 = 类别：导线橙 ✓ 元件蓝 ✓ 文字灰 ✓；深浅 = 版 ✓）" % svg_p)
+    try:
+        import cairosvg
+        cairosvg.svg2png(url=svg_p, write_to=os.path.join(out, stem + ".png"),
+                         scale=1.0, background_color="white")
+    except ImportError:
+        print("（没装 cairosvg ⇒ 只出 svg ✓）")
+    lines = report_view(a_fzz, b_fzz)
+    md_p = os.path.join(out, stem + ".md")
+    open(md_p, "w", encoding="utf-8", newline="\n").write("\n".join(lines) + "\n")
+    print()
+    print("\n".join(lines))
+    print("\n（同一份清单也写到 %s ✓）" % md_p)
+    for n in os.listdir(out):                       # 中间产物（渲染器写的那对）别留在 diff/ 里 ✓
+        if n.startswith("_tmp_%s_" % VIEW):
+            os.remove(os.path.join(out, n))
+    return 0
+
+
+def _place(fzz, view):
+    """`{(位号, 脚id): (x, y)}`（sketch 坐标 ✓）—— 只读该视图的 geometry ✓。
+
+    ★ 与渲染器同一口径 ✓：`geometry` 的 `x/y` 就是 sketch 绝对坐标 ✓
+      （换算成 mm 才乘 `SK` ✓ —— 与 `pcb_check`/`pcb_wire` 同一套 ✓）。
+    """
+    import xml.etree.ElementTree as ET
+    import zipfile
+    z = zipfile.ZipFile(fzz)
+    name = [n for n in z.namelist() if n.endswith(".fz")][0]
+    root = ET.fromstring(z.read(name))
+    out = {}
+    for e in root.iter("instance"):
+        ttl = (e.findtext("title") or "").strip()
+        vw = next((c for c in e if c.tag.split("}")[-1] == "views"), None)
+        sub = next((c for c in vw if c.tag.split("}")[-1] == view), None) if vw is not None else None
+        g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
+        if g is None:
+            continue
+        out[ttl] = g
+    return out
+
+
+def report_view(a_fzz, b_fzz):
+    """清单：① 元件摆位 Δ mm（三视图共用 ✓）＋ ② 该视图专属那一节 ✓。"""
+    view = {"bb": "breadboardView", "sch": "schematicView"}[VIEW]
+    ga, gb = _place(a_fzz, view), _place(b_fzz, view)
+    mm = lambda v: v * SK
+    L = []
+    L.append("# %s 差异清单：%s ⇒ %s" % (VIEW, _vtxt(a_fzz), _vtxt(b_fzz)))
+    L.append("")
+    L.append("> 色相 = 类别（导线 / 元件 / 文字）✓；深浅 = 版（浅 = A 旧 / 深 = B 新）✓；"
+             "重合处更深 = 两版一样 ✓。")
+    L.append("")
+    L.append("## ① 元件摆位（Δ mm）")
+    L.append("")
+    same = moved = 0
+    rows = []
+    for ttl in sorted(set(ga) | set(gb)):
+        # ★ 导线（`Wire*`）与图例文字件（`TXT*`）不归这里 ✗ —— 导线归 ②（增删/改色/走向 ✓），
+        #   `TXT*` 是图例件，本来就不画 ✓（渲染器也跳过它 ✓）⇒ 报出来只是噪声 ✗。
+        if ttl.startswith("Wire") or ttl.startswith("TXT"):
+            continue
+        if ttl not in ga:
+            rows.append("- **%s**：B 里**新增** ✓" % ttl)
+            continue
+        if ttl not in gb:
+            rows.append("- **%s**：B 里**没了** ✗" % ttl)
+            continue
+        xa, ya = ga[ttl].get("x"), ga[ttl].get("y")
+        xb, yb = gb[ttl].get("x"), gb[ttl].get("y")
+        if None in (xa, ya, xb, yb):
+            continue
+        dx, dy = mm(float(xb) - float(xa)), mm(float(yb) - float(ya))
+        d = (dx * dx + dy * dy) ** 0.5
+        if d < JOINT:
+            same += 1
+            continue
+        moved += 1
+        rows.append("- **%s**：移了 **%.3f mm**（Δx %+.3f ✓ Δy %+.3f ✓）" % (ttl, d, dx, dy))
+    if not rows:
+        rows.append("- （摆位一个也没动 ✓）")
+    L += rows
+    L.append("")
+    L.append("（没动 %d 个 ✓ / 动了或增删 %d 个 ✓）" % (same, moved))
+    L.append("")
+    if VIEW == "bb":
+        L += _bb_section(a_fzz, b_fzz)
+    else:
+        L += _sch_section(a_fzz, b_fzz)
+    return L
+
+
+def _bb_section(a_fzz, b_fzz):
+    """面包板专属：② 跳线变化 ✓。
+
+    ★ 读法**只有一份** ✓：`bb_compare.load()` ✓（孔 / 交叉 / 遮挡那套全是它 ✓）——
+      本函数只做"A 有 B 没有"这种事 ✓，**不重算几何** ✓。
+    """
+    import bb_compare as BC
+    la, _pa = BC.load(a_fzz)
+    lb, _pb = BC.load(b_fzz)
+    key = lambda lk: min(lk.wids)                       # 多段拼起来的一根 ⇒ 取 id 最小的 ✓（稳 ✓）
+    A = {key(lk): lk for lk in la}
+    B = {key(lk): lk for lk in lb}
+    L = ["## ② 跳线变化", ""]
+    add = [k for k in B if k not in A]
+    gone = [k for k in A if k not in B]
+    chg, same = [], 0
+    for k in sorted(set(A) & set(B)):
+        x, y = A[k], B[k]
+        pa_, pb_ = x.pts, y.pts                       # ★ `pts` / `length` 是 **property** ✓（不是方法 ✗）
+        d = max((((pb_[i][0] - pa_[i][0]) ** 2 + (pb_[i][1] - pa_[i][1]) ** 2) ** 0.5)
+                for i in range(min(len(pa_), len(pb_)))) if pa_ and pb_ else 0.0
+        dl = y.length - x.length
+        if d * SK < JOINT and abs(dl) * SK < JOINT and x.color == y.color:
+            same += 1
+            continue
+        chg.append("- **%s**：%s　端点最大挪 **%.3f mm** ✓ 长度 %+.3f mm ✓"
+                   % (k, "颜色 %s⇒%s" % (x.color or "（默认）", y.color or "（默认）")
+                      if x.color != y.color else "走向变了",
+                      d * SK, dl * SK))
+    L += ["- A %d 根 / B %d 根 ✓（没动 %d 根 ✓）" % (len(la), len(lb), same), ""]
+    for t in ("**新增**：%s" % "、".join(sorted(add)) if add else "**新增**：无 ✓",
+              "**没了**：%s" % "、".join(sorted(gone)) if gone else "**没了**：无 ✓"):
+        L.append("- " + t)
+    if chg:
+        L += ["", "**变了**（%d 根）✓：" % len(chg), ""] + chg
+    L.append("")
+    return L
+
+
+def _sch_section(a_fzz, b_fzz):
+    """原理图专属：② 导线指标对比 ✓ —— 量尺只有一份 ✓：`sch_metrics.metrics()` ✓。"""
+    import sch_metrics as SM
+    ma, mb = SM.metrics(a_fzz), SM.metrics(b_fzz)
+    L = ["## ② 导线指标对比", ""]
+    L.append("| 项 | A %s | B %s | 差 |" % (_vtxt(a_fzz), _vtxt(b_fzz)))
+    L.append("|---|---|---|---|")
+    for k, lab, fmt in (("wires", "导线数", "%d"), ("parts", "元件数", "%d"),
+                        ("mm", "总长 mm", "%.1f"), ("crossings", "交叉数", "%d"),
+                        ("ortho", "正交度", "%.4f"), ("worst", "最歪 mm", "%.4f")):
+        va, vb = ma.get(k), mb.get(k)
+        if va is None or vb is None:
+            continue
+        try:
+            dv = "%+.4g" % (float(vb) - float(va))
+        except (TypeError, ValueError):
+            dv = ""
+        L.append(("| %s | " + fmt + " | " + fmt + " | %s |") % (lab, va, vb, dv))
+    L.append("")
+    L.append("> 量尺 = `sch_metrics.py` ✓（交叉数等口径与布线器**同一套** ✓；结论要拿这把**独立**尺子复核过 ✓）。")
+    L.append("")
+    return L
+
+
 def _legend(rows, font, pad, x0=None, width=None):
     """⇒ `(图例 svg 片段, 需要的额外高度)` ✓ —— **三列** ✓，画在**板子下方**的空白带里 ✓。
 
@@ -787,38 +1111,52 @@ def _legend_rows(name_a, name_b):
             (A_OTH, "grey: A light (silk/board)"), (B_OTH, "grey: B dark")]
 
 
-def overlay(svg_a, svg_b, name_a, name_b):
-    """两版叠合 ✓：A 蓝、B 红、重合深色 ✓。"""
-    import render_pcb as R
-    va, wa, ha = _frame(svg_a)
-    vb, wb, hb = _frame(svg_b)
-    if va != vb or abs(wa - wb) > 0.5 or abs(ha - hb) > 0.5:
-        print("⚠️ 两版取景不一致 ✗（%s vs %s ✓）⇒ 叠合会用 A 的取景 ✓，"
-              "位置对不上不是内容差异 ✗" % (va, vb))
-    # 板框的**底色**要清掉 ✓（否则 A 的板底一铺，B 就看不见了 ✗）；描边留着 ✓ ⇒ 会各自染色 ✓
-    ia = _inner(svg_a).replace('fill="%s"' % R.C_BRD_FILL, 'fill="none"')
-    ib = _inner(svg_b).replace('fill="%s"' % R.C_BRD_FILL, 'fill="none"')
-    # ★★ “**认色换色**”而不是“刷成一色” ✗：层色是渲染器的**固定常量** ✓
-    #   （面 `C_CU0/C_CU1` ✓、线 `C_W0/C_W1` ✓、过孔 `C_VIA_*` ✓）⇒ 按表逐项换 ✓；
-    #   表里没写到的（丝印/板框/位号/孔）⇒ `default` 中性灰 ✓。
-    def pal(top, bot, oth):
-        return ({R.C_CU1: top, R.C_W1: top, R.C_VIA_TOP: top,
-                 R.C_CU0: bot, R.C_W0: bot, R.C_VIA_BOT: bot}, oth)
+def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None):
+    """两版叠合 ✓：A 浅、B 深、重合更深 ✓。
 
-    ta, oa = pal(A_TOP, A_BOT, A_OTH)
-    tb, ob = pal(B_TOP, B_BOT, B_OTH)
-    ia = R.remap_colors(ia, ta, oa)
-    ib = R.remap_colors(ib, tb, ob)
+    ★ 2026-10-07 加了三个口（面包板/原理图用 ✓，**PCB 那条路一个字不改** ✓）：
+      · `pal`：`({类别: A 色}, {类别: B 色})` ✓ —— 给了就走「色相 = 类别」✓；
+        不给 ⇒ 走 PCB 那套「色相 = 层」（认固定层色再换 ✓）；
+      · `frame`：叠合窗口 `(x, y, w, h)` ✓；不给 ⇒ 用 A 的取景 ✓（PCB 两版板框相同 ✓）；
+      · `rows`：图例行 ✓；不给 ⇒ PCB 那六行 ✓。
+    """
+    import render_pcb as R
+    if frame is None:
+        va, wa, ha = _frame(svg_a)
+        vb, wb, hb = _frame(svg_b)
+        if va != vb or abs(wa - wb) > 0.5 or abs(ha - hb) > 0.5:
+            print("⚠️ 两版取景不一致 ✗（%s vs %s ✓）⇒ 叠合会用 A 的取景 ✓，"
+                  "位置对不上不是内容差异 ✗" % (va, vb))
+        vv = [float(x) for x in re.findall(r"[-+0-9.eE]+", va)] if va else []
+        vx, vy = (vv[0], vv[1]) if len(vv) == 4 else (0.0, 0.0)
+    else:
+        vx, vy, wa, ha = frame
+    if pal is None:
+        # 板框的**底色**要清掉 ✓（否则 A 的板底一铺，B 就看不见了 ✗）；描边留着 ✓ ⇒ 会各自染色 ✓
+        ia = _inner(svg_a).replace('fill="%s"' % R.C_BRD_FILL, 'fill="none"')
+        ib = _inner(svg_b).replace('fill="%s"' % R.C_BRD_FILL, 'fill="none"')
+        # ★★ “**认色换色**”而不是“刷成一色” ✗：层色是渲染器的**固定常量** ✓
+        #   （面 `C_CU0/C_CU1` ✓、线 `C_W0/C_W1` ✓、过孔 `C_VIA_*` ✓）⇒ 按表逐项换 ✓；
+        #   表里没写到的（丝印/板框/位号/孔）⇒ `default` 中性灰 ✓。
+        def _pal(top, bot, oth):
+            return ({R.C_CU1: top, R.C_W1: top, R.C_VIA_TOP: top,
+                     R.C_CU0: bot, R.C_W0: bot, R.C_VIA_BOT: bot}, oth)
+
+        ta, oa = _pal(A_TOP, A_BOT, A_OTH)
+        tb, ob = _pal(B_TOP, B_BOT, B_OTH)
+        ia = R.remap_colors(ia, ta, oa)
+        ib = R.remap_colors(ib, tb, ob)
+    else:
+        ia = _inner(_paint(svg_a, pal[0])[0])
+        ib = _inner(_paint(svg_b, pal[1])[0])
     # ★ 字号**按画布比例** ✓（✗ 写死 ⇒ 在这个渲染器的画布里看不见 ✗）；图例**放在板子下面**
     #   的空白带里 ✓（画布高度加一条 ✓ ⇒ 单独打开 svg 也看得见 ✓，不再压在图上 ✓）。
     fs = max(13.0, wa * 0.0105)
     # ★ 图例框的**左缘**对齐「上面 PCB 图形的左边框」✓（用户 2026-10-07 定 ✓）——
     #   板框那条线的 x 就是它 ✓（fzz 路径是 `--board-only` 渲的 ⇒ 那个 rect 就是板框 ✓）。
     bx = _board_px(svg_a, R)
-    leg, extra = _legend(_legend_rows(name_a, name_b), fs, fs * 0.6,
+    leg, extra = _legend(rows if rows else _legend_rows(name_a, name_b), fs, fs * 0.6,
                          x0=(bx[0] if bx else None), width=wa)
-    vv = [float(x) for x in re.findall(r"[-+0-9.eE]+", va)] if va else []
-    vx, vy = (vv[0], vv[1]) if len(vv) == 4 else (0.0, 0.0)
     H2 = ha + extra
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -833,7 +1171,7 @@ def overlay(svg_a, svg_b, name_a, name_b):
 
 
 def main(argv):
-    global PIX, PAT, NETS_FILE
+    global PIX, PAT, NETS_FILE, VIEW
     # ★ `--px 5` ⇒ 画布约 1700 单位 ✓（实测：这个渲染器的画布 ≈ `px × 358` ✓ —— `--px 24`
     #   是 8043 ✗，一个字就占了整个屏幕的比例 ✗，实测图例因此看不见 ✓）
     px, out, last, pos = 5.0, None, None, []
@@ -852,6 +1190,8 @@ def main(argv):
             PAT = argv[i + 1]; i += 2; continue
         if a == "--nets" and i + 1 < len(argv):
             NETS_FILE = os.path.abspath(argv[i + 1]); i += 2; continue
+        if a == "--view" and i + 1 < len(argv):          # ★ pcb（默认）/ bb / sch ✓
+            VIEW = argv[i + 1].strip().lower(); i += 2; continue
         pos.append(a); i += 1
     out = out or os.path.join(PIX, "diff")
 
@@ -876,6 +1216,13 @@ def main(argv):
         return _svg_mode(svg_p, fzz_p, out, 40.0)
     a_fzz = _resolve(pos[0], have)
     b_fzz = _resolve(pos[1], have)
+
+    # ★★ 2026-10-07 ✓：面包板 / 原理图走这条路 ✓ —— PCB 那套（网表 / 铜块 / 过孔）
+    #   对它们没意义 ✗（那三节讲的都是铜 ✗）⇒ 分开走 ✓，**PCB 那条路一个字不动** ✓。
+    if VIEW in ("bb", "sch"):
+        if not os.path.isdir(out):
+            os.makedirs(out)
+        return _view_diff(a_fzz, b_fzz, out, _vtxt(a_fzz), _vtxt(b_fzz))
 
     # ★★ 元件库的 tools 要先挂上路径 ✗（2026-10-07 实测漏过一次：`_lib_tools()` 写了却没调 ✓
     #   ⇒ `import pcb_check` 直接 ImportError ✓）
