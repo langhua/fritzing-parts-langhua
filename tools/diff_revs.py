@@ -1061,6 +1061,71 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
 VIEW_BIT = {"breadboardView": 64, "schematicView": 128, "pcbView": 4}
 
 
+# ★ 核心件（ground / netlabel / via …）的 svg 不在 `.fzz` 包里 ✓（AGENTS 记过：
+#   "核心件不在 .fzz 里 ⇒ 要去安装目录找" ✓）⇒ 按候选根依次找 ✓。
+#   ① **本库仓**第一优先 ✓（`svg/core/schematic/crystal.svg` 这条约定 AGENTS §2 写着的 ✓）；
+#   ② 环境变量 `FRITZING_PARTS` ✓（指到安装/构建树的 `parts` 那一层 ✓）；
+#   ③ 常见的安装目录 ✓。
+#   ✗ 本机绝对路径**不作唯一依赖** ✗ —— 都找不到就跳过该件（照旧列进“略过” ✓）。
+CORE_ROOTS = tuple(filter(None, [os.environ.get("FRITZING_PARTS"),
+                                 r"F:\build-fritzing\fritzing-parts",   # ★ 本机实测就在这儿 ✓
+                                 r"F:\build-fritzing\fritzing-app",
+                                 r"C:\Program Files\Fritzing",
+                                 r"C:\Program Files (x86)\Fritzing"]))
+
+
+def _core_svg(core_path, view, image=None):
+    """`:/resources/parts/core/ground.fzp` ⇒ 本机真 svg ✓（找不到 ⇒ None ✓）。
+
+    ✗ 不猜件名到具体文件 ✗：只用 fzp 自己的**基名**（`ground.fzp` ⇒ `ground.svg` ✓，
+      这是 Fritzing 核心件的命名约定 ✓）；调用方给了 `image` 就优先用它 ✓。
+    """
+    import part_box as PB                                      # ★ 局部导入 ✓（本文件惯例 ✓）
+    stem = os.path.splitext(os.path.basename(core_path.replace("\\", "/")))[0]
+    vdir = {"breadboardView": "breadboard", "schematicView": "schematic",
+            "pcbView": "pcb"}[view]
+    cands = []
+    lib = os.path.dirname(HERE)                                    # `tools` 的上一层 = 库仓 ✓
+    # ① **先找 fzp、读它自己声明的 `image`** ✓（与库内件同一套口径 ✓，✗ 不猜文件名 ✗）——
+    #   2026-10-07 实测：猜 `ground.svg` **猜错了** ✗（那件不叫这个名 ✓），而 `netlabel` 蒙对 ✓。
+    #   ⇒ 改成：找到 `…/parts/core/<名>.fzp` ⇒ 读 `<view>/layers@image` ⇒ `resolve_svg` ✓。
+    for root in ((lib,) + CORE_ROOTS):
+        # ★ 2026-10-07 实测：`F:\build-fritzing\fritzing-parts` 是个**只有 svg、没有 parts** 的
+        #   部分检出 ✓ ⇒ 它的形状是 `<根>/svg/core/<视图>/<名>.svg` ✓（本机实测
+        #   `…\svg\core\schematic\ground.svg` **确实在** ✓）—— ✗ 我上一版只试了
+        #   `<根>/[resources/]parts/svg/core/…` ✗ ⇒ 找不到 ✓。
+        cands.append(os.path.join(root, "svg", "core", vdir, stem + ".svg"))
+        if image:
+            cands.append(os.path.join(root, "svg", "core", image.replace("/", os.sep)))
+        for sub in ("resources", ""):
+            base = os.path.join(root, sub, "parts") if sub else os.path.join(root, "parts")
+            fz = os.path.join(base, "core", stem + ".fzp")
+            if not os.path.isfile(fz):
+                continue
+            img = image
+            if not img:
+                try:
+                    import xml.etree.ElementTree as _ET
+                    lay = _ET.parse(fz).getroot().find(".//%s/layers" % view)
+                    img = lay.get("image") if lay is not None else None
+                except Exception:
+                    img = None
+            got = PB.resolve_svg(fz, img) if img else None
+            if got:
+                return got
+            cands += [c for c in (os.path.join(base, "svg", "core", img.replace("/", os.sep)) if img else None,
+                                  os.path.join(base, "svg", "core", vdir, stem + ".svg"),
+                                  os.path.join(base, "svg", "core", stem + ".svg")) if c]
+    # ② 库仓那条老约定（`svg/core/<view>/<名>.svg` ✓ —— 本机实测那目录是**空的** ✗，留着不碍事 ✓）
+    cands.append(os.path.join(lib, "svg", "core", vdir, stem + ".svg"))
+    if image:
+        cands.append(os.path.join(lib, "svg", "core", image.replace("/", os.sep)))
+    for c in cands:
+        if c and os.path.isfile(c):
+            return c
+    return None
+
+
 def _place(fzz, view):
     """⇒ `({位号: geometry}, [没显示的位号…])`（sketch 坐标 ✓）。
 
@@ -1098,7 +1163,10 @@ def _place(fzz, view):
             out[ttl] = g
             continue
         drawn = False
-        if os.path.isfile(fzp):
+        if fzp.startswith(":") or fzp.startswith("/"):
+            # ★ 核心件：`:/resources/parts/core/ground.fzp` ✓ ⇒ 去本机几个根里找 svg ✓
+            drawn = bool(_core_svg(fzp, view))
+        elif os.path.isfile(fzp):
             try:
                 lay = ET.parse(fzp).getroot().find(".//%s/layers" % view)
                 drawn = PB.resolve_svg(fzp, lay.get("image") if lay is not None else None) is not None
@@ -1145,10 +1213,17 @@ def _centers(fzz, view):
             continue
         fzp = (e.get("path") or "").replace("/", os.sep)
         if not os.path.isfile(fzp):
+            svgp0 = _core_svg(fzp.replace(os.sep, "/"), view)      # ★ 核心件 ✓
+        else:
+            svgp0 = None
+        if not os.path.isfile(fzp) and not svgp0:
             continue
         try:
-            layers = ET.parse(fzp).getroot().find(".//%s/layers" % view)
-            svgp = PB.resolve_svg(fzp, layers.get("image") if layers is not None else None)
+            if svgp0:
+                svgp = svgp0
+            else:
+                layers = ET.parse(fzp).getroot().find(".//%s/layers" % view)
+                svgp = PB.resolve_svg(fzp, layers.get("image") if layers is not None else None)
             loc = (float(g.get("x") or 0.0), float(g.get("y") or 0.0))
             m = PB.tf_of(g)
             box = PB.body_box(svgp)
