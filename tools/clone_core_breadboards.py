@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 r"""★★ 把 core 的**面包板家族**克隆进本库、并按"孔只在面包板视图"改好 ✓（2026-10-05 用户定 ✓）
 
+★★★ **已作废** ✗（2026-10-07 ✓）—— **别再跑它** ✗：
+  本脚本克隆出来的 **7 件面包板**（`-LH` 系列）已于 2026-10-07 与素材目录
+  `svg/_assets/core-bb/` **一并删除** ✗（提交 `b1ef9ac` ✓；README 与元件箱计数同步改过 ✓）。
+  为什么删 ✓（不是"不好看"，是**冗余** ✗）：它们与 core 的面包板**结构完全相同**
+  （三视图共用一个图 ✓、孔只在面包板视图声明 ✓），而草图里 `Breadboard1` 用的 `moduleIdRef`
+  是 **core 的** `Breadboard-RSR03MB102-ModuleID` ✓ ⇒ 我方的 `-LH` 克隆**永远不会被引用** ✗
+  （口径见 `docs/fritzing-fz-notes.md` §11 ✓）。
+  ⇒ ① 素材没了 ⇒ `--import-core` 之外的分支会报错 ✓；② 就算跑起来，也只是把那 7 件冗余件
+  重新塞回来 ✓。**要克隆 core 件之前，先查草图里引用的 `moduleIdRef` 到底是哪一份** ✗。
+
 用法：
 ```
 py -3.13 tools/clone_core_breadboards.py --import-core "<Fritzing 安装目录>\fritzing-parts"
