@@ -181,6 +181,10 @@ tools\install_diff_ext.cmd          # 装完 Ctrl+Shift+P → Reload Window 即�
 `⟨上一条` / `下一条 ⟩` ✓、键盘 **←/→** ✓、**▶ 自动播放**（间隔可填 ✓、空格暂停 ✓），
 **点清单一条照旧高亮** ✓。
 
+**别的电路设计里也能用** ✓：扩展是**装一次全局**的 ✓（任何工作区都有这三个命令 ✓），
+新项目一般只需两个设置（`pixelDiff.projectDir` / `pixelDiff.fzzPattern` ✓），认不准也能自动找 ✓
+—— 怎么移植见 [`tools/vscode-diff/README.md`](tools/vscode-diff/README.md) ✓。
+
 ★ 工具细节、参数（`--dir` / `--pattern` / `--nets` ✓）、以及"坐标换算只有一份"等规矩，
 见 [`tools/README.md`](tools/README.md) 的「VS Code 扩展」与「版本对比 / 长跑」两节 ✓。
 卸载：`tools\install_diff_ext.cmd uninstall` ✓。

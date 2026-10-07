@@ -8,10 +8,22 @@
 //   ⇒ 判据只留"有 / 没有"这种**最硬的**，其余**只打印真实计数**给人看。
 const Module = require('module');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const stub = {
-	workspace: { workspaceFolders: [] },
+	workspace: {
+		workspaceFolders: [],
+		// ★ 设置读取的替身 ✓：真的 VS Code 里 `getConfiguration('pixelDiff').get('fzzPattern')`
+		//   查的是 **`pixelDiff.fzzPattern`** ✓ ⇒ 桩也得先拼段名 ✗（★ 我第一版忘了 ✗ ⇒
+		//   ① 打出 151 版 ⇒ 立刻看出来"设置没生效" ✓ —— 这就是为什么要打印真计数 ✓）。
+		getConfiguration: () => ({
+			get: (k, d) => {
+				const c = stub.cfg || {}, kk = 'pixelDiff.' + k;
+				return (kk in c) ? c[kk] : ((k in c) ? c[k] : d);
+			}
+		})
+	},
 	window: { createOutputChannel: () => ({ appendLine() { } }) },
 	commands: { registerCommand() { }, executeCommand() { } },
 	Uri: { file: (p) => ({ fsPath: p, toString: () => 'file://' + p }) },
@@ -32,12 +44,23 @@ const ext = require(path.join(EXTDIR, 'extension.js'));
 const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
         CSS, slideshowHtml, html } = ext._pure;
 
+// ★ 设置就用**项目自己的** `.vscode/settings.json` ✓（不是编一份假设置 ✓）——
+//   这样"项目用设置钉住 `pixel-pcb-v*`"这件事本身也被验到了 ✓。
+const projRoot = path.join(PIX, '..', '..');
+const setFile = path.join(projRoot, '.vscode', 'settings.json');
+stub.cfg = fs.existsSync(setFile)
+	? JSON.parse(fs.readFileSync(setFile, 'utf8').replace(/^\s*\/\/.*$/gm, ''))
+	: {};
+console.log('⓪ 项目设置：%s ⇒ pixelDiff.fzzPattern = %s',
+	fs.existsSync(setFile) ? '.vscode/settings.json' : '（没有）', stub.cfg['pixelDiff.fzzPattern'] || '（用默认）');
+
 let bad = 0;
 const fail = (s, ...a) => { console.log('   ✗ ' + s, ...a); bad++; };
 
 // ① 版本排序
 const vers = listVersions(PIX);
-const nums = vers.map((n) => Number(/-v(\d+)/.exec(n)[1]));
+// 名字里没有 `-vN` 的（通用模式下会碰到 ✓）就给 -1 ✓ ⇒ 这里不假设它一定有 ✓
+const nums = vers.map((n) => { const m = /-v(\d+)/.exec(n); return m ? Number(m[1]) : -1; });
 const sorted = nums.every((v, i) => i === 0 || nums[i - 1] <= v);
 console.log('① 版本排序：共 %d 版，最后 4 个 = %s；单调递增 = %s',
 	vers.length, vers.slice(-4).join(', '), sorted);
@@ -112,5 +135,49 @@ console.log('⑥ 幻灯片：%d 页；版本序递增 = %s；带图 %d 页；两
 	pl.length, inc, withSvg, sameArt, pl.length ? path.basename(pl[pl.length - 1]) : '—');
 if (!pl.length || !inc || !withSvg || !sameArt) fail('幻灯片页面列表 / 容器结构不对');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 六项都过', bad || '');
+// ⑦ 通用识别：**别的电路设计**那种目录也得认出来 ✓（2026-10-07 通用化 ✓）
+//   ★ 造一个临时项目：没有 `pixel_nets.py` ✗、目录名也不叫 `pixel` ✗
+//     ⇒ 只能靠「含 fzz」这条通用规则认出来 ✓（老逻辑会认不出 ✗）。
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pixdiff-'));
+const tproj = path.join(tmp, 'hardware', 'myboard');
+fs.mkdirSync(path.join(tproj, 'diff'), { recursive: true });
+for (const n of ['board-a.fzz', 'board-b.fzz']) fs.writeFileSync(path.join(tproj, n), 'x');
+fs.writeFileSync(path.join(tproj, 'diff', 'diff-board-a-board-b.md'), 'x');
+const libRoot = path.join(EXTDIR, '..', '..');
+stub.workspace.workspaceFolders = [{ uri: stub.Uri.file(tmp) }, { uri: stub.Uri.file(libRoot) }];
+// ★ 先清掉**项目自己的**设置 ✓ —— 钉住的模式是 `^pixel-pcb-v\d+` ✓，而临时项目里叫
+//   `board-a.fzz` ✗ ⇒ 不清就认不出来 ✓（★ 实测踩到过：这一步恰恰反证了"模式真的生效" ✓）。
+const savedPat = stub.cfg['pixelDiff.fzzPattern'], savedDir = stub.cfg['pixelDiff.projectDir'];
+delete stub.cfg['pixelDiff.fzzPattern'];         // 退回默认：所有 fzz ✓
+stub.cfg['pixelDiff.projectDir'] = '';           // 先清掉钉住 ✓ 才能验"自动找" ✓
+const d2 = dirs();
+// ② 设置指哪就是哪 ✓（`pixelDiff.projectDir` ✓）
+stub.cfg['pixelDiff.projectDir'] = tproj;
+const d3 = dirs();
+// ③ 相对路径那份也得解对 ✓（项目里写的就是 `hardware/pixel` 这种 ✓）
+stub.cfg['pixelDiff.projectDir'] = path.join('hardware', 'myboard');
+const d4 = dirs();
+if (savedPat !== undefined) stub.cfg['pixelDiff.fzzPattern'] = savedPat;
+if (savedDir !== undefined) stub.cfg['pixelDiff.projectDir'] = savedDir;
+fs.rmSync(tmp, { recursive: true, force: true });
+console.log('⑦ 通用识别：自动找 = %s（要 = %s）；绝对路径设置 = %s；相对路径设置 = %s；库仓 = %s',
+	d2.proj === tproj ? '对' : (d2.proj || '（没找到）'), tproj,
+	d3.proj === tproj ? '对' : d3.proj, d4.proj === tproj ? '对' : d4.proj,
+	d2.tool ? '认到' : '（没认到）');
+if (d2.proj !== tproj || d3.proj !== tproj || d4.proj !== tproj) {
+	fail('非 pixel 项目 / 绝对设置 / 相对设置 这几种情形没认对');
+}
+
+// ⑧ 模式生效：同一个目录，换模式 ⇒ 名单跟着变 ✓
+//   ★ 本项目实测：`hardware/pixel` 里 151 个 fzz ✓，但只有 76 个是 `pixel-pcb-v*` ✓ ⇒
+//     ✗ 默认「所有 fzz」会把 75 个面包板/原理图稿混进选择框 ✗ ⇒ 项目用设置钉住 ✓。
+const PAT_OLD = '^pixel-pcb-v\\d+.*\\.fzz$';
+const old = listVersions(PIX, PAT_OLD);
+const all = listVersions(PIX, '\\.fzz$');
+const allSet = new Set(all);
+console.log('⑧ 模式生效：钉住老模式 %d 个（都在模式内 = %s，都是全量的子集 = %s）；全量 %d 个',
+	old.length, old.every((n) => new RegExp(PAT_OLD).test(n)), old.every((n) => allSet.has(n)), all.length);
+if (!old.length || !old.every((n) => new RegExp(PAT_OLD).test(n) && allSet.has(n))) fail('模式没生效');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 八项都过', bad || '');
 process.exit(bad ? 1 : 0);

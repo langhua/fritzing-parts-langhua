@@ -29,48 +29,120 @@ function log(s) {
 	outCh.appendLine(s);
 }
 
-/** 找**项目目录**（放着 fzz / `pixel_nets.py` 的那个）与**工具所在目录**（库仓根 ✓）。
+/** 找**项目目录**（放着 fzz 的那层 ✓，跑工具时当 cwd ✓）与**库仓根**（`tools/diff_revs.py` 在那儿 ✓）。
  *
- *  ★★ 2026-10-07 按约定搬家 ✓（用户指出：通用工具应放库下 ✓，项目里**不留副本** ✗ ——
- *    项目根的 `toolpaths.py` 里就写着这条 ✓）：`diff_revs.py` 现在在
- *    `fritzing-parts-langhua/tools/` ✓ ⇒ 这里要同时找两处 ✓：
- *      · **项目目录** ⇒ 跑的时候当 **cwd** ✓（工具按 cwd 找 fzz ✓、找 `pixel_nets.py` ✓）；
- *      · **库仓根** ⇒ 工具本体在那儿 ✓。
+ *  ★★ 2026-10-07 通用化 ✓（用户问：别的电路设计里怎么用 ✓）—— ✗ 不再只认
+ *    `hardware/pixel` 那个死路径 ✗。探索顺序（先明确 ⇒ 后模糊 ✓）：
+ *      ① 设置 `pixelDiff.projectDir` ✓（指哪就是哪 ✓）；
+ *      ② 老路径 `<root>/hardware/pixel` ✓（本项目 ✓，保持兼容 ✓）；
+ *      ③ `<root>` 自己 （含 fzz 就是 ✓）；
+ *      ④ 往下**最多 3 层**找含 fzz 的目录 ✓（跳过 .git / node_modules / tools / diff …✓）。
+ *    多个候选 ⇒ 取 **`diff/` 最近动过**的那个 ✓（正在干活的 ✓）；再平则**路径短**的 ✓（更靠上 ✓）。
+ *
+ *  ★ 实测（2026-10-07）：本项目 `hardware/pixel` 里 **151 个 fzz** ✓，但只有 **76 个**
+ *    是 `pixel-pcb-v*` ✗（其余 75 个是 breadboard / schematic ✓）
+ *    ⇒ 默认规则**不能**是「所有 fzz」✗ ⇒ 默认 `\.fzz$` ✓，本项目用设置钉住旧模式 ✓。
  */
 function dirs() {
 	const folders = (vscode.workspace.workspaceFolders || []).map((f) => f.uri.fsPath);
-	let proj = null, tool = null;
+	const re = fzzRe();
+	let tool = null;
 	for (const root of folders) {
-		if (!proj && fs.existsSync(path.join(root, 'hardware', 'pixel', 'pixel_nets.py'))) {
-			proj = path.join(root, 'hardware', 'pixel');
-		}
-		if (!proj && fs.existsSync(path.join(root, 'pixel_nets.py'))) proj = root;
 		if (!tool && fs.existsSync(path.join(root, 'tools', 'diff_revs.py'))) tool = root;
 	}
-	return { proj, tool };
+	const pinned = String(cfg().get('projectDir') || '').trim();
+	const roots = pinned ? pinRoots(pinned, folders) : folders;
+	const cands = [];
+	const add = (d) => { if (d && !cands.includes(d) && fs.existsSync(d)) cands.push(d); };
+	const walk = (dir, depth) => {
+		if (depth > 3) return;                       // 边界：最多往下 3 层 ✓（别在大仓里乱转 ✗）
+		if (hasFzz(dir, re)) add(dir);
+		let ents;
+		try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+		for (const e of ents) {
+			if (!e.isDirectory() || e.name.startsWith('.') || SKIP_DIR.has(e.name)) continue;
+			walk(path.join(dir, e.name), depth + 1);
+		}
+	};
+	for (const root of roots) {
+		add(path.join(root, 'hardware', 'pixel'));    // ② 老路径 ✓
+		walk(root, 0);                                // ③④
+	}
+	cands.sort((a, b) => (recency(b) - recency(a)) || (a.length - b.length));
+	return { proj: cands[0] || null, tool };
 }
 
-/** `pixel-pcb-v*.fzz` ⇒ 按版本号排（后缀如 `_byHand` 排在同号之后）。 */
-function listVersions(dir) {
+/** 扫目录时**跳过**的名字 ✓（避坑：`diff/` 里是 svg/png ✗、`tools/` 是工具 ✗）。 */
+const SKIP_DIR = new Set(['node_modules', '__pycache__', '.venv', 'venv', 'env',
+	'tools', 'diff', 'build', 'dist', 'out', 'target']);
+
+/** 设置里的项目目录 ⇒ 绝对路径 ✓。
+ *  ★ 绝对路径就直接用 ✓；**相对路径相对工作区根解** ✓ —— VS Code 设置里大家习惯写
+ *    `hardware/pixel` 这种相对路径 ✓（写死在进程 cwd 上会找不到 ✗，实测踩到过 ✓）。
+ */
+function pinRoots(pinned, folders) {
+	if (path.isAbsolute(pinned)) return [pinned];
+	const all = folders.map((f) => path.join(f, pinned));
+	const hit = all.filter((p) => fs.existsSync(p));
+	return hit.length ? hit : all;
+}
+
+function cfg() { return vscode.workspace.getConfiguration('pixelDiff'); }
+
+/** `pixelDiff.fzzPattern` ⇒ 正则 ✓（写了非法正则 ⇒ 退回默认 ＋ 记一笔 ✓，不进 br。）。 */
+function fzzRe() {
+	const s = String(cfg().get('fzzPattern') || '\.fzz$');
+	try { return new RegExp(s); } catch (e) {
+		log('设置里 pixelDiff.fzzPattern 不是合法正则 ⇒ 用默认 \.fzz$ ：' + s);
+		return /\.fzz$/;
+	}
+}
+
+/** 这层目录里**有没有**符合模式的 fzz 文件 ✓（读不到就当没有 ✓）。 */
+function hasFzz(dir, re) {
+	try {
+		return fs.readdirSync(dir, { withFileTypes: true })
+			.some((e) => e.isFile() && re.test(e.name));
+	} catch { return false; }
+}
+
+/** 这层目录的 `diff/` 里最后一次改动时间 ✓（用来挑"正在干活"的那个 ✓；没有=0 ✓）。 */
+function recency(dir) {
+	try {
+		return fs.readdirSync(path.join(dir, 'diff'))
+			.reduce((m, n) => Math.max(m, fs.statSync(path.join(dir, 'diff', n)).mtimeMs), 0);
+	} catch { return 0; }
+}
+
+/** 当前模式下的版本文件 ✓（按版本号排 ✓；不像 `-vN` 的排最前 ✓）。
+ *  ★ 模式从设置来 ✓（`pixelDiff.fzzPattern` ✓）—— ✗ 不再写死 `pixel-pcb-v` ✗。
+ */
+function listVersions(dir, pattern) {
+	const re = pattern ? new RegExp(pattern) : fzzRe();
 	const key = (n) => {
 		const m = /-v(\d+)([\s\S]*)$/.exec(n.replace(/\.fzz$/, ''));
 		return m ? [Number(m[1]), m[2] ? 1 : 0, m[2]] : [0, 0, n];
 	};
-	return fs.readdirSync(dir).filter((n) => /^pixel-pcb-v\d+.*\.fzz$/.test(n))
+	return fs.readdirSync(dir).filter((n) => re.test(n))
 		.sort((a, b) => {
 			const x = key(a), y = key(b);
 			return (x[0] - y[0]) || (x[1] - y[1]) || String(x[2]).localeCompare(String(y[2]));
 		});
 }
 
-/** 跑 `diff_revs.py` ✓（工具在库里 ✓、**cwd 给项目目录** ✓ ⇒ fzz 与网表都自己找得到 ✓）。
+/** 跑 `diff_revs.py` ✓（工具在库里 ✓、**cwd 给项目目录** ✓ ⇒ 输出落到项目的 `diff/` ✓）。
+ *  ★ 两个文件都传**绝对路径** ✓ ⇒ `diff_revs.py` 的 `_resolve()` 直接命中
+ *    ⇒ **文件名怎么取都行** ✓（解耦 ✓；不再要求 `-vN` 那种名字 ✓）。
+ *  ★ `--pattern` 跟设置同步 ✓（工具只拿它去列 `have` ✓，传绝对路径后不影响结果 ✓）。
  *  日志进输出通道；`PYTHONIOENCODING` 必须给 —— 否则中文/✓ 会撞 GBK 控制台。
  */
 function runDiff(toolDir, projDir, a, b) {
 	const tool = path.join(toolDir, 'tools', 'diff_revs.py');
+	const abs = (p) => (path.isAbsolute(p) ? p : path.join(projDir, p));
+	const args = [tool, '--pattern', fzzRe().source, abs(a), abs(b)];
 	return new Promise((resolve) => {
-		log(`\n> ${PY} "${tool}" "${a}" "${b}"   （cwd=${projDir}）`);
-		cp.execFile(PY, [tool, a, b], {
+		log(`\n> ${PY} ${args.map((s) => `"${s}"`).join(' ')}   （cwd=${projDir}）`);
+		cp.execFile(PY, args, {
 			cwd: projDir,
 			env: Object.assign({}, process.env, { PYTHONIOENCODING: 'utf-8' }),
 			maxBuffer: 32 * 1024 * 1024
@@ -339,7 +411,10 @@ function slideshowHtml(webview, nonce, n) {
 
 async function cmdSlideshow() {
 	const { proj } = dirs();
-	if (!proj) return void vscode.window.showErrorMessage('找不到项目目录（要有 pixel_nets.py）');
+	if (!proj) {
+		return void vscode.window.showErrorMessage(
+			'没找到项目目录（工作区里含 fzz 的那层，也可用设置 pixelDiff.projectDir 指定）');
+	}
 	const pages = pageList(proj);
 	if (!pages.length) {
 		return void vscode.window.showErrorMessage('diff/ 里还没有 diff-*.md ⇒ 先跑一次「比较两版」');
@@ -395,10 +470,15 @@ async function cmdCompare(context) {
 	const { proj, tool } = dirs();
 	if (!proj || !tool) {
 		return void vscode.window.showErrorMessage(
-			'找不到项目目录（要有 pixel_nets.py）或库仓 tools/diff_revs.py —— 两者都要在工作区里');
+			'没找到项目目录（工作区里含 fzz 的那层，也可用设置 pixelDiff.projectDir 指定）'
+			+ '或库仓 tools/diff_revs.py（库仓要加进工作区）');
 	}
 	const vers = listVersions(proj);
-	if (vers.length < 2) return void vscode.window.showErrorMessage('这个目录里少于两版 fzz');
+	if (vers.length < 2) {
+		return void vscode.window.showErrorMessage(
+			`这个目录里符合 pixelDiff.fzzPattern 的文件少于两个（现在 ${vers.length} 个）`
+			+ `：${proj}`);
+	}
 	const pick = (def) => vscode.window.showQuickPick(vers, { placeHolder: `选一版（默认 ${def}）` })
 		.then((v) => v || def);
 	const a = await pick(vers[vers.length - 2]);
@@ -412,28 +492,32 @@ async function cmdCompare(context) {
 
 async function cmdCompareFiles() {
 	const { proj, tool } = dirs();
-	if (!proj || !tool) {
+	if (!tool) {
 		return void vscode.window.showErrorMessage(
-			'找不到项目目录（要有 pixel_nets.py）或库仓 tools/diff_revs.py —— 两者都要在工作区里');
+			'没找到库仓的 tools/diff_revs.py ⇒ 把 fritzing-parts-langhua 也加进工作区');
 	}
 	const one = await vscode.window.showOpenDialog({
-		canSelectMany: false, openLabel: '选第一个（A）', defaultUri: vscode.Uri.file(proj),
+		canSelectMany: false, openLabel: '选第一个（A）',
+		defaultUri: proj ? vscode.Uri.file(proj) : undefined,
 		filters: { 'fzz / svg': ['fzz', 'svg'] }
 	});
 	if (!one || !one.length) return;
+	// ★ 没认出项目目录也不拦你 ✓：就用**你挑的那个文件所在目录**当项目 ✓
+	//   （差异图/清单都会落在它旁边的 `diff/` ✓）⇒ 任何文件夹零配置就能比 ✓。
+	const projDir = proj || path.dirname(one[0].fsPath);
 	const two = await vscode.window.showOpenDialog({
-		canSelectMany: false, openLabel: '选第二个（B）', defaultUri: vscode.Uri.file(proj),
+		canSelectMany: false, openLabel: '选第二个（B）', defaultUri: vscode.Uri.file(projDir),
 		filters: { 'fzz / svg': ['fzz', 'svg'] }
 	});
 	if (!two || !two.length) return;
 	await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: '差异图' },
-		() => runDiff(tool, proj, one[0].fsPath, two[0].fsPath));
-	const md = newestDiffMd(proj);
+		() => runDiff(tool, projDir, one[0].fsPath, two[0].fsPath));
+	const md = newestDiffMd(projDir);
 	if (md) {
 		await vscode.commands.executeCommand('vscode.openWith', vscode.Uri.file(md), VIEW);
 	} else {
 		// 两边都是 svg 时不出清单，只出图 ⇒ 直接把图打开
-		const png = path.join(proj, 'diff');
+		const png = path.join(projDir, 'diff');
 		const hit = fs.existsSync(png)
 			? fs.readdirSync(png).filter((n) => /^diff-.*\.png$/.test(n))
 				.map((n) => ({ n, t: fs.statSync(path.join(png, n)).mtimeMs })).sort((x, y) => y.t - x.t)
