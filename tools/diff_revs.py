@@ -839,25 +839,6 @@ def _inner(svg):
     return svg[svg.find(">", svg.find("<svg")) + 1:svg.rfind("</svg>")]
 
 
-def _no_fill(xml):
-    """把**填充**去掉 ⇒ 只剩描边 ✓（`<text>` 例外 ✓ —— 文字靠 fill 才看得见 ✓）。
-
-    ★ 为什么必须去 ✗（2026-10-07 用户实测 ✓，原话：「面包板和元件的图形都丢失了，被蓝色色块填满」
-      ✓）：元件 svg 里**每个面都带 `fill`** ✓ ⇒ 一律染成类别色 ⇒ **整块板变成一块蓝** ✗。
-      叠合图要的是「**轮廓对轮廓**」✓ ⇒ 面**不填色** ✓（丝印文字保留 ✓）。
-    """
-    keep = []
-
-    def stash(m):
-        keep.append(m.group(0))
-        return "\x00%d\x00" % (len(keep) - 1)
-
-    xml = re.sub(r"<text\b[^>]*>.*?</text>", stash, xml, flags=re.S)   # 文字先收起来 ✓
-    xml = re.sub(r'(\bfill\s*=\s*")[^"]*(")', r"\1none\2", xml)
-    xml = re.sub(r"(\bfill\s*:\s*)[^;\"']+", r"\1none", xml)
-    return re.sub(r"\x00(\d+)\x00", lambda m: keep[int(m.group(1))], xml)
-
-
 def _mix_hex(c, target, t):
     """把 `#rrggbb` 往 `target`（0 或 255）方向混 t ✓。"""
     r, g, b = (c >> 16) & 255, (c >> 8) & 255, c & 255
@@ -884,6 +865,9 @@ def _shade_hex(h, mode):
         黑 `#404040` ⇒ A `(147,147,147)` ✓ / B `(42,42,42)` ✓
       ✗ 白线 `#ffffff` 的 A 版提亮后**还是白** ✗ ⇒ 在白底上看不见 ✓ ⇒ A 侧**限一下亮度** ✓
       （超 0.90 就少混一点 ✓），B 侧天然变灰 ✓。
+
+    ★★ 2026-10-07 扩到**元件** ✓：元件也改成「按自己的颜色分浅/深」✓（原来那两版都错了 ✗
+      —— 见 `_paint` 里那两条教训 ✓）。文字那类仍是灰系 ✓。
     """
     s = str(h).lstrip("#")
     if len(s) != 6:
@@ -924,12 +908,40 @@ def _shade_svg(xml, mode):
     return _COL_STYLE_RE.sub(lambda m: m.group(1) + _shade_hex(m.group(2), mode), x)
 
 
+def _common_fill(svg):
+    """挑一个**零件**里最常见的**非近白**填充色 ⇒ 当图例里「元件」那两格的样例 ✓。
+
+    ★ 为什么要选 ✗：元件现在是**按各自原色**变浅/变深 ✓ ⇒ 图例没法只用一个固定色 ✓
+      （导线那条也是这个道理 ✓，它用官方色表的红当样例 ✓）。这里**从渲染里数**出来 ✓
+      ⇒ 是实测的样例 ✓，不是我拍的 ✗。
+    """
+    n = {}
+    for cls, txt in _top_split(svg):
+        if cls != CLS_PART:
+            continue
+        for h in re.findall(r'fill\s*[:=]\s*"?#([0-9a-fA-F]{6})', txt):
+            c = int(h, 16)
+            if _lum(c) > 0.90:                      # 近白的当样例没用 ✓（白底上看不见 ✓）
+                continue
+            n[c] = n.get(c, 0) + 1
+    if not n:
+        return "#999999"                            # 兜底：中灰 ✓（零件全是近白时才跑到这里 ✓）
+    return "#%06x" % max(n.items(), key=lambda kv: kv[1])[0]
+
+
 def _paint(svg, pal, mode="A"):
     """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
 
     · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
       （与 PCB 那套「把 A 的板底换成 none」一个道理 ✓）；
-    · **元件**：先去填充（`_no_fill` ✓）再上色 ⇒ **只描边** ✓（✗ 否则整块板变蓝 ✗）；
+    · **元件**：**按它自己的颜色**做同色浅/深 ✓（与导线共用 `_shade_svg` ✓）——
+      ★★ 这里我**换过两版** ✗、两版都被用户当场否了 ✓，写下来免得再犯 ✓：
+      ① 把 `fill` 一律染成类别色 ⇒ **整块板变蓝** ✗（用户 2026-10-07：『面包板和元件的
+         图形都丢失了，被蓝色色块填满』✗）；
+      ② 干脆把 `fill` 去掉（`_no_fill` ✗，已删 ✓）⇒ **图形的“肉”没了** ✗（面包板那些
+         **实心孔**全消失 ✓ ⇒ 用户 2026-10-07：『面包板的图位置错误，元件也都渲染错误』✗）。
+      ⇒ 正解 = **既不染也不删** ✓：保留原色相 ✓、只把**明度**分两档（A 浅 / B 深 ✓）
+      ⇒ 图形在 ✓、A/B 又分得开 ✓。
     · 导线 / 文字：描边与填充都上色 ✓（导线那个 `<circle>` 接点靠 fill ✓，文字靠 fill ✓）；
     · 换色共用 `render_pcb.remap_colors` ✓（属性式 `stroke=` 与内联 `style:` 两种写法它都盖 ✓）。
     """
@@ -944,7 +956,9 @@ def _paint(svg, pal, mode="A"):
             # ★ 导线：**按它自己的颜色**做同色浅/深 ✓（用户 2026-10-07 定 ✓）
             txt = _shade_svg(txt, mode)
         elif cls == CLS_PART:
-            txt = R.remap_colors(_no_fill(txt), {}, pal[cls])       # 只描边 ✓
+            # ★★ 零件：**按自己的颜色**变浅/变深 ✓（既不染成类别色 ✗、也不抹掉填充 ✗ ——
+            #   那两版都丢图形 ✓，见本函数 docstring 里的两条教训 ✓）
+            txt = _shade_svg(txt, mode)
         else:
             txt = R.remap_colors(txt, {}, pal[cls])
         parts.append(txt)
@@ -969,7 +983,7 @@ def _union_frame(sa, sb):
     return (x0, y0, max(ax + aw, bx + bw) - x0, max(ay + ah, by + bh) - y0)
 
 
-def _view_rows(name_a, name_b):
+def _view_rows(name_a, name_b, sample=None):
     """图例：三类 × 两版 = **6 行** ✓。
 
     ★ 必须是 6 行 ✗（2026-10-07 修 ✓）：`_legend` 是**按列**摆的（每列
@@ -979,10 +993,11 @@ def _view_rows(name_a, name_b):
     rows = []
     for cls, label in ((CLS_WIRE, "导线"), (CLS_PART, "元件"), (CLS_TEXT, "文字/位号")):
         for mode, nm in (("A", name_a), ("B", name_b)):
-            if cls == CLS_WIRE:
-                # ★ 导线**每条各按原色** ✗（用户 2026-10-07 定 ✓）⇒ 图例里放一个**样例**
-                #   （官方色表的红 ✓）＋ 文字里说清“按原色 ✓”（✗ 十几色摆不下 ✗）。
-                c = _shade_hex("#cc1414", mode)
+            if cls in (CLS_WIRE, CLS_PART):
+                # ★ 导线**每条各按原色** ✗、元件**每件各按原色** ✗（用户 2026-10-07 定 ✓）
+                #   ⇒ 图例里各放一个**样例**（导线用官方色表的红 ✓、元件用渲染里数出来的
+                #   最常见非近白填充 ✓）＋ 文字里说清“按原色 ✓”（✗ 十几色摆不下 ✗）。
+                c = _shade_hex("#cc1414" if cls == CLS_WIRE else (sample or "#999999"), mode)
                 lab = "%s（按原色·%s）%s" % (label, "浅" if mode == "A" else "深", nm)
             else:
                 c = VIEW_PAL[cls][0 if mode == "A" else 1]
@@ -1311,7 +1326,8 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
     #   而 A 的浅橙 `#f0a868` = `rgb(240,168,104)` ✓ ⇒ **两个几乎分不出来** ✗。
-    body = overlay(pa, pb, na, nb, pal=pal, frame=frame, rows=_view_rows(na, nb),
+    body = overlay(pa, pb, na, nb, pal=pal, frame=frame,
+                   rows=_view_rows(na, nb, _common_fill(sa)),
                    op=(0.6, 0.95), pre=True)
     # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
     #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
