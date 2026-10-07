@@ -41,8 +41,8 @@ Module._load = function (req, parent, isMain) {
 const EXTDIR = __dirname;
 const PIX = path.resolve(process.argv[2] || process.cwd());
 const ext = require(path.join(EXTDIR, 'extension.js'));
-const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage,
-        CSS, slideshowHtml, html, patRe } = ext._pure;
+const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, ROW_RE_SRC, reLit, dirs, pageList,
+        readPage, CSS, slideshowHtml, html, patRe } = ext._pure;
 
 // ★ 设置就用**项目自己的** `.vscode/settings.json` ✓（不是编一份假设置 ✓）——
 //   这样"项目用设置钉住 `pixel-pcb-v*`"这件事本身也被验到了 ✓。
@@ -201,5 +201,31 @@ for (const v of ['pcb', 'bb', 'sch']) {
 }
 if (bad9) fail('有视图的 fzzPattern 没配好（空名单）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 九项都过', bad || '');
+// ⑩ 两类可点的行都得在**渲染后的文字**上认出来 ✓ —— 这是踩过两次的坑 ✗：
+//   第一次按「反引号」写 ✗、第二次按「markdown 的 `**`」写 ✗ —— 浏览器里那两种标记
+//   **都不在了** ✗（`mdToHtml` 把它们变成了 `<code>` / `<b>` ✓）⇒ 拿**真清单**验 ✓。
+const viewMd = fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-(bb|sch)-.*\.md$/.test(n))
+	.map((n) => ({ n, t: fs.statSync(path.join(PIX, 'diff', n)).mtimeMs }))
+	.sort((a, b) => b.t - a.t);
+if (viewMd.length) {
+	const vh = mdToHtml(fs.readFileSync(path.join(PIX, 'diff', viewMd[0].n), 'utf8'));
+	// ★ 逐条 `<li>` 验 ✓ —— webview 是**一条一条**匹配的 ✓（`^` 才有意义 ✓）；
+	//   ✗ 第一版把整篇压成一行再匹配 ⇒ 换行没了 ⇒ 带 `^` 的图案 0 命中 ✗（当场报出来 ✓）。
+	//   ★ 去标签要用**空串** ✗ 不能用空格 ✗ —— 浏览器 `textContent` 里 `<b>C1</b>：` = `C1：`
+	//     （标签不占字符 ✓）；换成空格就变成 ` C1 ：` ✗ ⇒ 带 `^` / 紧跟冒号的图案全废 ✗
+	//     （这个坑今天第三次了：反引号 ✗、星号 ✗、空格 ✗ ⇒ 一律"按渲染后的文字"写 ✓）。
+	const items = (vh.match(/<li>[\s\S]*?<\/li>/g) || [])
+		.map((s) => s.replace(/<[^>]+>/g, '').trim());
+	const padRe = new RegExp(reLit(PAD_RE_SRC)), rowRe = new RegExp(reLit(ROW_RE_SRC));
+	const nPad = items.filter((s) => padRe.test(s)).length;
+	const nRow = items.filter((s) => rowRe.test(s)).length;
+	const nStar = items.filter((s) => /\*\*/.test(s)).length;
+	console.log('⑩ %s：%d 条清单行 ⇒ 脚名行 %d ✓、位号行 %d ✓、带星号的行 %d ✓（应为 0 ✓）',
+		viewMd[0].n, items.length, nPad, nRow, nStar);
+	if (nStar || !nRow) fail('视图清单的行在渲染后的文字里认不出来');
+} else {
+	console.log('⑩ 没有 bb/sch 清单可验（先跑一次 --view bb）✓');
+}
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十项都过', bad || '');
 process.exit(bad ? 1 : 0);

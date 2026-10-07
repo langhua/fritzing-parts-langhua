@@ -1182,6 +1182,13 @@ def _legend(rows, font, pad, x0=None, width=None):
     fs = font
     ncol = 3
     nrow = (len(rows) + ncol - 1) // ncol
+    # ★★ 2026-10-07 用户报「底部图例的方框应该封口」＋「字号大了」✗ —— **同一个根** ✓：
+    #   框宽 = `ncol × 16.5 × fs` ✓；sch 画布只有 375 宽 ✗ 而 fs = max(13, wa×0.0105) = 13 ✗
+    #   ⇒ 框宽 ~650 **越出画布** ✗ ⇒ 右半边连同右边/下边的框线被 viewBox **裁掉** ✗
+    #   ⇒ 看着就像“没画完 ✓”；字号相对画布也太大 ✗。
+    #   ⇒ 先把 fs **夹到装得下** ✓（一次改，两件都好 ✓）。
+    if width:
+        fs = min(fs, max(1.0, (float(width) - 3 * pad) / (ncol * 16.5)))
     cw = fs * 16.5                       # 一列宽 ✓
     box_w = ncol * cw + pad
     box_h = fs * (1.9 * nrow + 0.6)
@@ -1261,6 +1268,13 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None):
     leg, extra = _legend(rows if rows else _legend_rows(name_a, name_b), fs, fs * 0.6,
                          x0=(bx[0] if bx else None), width=wa)
     H2 = ha + extra
+    # ★ 「上面的图也应该有个方框，套住整张图」✓（2026-10-07 用户定 ✓）——
+    #   只看**视图**那条路加 ✗（PCB 那边本来就自带**板框** ✓，再加一层反而乱 ✓）。
+    fig = ""
+    if pal is not None:
+        fig = ('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="none" '
+               'stroke="#bbbbbb" stroke-width="%.2f"/>'
+               % (vx, vy, wa, ha, max(0.6, wa * 0.0009)))
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" width="%.0f" height="%.0f" '
@@ -1268,9 +1282,10 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None):
         '<rect width="100%%" height="100%%" fill="#ffffff"/>\n'
         '<g id="A" opacity="0.75">%s</g>\n'
         '<g id="B" opacity="0.55">%s</g>\n'
+        '%s\n'
         '<g id="legend" transform="translate(%.1f,%.1f)">%s</g>\n'
         '</svg>\n'
-    ) % (wa, H2, vx, vy, wa, H2, ia, ib, vx, vy + ha, leg)
+    ) % (wa, H2, vx, vy, wa, H2, ia, ib, fig, vx, vy + ha, leg)
 
 
 def main(argv):
