@@ -1345,6 +1345,35 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
     return "\n".join(out), anim, total, sec, tail
 
 
+def _anim_button(frame):
+    """★ 播放键（2026-10-08 用户要 ✓：「加个 svg 的播放键比较好」✓）。
+
+    ★ 为什么必须用**内联 `<script>`** ✗：动画写的是 `animation: … 1 forwards`（只播一遍 ✓）
+      ⇒ 想再看一遍只有一个办法：把动画的 `currentTime` 拨回 0 ✓（`document.getAnimations()` ✓）。
+      ★ 这个脚本**只在「把 svg 当文档打开」时跑得到** ✓（双击 ✓ / 浏览器直接打开 ✓）；
+      ✗ 在 `<img>` 里跑不到 ✗（浏览器不允许 ✓）—— 那种场合（VS Code 合并视图 / 幻灯片 ✓）
+      另有扩展自己的按钮 ✓ ⇒ 这里不做兜底 ✗。
+    ★ 按钮要放在**动画层外面** ✓（这里插在 `</svg>` 前 ✓）⇒ 它自己不会跟着闪 ✓。
+    """
+    x0, y0, w, h = frame
+    fs = max(w * 0.016, 8.0)                       # 字号跟画布宽走 ✓（各视图单位不同 ✓）
+    bw, bh = fs * 5.4, fs * 1.9
+    x, y = x0 + fs * 1.2, y0 + fs * 1.2
+    return (
+        '<g id="anim-btn" style="cursor:pointer" onclick="animReplay()">'
+        '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" rx="%.2f" fill="#ffffff"'
+        ' fill-opacity="0.92" stroke="#404040" stroke-width="%.2f"/>'
+        '<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" fill="#404040"'
+        ' text-anchor="middle">\u25b6 重放</text></g>'
+        '<script type="text/javascript"><![CDATA['
+        'function animReplay(){'
+        'var n=document.getAnimations?document.getAnimations():[];'
+        'for(var i=0;i<n.length;i++){try{n[i].currentTime=0;}catch(e){}}'
+        '}]]></script>'
+        % (x, y, bw, bh, bh * 0.25, max(fs * 0.09, 0.2),
+           x + bw / 2.0, y + bh * 0.68, fs))
+
+
 def _view_diff(a_fzz, b_fzz, out, na, nb):
     """面包板 / 原理图：叠合图 ＋ 清单 ✓（PCB 那条路**一个字不动** ✓）。"""
     sa = _render_view(a_fzz, VIEW, out)
@@ -1424,6 +1453,11 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
                             '{opacity:.16}</style>\n' + hits + "\n</svg>")
         print("✓ 高亮层：%d 组（点清单里 ① / ② 的条目 ⇒ 图上亮对应那组 ✓）"
               % hits.count('<g id="pd-'))
+    if dur:
+        # ★ 播放键（只播一遍 ⇒ 想再看就把动画拨回 0 ✓）：见 `_anim_button()` ✓
+        body = body.replace("</svg>", _anim_button(frame) + "\n</svg>")
+        print("✓ 播放键：图左上角一个「▶ 重放」✓（把 svg 当文档打开时能点 ✓；"
+              "在 `<img>` 里点不动 ✗ ⇒ 合并视图/幻灯片另有按钮 ✓）")
     open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
     print("✓ 叠合差异图 %s（色相 = 类别：导线橙 ✓ 元件蓝 ✓ 文字灰 ✓；深浅 = 版 ✓）" % svg_p)
     try:
