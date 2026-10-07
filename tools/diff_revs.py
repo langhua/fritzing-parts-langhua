@@ -1221,8 +1221,9 @@ def _anim_css(ka, kb, refs, token, sec=2.0, tail=2.0):
 
     ★ 时段表（用户 2026-10-07 定的规格 ✓，见 `docs/diff-animation.md` ✓）：
       一处变化 = A **闪 2 次** ⇒ A **撤掉** ⇒ B **闪 2 次** ⇒ B **留下** ✓，然后进下一处 ✓；
-      走完所有变化再停 `tail` 秒 ⇒ 从头循环 ✓（`animation-iteration-count: infinite` ✓）。
-      ⇒ 开始时看到的是 **A 图** ✓、结束那一刻是 **B 图** ✓（A 已全部撤完 ✓）。
+      全部走完 ⇒ **收尾**：被撤掉的 A **一起淡回来** ✓ ⇒ 末态 = **A+B 叠合图** ✓
+      （= 静止那张叠合图 ✓ —— 用户 2026-10-07 追加：「然后，能回到 A+B 的图吗？」✓）。
+      ⇒ 开始时看到的是 **A 图** ✓、中途是 B 图 ✓、**结束停在 A+B** ✓。
 
     ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s)` ✓ ——
       总时长**只在这一处算** ✗（✓ 内联 style 与关键帧百分比必须用**同一个**值 ✓）。
@@ -1231,6 +1232,7 @@ def _anim_css(ka, kb, refs, token, sec=2.0, tail=2.0):
     if not keys:
         return "", {}, 0.0, sec, tail
     total = len(keys) * sec + tail
+    end = len(keys) * sec                       # 最后一处时段的结束点 = 收尾段的起点 ✓
     pct = lambda t: round(100.0 * t / total, 3)          # noqa: E731  一行小工具 ✓
     out, anim = [], {}
     for i, key in enumerate(keys):
@@ -1241,7 +1243,10 @@ def _anim_css(ka, kb, refs, token, sec=2.0, tail=2.0):
             out.append("@keyframes %s{0%%{opacity:1}" % nm
                        + "".join("%s%%{opacity:%d}" % (pct(s + T * f), v) for f, v in
                                  ((0.10, 0), (0.20, 1), (0.30, 0), (0.40, 1)))
-                       + "%s%%{opacity:0}100%%{opacity:0}}" % pct(s + T * 0.50))
+                       # ★ 收尾段 ✓：被撤掉的 A **一起淡回来** ✓ ⇒ 末态 = A+B 叠合图 ✓
+                       #   （✗ 没有这段的话，末态会停在 B 图 ✗ —— 用户 2026-10-07 要的就是它 ✓）
+                       + "%s%%{opacity:0}%s%%{opacity:0}%s%%{opacity:1}100%%{opacity:1}}"
+                       % (pct(s + T * 0.50), pct(end), pct(end + tail * 0.6)))
         if key in kb:
             nm = "%s-b-%d" % (token, i)
             anim[("b", key)] = nm
@@ -1300,6 +1305,7 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     if dur:
         print("✓ 动画：关键帧 %d 条（A %d ＋ B %d ✓，共 %d 处变化 ✓）"
               "—— 一处 %.1f s ＋ 收尾 %.1f s ⇒ 一轮 %.1f s ✓"
+              "（收尾时被撤掉的 A **一起淡回** ⇒ 末态 = A+B 叠合图 ✓）"
               % (css.count("@keyframes"), len(ka), len(kb), len(refs), sec, tail, dur))
     # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
