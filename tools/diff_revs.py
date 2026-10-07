@@ -848,7 +848,73 @@ def _no_fill(xml):
     return re.sub(r"\x00(\d+)\x00", lambda m: keep[int(m.group(1))], xml)
 
 
-def _paint(svg, pal):
+def _mix_hex(c, target, t):
+    """把 `#rrggbb` 往 `target`（0 或 255）方向混 t ✓。"""
+    r, g, b = (c >> 16) & 255, (c >> 8) & 255, c & 255
+    return ((round(r + (target - r) * t) << 16) | (round(g + (target - g) * t) << 8)
+            | round(b + (target - b) * t))
+
+
+def _lum(c):
+    r, g, b = (c >> 16) & 255, (c >> 8) & 255, c & 255
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0
+
+
+def _shade_hex(h, mode):
+    """`#rrggbb` ⇒ **同色系**的浅版（A 旧 ✓）/ 深版（B 新 ✓）✓。
+
+    ★★ 2026-10-07 用户定 ✓：原话「B图导线按原图颜色，使用同色深色；A图导线按原图颜色，
+      使用同色浅色。而不是现在 A/B 图导线全部一个颜色」✓ —— 导线在 Fritzing 里**本来就有颜色** ✓
+      （`wireExtras/@color` ✓，官方配色表 13 色 ✓）⇒ **保留色相**才能一眼认出“哪根线” ✓，
+      深浅只表示版本 ✓。元件/文字两类的口径**不变** ✗（仍然是蓝系 / 灰系 ✓）。
+
+    ★ 混色比例是**量出来的**，不是拍的 ✓：A 往白混 **0.45** ✓、B 往黑混 **0.35** ✓ ——
+      拿官方色表里最深/最浅的几个试过 ✓：
+        红 `#cc1414` ⇒ A `(227,126,126)` 浅红 ✓ / B `(133,13,13)` 深红 ✓
+        黑 `#404040` ⇒ A `(147,147,147)` ✓ / B `(42,42,42)` ✓
+      ✗ 白线 `#ffffff` 的 A 版提亮后**还是白** ✗ ⇒ 在白底上看不见 ✓ ⇒ A 侧**限一下亮度** ✓
+      （超 0.90 就少混一点 ✓），B 侧天然变灰 ✓。
+    """
+    s = str(h).lstrip("#")
+    if len(s) != 6:
+        return h
+    try:
+        c = int(s, 16)
+    except ValueError:
+        return h
+    t = 0.45 if mode == "A" else 0.35
+    if mode == "B":
+        return "#%06x" % _mix_hex(c, 0, t)
+    out = _mix_hex(c, 255, t)
+    # ★ 白线（`#ffffff` / 近白 ✗）没法再浅 —— 往白混**永远是白** ✗（白底上看不见 ✓）
+    #   ⇒ 只能**略压一点**到看得见 ✓。★ 但要**刚好压到线** ✗：上一版从 0.30 起步 ✗ ⇒
+    #   白线被压成 `#b2b2b2`（≈ B 版 ✗ 分不出深浅 ✗）、**黄线 `#fff800` 甚至比 B 还深** ✗✗。
+    #   ⇒ 改成**从小往上试** ✓，一过阈值就停 ✓。实测：`#ffffff` ⇒ A `#e0e0e0` ✓（B `#a6a6a6` ✓）、
+    #   `#fff800` ⇒ A `#f2eb00` ✓（B `#a6a100` ✓）—— 两档仍然「A 浅 B 深」✓。
+    if _lum(out) > 0.88:
+        for tt in (0.02, 0.05, 0.08, 0.12, 0.18, 0.25):
+            out = _mix_hex(c, 0, tt)
+            if _lum(out) <= 0.88:
+                break
+    return "#%06x" % out
+
+
+_COL_ATTR_RE = re.compile(r'(\b(?:stroke|fill)\s*=\s*")' + r'(#[0-9a-fA-F]{6})(")')
+_COL_STYLE_RE = re.compile(r"(\b(?:stroke|fill)\s*:\s*)(#[0-9a-fA-F]{6})")
+
+
+def _shade_svg(xml, mode):
+    """把一个 svg 片段里**每个颜色**各按各的色相变浅/变深 ✓。
+
+    ★ 形状与 `render_pcb.remap_colors` **一样** ✓（属性式 `stroke="#…"` ＋ 内联式
+      `stroke:#…` 两种都盖 ✓），只是这里**逐色变换**而非查表 ✓ ——
+      导线颜色是**数据**（每根线一个 ✓）⇒ 表列不出来 ✗。
+    """
+    x = _COL_ATTR_RE.sub(lambda m: m.group(1) + _shade_hex(m.group(2), mode) + m.group(3), xml)
+    return _COL_STYLE_RE.sub(lambda m: m.group(1) + _shade_hex(m.group(2), mode), x)
+
+
+def _paint(svg, pal, mode="A"):
     """按类别上色 ✓ ⇒ `(新 svg, {类别: 个数})`。
 
     · **底**（板/画布那个 rect）：**不铺色** ✓ —— 铺了会把另一版盖住 ✗
@@ -864,6 +930,9 @@ def _paint(svg, pal):
         cnt[cls] = cnt.get(cls, 0) + 1
         if cls == CLS_BOARD:
             txt = re.sub(r'\bfill\s*=\s*"[^"]*"', 'fill="none"', txt, count=1)
+        elif cls == CLS_WIRE:
+            # ★ 导线：**按它自己的颜色**做同色浅/深 ✓（用户 2026-10-07 定 ✓）
+            txt = _shade_svg(txt, mode)
         elif cls == CLS_PART:
             txt = R.remap_colors(_no_fill(txt), {}, pal[cls])       # 只描边 ✓
         else:
@@ -899,8 +968,16 @@ def _view_rows(name_a, name_b):
     """
     rows = []
     for cls, label in ((CLS_WIRE, "导线"), (CLS_PART, "元件"), (CLS_TEXT, "文字/位号")):
-        rows.append((VIEW_PAL[cls][0], "%sA %s" % (label, name_a)))
-        rows.append((VIEW_PAL[cls][1], "%sB %s" % (label, name_b)))
+        for mode, nm in (("A", name_a), ("B", name_b)):
+            if cls == CLS_WIRE:
+                # ★ 导线**每条各按原色** ✗（用户 2026-10-07 定 ✓）⇒ 图例里放一个**样例**
+                #   （官方色表的红 ✓）＋ 文字里说清“按原色 ✓”（✗ 十几色摆不下 ✗）。
+                c = _shade_hex("#cc1414", mode)
+                lab = "%s（按原色·%s）%s" % (label, "浅" if mode == "A" else "深", nm)
+            else:
+                c = VIEW_PAL[cls][0 if mode == "A" else 1]
+                lab = "%s%s %s" % (label, mode, nm)
+            rows.append((c, lab))
     return rows
 
 
@@ -1016,8 +1093,8 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     sa = _render_view(a_fzz, VIEW, out)
     sb = _render_view(b_fzz, VIEW, out)
     pal = ({c: VIEW_PAL[c][0] for c in VIEW_PAL}, {c: VIEW_PAL[c][1] for c in VIEW_PAL})
-    ca = _paint(sa, pal[0])[1]
-    cb = _paint(sb, pal[1])[1]
+    ca = _paint(sa, pal[0], "A")[1]
+    cb = _paint(sb, pal[1], "B")[1]
     print("✓ %s 渲染：A 导线 %d / 元件 %d / 文字 %d ✓　B 导线 %d / 元件 %d / 文字 %d ✓"
           % (VIEW, ca.get(CLS_WIRE, 0), ca.get(CLS_PART, 0), ca.get(CLS_TEXT, 0),
              cb.get(CLS_WIRE, 0), cb.get(CLS_PART, 0), cb.get(CLS_TEXT, 0)))
@@ -1470,8 +1547,8 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0
         ia = R.remap_colors(ia, ta, oa)
         ib = R.remap_colors(ib, tb, ob)
     else:
-        ia = _inner(_paint(svg_a, pal[0])[0])
-        ib = _inner(_paint(svg_b, pal[1])[0])
+        ia = _inner(_paint(svg_a, pal[0], "A")[0])
+        ib = _inner(_paint(svg_b, pal[1], "B")[0])
     # ★ 字号**按画布比例** ✓（✗ 写死 ⇒ 在这个渲染器的画布里看不见 ✗）；图例**放在板子下面**
     #   的空白带里 ✓（画布高度加一条 ✓ ⇒ 单独打开 svg 也看得见 ✓，不再压在图上 ✓）。
     fs = max(13.0, wa * 0.0105)
