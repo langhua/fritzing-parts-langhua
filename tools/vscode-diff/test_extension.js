@@ -29,7 +29,7 @@ Module._load = function (req, parent, isMain) {
 const EXTDIR = __dirname;
 const PIX = path.resolve(process.argv[2] || process.cwd());
 const ext = require(path.join(EXTDIR, 'extension.js'));
-const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs } = ext._pure;
+const { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage } = ext._pure;
 
 let bad = 0;
 const fail = (s, ...a) => { console.log('   ✗ ' + s, ...a); bad++; };
@@ -90,5 +90,18 @@ const dd = dirs();
 console.log('⑤ 目录发现：项目 = %s；库仓 = %s', dd.proj || '（没找到）', dd.tool || '（没找到）');
 if (!dd.proj || !dd.tool) fail('dirs() 没能同时找到项目目录与库仓工具');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 五项都过', bad || '');
+// ⑥ 幻灯片：页面列表（按版本号递增 ✓）＋ 单页读取（至少一页带 svg 图 ✓）
+const pl = pageList(PIX);
+const seq = pl.map((p) => {
+	const m = /diff-v(\d+)[^-]*-v(\d+)/.exec(path.basename(p));
+	return m ? [Number(m[1]), Number(m[2])] : [1e9, 1e9];
+});
+const inc = seq.every((v, i) => i === 0
+	|| seq[i - 1][0] < v[0] || (seq[i - 1][0] === v[0] && seq[i - 1][1] <= v[1]));
+const withSvg = pl.filter((p) => readPage(p).svg).length;
+console.log('⑥ 幻灯片：%d 页；版本序递增 = %s；带图 %d 页（最后一页：%s）',
+	pl.length, inc, withSvg, pl.length ? path.basename(pl[pl.length - 1]) : '—');
+if (!pl.length || !inc || !withSvg) fail('幻灯片页面列表不对');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 六项都过', bad || '');
 process.exit(bad ? 1 : 0);

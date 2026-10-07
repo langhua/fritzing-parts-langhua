@@ -162,16 +162,8 @@ const JS = [
 	'})();'
 ].join('\n');
 
-function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
-	const csp = `default-src 'none'; img-src ${webview.cspSource} data:; `
-		+ `style-src 'unsafe-inline'; script-src 'nonce-${nonce}';`;
-	const art = svgText
-		? `<div class="art">${svgText}</div>`
-		: (imgUri ? `<img src="${imgUri}" alt="${esc(imgName || 'diff')}">`
-			: `<div class="hint" style="padding:16px">${esc(hint || '还没生成差异图')}</div>`);
-	return `<!DOCTYPE html><html><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="${csp}">
-<style>
+// ★ HTML/CSS **只留一份** ✓（自定义编辑器与幻灯片共用 ✓）—— ✗ 别在幻灯片里再抄一遍 ✗。
+const CSS = `
   body { margin:0; font-family: var(--vscode-font-family); color: var(--vscode-editor-foreground); }
   .wrap { display:flex; height:100vh; }
   .pane { overflow:auto; }
@@ -189,7 +181,27 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
   li.clickable:hover { background: var(--vscode-list-hoverBackground); }
   li.sel { background: var(--vscode-list-activeSelectionBackground); }
   .hint { color: var(--vscode-errorForeground); }
-</style></head><body>
+`;
+
+/** 把某个 svg 读成**能内联**的片段 ✓（去掉 xml 声明/注释 ＋ 给根一个 id ✓）——
+ *  自定义编辑器与幻灯片**共用这一份** ✓（✗ 别写两遍 ✗）。 */
+function inlineSvg(svgPath) {
+	if (!fs.existsSync(svgPath)) return null;
+	return fs.readFileSync(svgPath, 'utf8')
+		.replace(/^[\s\S]*?<svg\b/, '<svg')
+		.replace(/^<svg\b(?!\s+id=)/, '<svg id="pd-svg"');
+}
+
+function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
+	const csp = `default-src 'none'; img-src ${webview.cspSource} data:; `
+		+ `style-src 'unsafe-inline'; script-src 'nonce-${nonce}';`;
+	const art = svgText
+		? `<div class="art">${svgText}</div>`
+		: (imgUri ? `<img src="${imgUri}" alt="${esc(imgName || 'diff')}">`
+			: `<div class="hint" style="padding:16px">${esc(hint || '还没生成差异图')}</div>`);
+	return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${csp}">
+<style>${CSS}</style></head><body>
 <div class="wrap">
   <div class="pane left">${art}</div>
   <div class="pane right">
@@ -200,6 +212,149 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 </div>
 <script nonce="${nonce}">${svgText ? JS : ''}</script>
 </body></html>`;
+}
+
+// ── 幻灯片：把所有 `diff-*.md` 串起来，一页一页翻 / 自动播放 ✓（2026-10-07 用户要的 ✓）──
+//   · **顺序**按版本号排 ✓（`diff-v59-v76.md` ⇒ (59, 76) ✓；同 A 的按 B 排 ✓）；
+//   · 翻页/自动播放都在 **webview 里**（键盘 ←/→、空格 ✓）
+//     ⇒ 扩展只负责「给我第 k 页」✓（每页现读现给 ✓ ⇒ 不把 N 页的 svg 一次性塞进内存 ✓）。
+function pageList(proj) {
+	const d = path.join(proj, 'diff');
+	if (!fs.existsSync(d)) return [];
+	const key = (n) => {
+		const m = /^diff-v(\d+)([^-]*)-v(\d+)([^.]*)\.md$/.exec(n);
+		return m ? [Number(m[1]), Number(m[3]), n] : [1e9, 1e9, n];   // 认不出号的排最后 ✓
+	};
+	return fs.readdirSync(d).filter((n) => /^diff-.*\.md$/.test(n))
+		.sort((a, b) => {
+			const x = key(a), y = key(b);
+			return (x[0] - y[0]) || (x[1] - y[1]) || String(x[2]).localeCompare(String(y[2]));
+		})
+		.map((n) => path.join(d, n));
+}
+
+/** 一页的内容 ✓（标题 ＋ 内联 svg ＋ 已转好的清单 HTML ✓）。 */
+function readPage(mdPath) {
+	const dir = path.dirname(mdPath);
+	const stem = path.basename(mdPath).replace(/\.md$/, '');
+	return {
+		title: stem,
+		svg: inlineSvg(path.join(dir, stem + '.svg')),
+		html: mdToHtml(fs.readFileSync(mdPath, 'utf8'))
+	};
+}
+
+// 幻灯片里的脚本：翻页 ＋ 自动播放 ＋ 键盘 ✓，并**保持**「点行 ⇒ 高亮」✓（每换一页重新绑 ✓）。
+const SLIDE_JS = [
+	'(function(){',
+	'  var api = acquireVsCodeApi();',
+	'  var idx = -1, total = 0, timer = null;',
+	'  function $(id){ return document.getElementById(id); }',
+	'  function bindHighlight(){',
+	'    var SVG = $("pd-svg");',
+	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
+	'    var RE = new RegExp(' + JSON.stringify(PAD_RE_SRC) + ');',
+	'    function clear(){',
+	'      if (SVG) SVG.classList.remove("pd-focus");',
+	'      var g = document.querySelectorAll("#pd-hits > g");',
+	'      for (var i = 0; i < g.length; i++) g[i].style.display = "none";',
+	'      li.forEach(function(x){ x.classList.remove("sel"); });',
+	'    }',
+	'    li.forEach(function(x){',
+	'      var m = RE.exec(x.textContent || "");',
+	'      if (!m) return;',
+	'      x.classList.add("clickable");',
+	'      x.title = "点一下：在图上高亮 " + m[1];',
+	'      x.addEventListener("click", function(){',
+	'        clear();',
+	'        if (SVG) SVG.classList.add("pd-focus");',
+	'        var t = $("pd-" + m[1]);',
+	'        if (t) { t.style.display = ""; x.classList.add("sel"); }',
+	'      });',
+	'    });',
+	'    document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
+	'    if (SVG) SVG.addEventListener("click", clear);',
+	'  }',
+	'  function show(d){',
+	'    idx = d.index; total = d.total;',
+	'    $("art").innerHTML = d.svg || "<div class=\\"hint\\" style=\\"padding:16px\\">'
+		+ '（这一条没找到 svg 图）</div>";',
+	'    $("list").innerHTML = d.html;',
+	'    $("pos").textContent = (idx + 1) + " / " + total + "　" + d.title;',
+	'    bindHighlight();',
+	'  }',
+	'  function go(n){',
+	'    if (!total) return;',
+	'    n = (n % total + total) % total;',          // 两头循环 ✓
+	'    api.postMessage({ cmd: "page", index: n });',
+	'  }',
+	'  $("prev").addEventListener("click", function(){ go(idx - 1); });',
+	'  $("next").addEventListener("click", function(){ go(idx + 1); });',
+	'  $("play").addEventListener("click", function(){',
+	'    if (timer) { clearInterval(timer); timer = null; $("play").textContent = "▶ 自动播放"; return; }',
+	'    var sec = Math.max(1, Number($("sec").value) || 3);',
+	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
+	'    $("play").textContent = "⏸ 暂停";',
+	'  });',
+	'  document.addEventListener("keydown", function(e){',
+	'    if (e.key === "ArrowRight" || e.key === "PageDown") go(idx + 1);',
+	'    else if (e.key === "ArrowLeft" || e.key === "PageUp") go(idx - 1);',
+	'    else if (e.key === " ") { e.preventDefault(); $("play").click(); }',
+	'  });',
+	'  window.addEventListener("message", function(ev){',
+	'    var d = ev.data; if (d && d.cmd === "page") show(d);',
+	'  });',
+	'  api.postMessage({ cmd: "ready" });',
+	'})();'
+].join('\n');
+
+function slideshowHtml(webview, nonce, n) {
+	const csp = `default-src 'none'; img-src ${webview.cspSource} data:; `
+		+ `style-src 'unsafe-inline'; script-src 'nonce-${nonce}';`;
+	return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${csp}">
+<style>${CSS}
+  .wrap { height: calc(100vh - 34px); }
+  .top { display:flex; gap:8px; align-items:center; padding:6px 10px;
+         border-bottom:1px solid var(--vscode-panel-border); font-size:12px; }
+  .top button { background: var(--vscode-button-background); color: var(--vscode-button-foreground);
+                border:0; padding:3px 10px; border-radius:3px; cursor:pointer; }
+  .top input { width:3.2em; background: var(--vscode-input-background);
+               color: var(--vscode-input-foreground); border:1px solid var(--vscode-input-border); }
+  #pos { opacity:.85; }
+</style></head><body>
+<div class="top">
+  <button id="prev">⟨ 上一条</button><button id="next">下一条 ⟩</button>
+  <button id="play">▶ 自动播放</button><span>每</span><input id="sec" value="3"><span>秒</span>
+  <span id="pos">共 ${n} 条</span>
+  <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点清单一条 高亮</span>
+</div>
+<div class="wrap">
+  <div class="pane left" id="art"></div>
+  <div class="pane right" id="list"></div>
+</div>
+<script nonce="${nonce}">${SLIDE_JS}</script>
+</body></html>`;
+}
+
+async function cmdSlideshow() {
+	const { proj } = dirs();
+	if (!proj) return void vscode.window.showErrorMessage('找不到项目目录（要有 pixel_nets.py）');
+	const pages = pageList(proj);
+	if (!pages.length) {
+		return void vscode.window.showErrorMessage('diff/ 里还没有 diff-*.md ⇒ 先跑一次「比较两版」');
+	}
+	const panel = vscode.window.createWebviewPanel('pixelDiff.slides', 'Pixel 差异幻灯片',
+		vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [vscode.Uri.file(proj)] });
+	panel.webview.html = slideshowHtml(panel.webview, String(Date.now()), pages.length);
+	panel.webview.onDidReceiveMessage((msg) => {
+		if (!msg || (msg.cmd !== 'ready' && msg.cmd !== 'page')) return;
+		const i = msg.cmd === 'ready' ? 0 : ((msg.index % pages.length) + pages.length) % pages.length;
+		const p = readPage(pages[i]);
+		panel.webview.postMessage({ cmd: 'page', index: i, total: pages.length,
+			title: p.title, svg: p.svg, html: p.html });
+	});
+	log(`幻灯片：共 ${pages.length} 条（${pages.map((p) => path.basename(p)).slice(0, 3).join(', ')}…）`);
 }
 
 class DiffEditor {
@@ -215,12 +370,7 @@ class DiffEditor {
 		//   ✗ `<img>` 里的 svg 父文档碰不到 ✗（改不了它里面的 display ✓）。
 		panel.webview.options = { enableScripts: true, localResourceRoots: [vscode.Uri.file(dir)] };
 		const draw = () => {
-			let svgText = null;
-			if (fs.existsSync(svgPath)) {
-				svgText = fs.readFileSync(svgPath, 'utf8')
-					.replace(/^[\s\S]*?<svg\b/, '<svg')            // 去掉 xml 声明/注释，留 `<svg …>`
-					.replace(/^<svg\b(?!\s+id=)/, '<svg id="pd-svg"');   // 给它一个 id 好挂点击
-			}
+			let svgText = inlineSvg(svgPath);          // ★ 与幻灯片共用这一份 ✓
 			const pngUri = (!svgText && fs.existsSync(pngPath))
 				? panel.webview.asWebviewUri(vscode.Uri.file(pngPath)) : null;
 			const nonce = String(Math.random()).slice(2) + String(Date.now());
@@ -295,8 +445,7 @@ async function cmdCompareFiles() {
 
 function activate(context) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('pixelDiff.compare', () => cmdCompare(context)),
-		vscode.commands.registerCommand('pixelDiff.compareFiles', () => cmdCompareFiles()),
+		vscode.commands.registerCommand('pixelDiff.compare', () => cmdCompare(context)),		vscode.commands.registerCommand('pixelDiff.compareFiles', () => cmdCompareFiles()),	vscode.commands.registerCommand('pixelDiff.slideshow', () => cmdSlideshow()),
 		vscode.window.registerCustomEditorProvider(VIEW, new DiffEditor(context),
 			{ webviewOptions: { retainContextWhenHidden: true } })
 	);
@@ -309,5 +458,5 @@ function deactivate() { }
 // 这几件是纯逻辑，能单独验 —— 免得只靠"装上去点一下看看"。
 module.exports = {
 	activate, deactivate,
-	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs }
+	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, dirs, pageList, readPage }
 };

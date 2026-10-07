@@ -177,6 +177,10 @@ tools\install_diff_ext.cmd          # 装完 Ctrl+Shift+P → Reload Window 即�
 **用**：资源管理器里**双击** `diff\diff-*.md` ✓，或命令面板 → `Pixel 差异: 比较两版` ✓
 （要不要清单 ⇒ 给两个 `.fzz` ✓；含 **Fritzing 导出的 svg** 也能比 ✓，那种只出图 ✓）。
 
+**一页一页翻着看** ✓：命令面板 → `Pixel 差异: 幻灯片` ⇒ 把所有差异按**版本号**串成一串 ✓，
+`⟨上一条` / `下一条 ⟩` ✓、键盘 **←/→** ✓、**▶ 自动播放**（间隔可填 ✓、空格暂停 ✓），
+**点清单一条照旧高亮** ✓。
+
 ★ 工具细节、参数（`--dir` / `--pattern` / `--nets` ✓）、以及"坐标换算只有一份"等规矩，
 见 [`tools/README.md`](tools/README.md) 的「VS Code 扩展」与「版本对比 / 长跑」两节 ✓。
 卸载：`tools\install_diff_ext.cmd uninstall` ✓。

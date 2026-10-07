@@ -24,6 +24,11 @@
 				"command": "pixelDiff.compareFiles",
 				"title": "比较两个文件（fzz / svg 都行）",
 				"category": "Pixel 差异"
+			},
+			{
+				"command": "pixelDiff.slideshow",
+				"title": "幻灯片：把所有差异串起来翻页看 / 自动播放",
+				"category": "Pixel 差异"
 			}
 		],
 		"customEditors": [
