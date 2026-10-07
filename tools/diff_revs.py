@@ -1126,8 +1126,28 @@ def _core_svg(core_path, view, image=None):
     return None
 
 
+def _seq_keys(root):
+    r"""⇒ `[(instance 元素, **唯一 key**), …]` ✓ —— 重复位号加 `.2` `.3` ✓（`RC` ⇒ `RC`、`RC.2` ✓）。
+
+    ★★ 2026-10-07 实测修 ✗（用户：「RC 位置错误了吧？」✓）：v40 原理图里有**两个 netlabel
+      都叫 `RC`** ✓ ⇒ 原来用 `{位号: …}` 的字典 ✗ ⇒ **后一个覆盖前一个** ✗ ⇒ 图上画的是
+      第二个 RC 的图心 ✓，而清单那一行看着像在说第一个 ✗ ⇒ **图文对不上** ✓。
+
+    ★ 用 `.` 拼序号 ✗ 不用括号：扩展那条“位号行”正则的字符集是 `[\w.-]` ✓
+      ⇒ `RC.2：…` 照样能点 ✓（✗ 若写成 `RC(2)` 就点不动了 ✗）。
+    ★ ★ 序号**只在这里生成** ✓：`_place` 与 `_centers` 都调它 ✓
+      （✗ 两边各写一遍序号 ⇒ 两边顺序不一致 ⇒ 又变成“图里两个、清单一个” ✗）。
+    """
+    seen, out = {}, []
+    for e in root.iter("instance"):
+        ttl = (e.findtext("title") or "").strip()
+        seen[ttl] = seen.get(ttl, 0) + 1
+        out.append((e, ttl if seen[ttl] == 1 else "%s.%d" % (ttl, seen[ttl])))
+    return out
+
+
 def _place(fzz, view):
-    """⇒ `({位号: geometry}, [没显示的位号…])`（sketch 坐标 ✓）。
+    r"""⇒ `({位号: geometry}, [没显示的位号…])`（sketch 坐标 ✓），✓ —— 位号**唯一** ✓。
 
     ★★ 2026-10-07 用户实测两条（都对 ✓），两条合起来就是一句：**只列这个视图真的看得见的** ✓：
       ① 「原理图不应有 Via，是不是来自 PCB？」✓ —— **是** ✓。看探针输出：
@@ -1145,8 +1165,7 @@ def _place(fzz, view):
     name = [n for n in z.namelist() if n.endswith(".fz")][0]
     root = ET.fromstring(z.read(name))
     out, skipped = {}, []
-    for e in root.iter("instance"):
-        ttl = (e.findtext("title") or "").strip()
+    for e, ttl in _seq_keys(root):                     # ★ `ttl` = **唯一 key** ✓（重复的带 `.N` ✓）
         vw = next((c for c in e if c.tag.split("}")[-1] == "views"), None)
         sub = next((c for c in vw if c.tag.split("}")[-1] == view), None) if vw is not None else None
         g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
@@ -1204,8 +1223,7 @@ def _centers(fzz, view):
     name = [n for n in z.namelist() if n.endswith(".fz")][0]
     root = ET.fromstring(z.read(name))
     out = {}
-    for e in root.iter("instance"):
-        ttl = (e.findtext("title") or "").strip()
+    for e, ttl in _seq_keys(root):                     # ★ 与 `_place` **同一个 key** ✓
         vw = next((c for c in e if c.tag.split("}")[-1] == "views"), None)
         sub = next((c for c in vw if c.tag.split("}")[-1] == view), None) if vw is not None else None
         g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
