@@ -51,6 +51,16 @@ PIX = os.getcwd()
 PAT = r".*\.fzz$"
 NETS_FILE = None
 
+# ★ **接地符号**（核心件 ✓）的坐标数学在 `sch_net` 里 ✓ —— 本文件**不另写一份** ✗：
+#   2026-10-07 实测 ✓：原理图渲染器**不给接地符号**写 `partID` ✗（普通件 `%s0` ✓、
+#   网标签 `%s1` ✓、接地符号**没有** ✗）⇒ 只能按**脚位坐标**认 ✓，
+#   而那个坐标 = `sch_net.ground_pin` ✓（`render_sch.py` 画它用的也是这一份 ✓）。
+try:
+    sys.path.insert(0, HERE)
+    import sch_net as _SN                                          # noqa: E402
+except Exception:                        # noqa: BLE001  拿不到 ⇒ 退化成"接地符号认不出" ✓
+    _SN = None
+
 # ★★ 颜色口径（2026-10-07 用户定 ✓，原话：「双面板的**颜色差异看不出来了**」✗）：
 #   **色相 = 层**（顶 = 暖 ✓ / 底 = 冷 ✓）、**深浅 = 版**（浅 = A 旧 ✓ / 深 = B 新 ✓）、
 #   **非铜**（丝印/板框/位号/孔）= 中性灰（A 浅 ✓ / B 深 ✓）。
@@ -1041,6 +1051,18 @@ def _tag_elements(svg, refs, fzz, view, side):
         gx, gy = g.get("x"), g.get("y")
         if gx is not None and gy is not None:
             by_mi[("loc", round(float(gx), 2), round(float(gy), 2))] = key
+        # ★ **接地符号**：渲染器**不给它 partID** ✗（2026-10-07 实测 ✓：它的块是
+        #   `<g transform="translate(161.3280 138.0002) scale(1.250000) …">` ✓）
+        #   ⇒ 只能按坐标认 ✓，而那个坐标 = `sch_net` 自己算的**脚位** ✓
+        #   （✗ 不另写公式 ✗ —— `render_sch.py` 画的也是这一份 ✓）。
+        if _SN is not None and gx is not None:
+            try:
+                if _SN.is_ground_symbol(str(e.get("moduleIdRef") or "")):
+                    _gp = _SN.ground_pin((float(gx), float(gy)))
+                    if _gp:
+                        by_mi[("gp", round(_gp[0], 2), round(_gp[1], 2))] = key
+            except Exception:
+                pass
         # 导线：渲染成一条 `<line x1,y1,x2,y2>`（相对量 x2/y2 ⇒ 这里先绝对化 ✓）
         x, y = float(g.get("x") or 0.0), float(g.get("y") or 0.0)
         x2, y2 = float(g.get("x2") or 0.0), float(g.get("y2") or 0.0)
@@ -1049,6 +1071,15 @@ def _tag_elements(svg, refs, fzz, view, side):
             by_seg[tuple(round(v, 2) for p in pts for v in p)] = key
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
     out, got = [], set()
+
+    def _at(a):
+        """取一个**属性**的值 ✓ —— ✗ 不许拿全文扫数字 ✗：
+        2026-10-07 实测 ✓：`<line x1="108" y1="144" x2="108" y2="171">` 全文扫数字得
+        `[1, 108, 1, 144, 2, 108, …]` ✗ —— **属性名里的数字**（x1 / y1 / y2）跟着进来了 ✗
+        ⇒ 候选元组全错、一根都匹配不上（自检当场报 `A 包了 0 / B 包了 0` ✗）。
+        """
+        m = re.search(r'\b%s="(-?[\d.eE+-]+)"' % a, txt)
+        return float(m.group(1)) if m else None
     for cls, txt in _top_split(svg):
         key = None
         # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
@@ -1061,16 +1092,31 @@ def _tag_elements(svg, refs, fzz, view, side):
             nn = [float(v) for v in re.findall(r"-?\d+\.?\d*", mm.group(1))]
             if len(nn) >= 6:
                 key = by_mi.get(("loc", round(nn[4], 2), round(nn[5], 2)))
+        # ★★ **原理图**：那一版渲染器**自己**把 `modelIndex` 拼了一位数字当 partID ✓
+        #   —— 普通零件 `'<g partID="%s0">'` ✓、核心件（网标签 / 接地符号）
+        #   `'<g partID="%s1">'` ✓（两处都在 `render_sch.py` 里 ✓，出处是源码 ✓）。
+        #   ⇒ `partID[:-1]` 就是 `modelIndex` ✓（✗ 别再判末位是不是 "0" ✗ ——
+        #   2026-10-07 实测：判了就把 RC / Ground 全漏掉 ✓ 自检当场报 ✗）。
+        #   2026-10-07 实测 ✓：sch 里 `matrix(e,f)` **不是**实例的 geometry ✗
+        #   （C2：渲染 `172.8,-72.4377` ↔ 几何 `187.2,-44.5627` ✗；C1 只是恰好相等 ✓）
+        #   ⇒ 面包板可用坐标认 ✓、原理图得靠 partID ✓。
+        if key is None:
+            mp = re.search(r'\bpartID="(\d+)"', txt)
+            if mp:
+                key = by_mi.get(mp.group(1)[:-1])
+        # ★ 接地符号：块头那句 `translate(a b)` 就是它的**脚位** ✓（实测相符 ✓）
+        if key is None:
+            mt = re.match(r'\s*<g\s+transform="translate\(([-\d.]+)[ ,]+([-\d.]+)\)', txt)
+            if mt:
+                key = by_mi.get(("gp", round(float(mt.group(1)), 2),
+                                 round(float(mt.group(2)), 2)))
         if key is None and cls == CLS_WIRE:
-            nums = [float(v) for v in re.findall(r'-?\d+\.?\d*', txt[:220])]
-            if len(nums) >= 4:
-                cand = [(nums[i], nums[i + 1], nums[i + 2], nums[i + 3]) for i in range(len(nums) - 3)]
-                for (ax, ay, bx, by) in cand:
-                    for kk in ((ax, ay, bx, by), (bx, by, ax, ay)):
-                        if kk in by_seg:
-                            key = by_seg[kk]
-                            break
-                    if key:
+            ax, ay = _at("x1"), _at("y1")
+            bx, by = _at("x2"), _at("y2")
+            if None not in (ax, ay, bx, by):
+                for kk in ((ax, ay, bx, by), (bx, by, ax, ay)):
+                    if kk in by_seg:
+                        key = by_seg[kk]
                         break
         if key:
             out.append('<g id="%s-%s">%s</g>' % (side, re.sub(r"[^\w.-]", "_", key), txt))
@@ -1167,6 +1213,46 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     return "".join(out) + "</g>", refs
 
 
+def _anim_css(ka, kb, refs, token, sec=2.0, tail=2.0):
+    """★ 动画第二步（2026-10-07 ✓）：给每一处变化排一个**时段** ✓，写 `@keyframes`
+    ＋ 每个元素一句 `animation:` ✓ —— ✗ 不用选择器 ✗（幻灯片会把多张图拼在一页里
+    ✓，而 id / class 是**文档级**的 ✗ ⇒ 第一页的规则会去管第二页的元素 ✗）；
+    内联 `style="animation:…"` 只认自己那一句 ✓，再加上**名字里带 token** ✓ ⇒ 永不串台 ✓。
+
+    ★ 时段表（用户 2026-10-07 定的规格 ✓，见 `docs/diff-animation.md` ✓）：
+      一处变化 = A **闪 2 次** ⇒ A **撤掉** ⇒ B **闪 2 次** ⇒ B **留下** ✓，然后进下一处 ✓；
+      走完所有变化再停 `tail` 秒 ⇒ 从头循环 ✓（`animation-iteration-count: infinite` ✓）。
+      ⇒ 开始时看到的是 **A 图** ✓、结束那一刻是 **B 图** ✓（A 已全部撤完 ✓）。
+
+    ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s)` ✓ ——
+      总时长**只在这一处算** ✗（✓ 内联 style 与关键帧百分比必须用**同一个**值 ✓）。
+    """
+    keys = sorted(refs)
+    if not keys:
+        return "", {}, 0.0, sec, tail
+    total = len(keys) * sec + tail
+    pct = lambda t: round(100.0 * t / total, 3)          # noqa: E731  一行小工具 ✓
+    out, anim = [], {}
+    for i, key in enumerate(keys):
+        s, T = i * sec, sec
+        if key in ka:
+            nm = "%s-a-%d" % (token, i)
+            anim[("a", key)] = nm
+            out.append("@keyframes %s{0%%{opacity:1}" % nm
+                       + "".join("%s%%{opacity:%d}" % (pct(s + T * f), v) for f, v in
+                                 ((0.10, 0), (0.20, 1), (0.30, 0), (0.40, 1)))
+                       + "%s%%{opacity:0}100%%{opacity:0}}" % pct(s + T * 0.50))
+        if key in kb:
+            nm = "%s-b-%d" % (token, i)
+            anim[("b", key)] = nm
+            out.append("@keyframes %s{0%%{opacity:0}%s%%{opacity:0}" % (nm, pct(s + T * 0.50))
+                       + "".join("%s%%{opacity:%d}" % (pct(s + T * f), v) for f, v in
+                                 ((0.60, 1), (0.70, 0), (0.80, 1), (0.90, 0)))
+                       + "%s%%{opacity:1}100%%{opacity:1}}" % pct(s + T * 1.00))
+    # 时长都取同一个 `total` ✓ ⇒ 各元素的关键帧百分比冸在**同一条时间轴**上 ✓
+    return "\n".join(out), anim, total, sec, tail
+
+
 def _view_diff(a_fzz, b_fzz, out, na, nb):
     """面包板 / 原理图：叠合图 ＋ 清单 ✓（PCB 那条路**一个字不动** ✓）。"""
     sa = _render_view(a_fzz, VIEW, out)
@@ -1194,6 +1280,23 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
           % (len(refs), len(ka), len(kb), not lose,
              "" if not lose else " ✗ 漏了：%s" % "、".join(sorted(lose))))
+    # ★★ 动画第二步：关键帧 ＋ 逐元素内联 `animation` ✓（规格见 `docs/diff-animation.md` ✓）
+    token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
+    css, anim, dur, sec, tail = _anim_css(ka, kb, refs, token)
+    for (side, key), nm in anim.items():
+        gid = '<g id="%s-%s"' % (side, re.sub(r"[^\w.-]", "_", key))
+        st = gid + ' style="animation:%s %.3fs linear infinite">' % (nm, dur)
+        pa = pa.replace(gid + ">", st)
+        pb = pb.replace(gid + ">", st)
+    if css:
+        # ★ 关键帧**只写一份** ✓：A / B 两张图最终在**同一份文档**里 ✓（叠合图是一
+        #   个 `svg` ✓、扩展那边又是整段内联 ✓）⇒ CSS 是文件级的 ✓ ⇒ 写两遍只会让
+        #   字节翻倍 ✗（2026-10-07 实测：第一版就写了两份 ⇒ 数出 `@keyframes` 132 条 ✗）。
+        pa = pa.replace("</svg>", "<style>%s</style>\n</svg>" % css)
+    if dur:
+        print("✓ 动画：关键帧 %d 条（A %d ＋ B %d ✓，共 %d 处变化 ✓）"
+              "—— 一处 %.1f s ＋ 收尾 %.1f s ⇒ 一轮 %.1f s ✓"
+              % (css.count("@keyframes"), len(ka), len(kb), len(refs), sec, tail, dur))
     # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
