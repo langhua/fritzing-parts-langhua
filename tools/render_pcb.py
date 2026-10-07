@@ -237,6 +237,11 @@ def render(model, px_per_mm=12.0, opts=()):
                         q = PB.apply(p["M"], (cu - uv[0]) * kk, (cv - uv[1]) * kk)
                         xs.append(p["loc"][0] + q[0])
                         ys.append(p["loc"][1] + q[1])
+    # ★★ 2026-10-07 实测补的一条 ✓（差异图那件事抳出来的 ✗）：**不带 `--board-only` 时，
+    #   下面那个 `stroke=C_BRD_EDGE` 的 rect **不是板框** ✗ —— 因为 `r` 会被第 246 行
+    #   **胀成「板框 ∪ 全部墨迹」** ✗ ⇒ 画出来的是**取景框** ✓。
+    #   ⇒ ✗ 别拿它当"板框的像素范围"用 ✗（会整体平移 ✗，实测 0.5 mm ✓）；
+    #     要对板框定标/对齐 ⇒ 用 `--board-only` 渲 ✓（那时 `r` 就是真板框 ✓）。
     r = model["board"] or (min(xs), min(ys), max(xs), max(ys))
     if "--board-only" not in _OPTS[0] and xs:
         # ★★ 视口 = **板框 ∪ 所有焊盘/走线/过孔** ✓（2026-09-30 修 ✗）：
