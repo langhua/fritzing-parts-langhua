@@ -771,6 +771,9 @@ def _inner(svg):
 #     ⇒ `_cls_of()` **一份实现**管两边 ✓（✗ 别在两个渲染器里各写一套 ✗）。
 VIEW = "pcb"
 VIEW_PX = {"bb": 1800.0, "sch": 1700.0}     # 子进程渲染的输出宽 px ✓（它们第 3 个参数 ✓）
+# ★ 视图的中文名 ✓ —— **只在这一处** ✗（标题用它 ✓；✗ 别在清单里现拼 `VIEW` ✗ ——
+#   2026-10-08 用户指出：标题原来打的是 `bb 差异清单` ✗，要「面包板差异清单」✓）。
+VIEW_CN = {"pcb": "PCB", "bb": "面包板", "sch": "原理图"}
 CLS_WIRE, CLS_PART, CLS_TEXT, CLS_BOARD = "wire", "part", "text", "board"
 #   三类在两版里的颜色 ✓（沿用 PCB 那套常量：橙系 / 蓝系 / 灰系 ✓ 六色互分得开 ✓）
 VIEW_PAL = {"wire": (A_TOP, B_TOP), "part": (A_BOT, B_BOT), "text": (A_OTH, B_OTH)}
@@ -1792,7 +1795,7 @@ def report_view(a_fzz, b_fzz):
     gb, skipped_b = _place(b_fzz, view)
     mm = lambda v: v * SK
     L = []
-    L.append("# %s 差异清单：%s ⇒ %s" % (VIEW, _vtxt(a_fzz), _vtxt(b_fzz)))
+    L.append("# %s差异清单：%s ⇒ %s" % (VIEW_CN.get(VIEW, VIEW), _vtxt(a_fzz), _vtxt(b_fzz)))
     L.append("")
     L.append("> 色相 = 类别（导线 / 元件 / 文字）✓；深浅 = 版（浅 = A 旧 / 深 = B 新）✓；"
              "重合处更深 = 两版一样 ✓。")

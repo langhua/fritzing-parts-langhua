@@ -402,14 +402,19 @@ const CSS = `
           padding:8px; box-sizing:border-box; }
   .left img, .art svg { max-width:100%; height:auto; }
   .art svg { cursor:default; }
-  .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border); }
+  .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border);
+           /* ★★ 2026-10-08 用户定 ✗：「右侧内容字体可以小一些，**跟重放动画几个字的字体一样大**即可」✓
+              ⇒ 整块右栏统一 **12px** ✓（＝ 工具条那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
+           font-size:12px; line-height:1.5; }
   .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
          /* ★★ 2026-10-08 修 ✗：工具条**钉在顶上** ✓ —— 它是「▶ 重放动画」唯一的落脚处 ✓，
             而清单往往长过一屏 ✓ ⇒ 一滚就"看不到按钮"了 ✗（用户原话：「没有看到「▶ 重放动画」按钮」✓）。 */
          position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
   .bar button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
                 border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
-  h1 { font-size:1.15em; } h2 { font-size:1.05em; margin-top:1.1em; } h3 { font-size:1em; }
+  /* ★ 标题一律**跟正文同号** ✓（1em = 12px ✓）⇒ 只剩**粗体**做层级 ✓（用户要"一样大"✓） */
+  h1, h2, h3 { font-size:1em; }
+  h1 { margin:.2em 0 .4em; } h2 { margin-top:1.1em; } h3 { margin-top:1em; }
   code { background: var(--vscode-textCodeBlock-background); padding:0 3px; border-radius:3px; }
   blockquote { margin:.4em 0; padding-left:8px; border-left:3px solid var(--vscode-panel-border); opacity:.85; }
   ul { padding-left:1.2em; margin:.2em 0; }
@@ -445,7 +450,7 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 <div class="wrap">
   <div class="pane left">${art}</div>
   <div class="pane right">
-    <div class="bar">${svgText ? '<button id="pd-replay">▶ 重放动画</button>　点 ① 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
+    <div class="bar">${svgText ? '<button id="pd-replay">▶ 重放动画</button>　点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
 		: (imgUri ? esc(imgName) : '（无图）')}</div>
     ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
@@ -493,10 +498,13 @@ function readPage(mdPath) {
 }
 
 // 幻灯片里的脚本：翻页 ＋ 自动播放 ＋ 键盘 ✓，并**保持**「点行 ⇒ 高亮」✓（每换一页重新绑 ✓）。
+//   ★★ 2026-10-08：**本页没有「▶ 重放动画」按钮了** ✗（用户：「点击截图1中工具栏上的
+//     【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓）——
+//     重放统一去**合并视图**那条工具条上点 ✓（双击 `diff/*.md` 就是它 ✓）。
+//     ⇒ 于是这里既不绑 `#replay` ✓、也不带 `replayJs()` ✓（✗ 别留死代码 ✗）。
 const SLIDE_JS = [
 	'(function(){',
 	'  var api = acquireVsCodeApi();',
-	'  window.__pdLog = function(t){ try { api.postMessage({ cmd: "log", text: t }); } catch (e) {} };',
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
 	'  function bindHighlight(){',
@@ -533,10 +541,10 @@ const SLIDE_JS = [
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
 	'    $("play").textContent = "⏸ 暂停";',
 	'  });',
-	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 与合并视图那份**同一套** ✓（`replayJs()` ✓）。
-	//   幻灯片一页只有一个 svg ✓ ⇒ 起的就一定是当前这页 ✓。
-	'  $("replay").addEventListener("click", function(){ pdReplay(); });',
-	...replayJs(),                       // ★ 展开 ✗ 别写成 `...replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
+	// ★ 2026-10-08：「▶ 重放动画」**从这条工具条上撤掉了** ✗（用户要求 ✓ ——
+	//   「点击截图1中工具栏上的【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，
+	//   使用截图2的方式」✓）。重放去**合并视图**那条工具条上点 ✓（双击 `diff/*.md` ✓）。
+	//   ⇒ 这里既不绑 `#replay` ✓、也不带 `replayJs()` ✓（✗ 别留死代码 ✗）。
 	'  document.addEventListener("keydown", function(e){',
 	'    if (e.key === "ArrowRight" || e.key === "PageDown") go(idx + 1);',
 	'    else if (e.key === "ArrowLeft" || e.key === "PageUp") go(idx - 1);',
@@ -567,9 +575,8 @@ function slideshowHtml(webview, nonce, n) {
 <div class="top">
   <button id="prev">⟨ 上一条</button><button id="next">下一条 ⟩</button>
   <button id="play">▶ 自动播放</button><span>每</span><input id="sec" value="3"><span>秒</span>
-  <button id="replay">▶ 重放动画</button>
   <span id="pos">共 ${n} 条</span>
-  <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点清单一条 高亮</span>
+  <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点 ①② 里任意一条 高亮</span>
 </div>
 <div class="wrap">
   <div class="pane left"><div class="art" id="art"></div></div>
@@ -595,6 +602,8 @@ async function cmdSlideshow() {
 	panel.webview.onDidReceiveMessage((msg) => {
 		// ★ 图里那两段脚本会回话 ✓（`window.__pdLog` ✓）：起播成没成、起了几个动画 ✓ ——
 		//   用户报「点了没反应」时，**先看这一行** ✓（✗ 别靠猜 ✗）。
+		// ★ 2026-10-08：幻灯片那条工具条上**已经没有**「▶ 重放动画」了 ✗（用户要求撤掉 ✓）
+		//   ⇒ 它不再发 `log` ✓；这一支**留着**也无害 ✓（哪天按钮回来了就直接能看日志 ✓）。
 		if (msg && msg.cmd === 'log') return void log('[webview] ' + msg.text);
 		if (!msg || (msg.cmd !== 'ready' && msg.cmd !== 'page')) return;
 		const i = msg.cmd === 'ready' ? 0 : ((msg.index % pages.length) + pages.length) % pages.length;

@@ -283,20 +283,25 @@ if (bbMds.length) {
 	console.log('⑪ 没有 bb 清单可验（先跑一次 --view bb）✓');
 }
 
-// ⑫ ★★ 「▶ 重放动画」必须在**两个界面**里都有 ✓（2026-10-08 加 ✓）——
-//   用户原话：「没有看到「▶ 重放动画」按钮」✓。两个根都在这儿守着 ✓：
-//     ① 合并视图的按钮在**工具条**里 ✓（有图时才有 ✓ —— 名单里那行字说的就是它 ✓）；
-//     ② 幻灯片那条工具条**也得有** ✓（`diff_revs.py` 打印的那句「合并视图/幻灯片另有按钮 ✓」
-//        只有在两处都真有时才成立 ✗）；
-//     ③ 工具条**钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗ —— 一滚就"看不到"✓）。
+// ⑫ ★★ 「▶ 重放动画」按钮的位置与字（2026-10-08 改过两次口径 ✓）——
+//     ① **合并视图**那条工具条上**要有** ✓（双击 `diff/*.md` = 这个界面 ✓）；
+//     ② **幻灯片那条工具条上要没有** ✗（用户 2026-10-08：「点击截图1中工具栏上的【重放动画】
+//        按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓ ⇒ 撤掉了 ✓，
+//        重放统一去合并视图点 ✓）；
+//     ③ 工具条**钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗ —— 一滚就"看不到"✓）；
+//     ④ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
+//        ⇒ `.right` 与 `h1/h2/h3` 都得是 **12px** ✓。
 const edBar = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
 const slBar = slideshowHtml({ cspSource: '' }, 'N', 1);
 const hasId = (s, id) => s.indexOf('id="' + id + '"') >= 0;
 const sticky = CSS.indexOf('position:sticky') >= 0;
-console.log('⑫ 重放按钮：合并视图 = %s（工具条钉顶 = %s）；幻灯片 = %s',
-	hasId(edBar, 'pd-replay'), sticky, hasId(slBar, 'replay'));
-if (!hasId(edBar, 'pd-replay') || !hasId(slBar, 'replay') || !sticky) {
-	fail('「▶ 重放动画」按钮不在（或工具条没钉顶）');
+const rightFs = /\.right \{[^}]*font-size:\s*12px/.test(CSS);
+const headFs = /h1,\s*h2,\s*h3\s*\{\s*font-size:\s*1em/.test(CSS);
+console.log('⑫ 按钮与字号：合并视图按钮 = %s；幻灯片按钮 = %s（应为 false ✗）；'
+	+ '工具条钉顶 = %s；右栏 12px = %s；标题 1em = %s',
+	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), sticky, rightFs, headFs);
+if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !sticky || !rightFs || !headFs) {
+	fail('「▶ 重放动画」按钮位置不对（或右栏字号没跟按钮一样大）');
 }
 
 // ⑬ ★★ 面包板的**跳线身份是"接的哪两个孔"** ✗ 不是导线名 ✗（2026-10-08 修 ✓）——
@@ -394,9 +399,8 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 	const n = (svg.match(/data-anim="/g) || []).length;
 	if (n !== kf) { mismatch++; console.log('   ✗ %s：data-anim %d 条 ≠ keyframes %d 条', f, n, kf); }
 }
-const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0
-	&& slBar.indexOf('getAttribute("data-anim")') >= 0;
-console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；两处脚本都认 data-anim = %s',
+const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
+console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；合并视图脚本认 data-anim = %s',
 	n16, noDur, inlineAnim, btn, mismatch, startCode);
 if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
