@@ -437,13 +437,24 @@ const oneImpl = pdReplayOf(edBar) !== '' && pdReplayOf(edBar) === pdReplayOf(slB
 // ★★ 回显**不能把按钮内容整体覆盖** ✗（2026-10-08 实测撞到 ✓）：幻灯片那个按钮里是
 //   "**画出来的图形** ＋ 文字" ✓ ⇒ 整体覆盖会把图形**冲掉** ✓（`.lbl` ✓ 就是为这个拆出来的 ✓）。
 //   ⇒ 判据：脚本里得**先找 `.lbl`、找不到才回落到按钮** ✓（合并视图那个没有 `.lbl` ✓）。
-const fbOk = /querySelector\("\.lbl"\) \|\| btn/.test(pdReplayOf(slBar))
-	&& /lbl\.textContent = "重放中/.test(pdReplayOf(slBar))
-	&& !/btn\.textContent\s*=\s*[^;]*重放中/.test(pdReplayOf(slBar));
+// ★★ 还要守**用户刚报的那个坑** ✗：「点击一次，就一直在重放中，不会停止了吗？」✓ ——
+//   连点两次复现了 ✓：原来每次点都 `t0 = 当前文字` ✗ ⇒ 播到一半再点，`t0` 抓到的已经是
+//   **「重放中…」** ✓ ⇒ 到点还原成"重放中…" ⇒ **永远卡住** ✗（实测等 9 秒还是它 ✓）。
+//   ⇒ 判据：原字**只记一次** ✓（`__pdT0` ✓、`== null` 才写 ✓）、计时器**先清再设** ✓（`clearTimeout` ✓）。
+const fbSrc = pdReplayOf(slBar);
+const fbOk = /querySelector\("\.lbl"\) \|\| btn/.test(fbSrc)
+	&& /lbl\.textContent = "重放中/.test(fbSrc)
+	&& !/btn\.textContent\s*=\s*[^;]*重放中/.test(fbSrc);
+const reLabelOk = /if \(btn\.__pdT0 == null\) btn\.__pdT0 = lbl\.textContent/.test(fbSrc)
+	&& /clearTimeout\(btn\.__pdTimer\)/.test(fbSrc)
+	&& /btn\.__pdTimer = setTimeout/.test(fbSrc);
 console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
 	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s；'
-	+ '回显只改文字（✗ 不冲掉图形） = %s',
-	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk);
+	+ '回显只改文字（✗ 不冲掉图形） = %s；**连点也不会卡在「重放中…」** = %s',
+	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk, reLabelOk);
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk || !reLabelOk) {
+	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
+}
 if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
@@ -549,13 +560,19 @@ const stepBox = /\.step \{([^}]*)\}/.exec(slHtml);
 const stepBefore = /\.step::before \{([^}]*)\}/.exec(slHtml);
 const stepAfter = /\.step::after \{([^}]*)\}/.exec(slHtml);
 const stepH = stepBox ? px(stepBox[1], /height:\s*([\d.]+)px/) : NaN;
-const bothPercent = !!stepBefore && !!stepAfter && /height:\s*100%/.test(stepBefore[1]) && /height:\s*100%/.test(stepAfter[1]);
+// ★★ 用户 2026-10-08 第二报 ✓：「**黑色竖线仍然长了一些**」✓ —— 去**数像素**（截图放大 + 逐列量覆盖 ✓）：
+//   竖线 **30** 个设备像素（两端满覆盖 ✓）、三角 **29** 个 ✓ —— ★ 三角**顶端那一行只有 0.12 覆盖** ✓：
+//   它的尖角就在 (0,0) ✓、斜边从角上起 ✓ ⇒ 抗锯齿把最上面一行啃掉了 ✓（高度写 12px 也没用 ✓）。
+//   ⇒ **竖线主动收半像素** ✓（`calc(100% - 0.5px)` ✓）⇒ 量出来两边都是 **29** 行 ✓、差 **0** ✓。
+//   ★ 所以这条判据是"**竖线故意比容器矮一点点**" ✓ —— ✗ 不是"两块都 100%" ✗（那正是"竖线更长"那版 ✓）。
+const barShaved = !!stepBefore && /height:\s*calc\(100%\s*-\s*0?\.5px\)/.test(stepBefore[1]);
+const triFull = !!stepAfter && /height:\s*100%/.test(stepAfter[1]);
 const stepCentered = !!stepBox && /align-items:\s*center/.test(stepBox[1]);
 const barIsBorder = !!stepBefore && /border-left:\s*[\d.]+px solid currentColor/.test(stepBefore[1]);
 const triIsClip = !!stepAfter && /clip-path:\s*polygon\(/.test(stepAfter[1]);
-const heightsEqual = stepH > 0 && bothPercent;                     // ★ 同源 ⇒ 一定相等 ✓
-const stepSample = `容器高 ${stepH}px；竖线 height:100% = ${bothPercent}；竖线是 border-left = ${barIsBorder}；`
-	+ `三角 clip-path = ${triIsClip}；居中 = ${stepCentered}`;
+const heightsEqual = stepH > 0 && barShaved && triFull;            // ★ 量出来的结果就是"看起来等高" ✓
+const stepSample = `容器高 ${stepH}px；竖线收半像素 = ${barShaved}；三角 height:100% = ${triFull}；`
+	+ `竖线是 border-left = ${barIsBorder}；三角 clip-path = ${triIsClip}；居中 = ${stepCentered}`;
 // ★ 两处记号**仍然不同** ✓（用户：「两者**完全不同**啊！」✓）——
 //   合并视图 = **▶ 字符**（重放 ✓）；幻灯片 = **CSS 画的 `.step`**（步进 ✓）。
 //   ★ 判据必须**只看那个按钮自己** ✗（✗ 别看整个页面 ✗ —— 实测栽过 ✓：

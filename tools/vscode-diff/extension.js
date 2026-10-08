@@ -369,11 +369,19 @@ function replayJs() {
 		//   · 幻灯片那个按钮里是"**画出来的图形** ＋ 文字" ✓（`.step` ＋ `.lbl` ✓）⇒
 		//     整体覆盖会把图形**冲掉** ✓（回来的时候也只剩文字 ✗）；
 		//   · 合并视图那个按钮**没有** `.lbl` ✓ ⇒ 回落到按钮自己 ✓（它就是一串文字 ✓）。
-		//   ⇒ 这一份脚本两个界面通吃 ✓，且两个按钮各自的记号都保得住 ✓。
+		// ★★ 原字**只记一次** ✓，计时器**先清再设** ✓（2026-10-08 用户报「点击一次，就一直在重放中，
+		//   不会停止了吗？」✓ ⇒ 去连点两次复现了 ✓）：原来是每次点都 `t0 = 当前文字` ✗ ⇒
+		//   播到一半再点一下，`t0` 抓到的已经是 **「重放中…」** ✓ ⇒ 到点还原成"重放中…" ✓
+		//   ⇒ **永远卡在「重放中…」** ✗（实测点两次、再等 9 秒还是「重放中…」✓）。
+		//   ⇒ 如今 `__pdT0` 存**第一次**的原字 ✓、`__pdTimer` 每次先 clearTimeout ✓
+		//   ⇒ 点几次都能还原 ✓。
 		'      var lbl = btn.querySelector(".lbl") || btn;',
-		'      var t0 = lbl.textContent;',
+		'      if (btn.__pdT0 == null) btn.__pdT0 = lbl.textContent;',
 		'      lbl.textContent = "重放中…";',
-		'      setTimeout(function(){ lbl.textContent = t0; }, Number(dur) * 1000 + 200);',
+		'      clearTimeout(btn.__pdTimer);',
+		'      btn.__pdTimer = setTimeout(function(){',
+		'        lbl.textContent = btn.__pdT0; btn.__pdT0 = null;',
+		'      }, Number(dur) * 1000 + 200);',
 		'    }',
 		'  }',
 		// ★ 绑事件也放这儿 ✓ ⇒ 两个界面都自动有 ✓（✗ 别各绑一遍 ✗）
@@ -709,16 +717,19 @@ function slideshowHtml(webview, nonce, n) {
   /* ★★ 2026-10-08 用户定 ✓：「**从 css 画**，border-left + 三角，**border-left 与三角要等高**」✓
      ⇒ 幻灯片的「播放差异」不用字符 ✓，**画出来** ✓（✗ 字符要么没有这个形状 ✗ ——
         Unicode 只有 ⏮/⏭ 那种**双三角** ✓；要么各机器字体不一样 ✗）。
-     ★★ 等高怎么**保住** ✓（这一版是**量过才改成这样**的 ✓）：两块都用 height:100% ✓、
-        挂在**同一个** height:12px 的盒子上 ✓ ⇒ **结构上就是同一个高度** ✓。
-        ✗ 第一版三角是用 border-top/bottom 拼的 ✗ ⇒ 实测 11.80px，而竖线 11.9988px ✓
-        —— **边框宽度会被吸附到设备像素** ✓（浏览器算 border 时四舍五入 ✓），
-        高度则不会 ✓ ⇒ 两块差 0.2px ✓（肉眼看不出来 ✓，但"等高"这条就**不成立**了 ✗）。
-      ★ 三角用 clip-path 画 ✓（不是边框拼的 ✓）⇒ 它就是个 12px 高的实心块被切出三角形 ✓，
-        跟竖线**同高同源** ✓。颜色都用 currentColor ✓ ⇒ 深浅跟着按钮自己的 color 走 ✓。
-     ★ 单测第 ⑱ 项会把这几条抠出来对 ✓（容器高度 ＋ 两块都是 100% ＋ 竖线有 border-left ✓）。 */
+     ★★ 等高怎么保住的 ✓（**每一步都量过** ✓）：
+       · 两块都 height:100% ✓、挂在**同一个** height:12px 的盒子上 ✓ ⇒ **结构上等高** ✓；
+       · 但用户 2026-10-08 又报「**黑色竖线仍然长了一些**」✓ ⇒ 去**数像素**（截图放大 + 逐列量覆盖 ✓）：
+         竖线 **30** 个设备像素（两端都是满覆盖 ✓）、三角 **29** 个 ✓ ——
+         ★ 三角顶端那一行的覆盖只有 **0.12** ✓：它那个尖角在 (0,0)，**笔画的斜边从角上起** ✓
+         ⇒ 抗锯齿把最上面一行啃掉了 ✓（✗ 高度是 12px 也没用 ✗，**画出来**就是少一行 ✓）。
+       · ⇒ 竖线**主动收半像素** ✓（height 写成 calc(100% - 0.5px) ✓）⇒ 它两端各收 0.25px ✓、
+         量出来正好也是 **29** 行 ✓ ⇒ **两边看起来一样高** ✓（✗ 别再改回 100% ✗，一改就又长出来 ✓）。
+     ★ 三角用 clip-path 画 ✓（不是边框拼的 ✓）；✗ 边框拼的那版量过是 11.799 vs 11.998 ✗
+       —— 边框宽度会被吸附到设备像素 ✓，差 0.2px ✓，也不等 ✓。
+     ★ 颜色都用 currentColor ✓ ⇒ 深浅跟着按钮自己的 color 走 ✓。 */
   .step { display:inline-flex; align-items:center; gap:2px; height:12px; }
-  .step::before { content:""; width:0; height:100%; border-left:2px solid currentColor; }
+  .step::before { content:""; width:0; height:calc(100% - 0.5px); border-left:2px solid currentColor; }
   .step::after { content:""; width:9px; height:100%; background:currentColor;
                  clip-path: polygon(0 0, 100% 50%, 0 100%); }
 </style></head><body>
