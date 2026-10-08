@@ -434,13 +434,15 @@ const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
 const pdReplayOf = (s) => fnSrc(s, 'pdReplay');
 const noOldButton = slBar.indexOf('id="replay"') < 0;
 const oneImpl = pdReplayOf(edBar) !== '' && pdReplayOf(edBar) === pdReplayOf(slBar);
-// ★★ 回显的符号**不能写死** ✗（2026-10-08 实测撞到 ✓）：两个按钮符号不同 ✓
-//   ⇒ 写死 `"▶ 重放中…"` 会让幻灯片那个**闪一下 ▶** ✓ ⇒ 符号等于白换 ✓。
-//   ⇒ 判据：那段脚本里得**按按钮自己的首字符**拼回显 ✓（`charAt(0)` ✓）、**且不含写死的 ▶** ✗。
-const fbOk = /charAt\(0\) \+ " 重放中/.test(pdReplayOf(slBar)) && !/\u25B6 重放中/.test(pdReplayOf(slBar));
+// ★★ 回显**不能把按钮内容整体覆盖** ✗（2026-10-08 实测撞到 ✓）：幻灯片那个按钮里是
+//   "**画出来的图形** ＋ 文字" ✓ ⇒ 整体覆盖会把图形**冲掉** ✓（`.lbl` ✓ 就是为这个拆出来的 ✓）。
+//   ⇒ 判据：脚本里得**先找 `.lbl`、找不到才回落到按钮** ✓（合并视图那个没有 `.lbl` ✓）。
+const fbOk = /querySelector\("\.lbl"\) \|\| btn/.test(pdReplayOf(slBar))
+	&& /lbl\.textContent = "重放中/.test(pdReplayOf(slBar))
+	&& !/btn\.textContent\s*=\s*[^;]*重放中/.test(pdReplayOf(slBar));
 console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
 	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s；'
-	+ '回显符号跟按钮走（✗ 不写死 ▶） = %s',
+	+ '回显只改文字（✗ 不冲掉图形） = %s',
 	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk);
 if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
@@ -532,20 +534,38 @@ const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
 //     ★ 这条单测因此**盯住"两边符号不一样"** ✓：合并视图 = ▶（重放 ✓）、幻灯片 = ⏭（步进 ✓）
 //     （✗ 不许又变回同一个符号 ✗ —— 那会把两个不同的动作看成一个 ✓）。
 const slRightPane = (/<div class="pane right">([\s\S]*?)<script/.exec(slHtml) || [, ''])[1];
-// ★ 「▶ 播放差异」的 ▶ 要换成**步进播放**含义的符号 ✓（用户 2026-10-08 ✓）⇒ **⏭**（U+23ED ✓）。
+// ★★ 2026-10-08 用户定 ✓：幻灯片那个按钮的记号**用 CSS 画** ✓（「**从 css 画**，border-left + 三角，
+//   **border-left 与三角要等高**」✓）—— ✗ 不是字符 ✗（Unicode 里"竖线 ＋ 单个右三角"没有整字 ✓）。
+//   ⇒ 守四件事 ✓：① 按钮里有 `.step` ＋ `.lbl` ✓（文字单独一块 ✓，回显才不会把图形冲掉 ✓）；
+//   ② ⚠ **等高**：容器一个 height ✓ ＋ 两块都 height:100% ✓ ⇒ **结构上就是同一个高度** ✓
+//      （✗ 第一版三角用 border 拼 ✗ ⇒ 实测 11.80 vs 11.9988 ✓：**边框宽度会被吸附到设备像素** ✓，
+//       高度不会 ✓ ⇒ "等高"当场不成立 ✗ —— 所以不能靠"数相加 == 容器高" ✗，得靠**同源** ✓）；
+//   ③ 竖线**就是 border-left** ✓（用户原话 ✓）；④ 三角是 clip-path 切出来的 ✓、颜色 currentColor ✓。
 const replayInRight = slRightPane.indexOf('id="pd-replay"') >= 0
 	&& slRightPane.indexOf('id="pd-replay"') < slRightPane.indexOf('id="list"')
-	&& /<div class="bar"><button id="pd-replay">\u23ED 播放差异<\/button><\/div>/.test(slRightPane);
-// ★★ **两处的符号必须不一样** ✓（用户：「两者**完全不同**啊！」✓）——
-//   合并视图 = ▶（**重放** ✓：那份 md 的动画从头再放一遍 ✓）；
-//   幻灯片 = ⏭（**步进** ✓：在本页里一处一处推进 ✓）。
-//   ✗ 判据不是"有没有那个符号" ✗（两边都一样也能"有" ✓）⇒ 得**真把两边抠出来比** ✓。
-const glyphOf = (html) => {
-	const m = /<button id="pd-replay">(.{1,2}?)\s*[\u4e00-\u9fa5]{2,}/.exec(html);
-	return m ? m[1] : '';
-};
-const gEd = glyphOf(edBar), gSl = glyphOf(slHtml);
-const glyphsDiffer = gEd === '\u25B6' && gSl === '\u23ED';
+	&& /<div class="bar"><button id="pd-replay">\s*<span class="step" aria-hidden="true"><\/span>\s*<span class="lbl">播放差异<\/span><\/button><\/div>/.test(slRightPane);
+const px = (css, re) => { const m = re.exec(css); return m ? Number(m[1]) : NaN; };
+const stepBox = /\.step \{([^}]*)\}/.exec(slHtml);
+const stepBefore = /\.step::before \{([^}]*)\}/.exec(slHtml);
+const stepAfter = /\.step::after \{([^}]*)\}/.exec(slHtml);
+const stepH = stepBox ? px(stepBox[1], /height:\s*([\d.]+)px/) : NaN;
+const bothPercent = !!stepBefore && !!stepAfter && /height:\s*100%/.test(stepBefore[1]) && /height:\s*100%/.test(stepAfter[1]);
+const stepCentered = !!stepBox && /align-items:\s*center/.test(stepBox[1]);
+const barIsBorder = !!stepBefore && /border-left:\s*[\d.]+px solid currentColor/.test(stepBefore[1]);
+const triIsClip = !!stepAfter && /clip-path:\s*polygon\(/.test(stepAfter[1]);
+const heightsEqual = stepH > 0 && bothPercent;                     // ★ 同源 ⇒ 一定相等 ✓
+const stepSample = `容器高 ${stepH}px；竖线 height:100% = ${bothPercent}；竖线是 border-left = ${barIsBorder}；`
+	+ `三角 clip-path = ${triIsClip}；居中 = ${stepCentered}`;
+// ★ 两处记号**仍然不同** ✓（用户：「两者**完全不同**啊！」✓）——
+//   合并视图 = **▶ 字符**（重放 ✓）；幻灯片 = **CSS 画的 `.step`**（步进 ✓）。
+//   ★ 判据必须**只看那个按钮自己** ✗（✗ 别看整个页面 ✗ —— 实测栽过 ✓：
+//     `slHtml` 里本来就有别的 ▶ ✓（那是"自动播放"按钮 ✓）、⏭ 也只是**注释里提过** ✓
+//     ⇒ 全页搜字符必然假失败 ✓）。
+const btnOf = (s) => (/<button id="pd-replay">([\s\S]*?)<\/button>/.exec(s) || [, ''])[1].trim();
+const edBtn = btnOf(edBar), slBtn = btnOf(slHtml);
+const glyphsDiffer = edBtn === '\u25B6 重放动画'
+	&& /class="step"/.test(slBtn) && /class="lbl">播放差异</.test(slBtn)
+	&& !/[\u25B6\u23ED\u23EE\u21E5\u23F5]/.test(slBtn);     // ★ 幻灯片那个按钮里**不许有字符记号** ✓
 // ★★ 「文件名不加扩展名吗？」（2026-10-08 用户问 ✓）—— ★ 这条**真读一页** ✓
 //   （✗ 不是"源码里有没有 basename"就算过 ✗）：同名的 `.md` / `.svg` / `.png` 有三个 ✓
 //   ⇒ 名字里**必须**带 `.<ext>` ✓，否则分不出这一页指的是哪个文件 ✗。
@@ -625,12 +645,14 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
 console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
 	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）；'
-	+ '右栏清单上方有【播放差异】 = %s；两个播放按钮符号**不同** = %s（合并视图 %s / 幻灯片 %s ✓）',
-	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight, glyphsDiffer, gEd, gSl);
+	+ '右栏清单上方有【播放差异】 = %s；两处记号**不同** = %s'
+	+ '（合并视图 ›▶ 重放‹ 用字符 ✓ / 幻灯片 ›步进‹ 用 CSS 画 ✓）；'
+	+ '**图形与竖线等高** = %s（%s）',
+	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight, glyphsDiffer, heightsEqual, stepSample);
 if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
 	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
 	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks || !titleOk
-	|| !replayInRight || !glyphsDiffer) {
+	|| !replayInRight || !glyphsDiffer || !heightsEqual || !barIsBorder || !triIsClip || !stepCentered) {
 	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
 		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）'
 		+ '，或文件名没带扩展名（同名的 .md/.svg/.png 有三个 ⇒ 分不出是哪个）'

@@ -365,12 +365,15 @@ function replayJs() {
 		'    }',
 		'    var btn = document.getElementById("pd-replay") || document.getElementById("replay");',
 		'    if (btn && n) {',
-		'      var t0 = btn.textContent;',
-		// ★★ 回显的**符号跟着按钮自己走** ✗ 别写死 ▶ ✗ —— 两个按钮的符号**本来就不同** ✓
-		//   （合并视图 ▶ 重放 ✓ / 幻灯片 ⏭ 步进 ✓，见用户 2026-10-08 那条 ✓）⇒
-		//   写死会让幻灯片那个**闪一下 ▶** ✓（实测撞到过 ✓），符号就白换了 ✗。
-		'      btn.textContent = t0.charAt(0) + " 重放中…";',
-		'      setTimeout(function(){ btn.textContent = t0; }, Number(dur) * 1000 + 200);',
+		// ★★ 回显**只改文字那一块** ✗ 别整个 textContent 覆盖 ✗（2026-10-08 实测撞到过 ✓）：
+		//   · 幻灯片那个按钮里是"**画出来的图形** ＋ 文字" ✓（`.step` ＋ `.lbl` ✓）⇒
+		//     整体覆盖会把图形**冲掉** ✓（回来的时候也只剩文字 ✗）；
+		//   · 合并视图那个按钮**没有** `.lbl` ✓ ⇒ 回落到按钮自己 ✓（它就是一串文字 ✓）。
+		//   ⇒ 这一份脚本两个界面通吃 ✓，且两个按钮各自的记号都保得住 ✓。
+		'      var lbl = btn.querySelector(".lbl") || btn;',
+		'      var t0 = lbl.textContent;',
+		'      lbl.textContent = "重放中…";',
+		'      setTimeout(function(){ lbl.textContent = t0; }, Number(dur) * 1000 + 200);',
 		'    }',
 		'  }',
 		// ★ 绑事件也放这儿 ✓ ⇒ 两个界面都自动有 ✓（✗ 别各绑一遍 ✗）
@@ -432,8 +435,12 @@ const CSS = `
   .bar { font-size:12px; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
          position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
   .bar .dim { opacity:.75; }
+  /* ★★ 2026-10-08：按钮**内容与文字都要竖向居中** ✓ —— 幻灯片那个按钮里是"画出来的图形 ＋ 文字" ✓
+     （.step ＋ .lbl ✓），✗ 不是一整串文字 ✗ ⇒ 得让这两块自己对齐 ✓。
+     ★ 对合并视图那个按钮**无害** ✓（它只有一个文本节点 ⇒ 匿名 flex item ✓，居中照旧 ✓）。 */
   .bar button, .under button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
-                border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
+                border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px;
+                display:inline-flex; align-items:center; gap:4px; vertical-align:middle; }
   /* ★ 标题一律**跟正文同号** ✓（1em = 12px ✓）⇒ 只剩**粗体**做层级 ✓（用户要"一样大"✓） */
   h1, h2, h3 { font-size:1em; }
   h1 { margin:.2em 0 .4em; } h2 { margin-top:1.1em; } h3 { margin-top:1em; }
@@ -699,6 +706,21 @@ function slideshowHtml(webview, nonce, n) {
      flex:1 1 0 ⇒ 它吃掉**左列以外**的宽 ✓，所以"右列"是条真的列 ✓（✗ 不是跟在文件名后面的一截 ✗）；
      仍**允许折行** ✓（用户 2026-10-08 上一轮明说「这些是可以两行的」✓ —— 窄窗口下 2~3 行 ✓）。 */
   .tips { flex:1 1 0; min-width:0; opacity:.6; line-height:1.45; white-space:normal; }
+  /* ★★ 2026-10-08 用户定 ✓：「**从 css 画**，border-left + 三角，**border-left 与三角要等高**」✓
+     ⇒ 幻灯片的「播放差异」不用字符 ✓，**画出来** ✓（✗ 字符要么没有这个形状 ✗ ——
+        Unicode 只有 ⏮/⏭ 那种**双三角** ✓；要么各机器字体不一样 ✗）。
+     ★★ 等高怎么**保住** ✓（这一版是**量过才改成这样**的 ✓）：两块都用 height:100% ✓、
+        挂在**同一个** height:12px 的盒子上 ✓ ⇒ **结构上就是同一个高度** ✓。
+        ✗ 第一版三角是用 border-top/bottom 拼的 ✗ ⇒ 实测 11.80px，而竖线 11.9988px ✓
+        —— **边框宽度会被吸附到设备像素** ✓（浏览器算 border 时四舍五入 ✓），
+        高度则不会 ✓ ⇒ 两块差 0.2px ✓（肉眼看不出来 ✓，但"等高"这条就**不成立**了 ✗）。
+      ★ 三角用 clip-path 画 ✓（不是边框拼的 ✓）⇒ 它就是个 12px 高的实心块被切出三角形 ✓，
+        跟竖线**同高同源** ✓。颜色都用 currentColor ✓ ⇒ 深浅跟着按钮自己的 color 走 ✓。
+     ★ 单测第 ⑱ 项会把这几条抠出来对 ✓（容器高度 ＋ 两块都是 100% ＋ 竖线有 border-left ✓）。 */
+  .step { display:inline-flex; align-items:center; gap:2px; height:12px; }
+  .step::before { content:""; width:0; height:100%; border-left:2px solid currentColor; }
+  .step::after { content:""; width:9px; height:100%; background:currentColor;
+                 clip-path: polygon(0 0, 100% 50%, 0 100%); }
 </style></head><body>
 <div class="head">
   <div class="hcol">
@@ -720,11 +742,13 @@ function slideshowHtml(webview, nonce, n) {
          ★ 为什么按钮进 .bar 而提示留在 .head ✓：右栏没有"文件名/翻页"那些东西 ✓，
          那条 bar 本来就是右栏的**顶栏** ✓ ⇒ 按钮放这儿**贴着清单** ✓（正是用户指的位置 ✓）。
          ★★ 2026-10-08 用户又指一处 ✗：「两者**完全不同**啊！「▶ 重放动画」是从一个 md，到另一个 md。
-         「▶ 播放差异」是**在一个 md 内，从 A 播放到 B**。⇒ 「▶ 播放差异」的 **▶ 应该换成步进播放含义的字符**」✓
-         ⇒ 这里的符号换成 **⏭**（U+23ED 步进 / 跳到下一处 ✓）✓ ——
-         ★ 两个按钮**符号必须不一样** ✓（合并视图还是 ▶ ✓：那是"**重放**"✓；这边是"**步进**"✓），
-         单测第 ⑱ 项会盯住"两边符号不同"这一条 ✓。 -->
-    <div class="bar"><button id="pd-replay">⏭ 播放差异</button></div>
+         「▶ 播放差异」是**在一个 md 内，从 A 播放到 B**。⇒ 「▶ 播放差异」的 ▶ 应该换成步进播放含义的字符」✓
+         ⇒ 最后定的是 **用 CSS 画** ✓（用户：「**从 css 画**，border-left + 三角，
+         **border-left 与三角要等高**」✓ —— 见 .step ✓）✗ 不用字符 ✗：
+         Unicode 里"竖线 ＋ 单个右三角"**没有整字** ✓（只有 ⏮/⏭ 那种**双三角** ✓，而且各机器字体不一 ✓）。
+         ★ 图形 = .step ✓ 那个类 ✓（竖线用 border-left ✓、三角用 border 画 ✓，两块**等高 12px** ✓）；
+         文字单独放 .lbl ✓ ⇒ 起播回显**只改它** ✓（✗ 别整个 textContent 覆盖 ✗，那会把图形冲掉 ✓）。 -->
+    <div class="bar"><button id="pd-replay"><span class="step" aria-hidden="true"></span><span class="lbl">播放差异</span></button></div>
     <div id="list"></div>
   </div>
 </div>
