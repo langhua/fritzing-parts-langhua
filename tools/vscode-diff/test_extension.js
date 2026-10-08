@@ -490,6 +490,19 @@ const hintInRight = headBlock.indexOf('翻页') > headBlock.indexOf('class="hcol
 	&& hcolBlock.indexOf('翻页') < 0 && /\.tips \{[^}]*white-space:normal/.test(slHtml);
 const numbersOnly = /<input id="sec" type="number" min="3" max="99"/.test(slHtml);
 const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
+// ★★ 2026-10-08 用户报「**顶部高度不够**」✓ —— 截图上那个「每 N 秒」输入框**下边框没了** ✓、
+//   文件名只剩半截 ✓。根因**不是**"头写矮了" ✗，是**头被压缩了** ✗：
+//   `.head` 是 body 那个**竖排 flex** 的孩子 ✓ ⇒ 默认 `flex-shrink:1` ✓；
+//   而它为了"横向不撑破"带了 `overflow:hidden` ✓ ⇒ **按 flex 规范，overflow 不是 visible 的孩子
+//   自动最小尺寸算 0** ✗ ⇒ 内容比一屏高时它**跟 .wrap 一起被压** ✓（实测：需要 41px 的头被压到
+//   16~29px ✓、`scrollHeight 41 > clientHeight 29` ✓）⇒ `align-items:center` 再把 40px 的左列
+//   往中间一挤 ✓ ⇒ **上下一起切** ✗ —— 看着就像"高度不够" ✓。
+//   ⇒ 头**不许缩** ✓（`flex:0 0 auto` ✓）；★ 这条量的是**病因**本身 ✓（✗ 不是"有没有 52px" ✗
+//   —— 那得跑浏览器 ✓）：只要 `.head` 又是 `overflow:hidden` 又**没**钉住 flex-shrink ⇒ 就会复发 ✓。
+const headCss = (/\.head \{([^}]*)\}/.exec(slHtml) || [, ''])[1];
+const headNoShrink = /flex:0 0 auto/.test(headCss) || /flex-shrink:\s*0/.test(headCss);
+const headHazard = /overflow:hidden/.test(headCss) && !headNoShrink;
+const wrapShrinks = /\.wrap \{[^}]*flex:1 1 auto/.test(slHtml) && /\.wrap \{[^}]*min-height:0/.test(slHtml);
 // ★★ 文件名**最多 40 个字符** ✓ —— ★ 这里**把注入脚本里那个 clip() 抠出来真跑一遍** ✓
 //   （✗ 不是"源码里有 40 这串字"就算过 ✗，也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现 ✓）。
 const clipSrc = /function clip\(s\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
@@ -534,11 +547,13 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	+ '按钮行里 prev/play/next/秒数/页码 齐全 = %s；提示在右列且可折行 = %s；'
 	+ '每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；「2 / 3」不折行 = %s',
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
+console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
+	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）', !headHazard, wrapShrinks);
 if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
 	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
-	|| !numbersOnly || !secsOk || !posNowrap) {
+	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks) {
 	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
-		+ '，或按钮/秒数/文件名那几条没守住');
+		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：

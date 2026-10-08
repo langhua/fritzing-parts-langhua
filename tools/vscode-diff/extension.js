@@ -621,7 +621,15 @@ function slideshowHtml(webview, nonce, n) {
           跟左列**竖向居中**对齐 ✓，不贴着第 1 行 ✗）。
      ★ 还是那个**竖排横宽**的坑 ✗：左列是列向 flex ✓，它孩子里最宽的是第 1 行 ✓
      ⇒ 给 .hcol 和 .name 都留 min-width:0 ✓，窄窗口时文件名才截得到 ✓（见下 ✓）。 */
-  .head { display:flex; gap:12px; align-items:center; padding:6px 10px;
+  /* ★★ 2026-10-08 用户报「顶部高度不够」✓（截图里那个「每 N 秒」输入框的**下边框没了** ✓、
+     文件名那行只剩半截 ✓）—— 根因 ✗：.head 是 **body 那个竖排 flex 的孩子** ✓，
+     默认 flex-shrink:1 ✓；而它又带了 overflow:hidden ✓ ⇒ 按 flex 规范，
+     **overflow 不是 visible 的孩子，自动最小尺寸算 0** ✗ ⇒ 内容比一屏高时，
+     它会跟 .wrap 一起**被压缩** ✓ —— 实测：需要 41px 的头被压到 **16~29px** ✓、
+     scrollHeight 41 > clientHeight 29 ✓ ⇒ 于是 align-items:center 把左列（40px）
+     往中间一挤 ✓ ⇒ **上下一起切** ✓（下边框 + 文件名行就这么没的 ✓）。
+     ⇒ 头**不许缩** ✓：flex:0 0 auto ✓（要缩也只能缩 .wrap ✓，它本来就有 min-height:0 ✓）。 */
+  .head { flex:0 0 auto; display:flex; gap:12px; align-items:center; padding:6px 10px;
           border-bottom:1px solid var(--vscode-panel-border); font-size:12px;
           min-width:0; overflow:hidden; }
   .hcol { display:flex; flex-direction:column; gap:3px; min-width:0; flex:0 1 auto; }
