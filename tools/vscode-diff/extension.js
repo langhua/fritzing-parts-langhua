@@ -517,15 +517,29 @@ const SLIDE_JS = [
 	'  var api = acquireVsCodeApi();',
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
-	// ★★ 2026-10-08 用户定 ✓：「文件名字太长了吧？最长 60 个字符吧，再长就省略」✓
-	//   ⇒ **显示**最多 60 个字符（把省略号也算进去 ✓），超了用 `…` 收尾 ✓。
-	//   ★ 为什么不能只靠 CSS ✗：`text-overflow:ellipsis` 是**按宽度**截的 ✓ ——
-	//     窗口宽时 100 个字符也照样全显示 ✗，压不住"最长 60 个"这条 ✓（两条一起用 ✓：
-	//     这里限**字数** ✓，CSS 限**宽度** ✓）。`title` 仍挂全名 ✓（悬停看全 ✓）。
+	// ★★ 2026-10-08 用户定 ✓：「最长 40 个字符吧，再长就省略」✓
+	//   ⇒ **显示**最多 40 个字符（把省略号也算进去 ✓），超了用省略号收尾 ✓。
+	//   ★ 为什么不能只靠 CSS ✗：text-overflow:ellipsis 是**按宽度**截的 ✓ ——
+	//     窗口宽时 100 个字符也照样全显示 ✗，压不住"最长 40 个"这条 ✓（两条一起用 ✓：
+	//     这里限**字数** ✓，CSS 限**宽度** ✓）。title 仍挂全名 ✓（悬停看全 ✓）。
 	'  function clip(s){',
 	'    var a = Array.prototype.slice.call(String(s));',   // 按**码位**数 ✓（✗ 别数 UTF-16 单元 ✗）
-	'    return a.length > 60 ? a.slice(0, 59).join("") + "\\u2026" : String(s);',
+	'    return a.length > 40 ? a.slice(0, 39).join("") + "\\u2026" : String(s);',
 	'  }',
+	// ★★ 2026-10-08 用户定 ✓：「每 3 秒那个输入框……限制为只能输入 3-99 的数字」✓
+	//   ⇒ `min`/`max` **管得住箭头** ✗ 管不住**手打**的 0 或 500 ✗ ⇒ 起播前统一钳 ✓，
+	//     并**回写**输入框 ✓（人一眼就看见被纠成了几 ✓）。四舍五入到整数 ✓（3.7 ⇒ 4 ✓）。
+	//   ★ ✗ 别绑在 input 事件上 ✗（那样"先打 1"的瞬间就被拧成 3 ✓ ⇒ 12 打不出来 ✗），
+	//     绑 change / blur ✓。
+	'  function secs(){',
+	'    var el = $("sec"), v = Math.round(Number(el.value));',
+	'    if (!isFinite(v) || !v) v = 3;',
+	'    v = Math.min(99, Math.max(3, v));',
+	'    el.value = v;',
+	'    return v;',
+	'  }',
+	'  $("sec").addEventListener("change", secs);',
+	'  $("sec").addEventListener("blur", secs);',
 	'  function bindHighlight(){',
 	'    var SVG = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
 	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
@@ -545,7 +559,7 @@ const SLIDE_JS = [
 		+ '（这一条没找到 svg 图）</div>";',
 	'    $("list").innerHTML = d.html;',
 	'    $("pos").textContent = (idx + 1) + " / " + total;',
-	// ★ 文件名**单独一行** ✓（`.name` ✓）：这里**限 60 个字符** ✓（超了用 `…` 收尾 ✓），
+	// ★ 文件名**单独一行** ✓（`.name` ✓）：这里**限 40 个字符** ✓（超了用省略号收尾 ✓），
 	//   CSS 再管**宽度**截断 ✓；`title` 给**全名** ✓（悬停就看得见 ✓）。
 	'    $("name").textContent = clip(d.title);',
 	'    $("name").title = d.title;',
@@ -569,7 +583,7 @@ const SLIDE_JS = [
 	'  }',
 	'  $("play").addEventListener("click", function(){',
 	'    if (timer) { clearInterval(timer); timer = null; setPlay(false); return; }',
-	'    var sec = Math.max(1, Number($("sec").value) || 3);',
+	'    var sec = secs();',                        // ★ 3..99 ✓（原来是 Math.max(1, …) ✗ ⇒ 0.5 秒都能进 ✗）
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
 	'    setPlay(true);',
 	'  });',
@@ -601,38 +615,52 @@ function slideshowHtml(webview, nonce, n) {
   .wrap { flex:1 1 auto; height:auto; min-height:0; }
   .top { display:flex; gap:8px; align-items:center; padding:6px 10px;
          border-bottom:1px solid var(--vscode-panel-border); font-size:12px;
-         /* ★★ 2026-10-08 修 ✗（实测踩到 ✓）：.name 那一行要能**截断** ✓，但它跟 .top
+         /* ★★ 2026-10-08 修 ✗（实测踩到 ✓）：.meta 那一行要能**截断** ✓，但它跟 .top
             同在一个**竖排 flex** 里 ✓ ⇒ 一行的"横宽" = **最宽那个孩子** ✗ ⇒ 工具条一宽，
             整个 body 跟着宽 ✓ ⇒ .name 也跟着宽 ⇒ **永远截不到** ✗（实测 420px 窗口下
             scrollWidth - clientWidth = 0 ✓）。
-            ⇒ 给工具条 min-width:0 ＋ overflow:hidden ✓ ⇒ 它不再撑宽这一行 ✓，
-            并把那句长提示改成**可缩**（min-width:0 ＋ 省略号 ✓）✓。 */
+            ⇒ 给工具条 min-width:0 ＋ overflow:hidden ✓ ⇒ 它不再撑宽这一行 ✓。 */
          min-width:0; overflow:hidden; }
-  .top > span:last-child { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .top button { background: var(--vscode-button-background); color: var(--vscode-button-foreground);
                 border:0; padding:3px 10px; border-radius:3px; cursor:pointer;
                 /* ★★ 2026-10-08 用户定 ✗：按钮上只剩**一个符号**（← ▶ → ✓），
                    提示走 title 属性 ✓ ⇒ 三个按钮要**一样宽** ✓ 才不看着一高一低 ✗。
                    ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当场踩过 ✓）。 */
                 min-width:2.2em; text-align:center; }
-  .top input { width:3.2em; background: var(--vscode-input-background);
+  /* ★★ 2026-10-08 用户定 ✓：「每 3 秒那个输入框太长了，应限制为只能输入 3-99 的数字」✓
+     ⇒ ① type=number ＋ min=3 ＋ max=99（语义与校验 ✓）；
+       ② 去掉那两个上下箭头 ✗（Chromium 的箭头**占在框里面** ✓ ⇒ 看着又长又挤 ✓），
+          宽度收到 2.4em ＋ 居中 ✓（实测 47px ⇒ 35px ✓；两位数够用 ✓，✗ 别贪大 ✗）；
+       ③ 光靠属性不够 ✗（手打 0 / 500 照样进得去 ✓）⇒ 脚本里 secs() **回写** 3..99 ✓（见 SLIDE_JS ✓）。 */
+  .top input { width:2.4em; text-align:center; padding:1px 2px;
+               -webkit-appearance:none; appearance:none;
+               background: var(--vscode-input-background);
                color: var(--vscode-input-foreground); border:1px solid var(--vscode-input-border); }
-  #pos { opacity:.85; }
+  /* ★★ 2026-10-08 用户定 ✓：「2 / 3 这个地方不能换行，必须在同一行」✓
+     ⇒ 它是 flex 里可缩的孩子 ✓ ⇒ 窄窗口时被挤成**一列一个字**（实测 520px 窗口下 16×27 ✓ 两行 ✗）
+     ⇒ white-space:nowrap ✓（✗ 不许它自己折行 ✗）。 */
+  #pos { opacity:.85; white-space:nowrap; }
+  /* ★★ 2026-10-08 用户定 ✓：「←/→ 翻页 空格 播放/停止… 这些是可以两行的，用**文件名后面的空间**写两行」✓
+     ⇒ 第二行 = 文件名 ＋ 提示**并排** ✓：.name 该短就短 ✓（超出自己截 ✓），
+        .tips 吃掉**剩下**的宽 ✓ 并**允许折行** ✓（原来是工具条里那一格 ✗ —— 挤不下就被省略号吃掉 ✓）。 */
+  .meta { display:flex; gap:10px; align-items:flex-start; padding:2px 10px 6px; font-size:12px; }
   /* ★★ 2026-10-08 用户定 ✓：「把文件名显示在 ← 下面那一行，如果文件名超过一定字符数，
-     则用 ... 截断，鼠标放在上面时显示全文件名」✓
-     ＋「最长 60 个字符吧，再长就省略」✓
-     ⇒ 第二行 ✓；**两层截断** ✓：脚本限**字数**（超 60 ⇒ 收一个省略号 ✓，✗ CSS 做不到这个 ✗）
+     则用 ... 截断，鼠标放在上面时显示全文件名」✓ ＋「最长 40 个字符吧」✓
+     ⇒ **两层截断** ✓：脚本限**字数**（超 40 ⇒ 收一个省略号 ✓，✗ CSS 做不到这个 ✗）
        ＋ 这里限**宽度** ✓（text-overflow:ellipsis ✓ —— 窄窗口也不撑破 ✓）；
        title 挂全名 ✓（悬停看全 ✓）。 */
-  .name { padding:2px 10px 6px; font-size:12px; opacity:.9;
+  .name { flex:0 1 auto; min-width:0; opacity:.9;
           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tips { flex:1 1 0; min-width:0; opacity:.6; line-height:1.45; white-space:normal; }
 </style></head><body>
 <div class="top">
-  <button id="prev" title="上一条">←</button><button id="play" title="自动播放">▶</button><button id="next" title="下一条">→</button><span>每</span><input id="sec" value="3"><span>秒</span>
+  <button id="prev" title="上一条">←</button><button id="play" title="自动播放">▶</button><button id="next" title="下一条">→</button><span>每</span><input id="sec" type="number" min="3" max="99" step="1" value="3"><span>秒</span>
   <span id="pos">共 ${n} 条</span>
-  <span style="opacity:.6">←/→ 翻页　空格 播放/停止　Esc 取消高亮　点 ①② 里任意一条 高亮</span>
 </div>
-<div class="name" id="name"></div>
+<div class="meta">
+  <div class="name" id="name"></div>
+  <div class="tips">←/→ 翻页　空格 播放/停止　Esc 取消高亮　点 ①② 里任意一条 高亮</div>
+</div>
 <div class="wrap">
   <div class="pane left"><div class="art" id="art"></div></div>
   <div class="pane right" id="list"></div>

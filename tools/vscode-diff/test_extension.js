@@ -456,9 +456,15 @@ if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全�
 //     ⑤ ★ **顺序是 `← ▶ →`** ✓（用户：「把 **▶ 和 → 互换一下位置**」✓ —— 原来是 `← → ▶` ✗）
 //        ⇒ 从 HTML 里**按出现次序**抠出三个 id 来对 ✓（✗ 不是"三个都在"就算过 ✗）；
 //     ⑥ ★ **文件名另起一行** ✓（用户：「把文件名显示在 ← 下面那一行 …… 超了用 … 截断、
-//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.name` 空行 ✓，且它带 `ellipsis` 截断 ✓；
-//     ⑦ ★ **文件名最多 60 个字符** ✓（用户 2026-10-08：「文件名字太长了吧？最长 60 个字符吧，
-//        再长就省略」✓）⇒ 见下面那段：**真跑**注入脚本里的 `clip()` ✓（✗ 别在测试里再抄一遍规则 ✗）。
+//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.meta` 行 ✓，里面是 `.name` ＋ 提示 ✓；
+//     ⑦ ★ **文件名最多 40 个字符** ✓（用户 2026-10-08：「最长 40 个字符吧，再长就省略」✓）
+//        ⇒ 见下面那段：**真跑**注入脚本里的 `clip()` ✓（✗ 别在测试里再抄一遍规则 ✗）；
+//     ⑧ ★ **`每 N 秒` 只能 3..99** ✓（用户：「那个输入框太长了，应限制为只能输入 3-99 的数字」✓）
+//        ⇒ `type=number` ＋ `min`/`max` ✓（箭头用 ✓）＋ **真跑** `secs()` ✓ 钳手打的 0 / 500 ✓；
+//     ⑨ ★ **`2 / 3` 不许折行** ✓（用户：「不能换行，必须在同一行了」✓）⇒ `#pos` 得 `white-space:nowrap` ✓
+//        —— ★ 实测过它真的会折 ✓（520px 窗口下量到 16×27 ✓ = 一列一个字 ✓）；
+//     ⑩ ★ **提示挪到文件名旁边、允许两行** ✓（用户：「←/→ 翻页 空格 播放/停止… 这些是可以两行的，
+//        用文件名后面的空间写两行」✓）⇒ 提示得在 `.meta` 里（✗ 不在工具条里 ✗）、`.tips` 允许折行 ✓。
 const slHtml = slideshowHtml({ cspSource: '' }, 'N', 1);
 const tips = ['上一条', '下一条', '自动播放'];
 const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自动播放|暂停)/.test(slHtml);
@@ -467,37 +473,62 @@ const stopOk = slHtml.indexOf('\\u25a0') >= 0 && slHtml.indexOf('停止') >= 0;
 const noPause = slHtml.indexOf('暂停') < 0 && slHtml.indexOf('⏸') < 0 && slHtml.indexOf('\\u23f8') < 0;
 const btnOrder = (slHtml.match(/<button id="([^"]+)"/g) || []).map((s) => /id="([^"]+)"/.exec(s)[1]).join(',');
 const orderOk = btnOrder === 'prev,play,next';
-const nameRow = /<div class="name" id="name"><\/div>/.test(slHtml)
-	&& slHtml.indexOf('id="name"') > slHtml.indexOf('<div class="top">')
+const metaRow = /<div class="meta">([\s\S]*?)<\/div>\s*<div class="wrap">/.exec(slHtml);
+const metaInner = metaRow ? metaRow[1] : '';
+const topInner = (/<div class="top">([\s\S]*?)<\/div>/.exec(slHtml) || [, ''])[1];
+const nameRow = slHtml.indexOf('<div class="name" id="name"></div>') >= 0
+	&& metaInner.indexOf('id="name"') >= 0
 	&& /\.name \{[^}]*text-overflow:ellipsis/.test(slHtml);
-// ★★ 文件名**最多 60 个字符** ✓（用户 2026-10-08：「最长 60 个字符吧，再长就省略」✓）——
-//   ★ 这里**把注入脚本里那个 `clip()` 抠出来真跑一遍** ✓（✗ 不是"源码里有 60 这串字"就算过 ✗，
-//     也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现，迟早对不上 ✓）。
+const hintMoved = metaInner.indexOf('翻页') >= 0 && topInner.indexOf('翻页') < 0
+	&& /\.tips \{[^}]*white-space:normal/.test(slHtml);
+const numbersOnly = /<input id="sec" type="number" min="3" max="99"/.test(slHtml);
+const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
+// ★★ 文件名**最多 40 个字符** ✓ —— ★ 这里**把注入脚本里那个 clip() 抠出来真跑一遍** ✓
+//   （✗ 不是"源码里有 40 这串字"就算过 ✗，也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现 ✓）。
 const clipSrc = /function clip\(s\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
 let clipOk = false, clipSample = '抠不到 clip()';
 if (clipSrc) {
 	try {
 		const clip = new Function('return (' + clipSrc[0] + ')')();
-		const n = (s) => clip(s).length;
 		const long = clip('diff-bb-v100-v104_' + 'x'.repeat(60) + '.md');   // 83 字
-		const at60 = clip('y'.repeat(60));
-		const at59 = clip('y'.repeat(59));
-		const at61 = clip('y'.repeat(61));
+		const at40 = clip('y'.repeat(40));
+		const at39 = clip('y'.repeat(39));
+		const at41 = clip('y'.repeat(41));
 		clipSample = `83 字 ⇒ ${Array.from(long).length} 字（末字 ${Array.from(long).slice(-1)[0]}）；`
-			+ `61 字 ⇒ ${Array.from(at61).length}；60 字 ⇒ ${Array.from(at60).length}（原样 = ${at60 === 'y'.repeat(60)}）；`
-			+ `59 字 ⇒ ${Array.from(at59).length}（原样 = ${at59 === 'y'.repeat(59)}）`;
-		clipOk = Array.from(long).length === 60 && Array.from(long).slice(-1)[0] === '…'
-			&& n(at61) === 60 && at60 === 'y'.repeat(60) && at59 === 'y'.repeat(59)
+			+ `41 字 ⇒ ${Array.from(at41).length}；40 字 ⇒ ${Array.from(at40).length}（原样 = ${at40 === 'y'.repeat(40)}）；`
+			+ `39 字 ⇒ ${Array.from(at39).length}（原样 = ${at39 === 'y'.repeat(39)}）`;
+		clipOk = Array.from(long).length === 40 && Array.from(long).slice(-1)[0] === '…'
+			&& Array.from(at41).length === 40 && at40 === 'y'.repeat(40) && at39 === 'y'.repeat(39)
 			// ★ 还得**真用上** ✓（✗ 定义了却没人调，等于没限 ✗）
 			&& slHtml.indexOf('$("name").textContent = clip(d.title)') >= 0;
 	} catch (e) { clipSample = 'clip() 跑不起来：' + e.message; }
 }
+// ★★ `每 N 秒` 只能 3..99 ✓ —— 同法：**把 secs() 抠出来，喂几个越界的值真跑一遍** ✓。
+const secsSrc = /function secs\(\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
+let secsOk = false, secsSample = '抠不到 secs()';
+if (secsSrc) {
+	try {
+		// 注入那句是 `$("sec")` ✓ ⇒ 给个假 `$` 就够 ✓（✗ 不用真 DOM ✗）
+		const field = { value: '' };
+		const secs = new Function('$', 'return (' + secsSrc[0] + ')')(() => field);
+		const run = (v) => { field.value = v; const got = secs(); return `${got}（回写 ${field.value}）`; };
+		const s0 = run(0), s500 = run(500), s12 = run(12), sabc = run('abc'), sfrac = run(3.7);
+		secsSample = `0 ⇒ ${s0}；500 ⇒ ${s500}；12 ⇒ ${s12}；abc ⇒ ${sabc}；3.7 ⇒ ${sfrac}`;
+		secsOk = s0 === '3（回写 3）' && s500 === '99（回写 99）' && s12 === '12（回写 12）'
+			&& sabc === '3（回写 3）' && sfrac === '4（回写 4）'
+			&& slHtml.indexOf('var sec = secs();') >= 0;      // ★ 起播真用上它 ✓（✗ 定义了不用 ✗）
+	} catch (e) { secsSample = 'secs() 跑不起来：' + e.message; }
+}
 console.log('⑱ 幻灯片按钮：只有符号 = %s；title 三条齐 = %s；点 ▶ 变 ■/停止 = %s；'
 	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；文件名另起一行 = %s；'
-	+ '文件名 ≤ 60 字 = %s（%s）',
+	+ '文件名 ≤ 40 字 = %s（%s）',
 	noWords, hasTitles, stopOk, noPause, btnOrder, nameRow, clipOk, clipSample);
-if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow || !clipOk) {
-	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止；顺序 ← ▶ →；文件名另起一行且 ≤ 60 字）');
+console.log('   ⑱ 续：每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；'
+	+ '「2 / 3」不折行 = %s；提示挪到文件名旁边且可两行 = %s',
+	numbersOnly, secsOk, secsSample, posNowrap, hintMoved);
+if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow || !clipOk
+	|| !numbersOnly || !secsOk || !posNowrap || !hintMoved) {
+	fail('幻灯片那三个按钮没按用户要求改（符号/title/■/顺序/文件名 ≤ 40 字/秒数 3..99/「2 / 3」不折行/提示挪位）');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：
