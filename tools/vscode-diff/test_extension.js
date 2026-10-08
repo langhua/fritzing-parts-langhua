@@ -411,11 +411,23 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 	const n = (svg.match(/data-anim="/g) || []).length;
 	if (n !== kf) { mismatch++; console.log('   ✗ %s：data-anim %d 条 ≠ keyframes %d 条', f, n, kf); }
 }
+// ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
+//   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——
+//   ★ 撤掉的只是**顶栏**那条上的「▶ 重放动画」✗（`id="replay"` ✓，别又冒出来 ✗）。
+//   ⇒ 这条现在守两件事 ✓：① 顶栏**没有**旧按钮 ✓；② 两处的起播**是同一份实现** ✓ ——
+//   ✗ 不是"幻灯片里有没有按钮" ✗（那是第 ⑱ 项的事 ✓）。
+//   ★ 注意 `edBar`/`slBar` 是在第 ⑫ 项那里生成的 ✓（两处 HTML ✓），这儿直接用 ✓。
 const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
-const slideClean = slBar.indexOf('data-anim') < 0 && slBar.indexOf('pd-replay') < 0;
-console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；合并视图脚本认 data-anim = %s；幻灯片那份没留死代码 = %s',
-	n16, noDur, inlineAnim, btn, mismatch, startCode, slideClean);
-if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !slideClean) {
+const pdReplayOf = (s) => {
+	const m = /function pdReplay\(\)\{[\s\S]*?\n\s*\}/.exec(s);
+	return m ? m[0] : '';
+};
+const noOldButton = slBar.indexOf('id="replay"') < 0;
+const oneImpl = pdReplayOf(edBar) !== '' && pdReplayOf(edBar) === pdReplayOf(slBar);
+console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
+	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s',
+	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl);
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
 
@@ -479,8 +491,6 @@ const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自�
 const hasTitles = tips.every((t) => slHtml.indexOf('title="' + t + '"') >= 0);
 const stopOk = slHtml.indexOf('\\u25a0') >= 0 && slHtml.indexOf('停止') >= 0;
 const noPause = slHtml.indexOf('暂停') < 0 && slHtml.indexOf('⏸') < 0 && slHtml.indexOf('\\u23f8') < 0;
-const btnOrder = (slHtml.match(/<button id="([^"]+)"/g) || []).map((s) => /id="([^"]+)"/.exec(s)[1]).join(',');
-const orderOk = btnOrder === 'prev,play,next';
 // ★ 顶部结构：`.head` 里 = `.hcol` ＋ `.tips` 两列；`.hcol` 里 = `hrow` ＋ `.name` 两行。
 const headBlock = (/<div class="head">([\s\S]*?)<div class="wrap">/.exec(slHtml) || [, ''])[1];
 const hcolBlock = (/<div class="hcol">([\s\S]*?)<div class="tips">/.exec(slHtml) || [, ''])[1];
@@ -491,8 +501,20 @@ const leftTwoRows = hcolBlock.indexOf('class="hrow"') >= 0
 const row1All = ['prev', 'play', 'next', 'sec', 'pos'].every((id) => hrowBlock.indexOf('id="' + id + '"') >= 0);
 const hintInRight = headBlock.indexOf('翻页') > headBlock.indexOf('class="hcol"')
 	&& hcolBlock.indexOf('翻页') < 0 && /\.tips \{[^}]*white-space:normal/.test(slHtml);
+// ★★ 顺序量的是**那条按钮行** ✓（`hrow` ✓）—— ✗ 不是"整页的按钮" ✗：
+//   2026-10-08 右栏**顶上**又多了个 `#pd-replay` ✓（用户要的 ✓）⇒ 按整页抠会把它算进来 ✗
+//   ⇒ 顺序看着就"多了一个"✓ —— 但它根本不在顶栏那条上 ✓（这是**量错了地方** ✗，不是改坏了 ✓）。
+const btnOrder = (hrowBlock.match(/<button id="([^"]+)"/g) || []).map((s) => /id="([^"]+)"/.exec(s)[1]).join(',');
+const orderOk = btnOrder === 'prev,play,next';
 const numbersOnly = /<input id="sec" type="number" min="3" max="99"/.test(slHtml);
 const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
+// ★★ 2026-10-08 用户定 ✓：「面包板差异**是可以在右侧、『面包板差异清单』上方显示【播放差异】的吧**？」✓
+//   ⇒ 右栏**顶上一条**放着按钮 ✓，**在 `#list` 之前** ✓（`#list` 里就是「面包板差异清单」那份清单 ✓）。
+//   ★ 量**位置关系** ✓（✗ 不是"页面上有这个 id"就算过 ✗ —— 那样它跑到别处也照样过 ✓）。
+const slRightPane = (/<div class="pane right">([\s\S]*?)<script/.exec(slHtml) || [, ''])[1];
+const replayInRight = slRightPane.indexOf('id="pd-replay"') >= 0
+	&& slRightPane.indexOf('id="pd-replay"') < slRightPane.indexOf('id="list"')
+	&& /<div class="bar"><button id="pd-replay">▶ 播放差异<\/button><\/div>/.test(slRightPane);
 // ★★ 「文件名不加扩展名吗？」（2026-10-08 用户问 ✓）—— ★ 这条**真读一页** ✓
 //   （✗ 不是"源码里有没有 basename"就算过 ✗）：同名的 `.md` / `.svg` / `.png` 有三个 ✓
 //   ⇒ 名字里**必须**带 `.<ext>` ✓，否则分不出这一页指的是哪个文件 ✗。
@@ -569,11 +591,12 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	+ '每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；「2 / 3」不折行 = %s',
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
 console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
-	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）',
-	!headHazard, wrapShrinks, titleOk, titleSample);
-if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
+	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）；'
+	+ '右栏清单上方有【播放差异】 = %s',
+	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight);if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
 	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
-	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks || !titleOk) {
+	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks || !titleOk
+	|| !replayInRight) {
 	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
 		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）'
 		+ '，或文件名没带扩展名（同名的 .md/.svg/.png 有三个 ⇒ 分不出是哪个）');

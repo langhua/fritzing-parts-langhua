@@ -334,6 +334,10 @@ function markJs(pane) {
  *    ⇒ 一个字符都不执行 ✓ ⇒ 按钮**点了毫无反应** ✓（而且高亮、Esc 也一起失效 ✓）。
  *    ⇒ 必须写成 `...replayJs(),`（展开 ✓）；★ 并且**单测第 ⑰ 项**现在直接 `new Function(脚本)`
  *    做语法检查 ✓ —— ✗ 光"HTML 里有那串字"是不够的 ✗（这个坑就是这么溜过去的 ✓）。
+ *
+ * ★★ 2026-10-08：**派生的东西都收进来** ✓（定义 ＋ 绑事件），两个界面都只写 `...replayJs()` ✓ ——
+ *   ✗ 别在合并视图里绑一遍、幻灯片里再绑一遍 ✗（`#pd-replay` 两边同名 ✓ ⇒ 一份就够 ✓，
+ *   而且"只有一个实现"这件事**机器能验** ✓ —— 见单测第 ⑯ 项 ✓）。
  */
 function replayJs() {
 	return [
@@ -365,7 +369,10 @@ function replayJs() {
 		'      btn.textContent = "▶ 重放中…";',
 		'      setTimeout(function(){ btn.textContent = t0; }, Number(dur) * 1000 + 200);',
 		'    }',
-		'  }'
+		'  }',
+		// ★ 绑事件也放这儿 ✓ ⇒ 两个界面都自动有 ✓（✗ 别各绑一遍 ✗）
+		'  var rp = document.getElementById("pd-replay");',
+		'  if (rp) rp.addEventListener("click", function(){ pdReplay(); });'
 	];
 }
 
@@ -384,11 +391,10 @@ const JS = [
 	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
-	// ★★ 2026-10-08 用户定 ✓：按钮**挪到图的下面** ✓（原话：「把这个嵌入在差异的下面就好了吧？」✓）——
+	// ★★ 2026-10-08 用户定 ✓：按钮**在图的下面** ✓（原话：「把这个嵌入在差异的下面就好了吧？」✓）——
 	//   它原来在**右栏工具条**上 ✓，离图很远 ✗；现在贴在 `.left`（图那一栏 ✓）里图的**正下方** ✓，
 	//   并且 `position:sticky; bottom:0` ✓ ⇒ 图比一屏高时也**始终够得着** ✓（✗ 别又变成"找不到按钮" ✗）。
-	'  var rp = document.getElementById("pd-replay");',
-	'  if (rp) rp.addEventListener("click", function(){ pdReplay(); });',
+	//   ★ 绑定在 `replayJs()` 里 ✓（两个界面共用一份 ✓），这里只把定义与绑定**展开**进来 ✓。
 	...replayJs(),                       // ★ 展开 ✗ 别写成 `replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
 	'})();'
 ].join('\n');
@@ -414,10 +420,15 @@ const CSS = `
            /* ★★ 2026-10-08 用户定 ✗：「右侧内容字体可以小一些，**跟重放动画几个字的字体一样大**即可」✓
               ⇒ 整块右栏统一 **12px** ✓（＝ 那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
            font-size:12px; line-height:1.5; }
-  .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
-         /* ★★ 2026-10-08 修 ✗：工具条**钉在顶上** ✓ —— 上面只剩"点 ①② 高亮"那句提示了 ✓，
-            但它跟清单一起滚就没意义了 ✗ ⇒ 还是钉住 ✓。 */
+  /* ★★ 2026-10-08：这条工具条现在**两个界面共用** ✓ ——
+     · 合并视图：里面是那句高亮提示 ✓（要暗一些 ⇒ 提示自己带 .dim ✓）；
+     · 幻灯片：里面是**「▶ 播放差异」** ✓（用户：「在右侧、『面包板差异清单』上方显示【播放差异】」✓）
+       ★ ⇒ 那条 opacity:.75 **从 .bar 挪到 .bar .dim** ✓：✗ 放在 .bar 上会把按钮也一起调暗 ✗
+       （opacity 不能靠孩子"调回来" ✓ —— 它是在**整棵子树渲染完**之后再统一压暗的 ✓）。
+     ★ 钉在顶上 ✓：清单往往长过一屏 ✓ ⇒ 一滚按钮就"看不见"了 ✗。 */
+  .bar { font-size:12px; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
          position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
+  .bar .dim { opacity:.75; }
   .bar button, .under button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
                 border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
   /* ★ 标题一律**跟正文同号** ✓（1em = 12px ✓）⇒ 只剩**粗体**做层级 ✓（用户要"一样大"✓） */
@@ -460,8 +471,8 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 <div class="wrap">
   <div class="pane left">${art}${under}</div>
   <div class="pane right">
-    <div class="bar">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
-		: (imgUri ? esc(imgName) : '（无图）')}</div>
+    <div class="bar"><span class="dim">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
+		: (imgUri ? esc(imgName) : '（无图）')}</span></div>
     ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
 </div>
@@ -512,10 +523,13 @@ function readPage(mdPath) {
 }
 
 // 幻灯片里的脚本：翻页 ＋ 自动播放 ＋ 键盘 ✓，并**保持**「点行 ⇒ 高亮」✓（每换一页重新绑 ✓）。
-//   ★★ 2026-10-08：**本页没有「▶ 重放动画」按钮了** ✗（用户：「点击截图1中工具栏上的
-//     【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓）——
-//     重放去**合并视图**里**图下面**那个按钮点 ✓（双击 `diff/*.md` 就是它 ✓）。
-//     ⇒ 于是这里既不绑 `#replay` ✓、也不带 `replayJs()` ✓（✗ 别留死代码 ✗）。
+//   ★★ 2026-10-08 **第二次改**（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
+//     显示【播放差异】的吧？」✓）：**右栏顶上加回了播放按钮** ✓（`#pd-replay` ✓）——
+//     ★ 撤掉的只是**顶栏（`← ▶ →` 那条）**上那个 ✗（用户：「建议删掉工具栏的【重放动画】按钮」✓）；
+//     起播**共用** `replayJs()` ✓（函数 ＋ 绑事件都在里面 ✓ ⇒ 这里 `...replayJs()` 展开一次即可 ✓，
+//     ✗ 别另写一段 ✗）。
+//   ★ 「每换一页」时**不用做什么** ✓：新页的 svg 是**现读现给**的 ✓ ⇒ 里面**没有**内联
+//     `animation` ✓ ⇒ 进来永远是**静止的 A+B** ✓，点了才从 A 演到 B ✓（与合并视图同一条口径 ✓）。
 const SLIDE_JS = [
 	'(function(){',
 	'  var api = acquireVsCodeApi();',
@@ -581,6 +595,13 @@ const SLIDE_JS = [
 	'    n = (n % total + total) % total;',          // 两头循环 ✓
 	'    api.postMessage({ cmd: "page", index: n });',
 	'  }',
+	// ★★ 2026-10-08：**「▶ 播放差异」回来了** ✓（用户：「面包板差异是可以在右侧、
+	//   『面包板差异清单』上方显示【播放差异】的吧？」✓ —— 撤掉的只是**顶栏**那个 ✗，见下 ✓）。
+	//   ★ 实现**只有一份** ✓：`replayJs()`（函数 ＋ 绑事件 ✓）在 `JS` 与这里**各展开一次** ✓ ——
+	//     ✗ 别在这儿另写一段"起播" ✗（上次"点了没反应"就是两份写法打架 ＋ 注入脚本语法错 ✓）。
+	//   ★ 顺序要紧 ✗：`...replayJs()` 展开出来的是**顶层语句** ✓ ⇒ 放在 `api.postMessage({cmd:"ready"})`
+	//     前后都行 ✓ —— 但它必须与 `$`/`idx` 那些**同一层** ✓（不是塞进某个函数里 ✓）。
+	...replayJs(),
 	'  $("prev").addEventListener("click", function(){ go(idx - 1); });',
 	'  $("next").addEventListener("click", function(){ go(idx + 1); });',
 	// ★★ 2026-10-08 用户定 ✗：**只用符号 ＋ `title` 提示** ✓ ——
@@ -688,7 +709,16 @@ function slideshowHtml(webview, nonce, n) {
 </div>
 <div class="wrap">
   <div class="pane left"><div class="art" id="art"></div></div>
-  <div class="pane right" id="list"></div>
+  <div class="pane right">
+    <!-- ★★ 2026-10-08 用户定 ✓：「面包板差异**是可以在右侧、『面包板差异清单』上方显示【播放差异】的吧**？」✓
+         ⇒ 右栏（清单那一栏 ✓）**顶上一条** ✓，.bar 与合并视图共用 ✓（字号/边框/钉顶都一致 ✓）；
+         ★ 按钮 id 与合并视图**同名** ✓（pd-replay ✓）⇒ replayJs() 那一份**照旧能绑** ✓
+         （✗ 别为幻灯片再写一套 ✓）。
+         ★ 为什么按钮进 .bar 而提示留在 .head ✓：右栏没有"文件名/翻页"那些东西 ✓，
+         那条 bar 本来就是右栏的**顶栏** ✓ ⇒ 按钮放这儿**贴着清单** ✓（正是用户指的位置 ✓）。 -->
+    <div class="bar"><button id="pd-replay">▶ 播放差异</button></div>
+    <div id="list"></div>
+  </div>
 </div>
 <script nonce="${nonce}">${SLIDE_JS}</script>
 </body></html>`;
