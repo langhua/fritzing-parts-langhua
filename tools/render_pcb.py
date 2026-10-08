@@ -219,8 +219,11 @@ def render(model, px_per_mm=12.0, opts=()):
         xs += [q["box"][0], q["box"][2]]
         ys += [q["box"][1], q["box"][3]]
     for t in model["traces"]:
-        xs += [t["a"][0], t["b"][0]]
-        ys += [t["a"][1], t["b"][1]]
+        # ★ 2026-10-08 改 ✓：带弧的走线要按**真几何**包进来 ✓ —— ✗ 只取两端点的话，
+        #   弧鼓出去的那一段会**被 viewBox 裁掉** ✗（实测 v59 的弧偏离弦 ≈2.5 mm ✗）。
+        for p in (t["pts"] if t.get("pts") else [(t["a"][0], t["a"][1]), (t["b"][0], t["b"][1])]):
+            xs.append(p[0])
+            ys.append(p[1])
     for v in model["vias"]:
         xs.append(v["p"][0])
         ys.append(v["p"][1])

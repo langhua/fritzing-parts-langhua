@@ -34,13 +34,16 @@ r"""sketch 里的 **PCB 走线 / 过孔**：读、改、写 ✓（2026-09-30 立
   py -3.13 tools\pcb_wire.py <sketch.fzz> --dump        # 列 PCB 走线/过孔（绝对坐标 ✓ ＋ 端点接在谁身上 ✓）
 """
 import os
+import math
 import re
 import sys
 import zipfile
 
+SK = 25.4 / 90.0               # 1 sketch 单位 = 0.28222 mm ✓（全仓的 `PW.SK` ✓）
+CURVE_SEGS = 24                # 弧的采样段数 ✓（`trace_pts` 的缺省 ✓ —— 唯一定义 ✓）
+
 NUM_ATTRS = ("z", "x", "y", "x1", "y1", "x2", "y2", "wireFlags", "mils", "opacity", "banded")
 NUM_RE = re.compile(r'\b(' + "|".join(NUM_ATTRS) + r')="([-\d.eE+]+)"')
-SK = 25.4 / 90.0            # 1 sketch 单位 = 0.28222 mm ✓
 
 
 def fmt(v):
@@ -159,6 +162,25 @@ def curve_pts(geo, bezier, n=24):
         out.append((u * u * u * p0[0] + 3 * u * u * t * c0[0] + 3 * u * t * t * c1[0] + t * t * t * p3[0],
                     u * u * u * p0[1] + 3 * u * u * t * c0[1] + 3 * u * t * t * c1[1] + t * t * t * p3[1]))
     return out
+
+
+def poly_len(pts):
+    """折线**总长** ✓（sketch 单位 ✓）—— 唯一定义 ✓（`pcb_metrics` / `diff_revs` 都调它 ✓）"""
+    return sum(math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1])
+               for i in range(len(pts) - 1))
+
+
+def trace_pts(t, n=CURVE_SEGS):
+    """走线的**真实形状** ✓ ⇒ 绝对坐标点表（直线 = 2 点 ✓、弧 = `n+1` 点 ✓）
+    —— **唯一定义** ✗（谁要"走线在哪"都调它 ✓，✗ 别再各自读 `a`/`b` 拿弦 ✗）
+
+    ★★ 2026-10-08 立 ✓（用户对图点名 ✗：「v59 里的 5V 和 GND 24mil 线」✗）：弧的真形状在
+      `<bezier>` 里 ✓ ⇒ 拿弦当线的一切计算（间距 / 交叉 / 压盘 / 线长 / 拐角）**全是错的** ✗
+      （v59 那条弧偏离弦最多 **≈2.5 mm** ✗，比线宽大一个数量级 ✓）。
+    ★ `n` = 采样段数 ✓：24 段 ⇒ 单段弦长 ≤ 总长/24 ✓（本项目实测弧长 ≤ 42 单位 ⇒ 单段 ≤ 1.8 单位
+      = 0.5 mm ✓，与 `pcb_check.TOL`（0.14 mm）同量级偏松 ✓ —— 要更严就传大 `n` ✓）。
+    """
+    return curve_pts(t["geo"], t.get("bezier"), n)
 
 
 def abs_ends(geo):

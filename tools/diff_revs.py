@@ -181,6 +181,7 @@ def _nets(model, netmap):
       （第一版清单就是这么废的 ✗）⇒ 必须**先并链** ✓。
     铜块 = 一个连通分量 ✓；**块 > 1 ⇒ 这张网有地方没连上** ✗（就是 Fritzing 说的"还要布线"✓）。
     """
+    import pcb_wire as PW                                          # noqa: PLC0415  只为了 poly_len ✓
     mi2t = {}
     for q in model["pads"]:
         if q.get("mi"):
@@ -226,7 +227,9 @@ def _nets(model, netmap):
             tr = wires.get(w)
             if tr is None:
                 continue
-            ln += ((tr["b"][0] - tr["a"][0]) ** 2 + (tr["b"][1] - tr["a"][1]) ** 2) ** 0.5
+            # ★ 2026-10-08 改 ✓：线长走 `pcb_wire.poly_len()` ✓（弧按真弧 ✓ ——
+            #   ✗ 旧版按弦 ✗；实测 v59 的 5 条电源弧沿弧比弦长 ≈1.9% ✓ ⇒ 这块铜的线长少报 ✓）
+            ln += PW.poly_len(tr["pts"] if tr.get("pts") else [tr["a"], tr["b"]])
             layers[tr["layer"]] = layers.get(tr["layer"], 0) + 1
         for k in keys:
             if k[0] != "t":

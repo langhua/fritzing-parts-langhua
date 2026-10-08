@@ -7,8 +7,13 @@ py -3.13 tools/pcb_metrics.py <a.fzz> [<b.fzz> ...] [--nets=pixel_nets.py] [--wo
 ```
 量什么 ✓（都是**从文件几何**算的 ✓，与布线器的成本函数无关 ✗ —— 本仓规矩「不许自证」✓）：
 · 走线**条数 / 总长（mm，按层分）** ✓、**过孔数** ✓；
+   ★ 2026-10-08 改 ✗：**带 `<bezier>` 的弧按真弧长算** ✓（✗ 旧版按弦 ✗ —— 实测 v59 那 5 条
+   `24 mil` 电源弧沿弧比弦长 **≈1.9%** ✓，单块铜的线长因此少报 ✓；见 F18 ✓）；
 · **角度分布**：每条线自己相对水平是 `0/45/90/其它` ✓（PCB 常见审美：只走 0/45/90 ✓）；
+   ★ **弧不进这个谱** ✗：它按定义要扫过很多角度 ✓ ⇒ 弧只单独报**条数** ✓（✗ 逐采样段灌进
+   "其它角度名单"会把名单淹掉 ✗ —— 13 条弧 × 24 段 = 312 行噪音 ✓）；
 · **拐角分布**：同一层上**共用端点**的两段之间的转角 `0/45/90/其它` ✓；
+   ★ 弧在拐角里用**端点处的切线**方向 ✓（✗ 用弦 = 报错方向 ✗）；
 · ★ **点名单**（前 N 条 ✓）：非 0/45/90 的**线段** ✓、其它角度的**拐角** ✓
   —— 这份名单才是"能改什么"的抓手 ✓（数字只能看出多不多 ✓）。
 ★ 间距/短接**不在这里** ✗：那是 `pcb_check.py` 的事（它已有那份实现 ✓，别抄第二份 ✗）。
@@ -54,7 +59,11 @@ def class_ang(d, tol=1.0):
 def metrics(path, nets=None):
     m = PC.collect(path)
     tr, vi = m["traces"], m["vias"]
-    out = {"path": path, "n_seg": len(tr), "n_via": len(vi)}
+    # ★★ 2026-10-08 立 ✗：走线的"形状"一律走 `pcb_check.segs_of()` ✓（= `pcb_wire.trace_pts()`
+    #   那份唯一定义的弧 ✓）—— 直线 = 一段（与旧口径逐字相同 ✓）、弧 = 采样的 n 段 ✓。
+    segs = [PC.segs_of(t) for t in tr]
+    curved = [i for i, t in enumerate(tr) if t.get("curve")]
+    out = {"path": path, "n_seg": len(tr), "n_via": len(vi), "n_curve": len(curved)}
     tot = 0.0
     per_layer, per_net = {}, {}
     ang, ang_other = {}, []
@@ -62,7 +71,8 @@ def metrics(path, nets=None):
     seg_info = []
     for i, t in enumerate(tr):
         a, b = t["a"], t["b"]
-        ln = math.hypot(b[0] - a[0], b[1] - a[1]) * SK
+        # ★ 线长 = **沿真几何**累加 ✓（弧 = 折线采样长度 ≈ 弧长 ✓；直线就是 2 点的弦 ✓）
+        ln = PW.poly_len(t["pts"] if t.get("pts") else [a, b]) * SK
         tot += ln
         per_layer[t["layer"]] = per_layer.get(t["layer"], 0.0) + ln
         nm = (nets or {}).get(t.get("net") or "", None)
@@ -73,17 +83,21 @@ def metrics(path, nets=None):
         per_net.setdefault(key, [0.0, 0, 0])
         per_net[key][0] += ln
         per_net[key][1] += 1
-        d = ang_of(a, b)
-        c = class_ang(d)
-        if c is None:
-            ang_other.append((ln, i, d, a, b, t["layer"]))
+        # ★ 角度：**弧不进这个谱** ✗（它按定义扫过很多角度 ✓，进来就是 300 行噪音 ✓）
+        if t.get("curve"):
+            pass
         else:
-            ang[c] = ang.get(c, 0) + 1
+            d = ang_of(a, b)
+            c = class_ang(d)
+            if c is None:
+                ang_other.append((ln, i, d, a, b, t["layer"]))
+            else:
+                ang[c] = ang.get(c, 0) + 1
         for k, e in ((0, a), (1, b)):
             ends.setdefault((t["layer"], round(e[0], 2), round(e[1], 2)), []).append((i, k))
         seg_info.append((ln, i, t))
     out.update(total_mm=tot, per_layer=per_layer, ang=ang, ang_other=ang_other,
-               ends=ends, seg_info=seg_info, per_net=per_net)
+               ends=ends, seg_info=seg_info, per_net=per_net, curved=curved, segs=segs)
     # 拐角：同一层同一个点上恰好两段 ⇒ 算转角 ✓（180 - 夹角 ✓；0 = 直着 ✓）
     turns, turns_other = {}, []
     for (_lay, _x, _y), hit in ends.items():
@@ -93,8 +107,10 @@ def metrics(path, nets=None):
         if i1 == i2:
             continue
         p = (_x, _y)
-        d1 = ang_of(p, tr[i1]["b"] if k1 == 0 else tr[i1]["a"])
-        d2 = ang_of(p, tr[i2]["b"] if k2 == 0 else tr[i2]["a"])
+        # ★ 2026-10-08 改 ✓：方向取**端点处的切线** ✓（弧取第一/最后一段 ✓；
+        #   ✗ 旧版取弦 ⇒ 弧的拐角被报错角度 ✗ —— 例如弧在其端点处是切向离开的 ✓）。
+        d1 = ang_of(p, segs[i1][0][1] if k1 == 0 else segs[i1][-1][0])
+        d2 = ang_of(p, segs[i2][0][1] if k2 == 0 else segs[i2][-1][0])
         t = abs((d1 - d2) % 180.0)
         t = min(t, 180.0 - t)
         c = class_ang(t)
@@ -108,8 +124,11 @@ def metrics(path, nets=None):
 
 def show(m, worst=8, nets=None):
     print("== %s ==" % os.path.basename(m["path"]))
-    print("   走线 %d 段 ✓｜总长 %.1f mm ✓｜过孔 %d 个 ✓"
-          % (m["n_seg"], m["total_mm"], m["n_via"]))
+    print("   走线 %d 段 ✓｜总长 %.1f mm ✓｜过孔 %d 个 ✓%s"
+          % (m["n_seg"], m["total_mm"], m["n_via"],
+             "" if not m.get("n_curve") else
+             "｜**其中弯曲（`<bezier>`）%d 条** ✓（总长按**真弧**累加 ✓、角度不进下面的谱 ✓）"
+             % m["n_curve"]))
     print("   按层：%s" % "、".join("%s %.1fmm" % (k, v) for k, v in sorted(m["per_layer"].items())))
     print("   线段角度：%s｜**非 0/45/90 的 %d 段** %s"
           % ("、".join("%s°×%d" % (k, v) for k, v in sorted(m["ang"].items())) or "（无）",

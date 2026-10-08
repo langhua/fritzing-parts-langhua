@@ -97,6 +97,53 @@ def seg_seg(a, b, c, d):
         or (abs(d3) < 1e-9 and on_seg(c, a, b)) or (abs(d4) < 1e-9 and on_seg(d, a, b))
 
 
+# ── 走线的**真实几何**（一份实现 ✓ —— ★★ 2026-10-08 立 ✗）──────────────────────
+#   ★ 起因 ✓：弧的真形状在 `<bezier>` 里 ✓，✗ 拿两端点的**弦**当"线在哪" ⇒ 下面全部判据
+#     （间距 / 交叉 / 压盘 / 压孔 / 端点在不在别条线上 ✓）在弧上**都是错的** ✗ ——
+#     实测 v59 那条 `24 mil` 电源弧**偏离弦最多 ≈2.5 mm** ✗（比线宽大一个数量级 ✓）。
+#   ⇒ ✗ 谁也别再直接读 `t["a"]`/`t["b"]` 算"线身" ✗：一律走这几条 ✓（直线走**快路** ✓，
+#     与老口径逐字相同 ⇒ 没弧的板子报数与以前**一模一样** ✓）。
+#   ★ "是不是弧"看 `t["curve"]` ✓（✗ 别看 `pts` ✗ —— 直线也有 pts，只是 2 个点 ✓）。
+def segs_of(t):
+    """走线 ⇒ **段表** `[(a, b), …]` ✓（直线 1 段 ✓、弧 = 采样后的 n 段 ✓）—— 唯一入口 ✓"""
+    if not t.get("curve"):
+        return [(t["a"], t["b"])]
+    p = t.get("pts") or [t["a"], t["b"]]
+    return list(zip(p, p[1:]))
+
+
+def d_pt_trace(p, t):
+    """点到走线**真实几何**的距离 ✓（弧按折线采样 ✓；单位同输入 ✓）"""
+    if not t.get("curve"):
+        return d_pt_seg(p, t["a"], t["b"])
+    return min(d_pt_seg(p, a, b) for a, b in segs_of(t))
+
+
+def trace_near_pt(t, p, tol=TOL):
+    """走线**线身**是否挨着这点 ✓（含弧 ✓）"""
+    if not t.get("curve"):
+        return on_seg(p, t["a"], t["b"], tol)
+    return d_pt_trace(p, t) <= tol
+
+
+def trace_rect_hit(t, r, tol=TOL):
+    """走线（含弧 ✓）与矩形是否相交 ✓"""
+    if not t.get("curve"):
+        return seg_rect(t["a"], t["b"], r, tol)
+    return any(seg_rect(a, b, r, tol) for a, b in segs_of(t))
+
+
+def trace_trace_hit(ti, tj, tol=TOL):
+    """两条走线**真的碰上**吗 ✓（含弧 ✓）"""
+    if not (ti.get("curve") or tj.get("curve")):
+        return seg_seg(ti["a"], ti["b"], tj["a"], tj["b"])
+    for a, b in segs_of(ti):
+        for c, d in segs_of(tj):
+            if seg_seg(a, b, c, d):
+                return True
+    return False
+
+
 # ★★ 过孔**安全距离**规则 ✓（2026-10-01 用户定 ✓，原话：「我想先实现通孔不能在元件内，
 #   并与有安全距离的规则，比如 Via10 在 J1 焊盘上打孔了」✓）
 #   围栏（FAIL ✗）两条 —— 都按**过孔铜盘**（Ø = 孔 + 2×环 ✓，本仓 = 0.6 ⇒ 半径 0.30 ✓）算：
@@ -341,6 +388,15 @@ def collect(path):
         mi = re.search(r'modelIndex="(\d+)"', b)
         traces.append(dict(layer=t["layer"][:-5] if t["layer"].endswith("trace") else t["layer"],
                            a=e[0], b=e[1],
+                           # ★★ **真实形状** ✓（2026-10-08 ✓）：直线 = 2 点 ✓、带 `<bezier>` = 采样的
+                           #   弧 ✓（`pcb_wire.trace_pts()` = 唯一定义 ✓）。★ 下面**所有**几何判据
+                           #   都走 `segs_of()` / `d_pt_trace()` 读它 ✗ —— `a`/`b` 只剩"两端点"
+                           #   这一个用途（端点落盘 / 声明 / 板外 ✓），✗ 不许再拿它当"整条线在哪" ✗。
+                           pts=PW.trace_pts(t),
+                           #   ★ "这条线是不是**弧**" 要单独有个记号 ✗ —— `pts` **人人都有** ✓
+                           #     （直线就是 2 个点 ✓）⇒ ✗ 别拿 `pts` 当"有弧"的判据 ✗
+                           #     （`pcb_metrics` 第一版就这么写错了 ✓ ⇒ 报成"168 条弯曲" ✗）。
+                           curve=bool(t.get("bezier")),
                            # ★★ 曲线走线的**绝对控制点** ✓（`<bezier><cp0/><cp1/>` ⇒ 三次贝塞尔 ✓）
                            #   ✗ 只带端点 ⇒ 渲染器把弯曲的电源线画成**直弦** ✗ ——
                            #   2026-10-08 用户对图指出 ✓：v59 的 5V/GND `24 mil` 粗线在 Fritzing 里
@@ -426,9 +482,34 @@ def check(model, expect=None):
             for j, u in enumerate(traces):
                 if j == i or u["layer"] != t["layer"]:
                     continue
-                if on_seg(e, u["a"], u["b"]):
+                # ★ 2026-10-08 改 ✓：`on_seg(e, u.a, u.b)` ⇒ `trace_near_pt(u, e)` ✓
+                #   （判据从"端点落在**弦**上"变成"端点挨着**真几何**" ✓ —— 弧才不会漏 ✓）
+                if trace_near_pt(u, e):
                     uf.union(end(i, k), end(j, 0))
                     hit = True
+            # ★★ 2026-10-08 补 ✗：**弧的线身**也要能"接上东西" ✓ ——
+            #   ✗ 上面只查**两个端点** ✗：弧弯过去**身子**贴着焊盘/过孔/别的线的情形，
+            #     在直线年代不可能（线身 = 端点之间的一条直段 ✓），弧一来就真会发生了 ✗
+            #     ⇒ 不补就会把"几何上明明贴着铜"的弧报成**悬空** ✗（假报 ✓）。
+            #   ★ 只对**带弧的**走线查中间采样点 ✓（直线的线身判据不动 ✗ —— 那会改变
+            #     已交付板子的报数 ✓，而"直线中段压盘"另有 ④b 专门管 ✓）。
+            if k == 1 and t.get("curve"):
+                for mid in t["pts"][1:-1]:
+                    for q in pads:
+                        if t["layer"] in pad_layers(q) and in_rect(mid, q["box"]):
+                            uf.union(end(i, k), ("pad", q["title"], q["cid"]))
+                            hit = True
+                    for j, u in enumerate(traces):
+                        if j == i or u["layer"] != t["layer"]:
+                            continue
+                        if trace_near_pt(u, mid):
+                            uf.union(end(i, k), end(j, 0))
+                            hit = True
+                    for vi, v in enumerate(vias):
+                        if (abs(v["p"][0] - mid[0]) <= TOL
+                                and abs(v["p"][1] - mid[1]) <= TOL):
+                            uf.union(end(i, k), ("via", vi))
+                            hit = True
             # ★★ 2026-09-30 补 ✗：端点落在**过孔**上也算接上了 ✓ ——
             #   ✗ 旧版只查"焊盘 + 同层线" ✗ ⇒ **换层的两根线各报一个悬空端点** ✗
             #     （两层当然不同层 ✗）⇒ 实测把 15 个过孔报成 **30 条悬空** ✗
@@ -456,7 +537,9 @@ def check(model, expect=None):
             ti, tj = traces[i], traces[j]
             if ti["layer"] != tj["layer"]:
                 continue
-            if not seg_seg(ti["a"], ti["b"], tj["a"], tj["b"]):
+            # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓（`trace_trace_hit` 逐段比 ✓，
+            #   两条都是直线时走快路 ⇒ 与老口径逐字相同 ✓）
+            if not trace_trace_hit(ti, tj):
                 continue
             share = any(abs(endpt(ti, k)[0] - endpt(tj, m)[0]) <= TOL
                         and abs(endpt(ti, k)[1] - endpt(tj, m)[1]) <= TOL
@@ -471,7 +554,11 @@ def check(model, expect=None):
             uf.union(end(i, 0), end(j, 0))
             if share or not na or not nb or (na & nb):
                 continue
-            kind = "重叠" if abs(_cr(ti["a"], ti["b"], tj["a"])) < 1e-6 else "交叉"
+            # ★ 直线才分"重叠 / 交叉"✓（那个判据看的是**弦**✗）⇒ 有弧就只说"相交" ✓
+            if ti.get("curve") or tj.get("curve"):
+                kind = "相交（含弧 ✓）"
+            else:
+                kind = "重叠" if abs(_cr(ti["a"], ti["b"], tj["a"])) < 1e-6 else "交叉"
             probs.append("④ 同层%s ⇒ **短路桥**：走线 #%d（网 %s）与 #%d（网 %s）在 %s 层"
                          "把两张网接通了 ✗"
                          % (kind, i, "、".join(sorted(na)), j, "、".join(sorted(nb)),
@@ -496,12 +583,14 @@ def check(model, expect=None):
                 continue
             if q.get("circle"):
                 (cx, cy), r = q["circle"]
-                if d_pt_seg((cx, cy), t["a"], t["b"]) <= r + hw + 1e-9:
-                    ov = (r + hw - d_pt_seg((cx, cy), t["a"], t["b"])) * PW.SK
+                # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓（`d_pt_trace` 逐段比 ✓）
+                d = d_pt_trace((cx, cy), t)
+                if d <= r + hw + 1e-9:
+                    ov = (r + hw - d) * PW.SK
                 else:
                     continue
             else:
-                if not seg_rect(t["a"], t["b"], q["box"], hw):
+                if not trace_rect_hit(t, q["box"], hw):
                     continue
                 ov = -1.0
             probs.append("④b 线**中段**压到**别的网**的盘 ⇒ **短路桥** ✗：走线 #%d（网 %s）在 %s 层"
@@ -523,7 +612,8 @@ def check(model, expect=None):
         touch = []
         for j, t in enumerate(traces):
             hw = (t.get("mils") or 12.0) * 0.0254 / 2.0 / PW.SK
-            if d_pt_seg(v["p"], t["a"], t["b"]) <= rv + hw + 1e-9:
+            # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓（弧弯过去贴着过孔也要算 ✓）
+            if d_pt_trace(v["p"], t) <= rv + hw + 1e-9:
                 uf.union(("via", i), end(j, 0))
                 touch.append(t["layer"])
         for q in pads:
@@ -586,7 +676,8 @@ def check(model, expect=None):
                     who = "过孔 #%d" % tg[1]
                 elif tg and tg[0] == "wire":
                     u = traces[tg[1]]
-                    gap = d_pt_seg(e, u["a"], u["b"]) * PW.SK - _hw(t) - _hw(u)
+                    # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓
+                    gap = d_pt_trace(e, u) * PW.SK - _hw(t) - _hw(u)
                     who = "走线 #%d" % tg[1]
                 else:
                     q = pad_by.get((midx, cid))
@@ -811,7 +902,8 @@ def check(model, expect=None):
     for hi, (c, dia, _cup) in enumerate(model.get("holes") or ()):
         r = (dia / 2.0) / PW.SK                        # 孔半径 ⇒ sketch 单位 ✓
         for i, t in enumerate(traces):
-            d = (d_pt_seg(c, t["a"], t["b"]) - r) * PW.SK
+            # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓（孔旁边弯过去的弧也要算 ✓）
+            d = (d_pt_trace(c, t) - r) * PW.SK
             if d < HOLE_CLEAR_MM - 1e-9:
                 probs.append("⑨ 安装孔：走线 #%d 距孔 #%d 内壁只有 %+.3f mm ✗"
                              "（需要 ≥ %.2f mm ✓；孔 Ø%.2f ✓%s）"
@@ -831,11 +923,17 @@ def check(model, expect=None):
         notes.append("板框读不出 ⇒ **跳过②板外检查** ✗（请给带 `<board>` 与 PCB1 的 sketch ✓）")
     else:
         for i, t in enumerate(traces):
-            for k in (0, 1):
-                e = endpt(t, k)
+            # ★★ 2026-10-08 补 ✗：**弧的线身**也要查板上/板外 ✓ ——
+            #   ✗ 旧版只看**两个端点** ✗ ⇒ 弧鼓出去（偏离弦 ≈2.5 mm ✗）时，两端都在板上
+            #     ⇒ **整段鼓到板外却一个字都不报** ✗。★ 只对带弧的加采样点 ✓（直线的线身
+            #     判据不动 ✗ ⇒ 已交付板子的报数不变 ✓）。
+            pts = [(("起" if k == 0 else "终"), endpt(t, k)) for k in (0, 1)]
+            if t.get("curve"):
+                pts += [("线身", p) for p in t["pts"][1:-1]]
+            for tag, e in pts:
                 if not in_rect(e, r, 0.0):
-                    probs.append("② 板外：走线 #%d 的 %s 端 (%.2f,%.2f) mm 板框是 (%.2f,%.2f)-(%.2f,%.2f) ✗"
-                                 % (i, ("起" if k == 0 else "终"), e[0] * PW.SK, e[1] * PW.SK,
+                    probs.append("② 板外：走线 #%d 的%s (%.2f,%.2f) mm 板框是 (%.2f,%.2f)-(%.2f,%.2f) ✗"
+                                 % (i, tag, e[0] * PW.SK, e[1] * PW.SK,
                                     r[0] * PW.SK, r[1] * PW.SK, r[2] * PW.SK, r[3] * PW.SK))
         for i, v in enumerate(vias):
             if not in_rect(v["p"], r, 0.0):
