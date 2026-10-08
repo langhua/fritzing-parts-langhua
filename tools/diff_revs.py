@@ -1103,7 +1103,7 @@ def _render_view(fzz, view, out):
 
 
 def _seg_sig(txt):
-    r"""一段**顶层**元素 ⇒ "按画出来的样子"的签名 ✓（导线段 / 接点圆点 ✓；其余 ⇒ `None` ✓）。
+    r"""一段**顶层**元素 ⇒ "按画出来的样子"的签名 ✓（导线段 / 接点圆点 / 位号组 ✓；其余 ⇒ `None` ✓）。
 
     ★ 为什么签名要**从画好的 svg 取** ✗（而不是从 sketch 的实例几何取 ✗）：
       `render_sch.py` 画导线时会**拐弯 / 断开 / 加接点圆点** ✓ ⇒ 图上那根线的端点**不等于**
@@ -1111,6 +1111,16 @@ def _seg_sig(txt):
       （面包板那边恰好相等 ✓ 所以老办法能用 ✓；原理图不行 ✗）。
     ★ 判据 = 几何**逐位**（四舍五入到 0.01 ✓）＋ 字面量本身 ✓：
       纯函数 ✓、不看颜色 ✗（颜色是"版"的深浅 ✓ 两版本来就不同 ✓）。
+    ★★ 2026-10-08（用户报 ✗：「播完还留了一些 A 版本的文字残留」✓）：
+      **位号组**也进这张表 ✓（`<g font-family=…><text x y>…</text>…</g>` ✓）——
+      签名 = 每行的 **(x, y, 文字)** ✓；**仍然不看颜色 × 不看字号** ✗
+      （`fill` 是"版"的深浅 ✓、字号两版相同 ✓）。
+      ✗ 认不出（没有 `<text>` 子元素 ✗、或 x/y 缺了 ✗）⇒ 返回 `None` ⇒ 这一组**不进表** ✓
+      ⇒ 也就**不会**被包进动画 ✓ —— 所以测试那边**另有一道**：A 侧独有的顶层文字
+      必须都在组里 ✓（㉒ ✓，且**数一遍 `<text`** 防止解析漏 ✓）。
+      ★ 签名形状 = `("text", 首行 x, 首行 y, ((x, y, 文字), …))` ✓ ——
+      **首行的 (x, y) 摆在 [1] [2]** ✓ ⇒ 排序/找位置那套对三种签名**同一套** ✓
+      （实测踩过 ✗：第一版把整串行塞进 [1] ⇒ 排序时拿元组比浮点 ⇒ `TypeError` ✓）。
     """
     m = re.match(r"\s*<line\b", txt)
     if m:
@@ -1129,17 +1139,40 @@ def _seg_sig(txt):
                 return None
             vals.append(round(float(mm.group(1)), 2))
         return ("dot",) + tuple(vals)
+    if re.match(r"\s*<g\b", txt):
+        # ★ 只认**位号组** ✓：`font-family` 必须在**第一个标签**里 ✓（^ 渲染器就是这么写的 ✓；
+        #   ✗ 别拿"整块里有 font-family"当判据 ✗ —— 零件组里也可能有 `font-family` ✓）
+        head = txt[:txt.find(">") + 1]
+        if "font-family" not in head:
+            return None
+        lines = []
+        for mm in re.finditer(r"<text\b([^>]*)>([^<]*)</text>", txt):
+            ax = re.search(r'\bx="(-?[\d.eE+-]+)"', mm.group(1))
+            ay = re.search(r'\by="(-?[\d.eE+-]+)"', mm.group(1))
+            if ax is None or ay is None:
+                return None
+            lines.append((round(float(ax.group(1)), 2), round(float(ay.group(1)), 2),
+                          mm.group(2)))
+        return ("text",) + lines[0][:2] + (tuple(lines),) if lines else None
     return None
 
 
-def _wire_units(sa, sb):
-    r"""**原理图**的导线变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key})` ✓。
+def _painted_units(sa, sb):
+    r"""**原理图**的变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key})` ✓。
 
     ★★ 2026-10-08 用户报 ✗：「**原理图**也该跟面包板一样：进来 A+B ⇒ 点播放 ⇒ A→B ⇒
       播完**只显示 B**」✓ —— 实测坐实 ✗：原理图 A/B 两版之间**导线**才是主要差别 ✓
       （v20→v40：导线 60→41 段 ✓），而老口径只给"零件摆位"打钥匙 ✗（`_hit_view` 里那段
       按孔对比较是**面包板专属**的 ✓）⇒ 播完之后 **A 侧的 48 段线 ＋ 31 个接点仍留在图上** ✗
       ⇒ 末态不是 B ✓（实测就是这么量的 ✓）。
+    ★★ 2026-10-08（当天第二轮 ✓，用户报 ✗：「播完还留了一些 A 版本的文字残留」✓）：
+      **位号**也是同一类漏网的 ✓ —— 实测 v20→v40：A 侧 **7 个位号**（`L1` / `C1` / `C2` /
+      `R1` / `U1` / `J1` / `J2` ✓）在 B 里找不到同形同位的 ✓ ⇒ 播完 7 条灰字留在图上 ✓。
+      ⇒ 表里**加上位号组** ✓。★ 但位号**不**像导线那样按连通分量分组 ✗ ——
+      它在 `_tag_elements()` 里**并进它那个零件的变化处** ✓（渲染器现在给位号组写了
+      `partID` ✓）：零件挪走时，位号跟着它一起闪/一起撤 ✓（实测：那 7 个位号对应的 7 个
+      零件**本来就已经是变化处** ✓ ⇒ **一处都没多** ✓ 一轮仍是 22s ✓）。
+      ⇒ 这里只给"**并不进任何零件**的位号"发自己的 key ✓（例如零件没动、只有值改了 ✓）。
 
     ★ 怎么分组 ✗（不能一段一个时段 ✗ —— 那样一轮 80 × 2s = 160s ✓）：
       按**连通分量**聚 ✓（共享端点的段连在一起 ✓、接点圆点按坐标挂上 ✓）
@@ -1149,17 +1182,27 @@ def _wire_units(sa, sb):
       是零件自己的图形 ✓，归零件那套钥匙管 ✓）。
     """
     def top(svg):
-        out = {}
+        out, lab = {}, {}
         for cls, txt in _top_split(svg):
-            if cls != CLS_WIRE:
+            if cls not in (CLS_WIRE, CLS_TEXT):
                 continue
             sig = _seg_sig(txt)
-            if sig is not None:
-                out.setdefault(sig, 0)
-                out[sig] += 1
-        return out
+            if sig is None:
+                continue
+            out.setdefault(sig, 0)
+            out[sig] += 1
+            if cls == CLS_TEXT:
+                # ★ 位号**按"它是哪个零件的位号"认亲** ✓（`partID` ✓，渲染器写的 ✓）：
+                #   ✗ 不按签名认 ✗ —— 同一个位号在 A、B 里坐标不同 ⇒ 签名不同 ⇒
+                #   会被当成**两处**变化 ✓（实测：14 处 ✗ ⇒ 一轮凭空多 28s ✗）。
+                #   认亲之后 ⇒ **一处** ✓：A 的淡出、B 的淡入**同一个时段** ✓
+                #   （✗ 免得"先在一个时刻消失、又在另一个时刻冒出来" ✓）。
+                mp = re.search(r'\bpartID="(\d+)"', txt)
+                if mp:
+                    lab[sig] = ("lab", mp.group(1))
+        return out, lab
 
-    ta, tb = top(sa), top(sb)
+    (ta, la), (tb, lb) = top(sa), top(sb)
     only_a = {k: n for k, n in ta.items() if n > tb.get(k, 0)}
     only_b = {k: n for k, n in tb.items() if n > ta.get(k, 0)}
     if not only_a and not only_b:
@@ -1190,11 +1233,21 @@ def _wire_units(sa, sb):
         if sg[0] != "dot":
             continue
         union(("s", sg), ("p", (sg[1], sg[2])) if (sg[1], sg[2]) in pts else ("s", sg))
+    # ★ 位号：**同一个零件的位号**（A 的一个 ＋ B 的一个 ✓）焊成同一处 ✓ ——
+    #   实测 v20→v40：不焊 = 14 处 ✗（A 7 ＋ B 7 ✓）；焊上 = **7 处** ✓。
+    for sg, n in list(la.items()) + list(lb.items()):
+        if sg in only_a or sg in only_b:
+            union(("s", sg), ("p", n))
     # ★ 序号按**位置**排 ✓（左→右、上→下 ✓）⇒ 同一份输入每次跑出来的时段顺序一样 ✓
     #   （`refs` 会被 `_anim_css` 排序 ✓，但 key 名字本身也带上位置更好读 ✓）
-    order = sorted({find(("s", sg)) for sg in list(only_a) + list(only_b)},
-                   key=lambda r: (min((sg[1], sg[2]) for sg in list(only_a) + list(only_b)
-                                      if find(("s", sg)) == r and sg[0] == "line") or (0, 0)))
+    #   ★ 位号组的坐标也在 [1] [2] ✓（`(x, y)` ✓）⇒ 排序口径对三种签名**同一套** ✓。
+    allsg = list(only_a) + list(only_b)
+    pos = {}
+    for sg in allsg:
+        r, p = find(("s", sg)), (sg[1], sg[2])
+        if r not in pos or p < pos[r]:
+            pos[r] = p
+    order = sorted(pos, key=lambda r: pos[r])
     name = {r: "seg%d" % i for i, r in enumerate(order)}
     ka = {sg: name[find(("s", sg))] for sg in only_a}
     kb = {sg: name[find(("s", sg))] for sg in only_b}
@@ -1214,10 +1267,14 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
         数字也扫进来 ✗）。
     ★ `skip` = **背景件**的下标 ✓ ⇒ 它**不包**（= 不参与动画 ✓，板是画布 ✓）。
 
-    ⇒ 返回 `(新 svg, 打上钥匙的 key 集合, 裸在外面没进组的线)` ✓ —— 三个都拿去自检 ✓
-      （= 该侧**真画出来且真变了**的件数 ✓；✗ 少包一个就报错，不许静默 ✗）。
+    ⇒ 返回 `(新 svg, 打上钥匙的 key 集合, 裸在外面没进组的线, 被并掉的位号钥匙)` ✓
+      —— 四个都拿去自检 ✓（= 该侧**真画出来且真变了**的件数 ✓；✗ 少包一个就报错，不许静默 ✗）。
       ★ 第三个（`leak` ✓）是 2026-10-08 加的：**属于变化处、却没进组的线** ⇒ 它们在动画里
       **撤不掉** ✓（用户报的「箭头所指的红横线仍然没有被删除」✓ 就是这一类 ✓）。
+      ★ 第四个（`tied` ✓）是 2026-10-08 当天第二轮加的：**位号并进了它那个零件的变化处** ✓
+      ⇒ 它**自己那个钥匙**（`_painted_units()` 发的 ✓）就**不被用了** ✗ ——
+      报出来，调用处才好把"报了变化却没进动画"的自检算对 ✓（用户报的
+      「播完还留了一些 A 版本的文字残留」✓ 就是这条要治的 ✓）。
     """
     import xml.etree.ElementTree as ET
     import zipfile
@@ -1268,8 +1325,9 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
             pts = [(x, y), (x + x2, y + y2)]
             by_seg[tuple(round(v, 2) for p in pts for v in p)] = key
     head = svg[:svg.find(">", svg.find("<svg")) + 1]
-    out, got, leak = [], set(), []
+    out, got, leak, tied = [], set(), [], set()
     buf, buf_key = [], None
+    seen = {}                                  # ★ key ⇒ 这个 key 出过几个组 ✓（见 `flush()` ✓）
 
     def flush():
         """把攒着的一串**同一个 key** 的顶层元素包成**一个**组 ✓。
@@ -1277,9 +1335,18 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
         ★★ 2026-10-08：一条跳线的几段**只包一层** ✓ —— ✗ 别一段一个 `<g id="a-…">` ✗
           （那会写出**重复 id** ✓）。渲染器是按 sketch 顺序画线的 ✓ ⇒ 同一条跳线的几段
           **挨着** ✓（实测：`a-Wire90013116` 的竖段与横段就是前后脚 ✓）。
+        ★★ 2026-10-08（当天第二轮 ✓）：**位号**跟它那个零件**不挨着** ✓（渲染器把位号画在
+          最后 ✓）⇒ 同一个 key 会出**两个**组 ✓ ⇒ id 加序号（`a-C1` / `a-C1-2` ✓）**保证唯一** ✓
+          （⚠ 原来同一个 key 只会出一个组 ✓，所以没这个顾虑 ✗）。
+          ⇒ 动画名字**不能**再靠 id 挂 ✗：改挂一个 `data-anim-key="a|<key>"` ✓，
+          由 `_anim_data()` 把它换成 `data-anim="<名字>"` ✓ —— 一次替换**两个组都盖到** ✓。
         """
         if buf_key is not None:
-            out.append('<g id="%s-%s">%s</g>' % (side, _gid(buf_key), "".join(buf)))
+            n = seen.get(buf_key, 0)
+            seen[buf_key] = n + 1
+            gid = "%s-%s%s" % (side, _gid(buf_key), "" if n == 0 else "-%d" % (n + 1))
+            out.append('<g id="%s" data-anim-key="%s|%s">%s</g>'
+                       % (gid, side, _gid(buf_key), "".join(buf)))
 
     def _at(a):
         """取一个**属性**的值 ✓ —— ✗ 不许拿全文扫数字 ✗：
@@ -1296,11 +1363,26 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
             out.append(txt)
             continue
         key = None
+        tie = None                                 # ★ 位号并进零件那一处时，它**自己**的钥匙 ✓
+        # ★★ 2026-10-08（当天第二轮 ✓）：**位号**要**并进它那个零件的变化处** ✓ ——
+        #   零件挪走 ⇒ 位号跟着一起闪、一起撤 ✓（用户报 ✗：「播完还留了一些 A 版本的文字残留」✓：
+        #   实测 v20→v40 留了 **7 条灰字** ✓ = `L1` / `C1` / `C2` / `R1` / `U1` / `J1` / `J2` ✓）。
+        #   ★ 判据 = 渲染器写在位号组上的 **`partID`** ✓（`render_sch.py` 现在照 Fritzing 导出的
+        #   形状写 `<g id="partLabel" partID="…0">` ✓）⇒ `by_mi[partID[:-1]]` = 那个零件的 key ✓
+        #   ⇒ **一处都不多** ✓（那 7 个位号对应的零件本来就是变化处 ✓ ⇒ 一轮仍是 22s ✓）。
+        #   ★ 零件**没**进变化处（只有值改了 ✓）⇒ `partID` 查不到 ⇒ 落到下面那张表 ✓
+        #   ⇒ 位号**自成一处** ✓（仍然撤得掉 ✓，只是不跟零件同步 ✓）。
+        if cls == CLS_TEXT:
+            mp0 = re.search(r'\bpartID="(\d+)"', txt)
+            if mp0:
+                key = by_mi.get(mp0.group(1)[:-1])
+            if key is not None:
+                tie = (seg_keys or {}).get(_seg_sig(txt))
         # ★★ 2026-10-08（原理图的导线 ✓）：**先查"按画出来的样子"给的表** ✓ ——
-        #   `seg_keys`（见 `_wire_units()` ✓）是**从两份渲好的 svg 量的** ✓ ⇒ 与图**逐字同一份**
+        #   `seg_keys`（见 `_painted_units()` ✓）是**从两份渲好的 svg 量的** ✓ ⇒ 与图**逐字同一份**
         #   几何 ✓（✗ 不重算布线 ✗：`render_sch.py` 会拐弯、会断开、会加接点 ✓，
         #   在 `diff_revs` 里重算就是**第二份实现** ✓ ⇒ 迟早对不上 ✓）。
-        if cls == CLS_WIRE and seg_keys:
+        if key is None and cls in (CLS_WIRE, CLS_TEXT) and seg_keys:
             key = seg_keys.get(_seg_sig(txt))
         # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
         #   —— 实测两个渲染器都逐位相符 ✓（`L1: -2.020000 42.448800` ↔ `x=-2.02 y=42.4488` ✓）。
@@ -1344,6 +1426,12 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
                 buf, buf_key = [], key
             buf.append(txt)
             got.add(key)
+            if tie:
+                # ★ 这个位号**并进了零件那一处** ✓ ⇒ 它自己那处变化就**不用了** ✗
+                #   （调用处据此把"报了变化却没进动画"的自检算对 ✓；
+                #   ✗ 别把它算进 `got` ✗ —— 那样 `_anim_css()` 会给它写一条**没人用的**
+                #   关键帧 ✓，测试里"名字集合相等"当场假失败 ✓）
+                tied.add(tie)
         else:
             # ★★ 自检（2026-10-08 加 ✓）：**按坐标能认出属于变化处、却没进组**的线 ✗ ——
             #   它们不参与动画 ⇒ 动画把那一版撤掉了、它们**却一直都在** ✓
@@ -1353,11 +1441,16 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
                 if None not in (ax, ay, bx, by) and (((ax, ay, bx, by) in by_seg)
                                                      or ((bx, by, ax, ay) in by_seg)):
                     leak.append("(%.0f,%.0f)→(%.0f,%.0f)" % (ax, ay, bx, by))
+            elif cls == CLS_TEXT and seg_keys and _seg_sig(txt) in seg_keys:
+                # ★ 按现在的查找顺序，这条**应当永不触发** ✓（表里有这个签名就会在上一段被认走 ✓）——
+                #   留着它是给**以后改查找顺序**的人当绊线 ✓：位号撤不掉，图上就会留灰字 ✓
+                #   （用户 2026-10-08 报的正是这个 ✓）。
+                leak.append("位号 %s" % (txt[:60].replace("\n", " "),))
             flush()
             buf, buf_key = [], None
             out.append(txt)
     flush()
-    return head + "".join(out) + "</svg>", got, leak
+    return head + "".join(out) + "</svg>", got, leak, tied
 
 
 def _link_same(x, y):
@@ -1518,7 +1611,7 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     return body, refs
 
 
-def _anim_css(ka, kb, refs, token, sec=ANIM_SEC):
+def _anim_css(ka, kb, units, token, sec=ANIM_SEC):
     """★ 给每一处变化排一个**时段** ✓，写 `@keyframes` ＋ 每个元素一个 `data-anim="<名字>"` ✓
     —— ✗ 不用选择器 ✗（幻灯片把多张图拼在一页里 ✓，而 id / class 是**文档级**的 ✗
     ⇒ 第一页的规则会去管第二页的元素 ✗）；名字里带 token ✓ ⇒ 永不串台 ✓。
@@ -1532,11 +1625,14 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC):
         ⇒ 打开 svg 时看到的是**静止的 A+B 叠合图** ✓，等「▶ 重放动画」被点才由 JS 起播 ✓；
       ② **不再收尾淡回 A+B** ✗ —— 那段**删掉** ✓ ⇒ 播完**停在 B** ✓
         （原话：「点击【重放动画】时，才从 A 开始变化到 B，并在结束后**停留在 B**」✓）。
+    ★★ 2026-10-08（当天第二轮 ✓）：第三个参数是 **`units` = 真有组挂上动画的那些 key** ✗
+      （✗ 不是"报出来的全部变化" ✗）—— 位号并进零件那一处时 ✓，它**自己**那个 key
+      就没人用了 ✓ ⇒ 别给它写关键帧 ✗（测试 ⑯ 是"名字集合相等" ✓ ⇒ 多写一条当场假失败 ✓）。
 
     ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s, A 那几行图例的动画名)` ✓ ——
       总时长**只在这一处算** ✗（✓ JS 起播与关键帧百分比必须用**同一个**值 ✓）。
     """
-    keys = sorted(refs)
+    keys = sorted(units)
     if not keys:
         return "", {}, 0.0, None
     total = len(keys) * sec
@@ -1579,14 +1675,18 @@ def _anim_data(pa, pb, anim):
       只挂个**名字** ✓，由扩展/幻灯片那两个按钮去起播 ✓（`data-anim` 就是那个名字 ✓）。
     ★ 一轮时长**不在这里** ✓ —— 它挂在根 `<svg>` 的 `data-anim-dur` 上 ✓（见调用处 ✓），
       而那个数**只在 `_anim_css()` 算一处** ✗（✗ 别让 JS 自己加起来 ✗）。
+    ★★ 2026-10-08（当天第二轮 ✓）：**认的是 `data-anim-key` 记号，不是 id** ✗ ——
+      一个 key 可能出**两个**组 ✓（零件一个 ＋ 它的位号一个 ✓，见 `_tag_elements()` ✓，
+      位号的 id 带序号 ⇒ 按 id 找不全 ✗）。⇒ 一次 `replace` 把**两个都**换成 `data-anim` ✓，
+      且**不留** `data-anim-key` 残渣 ✓（测试 ㉒ 会当场查这一条 ✓）。
     """
     for (side, key), nm in anim.items():
-        # ★ 同一个 key 的几段在**一个** `<g>` 里 ✓ ⇒ 这里一换就换全 ✓
-        gid = '<g id="%s-%s"' % (side, _gid(key))
+        # ★ 同一个 key 的几段在**一个** `<g>` 里 ✓；位号则另起一组**同一个 key** ✓ ⇒ 两处都换 ✓
+        tok = 'data-anim-key="%s|%s"' % (side, _gid(key))
         if side == "a":
-            pa = pa.replace(gid, gid + ' data-anim="%s"' % nm)
+            pa = pa.replace(tok, 'data-anim="%s"' % nm)
         else:
-            pb = pb.replace(gid, gid + ' data-anim="%s"' % nm)
+            pb = pb.replace(tok, 'data-anim="%s"' % nm)
     return pa, pb
 
 
@@ -1629,31 +1729,40 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     #   ⇒ `skip` 必须传 None ✗（传 skb 会误跳下一块 ✓）
     pb0 = _paint(sb, pal[1], "B", drop=skb)[0]
     # ★★ 2026-10-08（**原理图**的导线 ✓）：导线也是"变化处" ✓ —— 判据**从这两份渲好的 svg 量** ✓
-    #   （✗ 不在本文件里重算布线 ✗，见 `_wire_units()` 的说明 ✓）。
+    #   （✗ 不在本文件里重算布线 ✗，见 `_painted_units()` 的说明 ✓）。
     seg_a = seg_b = None
     if VIEW == "sch":
-        seg_a, seg_b, wrefs = _wire_units(pa0, pb0)
+        seg_a, seg_b, wrefs = _painted_units(pa0, pb0)
         if wrefs:
-            print("✓ 原理图导线：A/B 两版**画出来的**线比出来 ⇒ %d 处导线变化 ✓（A %d 段 / B %d 段 ＋ 接点 ✓）"
+            print("✓ 原理图导线/位号：按 A/B 两版**画出来的**样子比 ⇒ %d 处变化 ✓"
+                  "（A %d 个签名 / B %d 个签名 ＋ 接点 ＋ 位号 ✓）"
                   % (len(wrefs), len(seg_a), len(seg_b)))
         refs = refs | wrefs
-    pa, ka, leak_a = _tag_elements(pa0, refs, a_fzz, vname, "a", skip=ska, seg_keys=seg_a)
-    pb, kb, leak_b = _tag_elements(pb0, refs, b_fzz, vname, "b", seg_keys=seg_b)
-    lose = refs - (ka | kb)
-    print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
-          % (len(refs), len(ka), len(kb), not lose,
+    pa, ka, leak_a, tie_a = _tag_elements(pa0, refs, a_fzz, vname, "a", skip=ska, seg_keys=seg_a)
+    pb, kb, leak_b, tie_b = _tag_elements(pb0, refs, b_fzz, vname, "b", skip=skb, seg_keys=seg_b)
+    # ★★ 2026-10-08（当天第二轮 ✓）：`_tag_elements()` 现在还回一个 `tied` ✓ ——
+    #   "这个位号并进了它那个零件的变化处" ✓（用户报 ✗：「播完还留了一些 A 版本的文字残留」✓、
+    #   实测 v20→v40 留下 7 条灰字 ✓）。
+    tied = tie_a | tie_b
+    used = ka | kb                                  # ★ 真有组挂上动画的 key ✓ = 时段表 ✓
+    lose = refs - used - tied
+    print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；其中 **%d 处是位号并进零件**"
+          "（不再单占时段 ✓）；**一处都没漏** = %s%s"
+          % (len(refs), len(ka), len(kb), len(tied), not lose,
              "" if not lose else " ✗ 漏了：%s" % "、".join(sorted(lose))))
+    print("   ⇒ **时段 %d 处**（= 一轮几步 ✓）；一处 %.1f s ⇒ 一轮 %.1f s ✓"
+          % (len(used), ANIM_SEC, len(used) * ANIM_SEC))
     # ★★ 2026-10-08 自检 ✓：**属于变化处、却没进动画组**的线 = 动画里撤不掉的线 ✓
     #   （用户原话：「箭头所指的红横线仍然没有被删除」✓ —— 实测就是 `Wire90013116`
     #    的第二段 ✓：那条跳线是**两段 Wire 串起来**的 ✓，只包了第一段 ✓。）
     leak = leak_a + leak_b
-    print("✓ 动画钥匙：**裸在外面、又属于变化处**的线 = %d 根 %s"
+    print("✓ 动画钥匙：**裸在外面、又属于变化处**的线/位号 = %d 根 %s"
           % (len(leak), "✓（动画里都撤得干净 ✓）" if not leak
              else "✗ %s ⇒ 动画撤不掉它们 ✓" % "；".join(leak[:4])))
     # ★★ 动画：只写**关键帧** ＋ 每个组一个 `data-anim="<名字>"` ✓ —— ✗ 不写 `animation:` ✗
     #   （写了就一进页面自己播 ✓ —— 用户 2026-10-08 要的是"**进入时显示 A+B**、点了才播" ✓）
     token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
-    css, anim, dur, leg_a = _anim_css(ka, kb, refs, token)
+    css, anim, dur, leg_a = _anim_css(ka, kb, used, token)
     pa, pb = _anim_data(pa, pb, anim)
     if css:
         # ★ 关键帧**只写一份** ✓：A / B 两张图最终在**同一份文档**里 ✓（叠合图是一

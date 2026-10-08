@@ -718,7 +718,7 @@ for el in root.iter("instance"):
                 lines.append(v)
         _ = props
     labels.append((ttl, (enum(tg, "x"), enum(tg, "y")), float(enum(tg, "fontSize", 5.0)),
-                   tg.get("textColor") or "#000000", lines))
+                   tg.get("textColor") or "#000000", lines, fzpmid))
     LAB_REL[fzpmid] = {"lines": lines, "fs": float(enum(tg, "fontSize", 5.0))}
 print("── 位号 %d 个：%s" % (len(labels), ", ".join("%s(%s)" % (l[0], "+".join(l[4][1:]) or "—") for l in labels)))
 
@@ -1077,7 +1077,7 @@ for _t1, _v, _t2, _a2, _b2, _d2 in sorted(fj_near, key=lambda z: z[5]):
 
 # ── ④d ★ 美学指标之二：**位号文字压到东西** ✓（2026-09-27 用户点名 ✓）──#   配 ① 别的元件的本体框 ✓ ② 导线 ✓ ③ 别的位号 ✓（三类分开报 ✓，且**逐条点名** ✓）。
 LBOX = [(ttl, ST.label_bbox(lx, ly, fs, lines))
-        for ttl, (lx, ly), fs, _c, lines in labels]
+        for ttl, (lx, ly), fs, _c, lines, _mi in labels]
 bl = bw = bb2 = 0
 detail = []
 for ttl, bx in LBOX:
@@ -1132,8 +1132,17 @@ for (cx, cy), _rr in dots:                            # ★ 接点圆点画在�
     # ★ 颜色 = 该点的**线色** ✓（2026-10-04 ✓；依据见上面那段 ✓）—— 查不到 ⇒ 回退黑 ✓
     body.append('<circle cx="%.4f" cy="%.4f" r="%.4f" fill="%s" stroke="none"/>'
                 % (cx, cy, _rr, DOTCOL.get((round(cx, 3), round(cy, 3)), "#000000")))
-for ttl, (lx, ly), fs, col, lines in labels:
-    body.append('<g font-family="DroidSans" font-size="%.3f" fill="%s">' % (fs, col))
+for ttl, (lx, ly), fs, col, lines, _mi in labels:
+    # ★★ 2026-10-08 ✓：位号组**带上它那个零件的 `partID`** ✓（`id="partLabel"` ✓ 与 Fritzing
+    #   自己导出的形状**逐字同形** ✓ —— 依据 = `--verify-export` 里量导出那一句
+    #   `<g id='partLabel' partID='…'>` ✓）。★ 为什么非要它 ✗：差异图的**动画**要靠它把
+    #   位号**并进零件那一处** ✓ —— ✗ 不带的话，零件挪走了、位号撤不掉 ✓
+    #   （实测：v20→v40 播完还剩 **7 条灰字** ✓，用户就是拿着截图来报的 ✓）。
+    #   ★ 没有 `modelIndex` 的实例 ⇒ **不写** `partID` ✗（写了就是个假钥匙 ✓，
+    #     那种位号会各自成为一处变化 ✓ —— 仍然**撤得掉** ✓，只是不跟零件同步 ✓）。
+    _pid = (' partID="%s0"' % _mi) if _mi else ""
+    body.append('<g id="partLabel"%s font-family="DroidSans" '
+                'font-size="%.3f" fill="%s">' % (_pid, fs, col))
     for i, s_ in enumerate(lines):
         # ★ 基线在**锚点下方**一个行高 ✓（Fritzing 写的是 `<text x="0" y="5.000">位号</text>` ✓，
         #   即第 1 行基线 = 锚点 + font-size ✓）—— 我原来画在`ly + fs*i`（第 1 行 = 锚点 ✗）
@@ -1320,7 +1329,7 @@ if "verify-export" in opts:
         print("        ✗ …… 另有 %d 根" % (len(extra) - 6))
 
     lw, lbad = 0.0, []
-    for ttl0, (lx, ly), fs, col, lines in labels:
+    for ttl0, (lx, ly), fs, col, lines, _mi in labels:
         blk = next((b for b in lab.values()
                     if re.search(r">%s</text>" % re.escape(ttl0), b)), None)
         if blk is None:

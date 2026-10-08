@@ -539,6 +539,12 @@ if (!n21 || badLeg21 || !nLeg || !drawsLegPy) {
 //     · "在动画组里" = 它被包在某个带 `data-anim` 的 `<g>` 里 ✓（扫的时候按嵌套记 ✓）。
 //   ★ 只对**原理图**查 ✓：面包板那边有它自己那套（按孔对打钥匙 ＋ `leak` 自检 ✓），
 //     而且面包板的阴影件/板子会制造假阳性 ✓。
+//   ★★ 2026-10-08 **第三次补** ✓（用户截图报 ✗：「播完还留了一些 A 版本的文字残留」✓）：
+//     **位号**是同一类漏网的 ✓（实测 v20→v40 留了 **7 条灰字** ✓：`L1`/`C1`/`C2`/`R1`/
+//     `U1`/`J1`/`J2` ✓）⇒ 同一条判据**也查位号** ✓：A 独有的位号组（`<g … font-family=…>`）
+//     必须都在动画组里 ✓。★ 附两条防"自己骗自己" ✓：解析到的位号**数一遍** `<text` ✓
+//     （漏解析 ⇒ 当场失败 ✓，不许静默 ✓）；A 独有的位号**必须真有几个** ✓
+//     （否则这条测试是空的 ✓ —— 现在是 7 个 ✓）。
 const tagRe = /<(\/?)([a-zA-Z][\w:.-]*)((?:"[^"]*"|'[^']*'|[^>"'])*?)(\/?)>/g;
 function leavesOf(svg, gid, stopId) {
 	const i = svg.indexOf('<g id="' + gid + '"');
@@ -552,7 +558,22 @@ function leavesOf(svg, gid, stopId) {
 		const closing = m[1] === '/', name = m[2].toLowerCase(), attrs = m[3];
 		if (name === 'g') {
 			if (closing) stack.pop();
-			else if (!m[4]) stack.push(/data-anim=/.test(attrs));
+			else if (!m[4]) stack.push(/data-anim(-key)?=/.test(attrs));
+			// ★ 位号组：`font-family` 在**这一层**的标签里 ✓（零件组里也有 `font-family` ✗
+			//   ⇒ 必须看块头，✗ 别看整块 ✗ —— 2026-10-07 实测过同一个坑 ✓）。
+			if (!closing && /font-family/.test(attrs)) {
+				const end = body.indexOf('</g>', m.index);
+				const txt = body.slice(m.index, end < 0 ? body.length : end);
+				const parts = [];
+				for (const t of txt.matchAll(/<text\b([^>]*)>([^<]*)<\/text>/g)) {
+					const ax = /\bx="(-?[\d.eE+-]+)"/.exec(t[1]);
+					const ay = /\by="(-?[\d.eE+-]+)"/.exec(t[1]);
+					if (ax && ay) parts.push([+ax[1], +ay[1], t[2]].join('@'));
+				}
+				if (parts.length) {
+					out.push({ sig: 'text|' + parts.join('|'), inAnim: stack.indexOf(true) >= 0 });
+				}
+			}
 			continue;
 		}
 		if (closing) continue;
@@ -573,27 +594,47 @@ function leavesOf(svg, gid, stopId) {
 	return out;
 }
 let n22 = 0, n22bad = 0, aOnly22 = 0, unwrapped22 = 0;
+let labOnly22 = 0, labBad22 = 0, textSeen22 = 0, keyLeft22 = 0;
 for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-sch-.*\.svg$/.test(x))) {
 	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
 	if (svg.indexOf('data-anim-dur') < 0) continue;          // 没变化的图没有动画 ✓ 跳过 ✓
 	n22++;
+	// ★ `data-anim-key` 是**打钥匙时的记号** ✓ ⇒ 交给 `_anim_data()` 时就该**换干净** ✗
+	//   （留一个就是"有组没挂上名字" ✓ ⇒ 那一段动画根本不跑 ✓）。
+	if (svg.indexOf('data-anim-key') >= 0) {
+		keyLeft22++;
+		console.log('   ✗ %s：还留着 data-anim-key 记号（那一组没换到 data-anim ⇒ 不参与动画）', f);
+	}
+	const aBody = svg.slice(svg.indexOf('<g id="A"'), svg.indexOf('<g id="B"'));
+	const bBody = svg.slice(svg.indexOf('<g id="B"'), svg.indexOf('<g id="legend"'));
+	textSeen22 += (aBody.match(/<text\b/g) || []).length + (bBody.match(/<text\b/g) || []).length;
 	const la = leavesOf(svg, 'A', 'B');
 	const inB = new Set(leavesOf(svg, 'B', 'legend').map((x) => x.sig));
 	const onlyA = la.filter((x) => !inB.has(x.sig));
 	const unwrapped = onlyA.filter((x) => !x.inAnim);
+	const labOnly = onlyA.filter((x) => x.sig.indexOf('text|') === 0);
+	const labBad = labOnly.filter((x) => !x.inAnim);
 	aOnly22 += onlyA.length;
 	unwrapped22 += unwrapped.length;
+	labOnly22 += labOnly.length;
+	labBad22 += labBad.length;
 	if (unwrapped.length) {
 		n22bad++;
-		console.log('   ✗ %s：A 独有导线元素 %d 个，其中 **没进动画组** %d 个（播完撤不掉 ✗）'
+		console.log('   ✗ %s：A 独有元素 %d 个，其中 **没进动画组** %d 个（播完撤不掉 ✗）'
 			+ '，例如 %s', f, onlyA.length, unwrapped.length,
 		unwrapped.slice(0, 3).map((x) => x.sig).join(' ／ '));
 	}
 }
-console.log('㉒ 原理图导线进动画：%s 张 sch 图 ⇒ A 独有导线元素 %s 个，未进组的 %s 个 ⇒ 不合格 %s 张',
-	n22, aOnly22, unwrapped22, n22bad);
-if (!n22 || n22bad) {
-	fail('原理图里 A 独有导线没进动画组 ⇒ 播放完 A 的线还留在图上（用户要的是"播完只显示 B"）');
+// ★ 位号那半：A 独有的位号**必须真出现**（否则这条是空测试 ✓）＋ 它们**都要在动画组里** ✓
+const labMissing = labOnly22 === 0;
+console.log('㉒ 原理图元素进动画：%s 张 sch 图 ⇒ A 独有元素 %s 个（其中**位号** %s 个），'
+	+ '未进组的 %s 个（位号占 %s）⇒ 不合格 %s 张；位号样例 = %s；`<text` 共扫到 %s 个；'
+	+ 'data-anim-key 残渣 %s 张',
+n22, aOnly22, labOnly22, unwrapped22, labBad22, n22bad,
+labMissing ? '**一个都没有** ✗' : '有 ✓', textSeen22, keyLeft22);
+if (!n22 || n22bad || labMissing || keyLeft22) {
+	fail('原理图里 A 独有的导线/位号没进动画组 ⇒ 播放完 A 的线、A 的位号还留在图上'
+		+ '（用户要的是"播完只显示 B"）；或位号这条测试自己空了');
 }
 // ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
 //   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——

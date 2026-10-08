@@ -170,6 +170,12 @@
   ⇒ 按 `partID` 认线要用 **`mi` + 1 位层号** 前缀匹配 ✓（`900131750` ⇒ `mi=90013175` ✓；走线只出一份 ✓）。
 - ★ **每个元件还有第三个组** ✗：`<g id="partLabel" partID="…">`（位号文字 ✓）——
   ✗ 用 `d[pid] = …` 会被它**覆盖** ✗（我中过一次 ⇒ 定标全错 ✗）⇒ 必须 `setdefault(...).extend(...)` + 跳过 `partLabel` ✓。
+  ★ 2026-10-08 ✓：**我们自己那个 `render_sch.py` 现在也照这个形状写** ✓
+  （`<g id="partLabel" partID="…0" font-family="DroidSans" …>` ✓）—— 不是为了像 ✗，
+  而是**差异图的动画要靠它** ✓（位号据此**并进它那个零件那一处** ✓，见 `docs/diff-animation.md` ✓）。
+  ⚠ 于是我们自己渲的 svg 里 `id="partLabel"` 会**重复 9 次** ✓ —— 与 Fritzing 导出**同病** ✓
+  （它每个位号组都叫这个名字 ✓）；★ 谁要按 id 找位号，**别用 `getElementById`** ✗，
+  按 `partID` 找 ✓。
 - 走线 = `<g partID="mi+层号"><line … stroke-width="0.864"/></g>` ✓（0.864 导出单位 = 12 mil ✓）。
 
 ### F14 · ★★ **Fritzing 载入时会把走线端点吸到它自己的连接点** ✗
