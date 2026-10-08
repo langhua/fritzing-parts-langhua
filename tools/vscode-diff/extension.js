@@ -435,17 +435,25 @@ const CSS = `
               ⇒ 整块右栏统一 **12px** ✓（＝ 那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
            font-size:12px; line-height:1.5; }
   /* ★★ 2026-10-08：这条工具条**两个界面共用** ✓ ——
-     · 合并视图：**按钮 ＋ 那句高亮提示** ✓（提示要暗一些 ⇒ 自己带 .dim ✓）；
+     · 合并视图：里面**只有那个按钮** ✓（没有 svg 时才回落到图名 ✓）；
      · 幻灯片：里面是**「播放差异」** ✓（用户：「在右侧、『面包板差异清单』上方显示【播放差异】」✓）
        ★ ⇒ 那条 opacity:.75 **从 .bar 挪到 .bar .dim** ✓：✗ 放在 .bar 上会把按钮也一起调暗 ✗
        （opacity 不能靠孩子"调回来" ✓ —— 它是在**整棵子树渲染完**之后再统一压暗的 ✓）。
      ★ 钉在顶上 ✓：清单往往长过一屏 ✓ ⇒ 一滚按钮就"看不见"了 ✗。
-     ★ 横排 ＋ gap ✓：合并视图那条里是"按钮 ＋ 提示"两个东西 ✓ ——
-       ✗ 不然它们会贴在一起 ✓；顺带让提示**可缩**（min-width:0 ＋ 省略号 ✓），窄窗口不撑破 ✓。 */
+     ★ 横排 ＋ gap ✓：为"按钮 ＋ 别的东西"留的 ✓（现在两边都只剩按钮 ✓，留着不影响 ✓）。 */
   .bar { font-size:12px; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
          position:sticky; top:0; z-index:2; background: var(--vscode-editor-background);
          display:flex; gap:8px; align-items:center; min-width:0; }
-  .bar .dim { opacity:.75; flex:1 1 auto; min-width:0;
+  /* ★★ 2026-10-08 用户报：「『点 ① ② 里任意一条 ⇒ 图上高亮…』这段文字，**不能放在播放差异的段落里**，
+     它的内容**都被格式吃掉了**」✓ —— 根因（实测 ✓）：那句真宽 **275px**，而右栏在 1040px 窗口下只有
+     **360px**（左栏 flex:2 / 右栏 flex:1 ⇒ 右栏只占 1/3 ✓）⇒ 跟按钮挤一行**放不下** ✓；
+     上一版为"别把按钮挤出界"加的 nowrap ＋ overflow:hidden ＋ 省略号 ⇒ 把它截成「点 ①② 里任意…」✗
+     （520px 窗口下只剩 **60px** ⇒ 只剩开头几个字 ✓）。
+     ⇒ 现在提示**自己一段** ✓：不限宽 ✓、**可以折行** ✓ ⇒ 多窄都看得全 ✓（✗ 别再加 nowrap ✗）。 */
+  .dim { opacity:.75; }
+  /* ★ 顶栏里那个 .dim 只可能是**没有 svg 时的图名** ✓（image 兜底那条路 ✓）
+     ⇒ 它仍然是"一行、放不下就省略号" ✓（✗ 提示别用到这里 ✗）。 */
+  .bar .dim { flex:1 1 auto; min-width:0;
               overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   /* ★★ 2026-10-08：按钮**内容与文字都要竖向居中** ✓ —— 幻灯片那个按钮里是"画出来的图形 ＋ 文字" ✓
      （.step ＋ .lbl ✓），✗ 不是一整串文字 ✗ ⇒ 得让这两块自己对齐 ✓。
@@ -501,14 +509,26 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 		? '<button id="pd-replay"><span class="ic" aria-hidden="true">▶</span>'
 			+ '<span class="lbl">播放差异</span></button>'
 		: '';
+	// ★ 顶栏里**只放那个按钮** ✓（没有 svg 时才回落到图名 ✓）—— 与幻灯片那条**结构一样** ✓。
+	const barCell = svgText ? playBtn
+		: `<span class="dim">${imgUri ? esc(imgName) : '（无图）'}</span>`;
+	// ★★ 2026-10-08 用户报：「『点 ① ② 里任意一条 ⇒ 图上高亮…』这段文字，**不能放在播放差异的段落里**，
+	//   它的内容都被格式吃掉了」✓ —— 实测坐实 ✓：那句真宽 **275px**，而右栏在 1040px 窗口下只有
+	//   **360px** 宽（`.left` flex:2 / `.right` flex:1 ⇒ 右栏只占 1/3 ✓）⇒ 跟按钮挤一行**必然放不下** ✓；
+	//   上一版为"别把按钮挤出界"给它加的 nowrap ＋ overflow:hidden ＋ 省略号 ⇒
+	//   就被截成「点 ①② 里任意…」✗（520px 窗口下只剩 **60px** ⇒ 只剩开头几个字 ✓）。
+	//   ⇒ 提示**另起一段** ✓（`.dim` 那个块 ✓、能折行 ✓）⇒ 多窄都看得全 ✓；
+	//   ✗ 别再塞回 `.bar` 里 ✗（`.bar .dim` 那条 still 截断 ✓，是留给"图名"兜底的 ✓）。
+	const tip = svgText
+		? '<div class="dim">点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）</div>' : '';
 	return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <style>${CSS}</style></head><body>
 <div class="wrap">
   <div class="pane left">${art}</div>
   <div class="pane right">
-    <div class="bar">${playBtn}<span class="dim">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
-		: (imgUri ? esc(imgName) : '（无图）')}</span></div>
+    <div class="bar">${barCell}</div>
+    ${tip}
     ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
 </div>

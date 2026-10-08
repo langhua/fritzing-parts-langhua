@@ -294,6 +294,13 @@ if (bbMds.length) {
 //     ④ 那条 `.bar` **钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗）；
 //     ⑤ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
 //        ⇒ `.right` 与 `h1/h2/h3` 都得是 **12px** ✓。
+//     ⑥ ★★ 那句高亮提示**不许跟按钮挤在一段里** ✗（用户 2026-10-08：「『点 ① ② 里任意一条 ⇒
+//        图上高亮…』这段文字，**不能放在播放差异的段落里**，它的内容**都被格式吃掉了**」✓）——
+//        ★ 病因量过 ✓：那句真宽 **275px** ✓，右栏在 1040px 窗口下只有 **360px**（`.right` flex:1
+//        ⇒ 只占 1/3 ✓）⇒ 一行放不下 ✓ ⇒ 上一版给它加的 `nowrap ＋ overflow:hidden ＋ 省略号`
+//        就把它**截成「点 ①② 里任意…」** ✗（520px 窗口下只剩 **60px** ✓，只剩开头几个字 ✓）。
+//        ⇒ 判据两条 ✓：① 提示**是 `.bar` 之外的独立一段** ✓（✗ 不在按钮那段里 ✗）；
+//        ② 它用的那条 CSS **不许带 `nowrap`** ✓ —— ✗ 不是"页面上有那句字"就算过 ✗（截掉了也还是有 ✓）。
 //     ★ 教训 ✗：这两处**都**是"位置"这种**看着就知道**的事 ✓ ⇒ 判据要量**位置关系** ✓，
 //       ✗ 别只查"页面上有没有这个 id" ✗（那样它跑到哪都算过 ✓）。
 const edBar = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
@@ -304,19 +311,26 @@ const rightFs = /\.right \{[^}]*font-size:\s*12px/.test(CSS);
 const headFs = /h1,\s*h2,\s*h3\s*\{\s*font-size:\s*1em/.test(CSS);
 const leftPane = (/<div class="pane left">([\s\S]*?)<div class="pane right">/.exec(edBar) || [, ''])[1];
 const rightPane = (/<div class="pane right">([\s\S]*?)<\/div>\s*<script/.exec(edBar) || [, ''])[1];
-const btnInRightBar = rightPane.indexOf('class="bar"') >= 0
-	&& rightPane.indexOf('id="pd-replay"') > rightPane.indexOf('class="bar"')
-	&& rightPane.indexOf('id="pd-replay"') < rightPane.indexOf('class="dim"');   // ★ 在提示之前 ⇒ 顶栏里 ✓
+// ★ 按钮是 `.bar` 里**唯一**的孩子 ✓ ⇒ `</button></div>` 紧跟着 ✓（按钮后面就是那段的结尾 ✓）。
+const btnInRightBar = /<div class="bar"><button id="pd-replay">[\s\S]*?<\/button><\/div>/.test(rightPane);
 const notInLeft = leftPane.indexOf('id="pd-replay"') < 0;                          // ★ 左栏不许有 ✗
 const noUnder = leftPane.indexOf('class="under"') < 0 && CSS.indexOf('.under') < 0; // ★ 那套"图下面"的残留要清掉 ✓
+// ★★ 提示**另起一段** ✓：紧跟 `.bar` 之后 ✓、**在清单之前** ✓（它就是给清单看的 ✓）。
+const tipOwnLine = /<\/button><\/div>\s*<div class="dim">点 ① ② 里任意一条 ⇒ 图上高亮/.test(rightPane)
+	&& rightPane.indexOf('点 ① ② 里任意一条') < rightPane.indexOf('<h1');
+// ★★ 提示那段用的规则**不许截断** ✗ —— 它就是被 `nowrap` 吃掉的 ✓（这条守住复发 ✓）。
+const dimBlock = (/\.dim \{([^}]*)\}/.exec(CSS) || [, ''])[1];
+const tipNoNowrap = dimBlock.length > 0 && !/nowrap/.test(dimBlock) && !/overflow:\s*hidden/.test(dimBlock);
 console.log('⑫ 按钮与字号：合并视图按钮 = %s；幻灯片按钮 = %s（应为 false ✗）；'
 	+ '按钮在**右栏顶栏**里 = %s；左栏没有 = %s（应为 true ✓）；「图下面」那套已清 = %s；'
-	+ '顶栏钉顶 = %s；右栏 12px = %s；标题 1em = %s',
+	+ '顶栏钉顶 = %s；右栏 12px = %s；标题 1em = %s；'
+	+ '提示**自己一段** = %s；提示那段**不截断** = %s',
 	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), btnInRightBar, notInLeft, noUnder,
-	sticky, rightFs, headFs);
+	sticky, rightFs, headFs, tipOwnLine, tipNoNowrap);
 if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !btnInRightBar || !notInLeft
-	|| !noUnder || !sticky || !rightFs || !headFs) {
-	fail('「▶ 播放差异」按钮位置不对（该在**右栏顶栏**里 / 或左栏还留着 / 或右栏字号没跟按钮一样大）');
+	|| !noUnder || !sticky || !rightFs || !headFs || !tipOwnLine || !tipNoNowrap) {
+	fail('「▶ 播放差异」按钮位置不对（该在**右栏顶栏**里 / 或左栏还留着 / 或右栏字号没跟按钮一样大）'
+		+ '，或那句高亮提示又跟按钮挤在一段里 / 被 nowrap 截断（它得**自己一段**、**能折行**）');
 }
 
 // ⑬ ★★ 面包板的**跳线身份是"接的哪两个孔"** ✗ 不是导线名 ✗（2026-10-08 修 ✓）——
