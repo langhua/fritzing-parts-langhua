@@ -283,13 +283,16 @@ if (bbMds.length) {
 	console.log('⑪ 没有 bb 清单可验（先跑一次 --view bb）✓');
 }
 
-// ⑫ ★★ 「▶ 重放动画」按钮的位置与字（2026-10-08 改过两次口径 ✓）——
-//     ① **合并视图**那条工具条上**要有** ✓（双击 `diff/*.md` = 这个界面 ✓）；
+// ⑫ ★★ 「▶ 重放动画」按钮的位置与字（2026-10-08 改过三次口径 ✓）——
+//     ① **合并视图要有** ✓（双击 `diff/*.md` = 这个界面 ✓）；
 //     ② **幻灯片那条工具条上要没有** ✗（用户 2026-10-08：「点击截图1中工具栏上的【重放动画】
-//        按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓ ⇒ 撤掉了 ✓，
-//        重放统一去合并视图点 ✓）；
-//     ③ 工具条**钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗ —— 一滚就"看不到"✓）；
-//     ④ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
+//        按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓ ⇒ 撤掉了 ✓）；
+//     ③ ★ 按钮必须在**图那一栏里、图的正下方** ✓（用户：「把这个嵌入在**差异的下面**就好了吧？」✓）
+//        —— ★ 这条单测**真的切开两栏**量位置 ✓（✗ 不是"HTML 里有这个 id"就算过 ✗：
+//        原来按钮在**右栏工具条**上 ✓，图在左栏 ⇒ 离图十万八千里 ✗）；
+//     ④ 它还得**钉在栏底** ✓（`position:sticky; bottom:0` ✓ —— 图比一屏高时也够得着 ✓）；
+//     ⑤ 工具条**钉在顶上** ✓（清单比一屏长时，提示不许跟着滚走 ✗）；
+//     ⑥ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
 //        ⇒ `.right` 与 `h1/h2/h3` 都得是 **12px** ✓。
 const edBar = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
 const slBar = slideshowHtml({ cspSource: '' }, 'N', 1);
@@ -297,11 +300,20 @@ const hasId = (s, id) => s.indexOf('id="' + id + '"') >= 0;
 const sticky = CSS.indexOf('position:sticky') >= 0;
 const rightFs = /\.right \{[^}]*font-size:\s*12px/.test(CSS);
 const headFs = /h1,\s*h2,\s*h3\s*\{\s*font-size:\s*1em/.test(CSS);
+const leftPane = (/<div class="pane left">([\s\S]*?)<div class="pane right">/.exec(edBar) || [, ''])[1];
+const rightPane = (/<div class="pane right">([\s\S]*?)<\/div>\s*<script/.exec(edBar) || [, ''])[1];
+const underArt = leftPane.indexOf('class="art"') >= 0
+	&& leftPane.indexOf('id="pd-replay"') > leftPane.indexOf('class="art"');
+const notInRight = rightPane.indexOf('id="pd-replay"') < 0;
+const underSticky = /\.under \{[^}]*position:\s*sticky[^}]*bottom:\s*0/.test(CSS);
 console.log('⑫ 按钮与字号：合并视图按钮 = %s；幻灯片按钮 = %s（应为 false ✗）；'
+	+ '按钮在图下面 = %s；不在右栏 = %s（应为 true ✓）；栏底钉住 = %s；'
 	+ '工具条钉顶 = %s；右栏 12px = %s；标题 1em = %s',
-	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), sticky, rightFs, headFs);
-if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !sticky || !rightFs || !headFs) {
-	fail('「▶ 重放动画」按钮位置不对（或右栏字号没跟按钮一样大）');
+	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), underArt, notInRight, underSticky,
+	sticky, rightFs, headFs);
+if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !underArt || !notInRight
+	|| !underSticky || !sticky || !rightFs || !headFs) {
+	fail('「▶ 重放动画」按钮位置不对（该在图下面却没在 / 或右栏字号没跟按钮一样大）');
 }
 
 // ⑬ ★★ 面包板的**跳线身份是"接的哪两个孔"** ✗ 不是导线名 ✗（2026-10-08 修 ✓）——
@@ -400,9 +412,10 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 	if (n !== kf) { mismatch++; console.log('   ✗ %s：data-anim %d 条 ≠ keyframes %d 条', f, n, kf); }
 }
 const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
-console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；合并视图脚本认 data-anim = %s',
-	n16, noDur, inlineAnim, btn, mismatch, startCode);
-if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode) {
+const slideClean = slBar.indexOf('data-anim') < 0 && slBar.indexOf('pd-replay') < 0;
+console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；合并视图脚本认 data-anim = %s；幻灯片那份没留死代码 = %s',
+	n16, noDur, inlineAnim, btn, mismatch, startCode, slideClean);
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !slideClean) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
 
@@ -435,22 +448,58 @@ if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全�
 // ⑱ ★★ 幻灯片工具的**三个按钮**（2026-10-08 用户定 ✓）——
 //   「1. <上一条 改为←，鼠标放在←上时，显示上一条 2. 下一条> 改为→ … 显示下一条
 //     3. ▶自动播放 改为 ▶，… 显示自动播放；点击▶，切换为停止符号，… 显示停止，
-//     **不用暂停符号和暂停词语**」✓ ⇒ 四件事都要对上 ✓：
-//     ① 按钮上**只有符号** ✓（`←` / `→` / `▶` ✓ —— ✗ 不许再带「上一条 / 自动播放」的字 ✗）；
+//     **不用暂停符号和暂停词语**」✓ ⇒ 五件事都要对上 ✓：
+//     ① 按钮上**只有符号** ✓（`←` / `▶` / `→` ✓ —— ✗ 不许再带「上一条 / 自动播放」的字 ✗）；
 //     ② 提示走 **`title`** ✓（`上一条` / `下一条` / `自动播放` ✓）；
 //     ③ 点 ▶ ⇒ 文字变 **`■`** ✓、`title` 变 **`停止`** ✓；
-//     ④ ✗ **不许出现「暂停」二字、也不许出现 ⏸** ✗（用户明确否掉 ✓）。
+//     ④ ✗ **不许出现「暂停」二字、也不许出现 ⏸** ✗（用户明确否掉 ✓）；
+//     ⑤ ★ **顺序是 `← ▶ →`** ✓（用户：「把 **▶ 和 → 互换一下位置**」✓ —— 原来是 `← → ▶` ✗）
+//        ⇒ 从 HTML 里**按出现次序**抠出三个 id 来对 ✓（✗ 不是"三个都在"就算过 ✗）；
+//     ⑥ ★ **文件名另起一行** ✓（用户：「把文件名显示在 ← 下面那一行 …… 超了用 … 截断、
+//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.name` 空行 ✓，且它带 `ellipsis` 截断 ✓。
 const slHtml = slideshowHtml({ cspSource: '' }, 'N', 1);
 const tips = ['上一条', '下一条', '自动播放'];
 const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自动播放|暂停)/.test(slHtml);
 const hasTitles = tips.every((t) => slHtml.indexOf('title="' + t + '"') >= 0);
 const stopOk = slHtml.indexOf('\\u25a0') >= 0 && slHtml.indexOf('停止') >= 0;
 const noPause = slHtml.indexOf('暂停') < 0 && slHtml.indexOf('⏸') < 0 && slHtml.indexOf('\\u23f8') < 0;
+const btnOrder = (slHtml.match(/<button id="([^"]+)"/g) || []).map((s) => /id="([^"]+)"/.exec(s)[1]).join(',');
+const orderOk = btnOrder === 'prev,play,next';
+const nameRow = /<div class="name" id="name"><\/div>/.test(slHtml)
+	&& slHtml.indexOf('id="name"') > slHtml.indexOf('<div class="top">')
+	&& /\.name \{[^}]*text-overflow:ellipsis/.test(slHtml);
 console.log('⑱ 幻灯片按钮：只有符号 = %s；title 三条齐 = %s；点 ▶ 变 ■/停止 = %s；'
-	+ '没有「暂停」/⏸ = %s', noWords, hasTitles, stopOk, noPause);
-if (!noWords || !hasTitles || !stopOk || !noPause) {
-	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止）');
+	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；文件名另起一行 = %s',
+	noWords, hasTitles, stopOk, noPause, btnOrder, nameRow);
+if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow) {
+	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止；顺序 ← ▶ →；文件名另起一行）');
 }
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十八项都过', bad || '');
+// ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：
+//   `.left` 那段 CSS 在 `const CSS = \`…\`` **模板字符串**里 ✓ ⇒ 注释里一个反引号就把模板**截断** ✗
+//   ⇒ `SyntaxError: Unexpected identifier 'sticky'` ✓（`node --check` 当场就报 ✓）；
+//   更阴的是**幻灯片那份 CSS** ✓ —— 它在 `slideshowHtml()` 返回的模板里 ✓ ⇒ 语法**过得去** ✗，
+//   但反引号里的字变成了 `${…}` **表达式** ✓ ⇒ 运行时 `TypeError: cspCSS.wrap is not a function` ✗✗
+//   （✗ `node --check` 抓不到这一种 ✗ —— 必须**真的调一次** `slideshowHtml()` ✓）。
+//   ⇒ 这条同时做两件事 ✓：① 语法检查 extension.js 本体 ✓；② **真调**两个 HTML 生成函数 ✓。
+let n19 = 0, bad19 = 0;
+const extSrc = fs.readFileSync(path.join(EXTDIR, 'extension.js'), 'utf8');
+try { new Function(extSrc); n19++; }                    // ① 本体语法（截断型 ⇒ 这里就报 ✓）
+catch (e) { bad19++; console.log('   ✗ extension.js 本体语法错：%s', e.message); }
+try {                                                    // ② 真渲染两种界面（运行期 substitutions ✓）
+	html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
+	slideshowHtml({ cspSource: '' }, 'N', 1);
+	n19++;
+} catch (e) {
+	bad19++;
+	console.log('   ✗ 渲染 HTML 时抛异常（多半是 CSS 注释里写了反引号 ⇒ 变成了 JS 表达式）：%s', e.message);
+}
+const cssRegion = /const CSS = `[\s\S]*?`;/.exec(extSrc);
+const cssTicks = cssRegion ? (cssRegion[0].match(/`/g) || []).length : -1;
+console.log('⑲ 模板字符串体检：extension.js 语法 = %s；两种界面能渲染 = %s；'
+	+ 'CSS 模板里的反引号 = %d（应为 2 ✓ = 开头结尾各一个 ✓）',
+	n19 === 2 ? 'OK' : 'BAD', n19 === 2 ? 'OK' : 'BAD', cssTicks);
+if (bad19 || cssTicks !== 2) fail('CSS 模板字符串被反引号截断（注释里别写反引号）');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十九项都过', bad || '');
 process.exit(bad ? 1 : 0);

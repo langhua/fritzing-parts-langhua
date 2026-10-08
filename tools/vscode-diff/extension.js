@@ -384,12 +384,12 @@ const JS = [
 	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
-	// ★ 按钮在**工具条**上 ✓（图上不放按钮 ✗ —— 用户 2026-10-08 定 ✓）：
-	//   图里那个「▶ 重放」只在"把 svg 当文档"打开时能点 ✓，在图片预览里是 `<img>` ✗、
-	//   在 webview 里又被 CSP 挡 ✗ ⇒ 用户点着没反应 ✓。
+	// ★★ 2026-10-08 用户定 ✓：按钮**挪到图的下面** ✓（原话：「把这个嵌入在差异的下面就好了吧？」✓）——
+	//   它原来在**右栏工具条**上 ✓，离图很远 ✗；现在贴在 `.left`（图那一栏 ✓）里图的**正下方** ✓，
+	//   并且 `position:sticky; bottom:0` ✓ ⇒ 图比一屏高时也**始终够得着** ✓（✗ 别又变成"找不到按钮" ✗）。
 	'  var rp = document.getElementById("pd-replay");',
 	'  if (rp) rp.addEventListener("click", function(){ pdReplay(); });',
-	...replayJs(),                       // ★ 展开 ✗ 别写成 `...replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
+	...replayJs(),                       // ★ 展开 ✗ 别写成 `replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
 	'})();'
 ].join('\n');
 
@@ -398,19 +398,27 @@ const CSS = `
   body { margin:0; font-family: var(--vscode-font-family); color: var(--vscode-editor-foreground); }
   .wrap { display:flex; height:100vh; }
   .pane { overflow:auto; }
-  .left { flex:2 1 0; background:#ffffff; display:flex; align-items:flex-start; justify-content:center;
+  /* ★ 图的这一栏改成**竖排** ✓（图 ＋ 图下面那个「▶ 重放动画」✓）——
+     ✗ 原来 justify-content:center 是"图只一个、横向居中"用的 ✓，多一个孩子就变成并排了 ✗。
+     ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当天踩过两次 ✓）。 */
+  .left { flex:2 1 0; background:#ffffff; display:flex; flex-direction:column; align-items:center;
           padding:8px; box-sizing:border-box; }
+  .art { max-width:100%; }
   .left img, .art svg { max-width:100%; height:auto; }
   .art svg { cursor:default; }
+  /* ★★ 2026-10-08 用户定 ✓：「把这个（▶ 重放动画）**嵌入在差异的下面**就好了吧？」✓
+     ⇒ 按钮贴在图的**正下方** ✓；sticky bottom ⇒ 图比一屏高时**始终够得着** ✓。 */
+  .under { position:sticky; bottom:0; margin-top:8px; padding:2px 6px;
+           background: var(--vscode-editor-background); border-radius:3px; }
   .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border);
            /* ★★ 2026-10-08 用户定 ✗：「右侧内容字体可以小一些，**跟重放动画几个字的字体一样大**即可」✓
-              ⇒ 整块右栏统一 **12px** ✓（＝ 工具条那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
+              ⇒ 整块右栏统一 **12px** ✓（＝ 那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
            font-size:12px; line-height:1.5; }
   .bar { font-size:12px; opacity:.75; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
-         /* ★★ 2026-10-08 修 ✗：工具条**钉在顶上** ✓ —— 它是「▶ 重放动画」唯一的落脚处 ✓，
-            而清单往往长过一屏 ✓ ⇒ 一滚就"看不到按钮"了 ✗（用户原话：「没有看到「▶ 重放动画」按钮」✓）。 */
+         /* ★★ 2026-10-08 修 ✗：工具条**钉在顶上** ✓ —— 上面只剩"点 ①② 高亮"那句提示了 ✓，
+            但它跟清单一起滚就没意义了 ✗ ⇒ 还是钉住 ✓。 */
          position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
-  .bar button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
+  .bar button, .under button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
                 border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px; }
   /* ★ 标题一律**跟正文同号** ✓（1em = 12px ✓）⇒ 只剩**粗体**做层级 ✓（用户要"一样大"✓） */
   h1, h2, h3 { font-size:1em; }
@@ -444,13 +452,15 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 		? `<div class="art">${svgText}</div>`
 		: (imgUri ? `<img src="${imgUri}" alt="${esc(imgName || 'diff')}">`
 			: `<div class="hint" style="padding:16px">${esc(hint || '还没生成差异图')}</div>`);
+	// ★★ 2026-10-08：`▶ 重放动画` 从右栏工具条**搬到了图的正下方** ✓（`.under` ✓ —— 见 CSS 与 JS 处的注释 ✓）。
+	const under = svgText ? '<div class="under"><button id="pd-replay">▶ 重放动画</button></div>' : '';
 	return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <style>${CSS}</style></head><body>
 <div class="wrap">
-  <div class="pane left">${art}</div>
+  <div class="pane left">${art}${under}</div>
   <div class="pane right">
-    <div class="bar">${svgText ? '<button id="pd-replay">▶ 重放动画</button>　点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
+    <div class="bar">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
 		: (imgUri ? esc(imgName) : '（无图）')}</div>
     ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
@@ -525,7 +535,10 @@ const SLIDE_JS = [
 	'    $("art").innerHTML = d.svg || "<div class=\\"hint\\" style=\\"padding:16px\\">'
 		+ '（这一条没找到 svg 图）</div>";',
 	'    $("list").innerHTML = d.html;',
-	'    $("pos").textContent = (idx + 1) + " / " + total + "　" + d.title;',
+	'    $("pos").textContent = (idx + 1) + " / " + total;',
+	// ★ 文件名**单独一行** ✓（`.name` ✓，CSS 负责截断 ✓）；`title` 给**全名** ✓（悬停就看得见 ✓）。
+	'    $("name").textContent = d.title;',
+	'    $("name").title = d.title;',
 	'    bindHighlight();',
 	'  }',
 	'  function go(n){',
@@ -572,25 +585,42 @@ function slideshowHtml(webview, nonce, n) {
 	return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <style>${CSS}
-  .wrap { height: calc(100vh - 34px); }
+  /* ★★ 2026-10-08：多了**第二行**（文件名 ✓）⇒ ✗ 别再写死 34px 的偏移 ✗（加一行就错位 ✓）；
+     改成"body 竖排 ＋ .wrap 吃掉剩下的高" ✓。 */
+  body { display:flex; flex-direction:column; height:100vh; }
+  .wrap { flex:1 1 auto; height:auto; min-height:0; }
   .top { display:flex; gap:8px; align-items:center; padding:6px 10px;
-         border-bottom:1px solid var(--vscode-panel-border); font-size:12px; }
+         border-bottom:1px solid var(--vscode-panel-border); font-size:12px;
+         /* ★★ 2026-10-08 修 ✗（实测踩到 ✓）：.name 那一行要能**截断** ✓，但它跟 .top
+            同在一个**竖排 flex** 里 ✓ ⇒ 一行的"横宽" = **最宽那个孩子** ✗ ⇒ 工具条一宽，
+            整个 body 跟着宽 ✓ ⇒ .name 也跟着宽 ⇒ **永远截不到** ✗（实测 420px 窗口下
+            scrollWidth - clientWidth = 0 ✓）。
+            ⇒ 给工具条 min-width:0 ＋ overflow:hidden ✓ ⇒ 它不再撑宽这一行 ✓，
+            并把那句长提示改成**可缩**（min-width:0 ＋ 省略号 ✓）✓。 */
+         min-width:0; overflow:hidden; }
+  .top > span:last-child { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .top button { background: var(--vscode-button-background); color: var(--vscode-button-foreground);
                 border:0; padding:3px 10px; border-radius:3px; cursor:pointer;
-                /* ★★ 2026-10-08 用户定 ✗：按钮上只剩**一个符号**（← → ▶ / ■ ✓），
+                /* ★★ 2026-10-08 用户定 ✗：按钮上只剩**一个符号**（← ▶ → ✓），
                    提示走 title 属性 ✓ ⇒ 三个按钮要**一样宽** ✓ 才不看着一高一低 ✗。
                    ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当场踩过 ✓）。 */
                 min-width:2.2em; text-align:center; }
   .top input { width:3.2em; background: var(--vscode-input-background);
                color: var(--vscode-input-foreground); border:1px solid var(--vscode-input-border); }
   #pos { opacity:.85; }
+  /* ★★ 2026-10-08 用户定 ✓：「把文件名显示在 ← 下面那一行，如果文件名超过一定字符数，
+     则用 ... 截断，鼠标放在上面时显示全文件名」✓
+     ⇒ 第二行 ✓，**超宽自动截断** ✓（text-overflow:ellipsis ✓ —— 宽度随窗口变 ✓，
+       ✗ 比写死"几个字符"更稳 ✓），title 挂全名 ✓。 */
+  .name { padding:2px 10px 6px; font-size:12px; opacity:.9;
+          white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style></head><body>
 <div class="top">
-  <button id="prev" title="上一条">←</button><button id="next" title="下一条">→</button>
-  <button id="play" title="自动播放">▶</button><span>每</span><input id="sec" value="3"><span>秒</span>
+  <button id="prev" title="上一条">←</button><button id="play" title="自动播放">▶</button><button id="next" title="下一条">→</button><span>每</span><input id="sec" value="3"><span>秒</span>
   <span id="pos">共 ${n} 条</span>
   <span style="opacity:.6">←/→ 翻页　空格 播放/停止　Esc 取消高亮　点 ①② 里任意一条 高亮</span>
 </div>
+<div class="name" id="name"></div>
 <div class="wrap">
   <div class="pane left"><div class="art" id="art"></div></div>
   <div class="pane right" id="list"></div>
