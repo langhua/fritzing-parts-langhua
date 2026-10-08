@@ -69,9 +69,12 @@ if (!vers.length || !sorted) fail('版本排序不对');
 // ② 找最新清单
 // ★ 2026-10-07 修 ✗：`diff/` 里现在还有 bb / sch 的清单（`diff-bb-*` / `diff-sch-*` ✓），
 //   它们常常比 PCB 那份**更新** ✗ ⇒ ②③④ 会拿它们当样本 ⇒ ④（`.connectorN` 那套）
-//   必然对不上 ✗。⇒ ②③④ 固定挑 **PCB** 那份（无视图段 ✓）；没有才退回最新的 ✓。
+//   必然对不上 ✗。⇒ ②③④ 固定挑 **PCB** 那份；没有才退回最新的 ✓。
+//   ★ 2026-10-08 改 ✗：PCB 那份的名字也补上了 `pcb` ✓（用户：「差异文件名**加上 pcb** 吧，
+//   比如 `diff-pcb-v57-v59.md`」✓）⇒ 这里的挑法跟着改 ✓ —— ✗ 别只认 `diff-v…`（改名后就
+//   一份都挑不到 ✓，②③④ 会静默退回"最新那份" ⇒ 拿 bb/sch 当样本 ✗ ⇒ ④ 假失败 ✓）。
 const pcbs = fs.existsSync(path.join(PIX, 'diff'))
-	? fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-v\d.*\.md$/.test(n))
+	? fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-(pcb-)?v\d.*\.md$/.test(n))
 		.map((n) => ({ n, t: fs.statSync(path.join(PIX, 'diff', n)).mtimeMs }))
 		.sort((a, b) => b.t - a.t)
 	: [];
@@ -415,8 +418,10 @@ if (!n15 || ann || lab) fail('图上还留着文字提示（用户要求去掉�
 //     ③ 动画名字挂 `data-anim` ✓、一轮时长挂根上的 `data-anim-dur` ✓（两者都要有 ✓）；
 //     ④ 两个界面的起播脚本都要**认 `data-anim`** ✓（✗ 不是把 currentTime 拨回 0 那套 ✗ ——
 //        那套只能"重播已经在跑/已跑完"的动画 ✓，进来时根本没动画可拨 ✓）。
+//   ★★ 2026-10-08：**PCB 也进这一圈** ✓（用户：「PCB 差异界面还不行，改成与其它两种一致吧」✓）
+//     ⇒ 三张图（pcb / bb / sch）**一套口径** ✓（✗ 别只查 bb/sch ✗ —— 那正是 PCB 漏掉的原因 ✓）。
 let n16 = 0, noDur = 0, inlineAnim = 0, btn = 0, mismatch = 0, n20 = 0, badLeg = 0, badSrc = 0;
-for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch)-.*\.svg$/.test(x))) {
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch|pcb)-.*\.svg$/.test(x))) {
 	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
 	const kf = (svg.match(/@keyframes/g) || []).length;
 	if (!kf) continue;                                    // 没变化的图没有动画 ✓ 跳过 ✓
@@ -448,9 +453,20 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 	const name = rows.length ? rows[0][1] : null;
 	const kfLeg = name && new RegExp('@keyframes\\s+' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 		+ '\\s*\\{\\s*0%\\{opacity:1\\}100%\\{opacity:0\\}\\}').test(svg);
-	const vb = /diff-(?:bb|sch)-(.+?)-(v?\d[\w.]*)\.svg$/.exec(f);   // ⇒ A 名 / B 名 ✓
+	const vb = /diff-(?:bb|sch|pcb)-(.+?)-(v?\d[\w.]*)\.svg$/.exec(f);   // ⇒ A 名 / B 名 ✓
 	const says = (s, x) => s.indexOf(x) >= 0;
-	const okSides = !vb || rows.every((r) => says(r[2], vb[1]) && !says(r[2], vb[2]));
+	// ★★ 2026-10-08（三张图一起看 ✓）：判据得**同时装得下三种行文** ✓ —— 实测三家的原话是：
+	//   · bb / sch：`导线（按原色·浅）v100` ✓（说的是"浅" ✓ **不带字母 A** ✓）；
+	//   · pcb 前两行：`A = v57  top` ✓；
+	//   · pcb 第三行：`grey: A light (silk/board)` ✓（**不带版号** ✓）。
+	//   ⇒ 原来那条"每行都必须含 A 版号"对 pcb 假失败 ✓；先补的"必须含 `\bA\b`"又对 bb/sch
+	//   假失败 ✓（它们说"浅" ✗）—— 两次都是**被实测抓住**的 ✓。⇒ 定成**两条**都成立 ✓：
+	//     ① **不含** B 的版号 ✗（B 那几行若被误包，这条就炸 ✓）；
+	//     ② 含 A 的版号 ✓，**或者**这一行**本来就没有版号** ✓（= 只带字母 A 的灰行 ✓，
+	//        这样 `grey: B dark` 依然过不了 ✓）。
+	const okRow = (t) => !says(t, vb ? vb[2] : '\u0000')
+		&& (!vb || says(t, vb[1]) || (/\bA\b/.test(t) && !/v\d/.test(t)));
+	const okSides = !vb || rows.every((r) => okRow(r[2]));
 	if (rows.length !== 3 || !kfLeg || !okSides) {
 		badLeg++;
 		console.log('   ✗ %s：A 图例三行没守好（组 %d 个、关键帧 1→0 = %s、行的版号 %s）',
@@ -635,6 +651,104 @@ labMissing ? '**一个都没有** ✗' : '有 ✓', textSeen22, keyLeft22);
 if (!n22 || n22bad || labMissing || keyLeft22) {
 	fail('原理图里 A 独有的导线/位号没进动画组 ⇒ 播放完 A 的线、A 的位号还留在图上'
 		+ '（用户要的是"播完只显示 B"）；或位号这条测试自己空了');
+}
+
+// ㉓ ★★ **PCB 也要播** ✓（2026-10-08 用户：「PCB 差异界面还不行，改成与其它两种一致吧」✓）。
+//   PCB 那条路原来**一点动画都没有** ✗ ⇒ 播完 A 的旧铜 / 旧丝印全在图上 ✗（末态是叠合图 ✗）。
+//   ★ 判据跟 ㉒ **同一个意思** ✓：**A 独有的顶层元素必须全在 `data-anim` 组里** ✓ ——
+//     只是"独有"的口径要换 ✗：PCB 的图**上过色**了（A 浅 / B 深 ✓）⇒ ✗ 不能把颜色算进签名 ✗
+//     （算了的话**每个**元素都是"A 独有" ✓ 假失败 ✓）。⇒ 这里用**几何口径** ✓：
+//       ① 去掉颜色 / 样式 / 动画记号（`stroke` / `fill` / `style` / `opacity` / `id` ✓）；
+//       ② 引号里的数字归一到 1 位小数 ✓。
+//     ★ 它比工具那边的"原文口径"**弱** ✓（工具还比颜色 / 线宽 ✓）⇒ 得到的是**子集** ✓：
+//       工具认定"A 独有"的集合 ⊇ 这里的集合 ✓ ⇒ 这里过了，工具那边必然也包到了 ✓
+//       （反过来说：工具多包的那些，这条测不出来 ✓ —— 那条由工具的 `一处都没漏` 自检管 ✓）。
+//   ★ 还有一条**反向**的补充 ✓（PCB 特有）：A 独有元素里**必须**含"换层的线" ✓ ——
+//     即工具要比颜色 ✗（实测：只比几何 ⇒ 少算 11 处 ✓、分量 21 变 32 ✓）。
+//     ⇒ 用一个**可判**的写法：`diff_revs.py` 里 `_pcb_units()` 必须用 `_raw_sig` ✓
+//       （原文口径 ✓），✗ 不许退回 `_seg_sig(txt)` 的几何口径 ✗。
+const rdr = fs.readFileSync(path.join(EXTDIR, '..', 'diff_revs.py'), 'utf8');
+const rawSig = /def _raw_sig\(txt\):\n(?:.*\n)*?    return _seg_sig\(txt, raw=True\)/.test(rdr)
+	&& /_pcb_units[\s\S]{0,4000}?sig = _raw_sig\(txt\)/.test(rdr);
+// ── 扫：顶层子元素（`<g data-anim>` 要**钻进去**、其余整块算一个 ✓）──
+const blind = (t) => t
+	.replace(/\b(?:stroke|fill|style|opacity|id|data-anim[a-z-]*)="[^"]*"/g, '')
+	.replace(/"([^"]*)"/g, (m0, v) => '"' + v.replace(/-?\d+(?:\.\d+)?/g, (x) => (+x).toFixed(1)) + '"');
+function topsOf(body, inAnim, out) {
+	// ★★ 每层**自己一份**正则 ✗ —— 共享那个 `tagRe` 会**串台** ✓：递归进去时内层把
+	//   `lastIndex` 改掉 ✓ ⇒ 外层从错位置接着扫 ✓ ⇒ 一直扫不完 ⇒ **OOM** ✓（实测炸过一次 ✓）。
+	const re = new RegExp(tagRe.source, 'g');
+	let depth = 0, start = null, m;
+	while ((m = re.exec(body)) !== null) {
+		const closing = m[1] === '/', name = m[2].toLowerCase(), attrs = m[3], sc = !!m[4];
+		if (depth === 0 && start === null && !closing) start = m.index;
+		if (name === 'g' && !sc) depth += closing ? -1 : 1;
+		if (depth === 0 && start !== null && (sc || closing)) {
+			const txt = body.slice(start, m.index + m[0].length);
+			const head = txt.slice(0, txt.indexOf('>') + 1);
+			if (/^<g\b/.test(txt) && /data-anim=/.test(head)) {
+				// ★ 钻进去的是**里面那一段** ✗（不是整块 ✗）—— 拿整块再递归 ⇒
+				//   同一个包装在这一层**又**匹配一次 ⇒ **无限递归** ✓（实测当场炸 ✓）。
+				const inner = txt.slice(head.length, txt.lastIndexOf('</g>'));
+				if (inner.length < txt.length) topsOf(inner, true, out);
+				else out.push({ sig: blind(txt), inAnim: true });
+			} else out.push({ sig: blind(txt), inAnim });
+			start = null;
+		}
+	}
+}
+let n23 = 0, bad23 = 0, aOnly23 = 0, unwrapped23 = 0, noDur23 = 0, pcbAnim = 0, skip23 = 0;
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-pcb-.*\.svg$/.test(x))) {
+	// ★ 只查**有清单**的那些 ✓（= 两个 `.fzz` 比出来的 ✓）—— `_svg_mode()` 那条路
+	//   （一个 fzz ＋ 一个**导出**的 svg ✓）**有意不装动画** ✗：外面那份的单位 / 取景 /
+	//   文字都不可控 ✓ ⇒ 比"画出来的样子"没有可比性 ✓（实测 `diff-pcb-v47_图示-v47.svg` ✓）。
+	//   ★ 判据就是"有没有同名 `.md`" ✓（`_svg_mode()` 本来就不出清单 ✓）—— ✗ 别拿名字猜 ✗。
+	if (!fs.existsSync(path.join(PIX, 'diff', f.replace(/\.svg$/, '.md')))) {
+		skip23++;
+		continue;
+	}
+	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
+	n23++;
+	if (svg.indexOf('data-anim-dur') < 0) {
+		noDur23++;
+		console.log('   ✗ %s：**没有动画**（PCB 也要跟 bb/sch 一样能播 ✗）', f);
+		continue;
+	}
+	pcbAnim++;
+	if (svg.indexOf('data-anim-key') >= 0) {
+		bad23++;
+		console.log('   ✗ %s：还留着 data-anim-key 记号（那一组没换到 data-anim ✗）', f);
+	}
+	const i = svg.indexOf('<g id="A"'), j = svg.indexOf('<g id="B"');
+	const k = svg.indexOf('<g id="legend"');
+	// ★ 切**里面**那些子元素 ✗ —— ✗ 别把 `<g id="A">` 自己的开/闭标签也切进来 ✗：
+	//   第一版就是这么写的 ✓ ⇒ 扫出来唯一那个"A 独有元素"是**整个 `g#A`** ✓（假失败 ✗）。
+	const la = [], lb = [];
+	topsOf(svg.slice(svg.indexOf('>', i) + 1, svg.lastIndexOf('</g>', j)), false, la);
+	topsOf(svg.slice(svg.indexOf('>', j) + 1, svg.lastIndexOf('</g>', k)), false, lb);
+	const inB = new Set(lb.map((x) => x.sig));
+	// ★ `<style>` 那块是**动画机器本身** ✓（关键帧就写在里面 ✓）⇒ 它当然"A 独有" ✗
+	//   （只有 A 那份被注入了 ✓）⇒ **不算**它 ✓（✗ 别把它当"没进组的元素" ✗ ——
+	//   实测就是这么假失败过一次 ✓）。
+	const skip = (x) => /^<(style|defs)\b/.test(x.sig);
+	const onlyA = la.filter((x) => !skip(x) && !inB.has(x.sig));
+	const unwrapped = onlyA.filter((x) => !x.inAnim);
+	aOnly23 += onlyA.length;
+	unwrapped23 += unwrapped.length;
+	if (unwrapped.length) {
+		bad23++;
+		console.log('   ✗ %s：A 独有元素 %d 个，其中 **没进动画组** %d 个（播完撤不掉 ✗），'
+			+ '例如 %s', f, onlyA.length, unwrapped.length,
+		unwrapped.slice(0, 2).map((x) => x.sig.slice(0, 70)).join(' ／ '));
+	}
+}
+console.log('㉓ PCB 也进动画：%s 张 pcb 图（另有 %s 张 `_svg_mode` 的、有意不装动画 ✓）⇒ '
+	+ '带 `data-anim-dur` 的 %s 张（缺 %s ✗）；A 独有元素 %s 个、未进组 %s 个 ⇒ 不合格 %s 张；'
+	+ '`_pcb_units()` 用的是**原文口径**（连颜色/线宽）= %s',
+n23, skip23, pcbAnim, noDur23, aOnly23, unwrapped23, bad23, rawSig);
+if (!n23 || !pcbAnim || bad23 || noDur23 || !aOnly23 || !rawSig) {
+	fail('PCB 要么没有动画、要么 A 独有的旧铜/旧丝印没进动画组、'
+		+ '要么判据退回了几何口径（会漏掉"换层"的线）');
 }
 // ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
 //   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——
@@ -930,5 +1044,5 @@ console.log('⑲ 模板字符串体检：extension.js 语法 = %s；两种界面
 	n19 === 2 ? 'OK' : 'BAD', n19 === 2 ? 'OK' : 'BAD', cssTicks);
 if (bad19 || cssTicks !== 2) fail('CSS 模板字符串被反引号截断（注释里别写反引号）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十二项都过', bad || '');
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十三项都过', bad || '');
 process.exit(bad ? 1 : 0);

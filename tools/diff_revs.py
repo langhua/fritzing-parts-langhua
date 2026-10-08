@@ -564,7 +564,13 @@ def _side(path_or_fzz, px_mm, PC, R):
 
 
 def _svg_mode(a_f, b_f, out, px_mm, have=()):
-    """比**两个 svg** ✓ —— 也可以是「**一个 fzz ＋ 一个 (Fritzing 导出的) svg**」✓。"""
+    """比**两个 svg** ✓ —— 也可以是「**一个 fzz ＋ 一个 (Fritzing 导出的) svg**」✓。
+
+    ★ 2026-10-08：产物名也补成 `diff-pcb-…` ✓（用户：「差异文件名**加上 pcb** 吧」✓）——
+      这条路用的就是 PCB 那套层色（`A_TOP` / `A_BOT` / `A_OTH` ✓）⇒ 前缀写 `pcb` 是对的 ✓。
+      ★ 这条路**不装动画** ✗：进来的可能是**别人导出的** svg ✓（单位/取景/文字都不可控 ✓），
+      比"画出来的样子"没有可比性 ✗ —— 要动画就给两个 `.fzz` ✓（那条路才有全套 ✓）。
+    """
     import cairosvg
     import sys as _sys
 
@@ -626,7 +632,7 @@ def _svg_mode(a_f, b_f, out, px_mm, have=()):
            % (W, H2, W, H2, tf(ia, ra, ka, Ba), la, tf(ib, rb, kb, Bb), lb, H, leg))
     if not os.path.isdir(out):
         os.makedirs(out)
-    stem = "diff-%s-%s" % (re.sub(r"[^\w.-]", "_", na), re.sub(r"[^\w.-]", "_", nb))
+    stem = "diff-pcb-%s-%s" % (re.sub(r"[^\w.-]", "_", na), re.sub(r"[^\w.-]", "_", nb))
     p = os.path.join(out, stem + ".svg")
     open(p, "w", encoding="utf-8", newline="\n").write(svg)
     cairosvg.svg2png(url=p, write_to=os.path.join(out, stem + ".png"), scale=1.0,
@@ -642,7 +648,7 @@ def report(a_fzz, b_fzz, ma, mb, netmap):
     L = ["# 差异清单：%s ⇒ %s" % (_vtxt(a_fzz), _vtxt(b_fzz)), "",
          # ★ 行首的 `> ` 是 **markdown 引用** ✗ —— 2026-10-07 被我改层色口径时**弄丢过一次** ✗
          #   （变成 `| 图 …` ✓）⇒ 扩展的单测抳出来了 ✓（清单渲染出来不再是引用块 ✓）。
-         "> 图 `diff-%s-%s.png` ✓：**顶层 = 暖色（橙）** ✓、**底层 = 冷色（蓝）** ✓，"
+         "> 图 `diff-pcb-%s-%s.png` ✓：**顶层 = 暖色（橙）** ✓、**底层 = 冷色（蓝）** ✓，"
          "**浅 = A（旧）** ✓、**深 = B（新）** ✓，丝印/板框/位号 = 中性灰 ✓（A 浅 / B 深 ✓）；"
          "两版重合处会叠得更深（= 没动 ✓）。" % (_vtxt(a_fzz), _vtxt(b_fzz)), ""]
 
@@ -1102,9 +1108,17 @@ def _render_view(fzz, view, out):
     return open(svgp, encoding="utf-8").read()
 
 
-def _seg_sig(txt):
-    r"""一段**顶层**元素 ⇒ "按画出来的样子"的签名 ✓（导线段 / 接点圆点 / 位号组 ✓；其余 ⇒ `None` ✓）。
+def _seg_sig(txt, raw=False):
+    r"""一段**顶层**元素 ⇒ "按画出来的样子"的签名 ✓（导线段 / 接点圆点 / 位号组 / **整段原文** ✓）。
 
+    ★★ `raw=True`（**PCB** 那条路 ✓）：**连颜色 / 线宽一起**算进签名 ✓ ⇒ 就是整段归一化原文 ✓。
+      为什么必须这样 ✗（2026-10-08 实测 ✓）：两条路比的东西**不是一份** ✓ ——
+      · **原理图**比的是**已经上过色的**两份图 ✓（A 浅 / B 深 ✓ ⇒ 颜色**本来就不同** ✗）
+        ⇒ 签名里**不能**有颜色 ✗（有的话每根线都成了"A 独有" ✓）；
+      · **PCB** 比的是**渲染器的原图** ✓（两版**同一套层色**：顶橙 / 底蓝 ✓）⇒ 颜色**可比** ✓，
+        而且**必须比** ✓ —— 一根走线从**顶层换到底层**是**真变化** ✓（图上就是橙 ↔ 蓝 ✓），
+        ✗ 只比几何会把这种变化漏掉 ✗（实测 v57→v59：只比几何 ⇒ **32 处** ✗，连颜色 ⇒ **21 处** ✓，
+        差的 11 处全是"换层 / 改线宽"的走线 ✓）。
     ★ 为什么签名要**从画好的 svg 取** ✗（而不是从 sketch 的实例几何取 ✗）：
       `render_sch.py` 画导线时会**拐弯 / 断开 / 加接点圆点** ✓ ⇒ 图上那根线的端点**不等于**
       实例的 `geometry` ✗ ⇒ 拿实例几何去认，原理图里的线**一根都对不上** ✓
@@ -1121,7 +1135,18 @@ def _seg_sig(txt):
       ★ 签名形状 = `("text", 首行 x, 首行 y, ((x, y, 文字), …))` ✓ ——
       **首行的 (x, y) 摆在 [1] [2]** ✓ ⇒ 排序/找位置那套对三种签名**同一套** ✓
       （实测踩过 ✗：第一版把整串行塞进 [1] ⇒ 排序时拿元组比浮点 ⇒ `TypeError` ✓）。
+    ★★ 2026-10-08（**PCB** ✓，用户：「PCB 差异界面还不行，改成与其它两种一致吧」✓）：
+      上面那三种之外的**一律**走通用兜底 ✓ —— 签名 = `("raw", 归一化后的整段原文)` ✓
+      （见 `_paint_fmt()` ✓）。★ PCB 的顶层是**什么都有** ✓：件是
+      `<g transform="matrix(…)">` ✓、丝印是 `<path>` / `<rect>` / `<text>` ✓、
+      铜是 `<line>` ✓、过孔是 `<circle>` ✓ ⇒ 只认三种会漏掉一大半 ✓。
+      ★ **不会与那三种混** ✓：元组第一个元素不同（`"raw"` vs `"line"` / `"dot"` / `"text"`）✓
+      ⇒ 原理图那张表里没有 `raw` 条目 ✓ ⇒ 兜底在 sch / bb 上**永不命中** ✓（两条路互不干扰 ✓）。
+      ★ 兜底那条（`raw=False` 时）**没有真用过** ✓：PCB 明确走 `raw=True` ✓（见 `_pcb_units()` ✓）；
+        留着是给"以后又有别的视图"兜底 ✓（✗ 别因为兜底返回原文就以为可以省掉 `raw=True` ✗）。
     """
+    if raw:
+        return ("raw", _paint_fmt(txt))
     m = re.match(r"\s*<line\b", txt)
     if m:
         vals = []
@@ -1154,11 +1179,120 @@ def _seg_sig(txt):
             lines.append((round(float(ax.group(1)), 2), round(float(ay.group(1)), 2),
                           mm.group(2)))
         return ("text",) + lines[0][:2] + (tuple(lines),) if lines else None
-    return None
+    # ★★ 通用兜底（PCB 的"件 / 丝印"走这里 ✓，见 docstring 末段 ✓）：整段归一化 ⇒ 用**原文** ✓
+    return ("raw", _paint_fmt(txt))
+
+
+def _raw_sig(txt):
+    r"""**PCB 口径**的签名 ✓：**连颜色 / 线宽一起**算 ✓（= 整段归一化原文 ✓）。
+
+    ★ 与本文件别处那个"几何签名"**不是一回事** ✗，各有各的用处 ✓（见 `_seg_sig()` 里
+      `raw=True` 那一段的实测数据 ✓）。★ 表与"查表用的函数"**一起返回** ✓
+      （`_pcb_units()` 返回它 ✓）⇒ ✗ 不会出现"建表用几何、查表用原文"那种静默错位 ✗。
+    """
+    return _seg_sig(txt, raw=True)
+
+
+_NUM_RE = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+
+
+def _paint_fmt(txt, nd=2):
+    r"""一段 svg ⇒ 把**引号里的数字**归一到 nd 位小数 ✓ ⇒ "按画出来的样子"的指纹 ✓。
+
+    ★★ 只动**引号里的值** ✗ —— 2026-10-08 实测踩过 ✓：第一版直接在**全文**上替换数字 ✓
+      ⇒ **属性名里的数字**也跟着被改 ✗（`x1="1369.65"` 变成 `x1.00="1369.65"` ✓、
+      `#f28a00` 变成 `#f28.00a0.00` ✓）⇒ 于是"抽点"一个都抽不出来 ✓、
+      连通分量碎成 **172 个** ✗（该是 **21 个** ✓）。
+      —— 这与 `_tag_elements._at()` 里记的那条是**同一个陷阱** ✓（2026-10-07 在面包板上踩过 ✓）。
+    ★ 颜色里的数字也一起归一 ✓（无害 ✓：两版同色 ⇒ 同样处理 ✓）。
+    """
+    f = "%." + str(nd) + "f"
+    return re.sub(r'"([^"]*)"',
+                  lambda m: '"' + _NUM_RE.sub(lambda x: f % round(float(x.group(0)), nd),
+                                              m.group(1)) + '"', txt)
+
+
+def _paint_points(txt):
+    r"""一段**通用**顶层元素 ⇒ 它"占"的点 ✓（分组用 ✓，四舍五入到 0.1 px ✓）。
+
+    · `<line>` ⇒ 两端 ✓；`<circle>` ⇒ 圆心 ✓；`<rect>` / `<text>` ⇒ 左上角 ✓；
+    · `<g transform="matrix(…, e, f)">` ⇒ **(e, f)** ✓（= 这个件画在哪儿 ✓，
+      bb 那条路量过：矩阵的 (e, f) 就是实例的位置 ✓）；`<path>` ⇒ `d` 里的坐标对 ✓。
+    ★ 0.1 px 的容差是有意的 ✓：实测两版**同一根线**会差 **0.0003 单位** ✓
+      （`-71.9999` ↔ `-72.0002` ✓）—— ✗ 严格相等会把它们当成两个点 ✗（分量就不成串了 ✓）。
+    """
+    head = txt[:txt.find(">") + 1]
+    p = []
+    for a, b in (("x1", "y1"), ("x2", "y2"), ("cx", "cy"), ("x", "y")):
+        m1 = re.search(r'\b%s="(-?[\d.eE+-]+)"' % a, head)
+        m2 = re.search(r'\b%s="(-?[\d.eE+-]+)"' % b, head)
+        if m1 and m2:
+            p.append((round(float(m1.group(1)), 1), round(float(m2.group(1)), 1)))
+    mm = re.search(r"matrix\(([^)]*)\)", head)
+    if mm:
+        nn = _NUM_RE.findall(mm.group(1))
+        if len(nn) >= 6:
+            p.append((round(float(nn[4]), 1), round(float(nn[5]), 1)))
+    md = re.search(r'\bd="([^"]*)"', head)
+    if md:
+        nn = _NUM_RE.findall(md.group(1))
+        for i in range(0, len(nn) - 1, 2):
+            p.append((round(float(nn[i]), 1), round(float(nn[i + 1]), 1)))
+    return p
+
+
+def _sig_points(sg):
+    r"""签名 ⇒ 它"占"的点 ✓（分组与排序用 ✓）—— 四种签名**一套口径** ✓。"""
+    if sg[0] == "line":
+        return [(sg[1], sg[2]), (sg[3], sg[4])]
+    if sg[0] == "dot":
+        return [(sg[1], sg[2])]
+    if sg[0] == "text":
+        return [(x, y) for x, y, _t in sg[3]]
+    return _paint_points(sg[1])                      # ("raw", 原文) ⇒ PCB ✓
+
+
+def _group_units(only_a, only_b, pfx):
+    r"""两侧独有的元素 ⇒ 按**共享点**聚成连通分量 ⇒ `({A: key}, {B: key}, {所有 key})` ✓。
+
+    ★ 一处改动（一条网被重画 / 一个件挪了 / 一处丝印改了 ✓）算**一处变化** ✓ ——
+      ✗ 一个一个元素算 ✗：实测 v57→v59 有 **182 个**元素（⇒ 一轮 **344s** ✗），
+      按共享点聚起来只有 **21 处** ✓；v59→v76 有 **336 个** ⇒ **26 处** ✓。
+    ★ 序号按**最左上的点**排 ✓ ⇒ 同一份输入每次跑出来的时段顺序都一样 ✓
+      （`refs` 会被 `_anim_css` 排序 ✓，但 key 名字本身也带上位置更好读 ✓）。
+    """
+    par = {}
+
+    def find(x):
+        par.setdefault(x, x)
+        while par[x] != x:
+            par[x] = par[par[x]]
+            x = par[x]
+        return x
+
+    def union(x, y):
+        rx, ry = find(x), find(y)
+        if rx != ry:
+            par[rx] = ry
+
+    allsg = list(only_a) + list(only_b)
+    for sg in allsg:
+        for p in _sig_points(sg):
+            union(("s", sg), ("p", p))
+    pos = {}
+    for sg in allsg:
+        r = find(("s", sg))
+        pts = _sig_points(sg) or [(0.0, 0.0)]
+        p = min(pts)
+        if r not in pos or p < pos[r]:
+            pos[r] = p
+    name = {r: "%s%d" % (pfx, i) for i, r in enumerate(sorted(pos, key=lambda r: pos[r]))}
+    return ({sg: name[find(("s", sg))] for sg in only_a},
+            {sg: name[find(("s", sg))] for sg in only_b}, set(name.values()))
 
 
 def _painted_units(sa, sb):
-    r"""**原理图**的变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key})` ✓。
+    r"""**原理图**的变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key}, 查表用的签名函数)` ✓。
 
     ★★ 2026-10-08 用户报 ✗：「**原理图**也该跟面包板一样：进来 A+B ⇒ 点播放 ⇒ A→B ⇒
       播完**只显示 B**」✓ —— 实测坐实 ✗：原理图 A/B 两版之间**导线**才是主要差别 ✓
@@ -1206,55 +1340,80 @@ def _painted_units(sa, sb):
     only_a = {k: n for k, n in ta.items() if n > tb.get(k, 0)}
     only_b = {k: n for k, n in tb.items() if n > ta.get(k, 0)}
     if not only_a and not only_b:
-        return {}, {}, set()
-    # ── 连通分量：段与段共享**端点** ⇒ 同一处 ✓；接点圆点按坐标挂到同坐标的段端点 ✓ ──
-    par = {}
-
-    def find(x):
-        par.setdefault(x, x)
-        while par[x] != x:
-            par[x] = par[par[x]]
-            x = par[x]
-        return x
-
-    def union(x, y):
-        rx, ry = find(x), find(y)
-        if rx != ry:
-            par[rx] = ry
-
-    for sg in list(only_a) + list(only_b):
-        if sg[0] != "line":
-            continue
-        for p in ((sg[1], sg[2]), (sg[3], sg[4])):
-            union(("s", sg), ("p", p))
-    pts = {p for sg in list(only_a) + list(only_b) if sg[0] == "line"
-           for p in ((sg[1], sg[2]), (sg[3], sg[4]))}
-    for sg in list(only_a) + list(only_b):
-        if sg[0] != "dot":
-            continue
-        union(("s", sg), ("p", (sg[1], sg[2])) if (sg[1], sg[2]) in pts else ("s", sg))
+        return {}, {}, set(), _seg_sig
+    # ★ 分组与排序都收进 `_group_units()` ✓（PCB 那条路**同一份** ✓ ⇒ 口径不会漂 ✓）
+    ka, kb, keys = _group_units(only_a, only_b, "seg")
     # ★ 位号：**同一个零件的位号**（A 的一个 ＋ B 的一个 ✓）焊成同一处 ✓ ——
-    #   实测 v20→v40：不焊 = 14 处 ✗（A 7 ＋ B 7 ✓）；焊上 = **7 处** ✓。
+    #   实测 v20→v40：不焊 = 14 处位号 ✗（A 7 ＋ B 7 ✓）；焊上 = **7 处** ✓。
+    #   ★ 这一步要在分组**之后**做 ✗ —— 位号之间不共享坐标 ✓（只共享"属于哪个零件" ✓），
+    #   所以它是**另加一次并查集** ✓：把两个 key 合并 ⇒ 直接用（小的那个名字 ✓）。
+    merge = {}
+
+    def root(k):
+        merge.setdefault(k, k)
+        while merge[k] != k:
+            merge[k] = merge[merge[k]]
+            k = merge[k]
+        return k
+
     for sg, n in list(la.items()) + list(lb.items()):
-        if sg in only_a or sg in only_b:
-            union(("s", sg), ("p", n))
-    # ★ 序号按**位置**排 ✓（左→右、上→下 ✓）⇒ 同一份输入每次跑出来的时段顺序一样 ✓
-    #   （`refs` 会被 `_anim_css` 排序 ✓，但 key 名字本身也带上位置更好读 ✓）
-    #   ★ 位号组的坐标也在 [1] [2] ✓（`(x, y)` ✓）⇒ 排序口径对三种签名**同一套** ✓。
-    allsg = list(only_a) + list(only_b)
-    pos = {}
-    for sg in allsg:
-        r, p = find(("s", sg)), (sg[1], sg[2])
-        if r not in pos or p < pos[r]:
-            pos[r] = p
-    order = sorted(pos, key=lambda r: pos[r])
-    name = {r: "seg%d" % i for i, r in enumerate(order)}
-    ka = {sg: name[find(("s", sg))] for sg in only_a}
-    kb = {sg: name[find(("s", sg))] for sg in only_b}
-    return ka, kb, set(name.values())
+        if sg in ka or sg in kb:
+            a, b = root(ka.get(sg) or kb.get(sg)), root(n)
+            if a != b:
+                merge[max(a, b)] = min(a, b)
+    ka = {sg: root(k) for sg, k in ka.items()}
+    kb = {sg: root(k) for sg, k in kb.items()}
+    return ka, kb, {root(k) for k in keys}, _seg_sig
 
 
-def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
+def _pcb_units(sa, sb):
+    r"""**PCB** 的变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key}, 查表用的签名函数)` ✓。
+
+    ★★ 2026-10-08 用户报 ✗：「PCB 差异界面还不行，改成与其它两种一致吧」✓ ——
+      即：进来 A+B ✓ ⇒ 点「▶ 播放差异」⇒ A→B ✓ ⇒ 播完**只显示 B** ✓。
+      PCB 那条路原来**一点动画都没有** ✗（只有关键帧那套根本没接 ✓）⇒ 播完 A 的旧铜、
+      旧丝印全都在 ✓（末态是叠合图 ✗，不是 B ✓）。
+
+    ★ 判据与原理图**同一个思路**（`_painted_units()` ✓、同样按 `_seg_sig()` ✓）：
+      **比"两版画出来的样子"** ✓ —— ✗ 不重算几何 ✗（铜怎么画是渲染器的事 ✓，
+      在 `diff_revs` 里重算就是第二份实现 ✓）。
+    ★ 与原理图的两处不同 ✓（都是被数据逼出来的 ✓）：
+      · **比所有顶层元素** ✓（原理图只比导线 ＋ 位号 ✓）：PCB 的"件"是
+        `<g transform="matrix(…)">` 整块 ✓，丝印是 `<path>` / `<rect>` / `<text>` ✓
+        ⇒ 只认 `<line>` / `<circle>` 会漏掉一大半 ✓（实测 v59→v76：还漏 12 个件 ＋ 8 处位号 ✓）；
+      · 分组还是**共享点** ✓（线段两端 / 圆心 / 矩阵的 (e, f) / `path` 的坐标对 ✓）
+        ⇒ 一处改动算一处 ✓。实测：v57→v59 = 182 个元素 ⇒ **21 处** ✓；
+        v59→v76 = 336 个 ⇒ **26 处** ✓（✗ 一个一个元素算 ⇒ 一轮 344s ✗）。
+    ★ 取景**必须先对账** ✗：两版都是 `--board-only` 渲的 ✓ ⇒ 画布与板框应当**逐字相同** ✓ ——
+      不同就**不装动画** ✓（px 坐标不可比 ✓，装上去会把**每个**元素都当成"变了" ✗）。
+    """
+    import render_pcb as R
+    if _frame(sa)[:1] != _frame(sb)[:1] or _frame(sa)[1:] != _frame(sb)[1:] \
+            or _board_px(sa, R) != _board_px(sb, R):
+        print("⚠️ PCB 两版**取景/板框不一致** ✗（%s vs %s ✓）⇒ **不装动画** ✓"
+              "（叠合仍按 A 的取景 ✓，见上面的警告 ✓）"
+              % (_frame(sa)[0], _frame(sb)[0]))
+        return {}, {}, set(), _raw_sig
+
+    def top(svg):
+        out = {}
+        for _cls, txt in _top_split(svg):
+            sig = _raw_sig(txt)            # ★ PCB：**连颜色/线宽**一起比 ✓（见 `_seg_sig()` ✓）
+            out.setdefault(sig, 0)
+            out[sig] += 1
+        return out
+
+    ta, tb = top(sa), top(sb)
+    only_a = {k: n for k, n in ta.items() if n > tb.get(k, 0)}
+    only_b = {k: n for k, n in tb.items() if n > ta.get(k, 0)}
+    if not only_a and not only_b:
+        return {}, {}, set(), _raw_sig
+    ka, kb, keys = _group_units(only_a, only_b, "pcb")
+    return ka, kb, keys, _raw_sig
+
+
+
+def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None, sigf=None):
     """把**变化处**的顶层元素包成 `<g id="a-<key>">` / `<g id="b-<key>">` ✓。
 
     ★ 钥匙（2026-10-07 实测 ✓，见 `docs/diff-animation.md` ✓）：
@@ -1278,6 +1437,9 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
     """
     import xml.etree.ElementTree as ET
     import zipfile
+    # ★★ 查表用的签名函数**由建表那边一起给** ✓（`_painted_units()` / `_pcb_units()` 的第四个返回值 ✓）
+    #   ⇒ ✗ 不会出现"建表用几何签名、查表用原文"那种**静默全漏** ✗（漏了自检也会当场报 ✓）。
+    sigf = sigf or _seg_sig
     z = zipfile.ZipFile(fzz)
     root = ET.fromstring(z.read([n for n in z.namelist() if n.endswith(".fz")][0]))
     tgl = lambda e: e.tag.split("}")[-1]                    # noqa: E731
@@ -1378,12 +1540,16 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
                 key = by_mi.get(mp0.group(1)[:-1])
             if key is not None:
                 tie = (seg_keys or {}).get(_seg_sig(txt))
-        # ★★ 2026-10-08（原理图的导线 ✓）：**先查"按画出来的样子"给的表** ✓ ——
-        #   `seg_keys`（见 `_painted_units()` ✓）是**从两份渲好的 svg 量的** ✓ ⇒ 与图**逐字同一份**
-        #   几何 ✓（✗ 不重算布线 ✗：`render_sch.py` 会拐弯、会断开、会加接点 ✓，
-        #   在 `diff_revs` 里重算就是**第二份实现** ✓ ⇒ 迟早对不上 ✓）。
-        if key is None and cls in (CLS_WIRE, CLS_TEXT) and seg_keys:
-            key = seg_keys.get(_seg_sig(txt))
+        # ★★ 2026-10-08（原理图的导线 ✓；**PCB 的一切** ✓）：**先查"按画出来的样子"给的表** ✓ ——
+        #   `seg_keys`（`_painted_units()` / `_pcb_units()` ✓）是**从两份渲好的 svg 量的** ✓
+        #   ⇒ 与图**逐字同一份**几何 ✓（✗ 不重算 ✗：`render_sch.py` 会拐弯、会断开、会加接点 ✓，
+        #   `render_pcb.py` 更是一整块铜/丝印 ✓，在这儿重算就是**第二份实现** ✓ ⇒ 迟早对不上 ✓）。
+        #   ★ 判据**不按类别分** ✓（原来只给 `CLS_WIRE` / `CLS_TEXT` 查 ✗）—— PCB 的顶层
+        #   什么都有 ✓（件是带 matrix 的 `<g>` ✓、丝印是 path / rect / text ✓）⇒ 全类都查 ✓。
+        #   ★ 表里没这个签名 ⇒ `.get` 给 `None` ✓ ⇒ 照旧往下走零件那套钥匙 ✓（互不干扰 ✓；
+        #   实测 sch 上仍然只有那三种签名进表 ✓ ⇒ 这条放宽在 sch 上**不改变任何结果** ✓）。
+        if key is None and seg_keys:
+            key = seg_keys.get(sigf(txt))
         # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
         #   —— 实测两个渲染器都逐位相符 ✓（`L1: -2.020000 42.448800` ↔ `x=-2.02 y=42.4488` ✓）。
         #   ✗ 别拿 `partID` 当门槛 ✗ —— 那是 **sch** 渲染器才写的 ✓（`<g partID=…><g transform=matrix>` ✓），
@@ -1441,7 +1607,7 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
                 if None not in (ax, ay, bx, by) and (((ax, ay, bx, by) in by_seg)
                                                      or ((bx, by, ax, ay) in by_seg)):
                     leak.append("(%.0f,%.0f)→(%.0f,%.0f)" % (ax, ay, bx, by))
-            elif cls == CLS_TEXT and seg_keys and _seg_sig(txt) in seg_keys:
+            elif cls == CLS_TEXT and seg_keys and sigf(txt) in seg_keys:
                 # ★ 按现在的查找顺序，这条**应当永不触发** ✓（表里有这个签名就会在上一段被认走 ✓）——
                 #   留着它是给**以后改查找顺序**的人当绊线 ✓：位号撤不掉，图上就会留灰字 ✓
                 #   （用户 2026-10-08 报的正是这个 ✓）。
@@ -1731,15 +1897,18 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     # ★★ 2026-10-08（**原理图**的导线 ✓）：导线也是"变化处" ✓ —— 判据**从这两份渲好的 svg 量** ✓
     #   （✗ 不在本文件里重算布线 ✗，见 `_painted_units()` 的说明 ✓）。
     seg_a = seg_b = None
+    sigf = _seg_sig                       # ★ bb 那条路不走表 ⇒ 给个默认 ✓（sch 会被覆盖 ✓）
     if VIEW == "sch":
-        seg_a, seg_b, wrefs = _painted_units(pa0, pb0)
+        seg_a, seg_b, wrefs, sigf = _painted_units(pa0, pb0)
         if wrefs:
             print("✓ 原理图导线/位号：按 A/B 两版**画出来的**样子比 ⇒ %d 处变化 ✓"
                   "（A %d 个签名 / B %d 个签名 ＋ 接点 ＋ 位号 ✓）"
                   % (len(wrefs), len(seg_a), len(seg_b)))
         refs = refs | wrefs
-    pa, ka, leak_a, tie_a = _tag_elements(pa0, refs, a_fzz, vname, "a", skip=ska, seg_keys=seg_a)
-    pb, kb, leak_b, tie_b = _tag_elements(pb0, refs, b_fzz, vname, "b", skip=skb, seg_keys=seg_b)
+    pa, ka, leak_a, tie_a = _tag_elements(pa0, refs, a_fzz, vname, "a", skip=ska, seg_keys=seg_a,
+                                          sigf=sigf)
+    pb, kb, leak_b, tie_b = _tag_elements(pb0, refs, b_fzz, vname, "b", skip=skb, seg_keys=seg_b,
+                                          sigf=sigf)
     # ★★ 2026-10-08（当天第二轮 ✓）：`_tag_elements()` 现在还回一个 `tied` ✓ ——
     #   "这个位号并进了它那个零件的变化处" ✓（用户报 ✗：「播完还留了一些 A 版本的文字残留」✓、
     #   实测 v20→v40 留下 7 条灰字 ✓）。
@@ -2348,7 +2517,10 @@ def main(argv):
     b_fzz = _resolve(pos[1], have)
 
     # ★★ 2026-10-07 ✓：面包板 / 原理图走这条路 ✓ —— PCB 那套（网表 / 铜块 / 过孔）
-    #   对它们没意义 ✗（那三节讲的都是铜 ✗）⇒ 分开走 ✓，**PCB 那条路一个字不动** ✓。
+    #   对它们没意义 ✗（那三节讲的都是铜 ✗）⇒ 分开走 ✓。
+    #   ★ 2026-10-08 起 **PCB 也装同一套动画** ✓（用户：「PCB 差异界面还不行，改成与其它两种
+    #   一致吧」✓）—— 那段在下面 ✓，与 `_view_diff()` 里那份是**同一套函数** ✓
+    #   （`_pcb_units` / `_tag_elements` / `_anim_css` / `_anim_data` ✓ ⇒ 三条路口径一致 ✓）。
     if VIEW in ("bb", "sch"):
         if not os.path.isdir(out):
             os.makedirs(out)
@@ -2368,9 +2540,44 @@ def main(argv):
     if not os.path.isdir(out):
         os.makedirs(out)
     na, nb = _vtxt(a_fzz), _vtxt(b_fzz)
-    stem = "diff-%s-%s" % (na, nb)
+    # ★★ 2026-10-08（用户 ✓）：「差异文件名，**加上 pcb** 吧，比如 `diff-pcb-v57-v59.md`」✓ ——
+    #   ✗ 原来叫 `diff-v57-v59` ✗ ⇒ 与 `diff-bb-*` / `diff-sch-*` 不成套 ✓，幻灯片的排序
+    #   本来就把"没有视图段的"当 PCB 排 ✓（`extension.js` 的 `ORD` ✓）⇒ 只是名字补全 ✓。
+    stem = "diff-pcb-%s-%s" % (na, nb)
     svg_p = os.path.join(out, stem + ".svg")
-    body = overlay(sa, sb, na, nb)
+    # ★★ 动画（2026-10-08 ✓）：判据 = **两份渲好的 svg 画出来的样子** ✓（见 `_pcb_units()` ✓）
+    seg_a, seg_b, refs, sigf = _pcb_units(sa, sb)
+    if refs:
+        print("✓ PCB：按 A/B 两版**画出来的**样子比 ⇒ %d 处变化 ✓"
+              "（A %d 个签名 / B %d 个签名 ✓）" % (len(refs), len(seg_a), len(seg_b)))
+    pa, ka, leak_a, tie_a = _tag_elements(sa, refs, a_fzz, "pcbView", "a", seg_keys=seg_a,
+                                          sigf=sigf)
+    pb, kb, leak_b, tie_b = _tag_elements(sb, refs, b_fzz, "pcbView", "b", seg_keys=seg_b,
+                                          sigf=sigf)
+    tied = tie_a | tie_b
+    used = ka | kb
+    lose = refs - used - tied
+    print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
+          % (len(refs), len(ka), len(kb), not lose,
+             "" if not lose else " ✗ 漏了：%s" % "、".join(sorted(lose))))
+    # ★ 与视图那条路**同一个口径** ✓：一轮 = 处数 × 2s ✓（✗ 不为 PCB 另定一套 ✗ ——
+    #   用户要的就是"与其它两种一致" ✓；实测该项目的 PCB 图 = **21 处 / 42s** 与 **26 处 / 52s** ✓）。
+    token = re.sub(r"[^\w]", "_", "%spcb%s" % (na, nb))
+    css, anim, dur, leg_a = _anim_css(ka, kb, used, token)
+    pa, pb = _anim_data(pa, pb, anim)
+    if css:
+        pa = pa.replace("</svg>", "<style>%s</style>\n</svg>" % css)
+    if dur:
+        print("✓ 动画：关键帧 %d 条（A 变化 %d ＋ B 变化 %d ＋ **A 图例淡出 1** ✓，"
+              "共 %d 处变化 ✓）—— 一处 %.1f s ⇒ 一轮 %.1f s ✓"
+              % (css.count("@keyframes"), len(ka), len(kb), len(used), ANIM_SEC, dur))
+        print("   ★ 口径（与 bb / sch **同一套** ✓）：**进来 = A+B 叠合图** ⇒ 点「▶ 播放差异」⇒ "
+              "**从 A 开始** ⇒ 走完**停在 B** ✓（图上**一个字都不写** ✓、**没有播放键** ✓ —— "
+              "起播走合并视图 / 幻灯片右栏顶上那个按钮 ✓）")
+    body = overlay(pa, pb, na, nb, a_leg_anim=leg_a)
+    if dur:
+        # ★ 一轮时长挂在**根 `<svg>`** 上 ✓（起播的 JS 要拿它 ✓；✗ 别让 JS 自己算 ✗）
+        body = body.replace("<svg ", '<svg data-anim-dur="%.3f" ' % dur, 1)
     # ★★ 把「点清单一条 ⇒ 图上高亮」用的**隐藏图层**塞进去 ✓（2026-10-07 ✓）——
     #   连样式一起写进 svg 本体 ✓ ⇒ 它**单文件也能用** ✓（不是在扩展里才亮 ✓）。
     hits = _hit_layer(ma, mb, sa, sb, na, nb)
@@ -2383,6 +2590,7 @@ def main(argv):
     open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
     print("✓ 叠合差异图 %s（层 = 色相：顶橙 ✓ 底蓝 ✓；版 = 深浅：浅 A %s ✓ 深 B %s ✓）"
           % (svg_p, na, nb))
+
     try:
         import cairosvg
         png_p = os.path.join(out, stem + ".png")
