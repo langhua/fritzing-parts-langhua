@@ -472,6 +472,62 @@ if (badLeg || !drawsTxt || !canvasHasLogo) {
 	fail('A 图例三行没跟着淡出（停在 B 时它们该没了），或渲染器又不画图例文字 / 又不把字算进画布'
 		+ '（那两半合起来就是用户报的「图例文字都没有显示出来」）');
 }
+
+// ㉑ ★★ **零件的"腿"必须画出来、而且末端要落在孔上** ✓（2026-10-08 用户报 ✗：
+//   「v104 中 R1.pin1 插在了 Breadboard1.pin16I，而幻灯片里的 R1 插的点显然与原图不一致」✓）——
+//   根因：渲染器只画零件 svg 自带的那截**直腿** ✗（`resistor_220.svg` 里只有 1.455 用户单位 ✓），
+//   而 Fritzing 是**按 sketch 里存的 `<leg>` 另画一条腿**的 ✓（口径与源码出处见 `render_bb.py` ✓）
+//   ⇒ R1 的右腿要跨 1 列 1 行去够 pin16I ✓，不画就看着"插错了地方" ✓。
+//   ★★ 判据**直接从生成好的图里量** ✓（✗ 不是信渲染器自己打印的那行 ✗）：把每张 bb 差异图里
+//    `data-pd-leg` 的折线抠出来，取**末端点**、套上外面那层 `matrix(...)` ✓ ⇒ 它必须落在
+//   **孔阵**上 ✓ —— 孔距 = 2.54mm = **9 sketch 单位** ✓（实测 pin11J=(99,45)、pin16I=(144,54) ✓，
+//   列/行都是 9 的整数倍 ✓）。★ 这条同时守住"有没有画"和"画在哪儿"两件事 ✓
+//   （✗ 只查"图里有 polyline"那种，画到月球上也算过 ✗）。
+let n21 = 0, nLeg = 0, badLeg21 = 0, worst21 = 0;
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-bb-.*\.svg$/.test(x))) {
+	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
+	n21++;
+	let got = 0;
+	// 腿 = `<g transform="matrix(a b c d e f)">` 里那几条 `data-pd-leg` 折线 ✓
+	for (const gm of svg.matchAll(/<g transform="matrix\(([^)]*)\)">([\s\S]*?)<\/g>/g)) {
+		if (gm[2].indexOf('data-pd-leg') < 0) continue;
+		const nn = (gm[1].match(/-?\d+\.?\d*(?:e-?\d+)?/g) || []).map(Number);
+		if (nn.length < 6) continue;
+		const [a, b, c, d, e, ff] = nn;
+		for (const pm of gm[2].matchAll(/data-pd-leg="1" points="([^"]+)"/g)) {
+			const pts = pm[1].trim().split(/\s+/).map((q) => q.split(',').map(Number));
+			const [x, y] = pts[pts.length - 1];
+			const X = a * x + c * y + e, Y = b * x + d * y + ff;
+			const rx = X - 9 * Math.round(X / 9), ry = Y - 9 * Math.round(Y / 9);
+			const dd = Math.sqrt(rx * rx + ry * ry);
+			got++;
+			worst21 = Math.max(worst21, dd);
+			if (dd > 0.35) {
+				badLeg21++;
+				console.log('   ✗ %s：腿末 (%s,%s) ⇒ 页面 (%.3f,%.3f)，离孔阵格点 %.3f 单位（%.3f mm）',
+					f, x, y, X, Y, dd, dd * 25.4 / 90);
+			}
+		}
+	}
+	if (!got) {
+		badLeg21++;
+		console.log('   ✗ %s：一条腿都没画 ✗（R/C 那种"另画的腿"必须按 sketch 的 <leg> 画出来）', f);
+	}
+	nLeg += got;
+}
+// ★ 渲染器里那两处**必须还在** ✓：① 按 sketch 画腿 ✓；② 零件 svg 自带的那截腿**改成 `<g>`**
+//   （= 不画 ✓，Fritzing 的做法 ✓）—— ✗ 少了 ② 会看见**两截腿** ✓。
+const rbb2 = fs.readFileSync(path.join(EXTDIR, '..', 'render_bb.py'), 'utf8');
+const drawsLegPy = rbb2.indexOf('data-pd-leg') >= 0
+	&& /re\.sub\(r"\^<line\\b", "<g"/.test(rbb2)
+	&& rbb2.indexOf('BC.hole_xy(_hid3)') >= 0;         // ★ 末端对账也在 ✓
+console.log('㉑ 零件的腿：%s 张 bb 图 ⇒ 抠出 %s 条腿，最大 Δ=%s 单位（%s mm）、不合格 %s 条；'
+	+ '渲染器里"按 sketch 画腿 + 自带腿改成 g" = %s',
+	n21, nLeg, worst21.toFixed(3), (worst21 * 25.4 / 90).toFixed(3), badLeg21, drawsLegPy);
+if (!n21 || badLeg21 || !nLeg || !drawsLegPy) {
+	fail('零件的腿没画 / 没落在孔上（用户报过「R1 插的点显然与原图不一致」）；'
+		+ '或渲染器里那两处（按 sketch 画腿、自带腿改 g）被删了');
+}
 // ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
 //   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——
 //   ★ 撤掉的只是**顶栏**那条上的「▶ 重放动画」✗（`id="replay"` ✓，别又冒出来 ✗）。
@@ -766,5 +822,5 @@ console.log('⑲ 模板字符串体检：extension.js 语法 = %s；两种界面
 	n19 === 2 ? 'OK' : 'BAD', n19 === 2 ? 'OK' : 'BAD', cssTicks);
 if (bad19 || cssTicks !== 2) fail('CSS 模板字符串被反引号截断（注释里别写反引号）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十项都过', bad || '');
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十一项都过', bad || '');
 process.exit(bad ? 1 : 0);

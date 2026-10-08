@@ -321,6 +321,7 @@ for el in root.iter("instance"):
     #   ⇒ Δ 应当 ≈ 0 ✓；**Δ 大 = "脚悬空"** ✗（正是用户一眼看到的 ✓）。
     _ph = {}                       # 脚 id → 它插进的孔 id ✓（从 <connector> 下的 <connect> 读 ✓）
     _pleg = {}                     # 脚 id → sketch 里有没有 <leg>（腿末端覆盖 ✓）
+    _legs = {}                     # ★ 脚 id → (腿的点（实例局部 ✓）, 颜色, 线宽) ✓ —— 见下 ✓
     for _cn in bv.iter():
         if tag(_cn) != "connector":
             continue
@@ -328,7 +329,36 @@ for el in root.iter("instance"):
         for _cs2 in _cn.iter():
             if tag(_cs2) == "connect" and _cs2.get("layer") == "breadboardbreadboard":
                 _ph[_cid0] = _cs2.get("connectorId")
-        _pleg[_cid0] = any(tag(_k) == "leg" for _k in _cn)
+        _lg = next((_k for _k in _cn if tag(_k) == "leg"), None)
+        _pleg[_cid0] = _lg is not None
+        if _lg is not None:
+            # ★★★ 2026-10-08 用户报 ✗：「v104 中 R1.pin1 插在了 Breadboard1.pin16I，
+            #   而幻灯片里的 R1 插的点显然与原图不一致」✓ —— **腿根本没画** ✓：
+            #   本渲染器只画零件 svg 自带的那截**直腿** ✗（`resistor_220.svg` 里的
+            #   `connector1leg` 只有 1.455 用户单位 ✓），而 Fritzing 是**另画一条腿**的 ✓。
+            #   Fritzing 口径（源码 `connectoritem.cpp` ／ `sketchwidget.cpp` ✓，已核 ✓）：
+            #     · 连接器的 `pos` = 零件 svg 里 `connectorNleg` **靠近本体的那一端** × k ✓
+            #       （`setRubberBandLeg`：「p1 is always the start point closest to the body」✓
+            #        ＋ `calcLeg` 里"取离 viewBox 中心近的那个端点" ✓）—— 实测正是 sketch 里
+            #       存的 `<connector><geometry>` ✓（R1：40.007×0.9 = 36.0063 ✓ 逐位相符 ✓）；
+            #     · 存的 `<leg><point>` 是**相对那个 pos 的偏移** ✓（`setLegPolygon(..., relative)`
+            #       ✓ / `changeLegForCommand(..., true, "load")` ✓）⇒ 腿 = pos → pos+每个点 ✓；
+            #     · 单位**就是 sketch 单位** ✓（**不要再乘 k** ✗ —— 实测 617/640 条腿里
+            #       600 条按"原样"落孔、Δ<0.35 单位 ✓，乘 k 那条只有 23 条对 ✓）；
+            #     · 线宽 = svg 那条腿上写的 `stroke-width` × k ✓（`m_legStrokeWidth` ✓；
+            #       缺省 29mil ✓ = Fritzing 的 `getStrokeWidth(element, 0.029)` ✓）；
+            #     · ★ 零件 svg **自带的那截腿不画** ✗ —— Fritzing 把那个元素**改成 `<g>`** ✓
+            #       （`element.setTagName("g") // don't want this element to actually be drawn` ✓）。
+            #   ★ 项目里 151 个 fzz、834 条腿，**全是 2 个点、没有非空 bezier** ✓（只 R / C 两种件 ✓）
+            #     ⇒ 直线段就够 ✓；★ 万一将来出现 3 点或 bezier ⇒ **当场报出来** ✗（不静默画直 ✓）。
+            _cg = next((_k for _k in _cn if tag(_k) == "geometry"), None)
+            _pp = [(num(_p.get("x")), num(_p.get("y"))) for _p in _lg if tag(_p) == "point"]
+            if _cg is not None and len(_pp) >= 2:
+                _gx0, _gy0 = num(_cg.get("x")), num(_cg.get("y"))
+                _legs[_cid0] = ([( _gx0 + _qx, _gy0 + _qy) for _qx, _qy in _pp],
+                                len(_pp),
+                                sum(1 for _b in _lg if tag(_b) == "bezier"
+                                    and (_b.text or "").strip()))
     # ★★★ 2026-09-27 **修** ✓（用户报"preview 是错的"✗，而 Fritzing 里 LED2 位置正确 ✓）：
     #   脚位**参考点**必须走完 svg 的祖先 `transform` 链 ✓ —— 上一版只认 `<circle>` 且直接用
     #   `cx/cy` ✗ ⇒ ① 焊盘画在 `<rect>` 里的件（LED2/J1/J2/L1/C1/C2/R1 ✓）**一个都查不到** ✗
@@ -341,7 +371,10 @@ for el in root.iter("instance"):
         _badref = ["<XML 解析不了：%s>" % _ex]
     _nchk = _bad = 0
     _unv = 0
-    _legn = 0                      # ★ 有 <leg> 覆盖的脚（按 sketch 画 ✓，不做几何对账 ✓）
+    _legn = 0                      # ★ 有 <leg> 覆盖的脚（**现在按 sketch 的腿画** ✓，见下 ✓）
+    _nleg = 0                      # ★ 真画出来的腿有几条 ✓
+    _legmax = 0.0                  # ★ 腿末端与"声称插的孔"的最大 Δ ✓（这条才是用户看的那件事 ✓）
+    _legbad = 0
     _maxd = 0.0                    # ★ 最大 Δ 也要报 ✓（"✓"必须带数字 ✓，不是口号 ✓）
     for _cid2, _hid2 in sorted(_ph.items()):
         _p2 = _pts.get("%spin" % _cid2)
@@ -356,7 +389,10 @@ for el in root.iter("instance"):
         #   ⇒ 腿被**拉长 1 格去够新孔** ✓ ⇒ Fritzing 里看着完全正常 ✓。
         #   而这里原来**只读零件 svg** ✗（算的是"没拉长的原腿"✗）⇒ 凭空差 1 格 ⇒ **误报** ✗
         #   （实测：C1 两条腿都是 18.0031 ✓；C2 是 18.0033 / 27.0033 ✗ —— 差 9 ✓）。
-        #   ⇒ 有 `<leg>` 覆盖的脚：以 sketch 自己的账为准 ✓，**不做几何对账** ✓（照实报出个数 ✓）。
+        #   ⇒ 有 `<leg>` 覆盖的脚：**按 sketch 存的腿画** ✓（Fritzing 口径 ✓）、
+        #     ✗ 不再拿零件 svg 里那截原腿去对账 ✗（那截腿 Fritzing 根本不画 ✓）。
+        #     ★★ 2026-10-08 补 ✓：**腿的末端**要跟"声称插的孔"对账 ✓ —— 那才是
+        #     用户一眼看的那件事 ✓（原来只报个数 ✗ ⇒ 腿画不到孔上也看不出来 ✓）。
         if _pleg.get(_cid2):
             _legn += 1
             continue
@@ -375,13 +411,6 @@ for el in root.iter("instance"):
             print("      ✗ 脚 %-16s 画在 (%7.1f,%7.1f)，孔 %-8s 在 (%7.1f,%7.1f)"
                   " ⇒ Δ=%.2f 单位 (%.2f mm) **悬空** ✗"
                   % (_cid2, _padx, _pady, _hid2, _xy2[0], _xy2[1], _dd, _dd * 25.4 / 90.0))
-    if _nchk or _unv or _legn:
-        _verdict = ("✓ 全落在孔上 ✓（最大 Δ=%.2f 单位）" % _maxd if not _bad else
-                    "✗ **%d 个悬空** ✗（最大 Δ=%.2f 单位）" % (_bad, _maxd)) \
-            if _nchk else "（本次没有需要几何对账的脚）✓"
-        print("      脚位自检：几何对账 %d 个脚 ⇒ %s ｜按 sketch 的 <leg> 绘制 %d 个 ✓"
-              "（Fritzing 口径 ✓）｜认不出/未验证 %d 个 %s"
-              % (_nchk, _verdict, _legn, _unv, "✓" if not _unv else "✗（这些件只能靠人眼 ✓）"))
     if _badref:
         print("      ⚠ 参考点没能算出来的：%s" % "；".join(_badref[:6]))
     a, b, c, d = k * m[0], k * m[1], k * m[2], k * m[3]
@@ -392,8 +421,64 @@ for el in root.iter("instance"):
     #   **+1.29 单位 = 1.03 × 1.25** ✓✓（x 偏、y 不偏 ✓ = min-y 为 0 ✓）—— 偏移量与 `min×k`
     #   **逐位相符** ✓ ⇒ 真凶就是它 ✓；减掉后四脚 Δ=0.00 ✓✓。
     #   ★ 判据：**偏移量必须等于 min×k** ✓（"差一点点"在这里是**可算**的 ✓，不是审美 ✗）。
+    # ★★★ 2026-10-08：**按 sketch 存的腿画出来** ✓（用户报「R1 插的点显然与原图不一致」✓）——
+    #   见上面收集 `_legs` 时那段 Fritzing 口径 ✓。要点：
+    #     · 腿的点**已经是 sketch 单位** ✓ ⇒ 用**不含 k** 的那个矩阵 ✓（`m[0..3]` 原样 ✓、
+    #       平移与零件那层**同一个** e/f ✓ —— 零件那层的 e/f 已经把 `k·viewBox 原点` 减掉了 ✓）；
+    #     · 零件 svg **自带的那截腿**要**改成 `<g>`**（= 不画 ✓）—— Fritzing 就是这么干的 ✓
+    #       （`initLegInfoAux`：`setTagName("g")` ✓）；✗ 不改的话会看见**两截腿** ✓；
+    #     · 线宽 = 那截腿上写的 `stroke-width × k` ✓、颜色照抄 ✓（缺省 #8C8C8C / 29mil ✓）。
+    _body = inner(txt)
+    _gl = []
+    for _cid3, (_poly, _npt, _nbz) in sorted(_legs.items()):
+        _lt = re.search(r'<line\b[^>]*\bid="%sleg"[^>]*/?>' % re.escape(_cid3), _body)
+        _col, _sw = "#8C8C8C", 0.029 * 90.0                # ★ 缺省：Fritzing 的 29mil ✓
+        if _lt:
+            _mc = re.search(r'\bstroke="([^"]+)"', _lt.group(0))
+            _mw = re.search(r'\bstroke-width="([\d.]+)"', _lt.group(0))
+            if _mc:
+                _col = _mc.group(1)
+            if _mw:
+                _sw = float(_mw.group(1)) * k              # ★ 用户单位 → sketch 单位 ✓
+            # ★ 那截自带腿**别再画** ✗（换成 `<g>` ＝ Fritzing 的做法 ✓）
+            _body = _body.replace(_lt.group(0), re.sub(r"^<line\b", "<g", _lt.group(0)))
+        if _npt > 2 or _nbz:
+            print("      ⚠ %s.%s 的腿是 **%d 个点 / %d 段 bezier** ✗ ⇒ 只按**直线段**画 ✓"
+                  "（本项目实测 834 条腿全是 2 点、无 bezier ✓）" % (ttl, _cid3, _npt, _nbz))
+        _gl.append('<polyline data-pd-leg="1" points="%s" fill="none" stroke="%s" '
+                   'stroke-width="%.4f" stroke-linecap="round"/>'
+                   % (" ".join("%.4f,%.4f" % _q for _q in _poly), _col, _sw))
+        _nleg += 1
+        _hid3 = _ph.get(_cid3)
+        _xy3 = BC.hole_xy(_hid3) if _hid3 else None
+        if _xy3 is not None:
+            _ex3, _ey3 = _poly[-1]
+            _d3 = ((num(g.get("x")) + m[0] * _ex3 + m[2] * _ey3 + m[4] - _subx - _xy3[0]) ** 2
+                   + (num(g.get("y")) + m[1] * _ex3 + m[3] * _ey3 + m[5] - _suby - _xy3[1]) ** 2) ** 0.5
+            _legmax = max(_legmax, _d3)
+            if _d3 > 0.35:
+                _legbad += 1
+                print("      ✗ %s.%s 的腿末端落在 (%7.2f,%7.2f)，而它声称插的 %s 在 (%7.1f,%7.1f)"
+                      " ⇒ Δ=%.2f 单位 (%.2f mm) ✗"
+                      % (ttl, _cid3, _ex3, _ey3, _hid3, _xy3[0], _xy3[1], _d3, _d3 * 25.4 / 90.0))
     lay_body.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
-                    % (a, b, c, d, e, f, inner(txt)))
+                    % (a, b, c, d, e, f, _body))
+    if _gl:
+        # ★ 腿画在零件**之后** ✓（Fritzing 里连接器是零件的子项、画在本体之上 ✓）
+        lay_body.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
+                        % (m[0], m[1], m[2], m[3], e, f, "".join(_gl)))
+    # ★ 自检**必须在腿画完之后**再打 ✗（腿的条数与末端 Δ 都是那一步算出来的 ✓ ——
+    #   第一版把这个 print 放在前面 ⇒ 明明画了 2 条腿却报"0 条" ✓，实测栽过 ✓）。
+    if _nchk or _unv or _legn:
+        _verdict = ("✓ 全落在孔上 ✓（最大 Δ=%.2f 单位）" % _maxd if not _bad else
+                    "✗ **%d 个悬空** ✗（最大 Δ=%.2f 单位）" % (_bad, _maxd)) \
+            if _nchk else "（本次没有需要几何对账的脚）✓"
+        print("      脚位自检：几何对账 %d 个脚 ⇒ %s ｜按 sketch 的 <leg> 画的腿 %d 条 %s"
+              "｜认不出/未验证 %d 个 %s"
+              % (_nchk, _verdict, _nleg,
+                 "✓（末端都对上声称的孔 ✓，最大 Δ=%.2f 单位 ✓）" % _legmax if not _legbad
+                 else "✗ **%d 条末端对不上孔** ✗（最大 Δ=%.2f 单位）" % (_legbad, _legmax),
+                 _unv, "✓" if not _unv else "✗（这些件只能靠人眼 ✓）"))
 
 xs, ys = [0.0, 576.0], [0.0, 189.0]
 for x1, y1, x2, y2, _c in wires:
