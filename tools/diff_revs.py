@@ -1102,7 +1102,106 @@ def _render_view(fzz, view, out):
     return open(svgp, encoding="utf-8").read()
 
 
-def _tag_elements(svg, refs, fzz, view, side, skip=None):
+def _seg_sig(txt):
+    r"""一段**顶层**元素 ⇒ "按画出来的样子"的签名 ✓（导线段 / 接点圆点 ✓；其余 ⇒ `None` ✓）。
+
+    ★ 为什么签名要**从画好的 svg 取** ✗（而不是从 sketch 的实例几何取 ✗）：
+      `render_sch.py` 画导线时会**拐弯 / 断开 / 加接点圆点** ✓ ⇒ 图上那根线的端点**不等于**
+      实例的 `geometry` ✗ ⇒ 拿实例几何去认，原理图里的线**一根都对不上** ✓
+      （面包板那边恰好相等 ✓ 所以老办法能用 ✓；原理图不行 ✗）。
+    ★ 判据 = 几何**逐位**（四舍五入到 0.01 ✓）＋ 字面量本身 ✓：
+      纯函数 ✓、不看颜色 ✗（颜色是"版"的深浅 ✓ 两版本来就不同 ✓）。
+    """
+    m = re.match(r"\s*<line\b", txt)
+    if m:
+        vals = []
+        for a in ("x1", "y1", "x2", "y2"):
+            mm = re.search(r'\b%s="(-?[\d.eE+-]+)"' % a, txt)
+            if mm is None:
+                return None
+            vals.append(round(float(mm.group(1)), 2))
+        return ("line",) + tuple(vals)
+    if re.match(r"\s*<circle\b", txt):
+        vals = []
+        for a in ("cx", "cy"):
+            mm = re.search(r'\b%s="(-?[\d.eE+-]+)"' % a, txt)
+            if mm is None:
+                return None
+            vals.append(round(float(mm.group(1)), 2))
+        return ("dot",) + tuple(vals)
+    return None
+
+
+def _wire_units(sa, sb):
+    r"""**原理图**的导线变化单元 ✓ ⇒ `({A 侧签名→key}, {B 侧签名→key}, {所有 key})` ✓。
+
+    ★★ 2026-10-08 用户报 ✗：「**原理图**也该跟面包板一样：进来 A+B ⇒ 点播放 ⇒ A→B ⇒
+      播完**只显示 B**」✓ —— 实测坐实 ✗：原理图 A/B 两版之间**导线**才是主要差别 ✓
+      （v20→v40：导线 60→41 段 ✓），而老口径只给"零件摆位"打钥匙 ✗（`_hit_view` 里那段
+      按孔对比较是**面包板专属**的 ✓）⇒ 播完之后 **A 侧的 48 段线 ＋ 31 个接点仍留在图上** ✗
+      ⇒ 末态不是 B ✓（实测就是这么量的 ✓）。
+
+    ★ 怎么分组 ✗（不能一段一个时段 ✗ —— 那样一轮 80 × 2s = 160s ✓）：
+      按**连通分量**聚 ✓（共享端点的段连在一起 ✓、接点圆点按坐标挂上 ✓）
+      ⇒ 一段改动（一条网被重画 ✓）算**一处变化** ✓。实测 v20→v40：**4 个分量** ✓
+      （A 独有 48 段 ＋ B 独有 29 段 ＋ 46 个点 ✓ 分进 4 处 ✓）。
+    ★ 只比**顶层**元素 ✓（渲染器把导线画在图层直下 ✓；零件组里那些 `<line class='pin'>`
+      是零件自己的图形 ✓，归零件那套钥匙管 ✓）。
+    """
+    def top(svg):
+        out = {}
+        for cls, txt in _top_split(svg):
+            if cls != CLS_WIRE:
+                continue
+            sig = _seg_sig(txt)
+            if sig is not None:
+                out.setdefault(sig, 0)
+                out[sig] += 1
+        return out
+
+    ta, tb = top(sa), top(sb)
+    only_a = {k: n for k, n in ta.items() if n > tb.get(k, 0)}
+    only_b = {k: n for k, n in tb.items() if n > ta.get(k, 0)}
+    if not only_a and not only_b:
+        return {}, {}, set()
+    # ── 连通分量：段与段共享**端点** ⇒ 同一处 ✓；接点圆点按坐标挂到同坐标的段端点 ✓ ──
+    par = {}
+
+    def find(x):
+        par.setdefault(x, x)
+        while par[x] != x:
+            par[x] = par[par[x]]
+            x = par[x]
+        return x
+
+    def union(x, y):
+        rx, ry = find(x), find(y)
+        if rx != ry:
+            par[rx] = ry
+
+    for sg in list(only_a) + list(only_b):
+        if sg[0] != "line":
+            continue
+        for p in ((sg[1], sg[2]), (sg[3], sg[4])):
+            union(("s", sg), ("p", p))
+    pts = {p for sg in list(only_a) + list(only_b) if sg[0] == "line"
+           for p in ((sg[1], sg[2]), (sg[3], sg[4]))}
+    for sg in list(only_a) + list(only_b):
+        if sg[0] != "dot":
+            continue
+        union(("s", sg), ("p", (sg[1], sg[2])) if (sg[1], sg[2]) in pts else ("s", sg))
+    # ★ 序号按**位置**排 ✓（左→右、上→下 ✓）⇒ 同一份输入每次跑出来的时段顺序一样 ✓
+    #   （`refs` 会被 `_anim_css` 排序 ✓，但 key 名字本身也带上位置更好读 ✓）
+    order = sorted({find(("s", sg)) for sg in list(only_a) + list(only_b)},
+                   key=lambda r: (min((sg[1], sg[2]) for sg in list(only_a) + list(only_b)
+                                      if find(("s", sg)) == r and sg[0] == "line") or (0, 0)))
+    name = {r: "seg%d" % i for i, r in enumerate(order)}
+    ka = {sg: name[find(("s", sg))] for sg in only_a}
+    kb = {sg: name[find(("s", sg))] for sg in only_b}
+    return ka, kb, set(name.values())
+
+
+def _tag_elements(svg, refs, fzz, view, side, skip=None, seg_keys=None):
     """把**变化处**的顶层元素包成 `<g id="a-<key>">` / `<g id="b-<key>">` ✓。
 
     ★ 钥匙（2026-10-07 实测 ✓，见 `docs/diff-animation.md` ✓）：
@@ -1197,12 +1296,18 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
             out.append(txt)
             continue
         key = None
+        # ★★ 2026-10-08（原理图的导线 ✓）：**先查"按画出来的样子"给的表** ✓ ——
+        #   `seg_keys`（见 `_wire_units()` ✓）是**从两份渲好的 svg 量的** ✓ ⇒ 与图**逐字同一份**
+        #   几何 ✓（✗ 不重算布线 ✗：`render_sch.py` 会拐弯、会断开、会加接点 ✓，
+        #   在 `diff_revs` 里重算就是**第二份实现** ✓ ⇒ 迟早对不上 ✓）。
+        if cls == CLS_WIRE and seg_keys:
+            key = seg_keys.get(_seg_sig(txt))
         # ★★ 零件：认**块里第一个 `matrix(…, e, f)`** ✓，拿 (e, f) 比实例的 geometry (x, y) ✓
         #   —— 实测两个渲染器都逐位相符 ✓（`L1: -2.020000 42.448800` ↔ `x=-2.02 y=42.4488` ✓）。
         #   ✗ 别拿 `partID` 当门槛 ✗ —— 那是 **sch** 渲染器才写的 ✓（`<g partID=…><g transform=matrix>` ✓），
         #   而 **bb** 渲染器只写 `<g transform="matrix(…)">` ✓ 没有 partID ✗ ⇒ 设了门槛就一个也匹配不上 ✓
         #   （自检当场报 `A 包了 0 / B 包了 0` ✗）。
-        mm = re.search(r"matrix\(([^)]*)\)", txt)
+        mm = None if key else re.search(r"matrix\(([^)]*)\)", txt)
         if mm:
             nn = [float(v) for v in re.findall(r"-?\d+\.?\d*", mm.group(1))]
             if len(nn) >= 6:
@@ -1225,7 +1330,7 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
             if mt:
                 key = by_mi.get(("gp", round(float(mt.group(1)), 2),
                                  round(float(mt.group(2)), 2)))
-        if key is None and cls == CLS_WIRE:
+        if key is None and cls == CLS_WIRE and seg_keys is None:
             ax, ay = _at("x1"), _at("y1")
             bx, by = _at("x2"), _at("y2")
             if None not in (ax, ay, bx, by):
@@ -1519,11 +1624,21 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
           % (ska, ma, skb, mb,
              "两版位置**相同** ✓（只画一次没有信息损失 ✓）" if ma == mb
              else "两版位置**不同** ✗ ⇒ 只画一次会藏住 B 的位置 ✓，请留意 ✗"))
-    pa, ka, leak_a = _tag_elements(_paint(sa, pal[0], "A", skip=ska)[0], refs, a_fzz, vname, "a",
-                                   skip=ska)
+    pa0 = _paint(sa, pal[0], "A", skip=ska)[0]
     # ★ B 侧：`drop=skb` ⇒ 板不画 ✓；而**块号会往前串** ✗（少了那一块 ✓）
     #   ⇒ `skip` 必须传 None ✗（传 skb 会误跳下一块 ✓）
-    pb, kb, leak_b = _tag_elements(_paint(sb, pal[1], "B", drop=skb)[0], refs, b_fzz, vname, "b")
+    pb0 = _paint(sb, pal[1], "B", drop=skb)[0]
+    # ★★ 2026-10-08（**原理图**的导线 ✓）：导线也是"变化处" ✓ —— 判据**从这两份渲好的 svg 量** ✓
+    #   （✗ 不在本文件里重算布线 ✗，见 `_wire_units()` 的说明 ✓）。
+    seg_a = seg_b = None
+    if VIEW == "sch":
+        seg_a, seg_b, wrefs = _wire_units(pa0, pb0)
+        if wrefs:
+            print("✓ 原理图导线：A/B 两版**画出来的**线比出来 ⇒ %d 处导线变化 ✓（A %d 段 / B %d 段 ＋ 接点 ✓）"
+                  % (len(wrefs), len(seg_a), len(seg_b)))
+        refs = refs | wrefs
+    pa, ka, leak_a = _tag_elements(pa0, refs, a_fzz, vname, "a", skip=ska, seg_keys=seg_a)
+    pb, kb, leak_b = _tag_elements(pb0, refs, b_fzz, vname, "b", seg_keys=seg_b)
     lose = refs - (ka | kb)
     print("✓ 动画钥匙：变化处 %d 个 ⇒ A 包了 %d / B 包了 %d；**一处都没漏** = %s%s"
           % (len(refs), len(ka), len(kb), not lose,

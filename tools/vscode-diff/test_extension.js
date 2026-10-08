@@ -528,6 +528,73 @@ if (!n21 || badLeg21 || !nLeg || !drawsLegPy) {
 	fail('零件的腿没画 / 没落在孔上（用户报过「R1 插的点显然与原图不一致」）；'
 		+ '或渲染器里那两处（按 sketch 画腿、自带腿改 g）被删了');
 }
+
+// ㉒ ★★ **原理图的导线也要进动画组** ✓（2026-10-08 用户报 ✗：「原理图也该跟面包板一样：
+//   进来 A+B ⇒ 点播放 ⇒ A→B ⇒ 播完**只显示 B**」✓）。根因：`_hit_view` 里"按孔对比较"
+//   那一段是**面包板专属**的 ✗ ⇒ 原理图里 A/B 的差别（v20→v40：导线 60→41 段 ✓）**只打给
+//   零件** ✗ ⇒ 播完之后 **A 侧的 48 段线 ＋ 31 个接点仍在图上** ✗（实测就是这么量的 ✓）。
+//   ⇒ 现在按**两份渲好的 svg** 比导线（✗ 不重算布线 ✗）＋ 按连通分量分组（实测 4 处 ✓）。
+//   ★ 判据 = **A 独有的顶层导线元素，必须全都在动画组里** ✓ —— 这条直接对上"播完只剩 B" ✓：
+//     · "A 独有" = 几何（四舍五入到 0.01 ✓）在 B 里找不到同名同形的 ✓；
+//     · "在动画组里" = 它被包在某个带 `data-anim` 的 `<g>` 里 ✓（扫的时候按嵌套记 ✓）。
+//   ★ 只对**原理图**查 ✓：面包板那边有它自己那套（按孔对打钥匙 ＋ `leak` 自检 ✓），
+//     而且面包板的阴影件/板子会制造假阳性 ✓。
+const tagRe = /<(\/?)([a-zA-Z][\w:.-]*)((?:"[^"]*"|'[^']*'|[^>"'])*?)(\/?)>/g;
+function leavesOf(svg, gid, stopId) {
+	const i = svg.indexOf('<g id="' + gid + '"');
+	const j = svg.indexOf('<g id="' + stopId + '"', i + 10);
+	const body = svg.slice(i, j > 0 ? j : svg.length);
+	const out = [];
+	const stack = [];
+	tagRe.lastIndex = 0;
+	let m;
+	while ((m = tagRe.exec(body)) !== null) {
+		const closing = m[1] === '/', name = m[2].toLowerCase(), attrs = m[3];
+		if (name === 'g') {
+			if (closing) stack.pop();
+			else if (!m[4]) stack.push(/data-anim=/.test(attrs));
+			continue;
+		}
+		if (closing) continue;
+		const g = (a) => {
+			const mm = new RegExp('\\b' + a + '="(-?[\\d.eE+-]+)"').exec(attrs);
+			return mm ? Math.round(parseFloat(mm[1]) * 100) / 100 : null;
+		};
+		let sig = null;
+		if (name === 'line') {
+			const v = ['x1', 'y1', 'x2', 'y2'].map(g);
+			if (v.every((x) => x !== null)) sig = 'line|' + v.join('|');
+		} else if (name === 'circle') {
+			const v = ['cx', 'cy'].map(g);
+			if (v.every((x) => x !== null)) sig = 'circ|' + v.join('|');
+		}
+		if (sig) out.push({ sig, inAnim: stack.indexOf(true) >= 0 });
+	}
+	return out;
+}
+let n22 = 0, n22bad = 0, aOnly22 = 0, unwrapped22 = 0;
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-sch-.*\.svg$/.test(x))) {
+	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
+	if (svg.indexOf('data-anim-dur') < 0) continue;          // 没变化的图没有动画 ✓ 跳过 ✓
+	n22++;
+	const la = leavesOf(svg, 'A', 'B');
+	const inB = new Set(leavesOf(svg, 'B', 'legend').map((x) => x.sig));
+	const onlyA = la.filter((x) => !inB.has(x.sig));
+	const unwrapped = onlyA.filter((x) => !x.inAnim);
+	aOnly22 += onlyA.length;
+	unwrapped22 += unwrapped.length;
+	if (unwrapped.length) {
+		n22bad++;
+		console.log('   ✗ %s：A 独有导线元素 %d 个，其中 **没进动画组** %d 个（播完撤不掉 ✗）'
+			+ '，例如 %s', f, onlyA.length, unwrapped.length,
+		unwrapped.slice(0, 3).map((x) => x.sig).join(' ／ '));
+	}
+}
+console.log('㉒ 原理图导线进动画：%s 张 sch 图 ⇒ A 独有导线元素 %s 个，未进组的 %s 个 ⇒ 不合格 %s 张',
+	n22, aOnly22, unwrapped22, n22bad);
+if (!n22 || n22bad) {
+	fail('原理图里 A 独有导线没进动画组 ⇒ 播放完 A 的线还留在图上（用户要的是"播完只显示 B"）');
+}
 // ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
 //   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——
 //   ★ 撤掉的只是**顶栏**那条上的「▶ 重放动画」✗（`id="replay"` ✓，别又冒出来 ✗）。
@@ -822,5 +889,5 @@ console.log('⑲ 模板字符串体检：extension.js 语法 = %s；两种界面
 	n19 === 2 ? 'OK' : 'BAD', n19 === 2 ? 'OK' : 'BAD', cssTicks);
 if (bad19 || cssTicks !== 2) fail('CSS 模板字符串被反引号截断（注释里别写反引号）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十一项都过', bad || '');
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十二项都过', bad || '');
 process.exit(bad ? 1 : 0);
