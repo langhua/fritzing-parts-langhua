@@ -1057,6 +1057,11 @@ def _view_rows(name_a, name_b, sample=None):
     ★ 必须是 6 行 ✗（2026-10-07 修 ✓）：`_legend` 是**按列**摆的（每列
       `ceil(行数/3)` 行 ✓）⇒ 7 行会变成 3/3/1 ✗ ⇒「元件A」在左列、「元件B」在中列
       ✗（用户看到的「图例乱了」✓）⇒ 就 6 行、一列一个类别 ✓（跟 PCB 那份图例同排法 ✓）。
+
+    ★★ 2026-10-08 加第三个字段 = **这一行属于哪一版** ✓（`"A"` / `"B"` ✓）——
+      用户原话：「**播放了差异后，会停在 B，没有 A 了，左侧下面也应该隐藏 A 的图例**」✓
+      ⇒ 每列上面那行是 A ✓、下面那行是 B ✓；`_legend` 拿它给 A 那几行挂上淡出动画 ✓
+      （✗ 别在 `_legend` 里按 `i % 2` 猜 ✗ —— 行序一改就悄悄反过来 ✓）。
     """
     rows = []
     for cls, label in ((CLS_WIRE, "导线"), (CLS_PART, "元件"), (CLS_TEXT, "文字/位号")):
@@ -1070,7 +1075,7 @@ def _view_rows(name_a, name_b, sample=None):
             else:
                 c = VIEW_PAL[cls][0 if mode == "A" else 1]
                 lab = "%s%s %s" % (label, mode, nm)
-            rows.append((c, lab))
+            rows.append((c, lab, mode))
     return rows
 
 
@@ -1423,15 +1428,22 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC):
       ② **不再收尾淡回 A+B** ✗ —— 那段**删掉** ✓ ⇒ 播完**停在 B** ✓
         （原话：「点击【重放动画】时，才从 A 开始变化到 B，并在结束后**停留在 B**」✓）。
 
-    ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s)` ✓ ——
+    ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s, A 那几行图例的动画名)` ✓ ——
       总时长**只在这一处算** ✗（✓ JS 起播与关键帧百分比必须用**同一个**值 ✓）。
     """
     keys = sorted(refs)
     if not keys:
-        return "", {}, 0.0
+        return "", {}, 0.0, None
     total = len(keys) * sec
     pct = lambda t: round(100.0 * t / total, 3)          # noqa: E731  一行小工具 ✓
     out, anim = [], {}
+    # ★★ 2026-10-08：**A 那几行图例**跟着整条时间轴线性淡出 ✓ ——
+    #   用户原话：「**播放了差异后，会停在 B，没有 A 了，左侧下面也应该隐藏 A 的图例**」✓。
+    #   ★ 取**整轮**线性（而不是"最后一秒啪地消失" ✓）：图上的 A 也是一处一处撤掉的 ✓
+    #   ⇒ 图例的 A 一路减到 0，正好在**最后一处 A 撤掉**的那一刻归零 ✓（口径一致 ✓）。
+    #   ★ 名字里带 token ✓ ⇒ 幻灯片把多张图拼一页也**不串台** ✓（与其它关键帧同规矩 ✓）。
+    leg_a = "%s-a-leg" % token
+    out.append("@keyframes %s{0%%{opacity:1}100%%{opacity:0}}" % leg_a)
     for i, key in enumerate(keys):
         s, T = i * sec, sec
         if key in ka:
@@ -1450,7 +1462,7 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC):
                                  ((0.60, 1), (0.70, 0), (0.80, 1), (0.90, 0)))
                        + "%s%%{opacity:1}100%%{opacity:1}}" % pct(s + T * 1.00))
     # 时长都取同一个 `total` ✓ ⇒ 各元素的关键帧百分比落在**同一条时间轴**上 ✓
-    return "\n".join(out), anim, total
+    return "\n".join(out), anim, total, leg_a
 
 
 def _anim_data(pa, pb, anim):
@@ -1526,7 +1538,7 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     # ★★ 动画：只写**关键帧** ＋ 每个组一个 `data-anim="<名字>"` ✓ —— ✗ 不写 `animation:` ✗
     #   （写了就一进页面自己播 ✓ —— 用户 2026-10-08 要的是"**进入时显示 A+B**、点了才播" ✓）
     token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
-    css, anim, dur = _anim_css(ka, kb, refs, token)
+    css, anim, dur, leg_a = _anim_css(ka, kb, refs, token)
     pa, pb = _anim_data(pa, pb, anim)
     if css:
         # ★ 关键帧**只写一份** ✓：A / B 两张图最终在**同一份文档**里 ✓（叠合图是一
@@ -1534,19 +1546,22 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
         #   字节翻倍 ✗（2026-10-07 实测：第一版就写了两份 ⇒ 数出 `@keyframes` 132 条 ✗）。
         pa = pa.replace("</svg>", "<style>%s</style>\n</svg>" % css)
     if dur:
-        print("✓ 动画：关键帧 %d 条（A %d ＋ B %d ✓，共 %d 处变化 ✓）—— 一处 %.1f s ⇒ 一轮 %.1f s ✓"
+        print("✓ 动画：关键帧 %d 条（A 变化 %d ＋ B 变化 %d ＋ **A 图例淡出 1** ✓，"
+              "共 %d 处变化 ✓）—— 一处 %.1f s ⇒ 一轮 %.1f s ✓"
               % (css.count("@keyframes"), len(ka), len(kb), len(refs), ANIM_SEC, dur))
         print("   ★ **不自动播** ✓：图上只有 `data-anim`（名字 ✓）＋ 根上的 `data-anim-dur`"
-              "（%.3f s ✓），起播由「▶ 重放动画」做 ✓" % dur)
+              "（%.3f s ✓），起播由「▶ 播放差异」做 ✓" % dur)
         print("   ★ 口径（用户 2026-10-08 定 ✓）：**进来 = A+B 叠合图** ⇒ 点按钮 ⇒ "
-              "**从 A 开始** ⇒ 走完**停在 B** ✓（原来那段「收尾淡回 A+B」已删 ✓）")
+              "**从 A 开始** ⇒ 走完**停在 B** ✓（原来那段「收尾淡回 A+B」已删 ✓）；"
+              "★ 停在 B 时 A 已经没了 ⇒ 底下图例里**属于 A 的那三行也一起淡出** ✓"
+              "（用户：「左侧下面也应该隐藏 A 的图例」✓）")
     # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
     #   而 A 的浅橙 `#f0a868` = `rgb(240,168,104)` ✓ ⇒ **两个几乎分不出来** ✗。
     body = overlay(pa, pb, na, nb, pal=pal, frame=frame,
                    rows=_view_rows(na, nb, _common_fill(sa, skip=ska)),
-                   op=(0.6, 0.95), pre=True)
+                   op=(0.6, 0.95), pre=True, a_leg_anim=leg_a)
     if dur:
         # ★ 一轮时长挂在**根 `<svg>`** 上 ✓（起播的 JS 要拿它拼简写 ✓；✗ 别让 JS 自己算 ✗）
         body = body.replace("<svg ", '<svg data-anim-dur="%.3f" ' % dur, 1)
@@ -1561,7 +1576,7 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
               % hits.count('<g id="pd-'))
     if dur:
         print("✓ 图上没有播放键 ✓（用户 2026-10-08 定 ✓：图里那个「▶ 重放」撤掉 ✓）——"
-              "起播统一走**外面**那两个「▶ 重放动画」✓（合并视图工具条 ✓ / 幻灯片工具条 ✓）；"
+              "起播统一走**外面**那两处「▶ 播放差异」✓（合并视图右栏顶上 ✓ / 幻灯片右栏顶上 ✓）；"
               "svg 单独打开就是**静止的 A+B** ✓")
     open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
     print("✓ 叠合差异图 %s（色相 = 类别：导线橙 ✓ 元件蓝 ✓ 文字灰 ✓；深浅 = 版 ✓）" % svg_p)
@@ -1805,8 +1820,12 @@ def report_view(a_fzz, b_fzz):
     same = moved = 0
     rows = []
     for ttl in sorted(set(ga) | set(gb)):
-        # ★ 导线（`Wire*`）与图例文字件（`TXT*`）不归这里 ✗ —— 导线归 ②（增删/改色/走向 ✓），
-        #   `TXT*` 是图例件，本来就不画 ✓（渲染器也跳过它 ✓）⇒ 报出来只是噪声 ✗。
+        # ★ 导线（`Wire*`）与图例文字件（`TXT*`）不归这里 ✗ —— 导线归 ②（增删/改色/走向 ✓）；
+        #   `TXT*` 是**图例件** ✓（色条旁边那行说明字 ✓）⇒ 报出来只是噪声 ✗。
+        #   ★★ 2026-10-08 更正 ✗：它**不是**"本来就不画" ✗ —— 用户报「图例文字都没有显示出来」✓
+        #   ⇒ 渲染器现在**照画** ✓（见 `render_bb.py` 的 `logo_text()` ✓）；这里仍然不比它 ✓
+        #   （它是图例、不是"元件摆位" ✓ —— 而它的移动/增删会被 ② 那节以外的地方看见吗 ✗：
+        #    不会 ✓，图例是设计的一部分、不参与 A/B 比对 ✓）。
         if ttl.startswith("Wire") or ttl.startswith("TXT"):
             continue
         if ttl not in ga:
@@ -1914,7 +1933,7 @@ def _sch_section(a_fzz, b_fzz):
     return L
 
 
-def _legend(rows, font, pad, x0=None, width=None):
+def _legend(rows, font, pad, x0=None, width=None, a_anim=None):
     """⇒ `(图例 svg 片段, 需要的额外高度)` ✓ —— **三列** ✓，画在**板子下方**的空白带里 ✓。
 
     ★★ 两条都是用户定的 ✓：
@@ -1924,6 +1943,11 @@ def _legend(rows, font, pad, x0=None, width=None):
         比图缩进去一截 ✓）。调用方各自把板框左缘算好传进来 ✓（fzz 路径用 `_board_px()` ✓、
         svg 路径用它自己的 `MARGIN` ✓）—— 本文件不重算 ✗。
       · `width` 给了就**别越出画布右缘** ✓（框宽是死的 ✓，位置可夹 ✓）。
+      · `a_anim`：给了就把**属于 A 的那几行**包进一个挂动画名的 `<g>` ✓ ——
+        用户 2026-10-08：「**播放了差异后，会停在 B，没有 A 了，左侧下面也应该隐藏 A 的图例**」✓
+        ⇒ 那几行的 `opacity` 由**同一条时间轴**线性推到 0 ✓（播完 = A 没了 = 图例也没了 ✓）。
+        ✗ 别自己判"第几行是 A" ✗ —— 行里的第三个字段（`_view_rows` / `_legend_rows` 给的 ✓）
+        就是答案 ✓。
     """
     fs = font
     ncol = 3
@@ -1944,31 +1968,42 @@ def _legend(rows, font, pad, x0=None, width=None):
     out = ['<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="#ffffff" '
            'fill-opacity="0.96" stroke="#cccccc" stroke-width="%.2f"/>'
            % (x0, pad, box_w, box_h, fs * 0.05)]
-    for i, (c, lab) in enumerate(rows):
+    for i, row in enumerate(rows):
+        c, lab = row[0], row[1]
+        side = row[2] if len(row) > 2 else None
         # ★ **列优先** ✓（一列一个主题 ✓）：列 1 = 顶层两版 ✓、列 2 = 底层两版 ✓、列 3 = 灰 ✓
         #   ✗ 行优先读起来是「A 顶、B 顶、A 底 / B 底、灰、灰」⇒ 版次和层都乱 ✓（2026-10-07 调过 ✓）
         cx = x0 + (i // nrow) * cw + fs * 0.5
         cy = pad + fs * 0.7 + (i % nrow) * fs * 1.9
-        out.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s" '
-                   'stroke="#999999" stroke-width="%.2f"/>'
-                   % (cx, cy, fs * 1.4, fs * 1.0, c, fs * 0.05))
-        out.append('<text x="%.1f" y="%.1f" font-family="sans-serif" font-size="%.1f" '
-                   'fill="#333333">%s</text>'
-                   % (cx + fs * 1.9, cy + fs * 0.95, fs, lab))
+        seg = ('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s" '
+               'stroke="#999999" stroke-width="%.2f"/>'
+               '<text x="%.1f" y="%.1f" font-family="sans-serif" font-size="%.1f" '
+               'fill="#333333">%s</text>'
+               % (cx, cy, fs * 1.4, fs * 1.0, c, fs * 0.05,
+                  cx + fs * 1.9, cy + fs * 0.95, fs, lab))
+        if a_anim and side == "A":
+            # ★ 一个 `<g>` 一行 ✓（几行就有几个同名 `data-anim` ✓ —— 起播的 JS 是
+            #   `querySelectorAll("[data-anim]")` 逐个赋动画 ✓ ⇒ 同名就一起淡出 ✓）
+            seg = '<g data-anim="%s">%s</g>' % (a_anim, seg)
+        out.append(seg)
     return "\n".join(out), box_h + pad * 2
 
 
 def _legend_rows(name_a, name_b):
-    """六个条目 ✓（三层 × 两版 ✓ ＋ 灰的两条 ✓）—— 两个调用方共用这一份 ✓。"""
+    """六个条目 ✓（三层 × 两版 ✓ ＋ 灰的两条 ✓）—— 两个调用方共用这一份 ✓。
+
+    ★ 第三个字段 = 这一行属于哪一版 ✓（`_view_rows` 同口径 ✓）—— PCB 那条路不给
+      动画名 ⇒ 这个字段只被**记着**、不生效 ✓（那边本来也没有重放按钮 ✓）。
+    """
     a = re.sub(r"[^\x20-\x7e]", "?", name_a)
     b = re.sub(r"[^\x20-\x7e]", "?", name_b)
-    return [(A_TOP, "A = %s  top" % a), (B_TOP, "B = %s  top" % b),
-            (A_BOT, "A = %s  bottom" % a), (B_BOT, "B = %s  bottom" % b),
-            (A_OTH, "grey: A light (silk/board)"), (B_OTH, "grey: B dark")]
+    return [(A_TOP, "A = %s  top" % a, "A"), (B_TOP, "B = %s  top" % b, "B"),
+            (A_BOT, "A = %s  bottom" % a, "A"), (B_BOT, "B = %s  bottom" % b, "B"),
+            (A_OTH, "grey: A light (silk/board)", "A"), (B_OTH, "grey: B dark", "B")]
 
 
 def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0.75, 0.55),
-            pre=False):
+            pre=False, a_leg_anim=None):
     """两版叠合 ✓：A 浅、B 深、重合更深 ✓。
 
     ★ 2026-10-07 加了三个口（面包板/原理图用 ✓，**PCB 那条路一个字不改** ✓）：
@@ -1976,6 +2011,9 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0
         不给 ⇒ 走 PCB 那套「色相 = 层」（认固定层色再换 ✓）；
       · `frame`：叠合窗口 `(x, y, w, h)` ✓；不给 ⇒ 用 A 的取景 ✓（PCB 两版板框相同 ✓）；
       · `rows`：图例行 ✓；不给 ⇒ PCB 那六行 ✓。
+    ★ 2026-10-08 加 `a_leg_anim` ✓：把**属于 A 的那几行**挂上这个动画名 ✓ ⇒
+      起播后它们跟着 A 一起淡出 ✓（播完 = 停在 B = A 的图例也在 ✓ 没了 ✓）。
+      ✗ 默认 `None` ✗ ⇒ PCB 那条路照旧不动 ✓。
     """
     import render_pcb as R
     if frame is None:
@@ -2016,7 +2054,7 @@ def overlay(svg_a, svg_b, name_a, name_b, pal=None, frame=None, rows=None, op=(0
     #   板框那条线的 x 就是它 ✓（fzz 路径是 `--board-only` 渲的 ⇒ 那个 rect 就是板框 ✓）。
     bx = _board_px(svg_a, R)
     leg, extra = _legend(rows if rows else _legend_rows(name_a, name_b), fs, fs * 0.6,
-                         x0=(bx[0] if bx else None), width=wa)
+                         x0=(bx[0] if bx else None), width=wa, a_anim=a_leg_anim)
     H2 = ha + extra
     # ★ 「上面的图也应该有个方框，套住整张图」✓（2026-10-07 用户定 ✓）——
     #   只看**视图**那条路加 ✗（PCB 那边本来就自带**板框** ✓，再加一层反而乱 ✓）。

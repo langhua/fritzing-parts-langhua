@@ -57,6 +57,66 @@ UNIT_MM = {"": 25.4 / 1000.0,          # ★ 无单位 = 1/1000 英寸 ✓（Fri
            "px": 25.4 / 72.0,          # ★★ `px` = **1/72 英寸** ✓（2026-09-27 实测钉死 ✓）
            "pt": 25.4 / 72.0,
            "mm": 1.0, "cm": 10.0, "in": 25.4}
+MM = 3.5433                    # 1mm = 3.5433 sketch 单位 ✓（件的 `width`/`height` 属性是 mm ✓）
+
+
+def xml_unesc(s):
+    """把 fz 属性里那一串**转义过的 svg** 还原 ✓（`&amp;` 必须**最后**换 ✗，否则二次转义 ✓）。"""
+    return (s.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
+            .replace("&#10;", "\n").replace("&#13;", "\r").replace("&#9;", "\t")
+            .replace("&apos;", "'").replace("&amp;", "&"))
+
+
+def xml_esc(t):
+    """文字里可能要写 `&` / `<` ⇒ 转义 ✓（反过来的那个 `xml_unesc` 只管属性 ✓）。"""
+    return t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def logo_text(props, g):
+    r"""`TXT*` 图例文字件 ⇒ `(一段 <text> 的 svg, 说明)` ✓ —— 就是色条旁边那行说明字 ✓。
+
+    ★★ 2026-10-08 用户报「**图例文字都没有显示出来**」✗ —— 原来这里直接 `continue` 掉了 ✗
+      （旧理由「免得挡住视图」✗ —— 那时图例件在图上乱摆 ✓）。现在它是**设计的一部分** ✓：
+      实测本板 **10 件** ✓（「图例：」＋ 9 个网名 ✓：GND / 5V / DATA_IN / DATA_OUT /
+      LED_DIN / RC / BR+ / COIL_A / COIL_B ✓），正好配 **9 条色条** ✓。
+
+    ★ 画法**不另创几何** ✗：件自己的 `shape` 属性里就带着那份 svg ✓
+      （`<svg viewBox="0 0 <10n> 13"><text x="1" y="9" font-size="10">…</text></svg>` ✓）
+      ⇒ 把它**整块按盒子缩放**画出来 ✓ —— 比例 / 字号 / 基线全是件自己声明的 ✓（✗ 我不算 ✗）。
+      `x` / `y` / `font-size` / `text-anchor` / `font-family` 一律照抄 ✓，只换 `fill` ✓
+      （件把文字颜色存在 `color` 属性里 ✓）并**丢掉 `id`** ✗（10 件全叫 `label` ✓ ⇒ 重复 id ✓）。
+
+    ★ 锚点 = **盒子左上角** ✓（实测钉死 ✓，**不是中点** ✗）：`bb_legend3.py` 给的色条
+      x=590 / 长 9 / 间隙 3 ⇒ 文字件的几何 x = **602** ✓（= 左缘 ✓）；y 也一算就合 ✓ ——
+      盒心 32.05 − 字墨心（盒内基线 9、字号 10 ⇒ 墨心 ≈ 4.5/13 ✓）1.25 ≈ **色条 y=31** ✓
+      正好竖向居中 ✓（若是中点约定，盒子会**压到色条上** ✗、字也偏上 4 单位 ✗）。
+
+    ★ 盒子 = `width`/`height` 两个属性（**mm** ✓）× `MM` ✓；★ 两条边的缩放**必须相等** ✓
+      （件自己的 viewBox 就是按这个比例做的 ✓）⇒ 不等 ⇒ 画出来是**拉伸**的 ✗ ⇒ 调用方当场报 ✓。
+    """
+    shape = xml_unesc(props.get("shape") or "")
+    mt = re.search(r"<text\b([^>]*)>(.*?)</text>", shape, re.S)
+    if mt is None:
+        return None, "`shape` 里没有 `<text>` ✗"
+    vb = re.search(r'viewBox="([-\d.eE\s,]+)"', shape)
+    if vb is None:
+        return None, "`shape` 里没有 `viewBox` ✗"
+    v = [float(t) for t in re.split(r"[ ,]+", vb.group(1).strip()) if t]
+    if len(v) != 4 or not v[2] or not v[3]:
+        return None, "`viewBox` 不完整：%s ✗" % vb.group(1)
+    w_mm, h_mm = num(props.get("width")), num(props.get("height"))
+    if not w_mm or not h_mm:
+        return None, "`width`/`height` 缺（盒子的 mm 尺寸 ✓）✗"
+    sx, sy = w_mm * MM / v[2], h_mm * MM / v[3]        # 盒内单位 → sketch 单位 ✓
+    x, y = num(g.get("x")), num(g.get("y"))
+    at = re.sub(r'\s(?:id|fill)="[^"]*"', "", mt.group(1))
+    seg = ('<text%s transform="translate(%.4f,%.4f) scale(%.6f,%.6f)" fill="%s">%s</text>'
+           % (at, x - sx * v[0], y - sy * v[1], sx, sy,
+              props.get("color") or "#333333", xml_esc(props.get("logo") or "")))
+    # ★ 盒子的**画布占比**也交出去 ✓（sketch 单位 ✓）—— 调用方要拿它把画布撑到装得下字 ✓
+    #   （✗ 不撑 ⇒ 最长的那个标签会被 viewBox 裁掉 ✗ —— 实测 `DATA_OUT` 就差 35 单位 ✓）。
+    return seg, sx, sy, sx * v[2], sy * v[3]
+
 
 
 def scale_of(svg_text):
@@ -163,6 +223,7 @@ def svg_for(fzp_path, img, view="breadboard"):
 
 
 lay_body, wires = [], []
+_logo_ok, _logo_bad = [], []          # ★ 图例文字（TXT*）画成了几件 / 哪几件画不出来 ✓
 for el in root.iter("instance"):
     mid = el.get("moduleIdRef") or ""
     ttl = (el.findtext("title") or "").strip()
@@ -196,7 +257,20 @@ for el in root.iter("instance"):
         if abs(x2) + abs(y2) > 1e-9:
             wires.append((x, y, x + x2, y + y2, col))
         continue
-    if ttl.startswith("TXT"):        # 图例文字件：不画正文（免得挡住视图 ✓）
+    if ttl.startswith("TXT"):
+        # ★★ 2026-10-08 用户报「图例文字都没有显示出来」✗ ⇒ 从"不画"改成"画出来" ✓
+        #   （口径与理由见 `logo_text()` 的 docstring ✓）。原来的理由「免得挡住视图」
+        #   已经不成立了 ✓ —— 这行字**就是要看的** ✓（色条没有说明字等于没有图例 ✓）。
+        props = {p.get("name"): p.get("value") for p in el.iter("property")}
+        res = logo_text(props, g)
+        if res[0] is None:
+            print("   ✗ %-6s 图例文字**画不出来** ✗：%s" % (ttl, res[1]))
+            _logo_bad.append(ttl)
+        else:
+            seg, sx, sy, bw, bh = res
+            lay_body.append(seg)
+            _logo_ok.append((ttl, props.get("logo") or "", sx, sy, num(g.get("x")),
+                             num(g.get("y")), props.get("color") or "", bw, bh))
         continue
     fzp = (el.get("path") or "").replace("/", os.sep)
     lay = ET.parse(fzp).getroot().find(".//breadboardView/layers") if os.path.isfile(fzp) else None
@@ -325,11 +399,55 @@ xs, ys = [0.0, 576.0], [0.0, 189.0]
 for x1, y1, x2, y2, _c in wires:
     xs += [x1, x2]
     ys += [y1, y2]
+# ★★ 图例文字也要算进画布 ✓（2026-10-08 ✓）：它们的盒子在色条**右边** ✓ ⇒ 不加进来
+#   就会被 viewBox **裁掉** ✗（实测 `DATA_OUT` 的盒子右缘超出 35 单位 ✓ —— 而画布是按
+#   "板 ＋ 导线" 算的 ✓，字从来没算过 ⇒ 这正是"字看不见"的第二半原因 ✓）。
+for _t, _txt, _sx, _sy, _lx, _ly, _col, _bw, _bh in _logo_ok:
+    xs += [_lx, _lx + _bw]
+    ys += [_ly, _ly + _bh]
 x0, x1 = min(xs) - 12, max(xs) + 12
 y0, y1 = min(ys) - 12, max(ys) + 12
 w, h = x1 - x0, y1 - y0
 body = ['<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="#f7f7f7"/>' % (x0, y0, w, h)]
 body += lay_body
+# ★★ 2026-10-08 图例文字自检 ✓（用户报过「图例文字都没有显示出来」✗ ⇒ 不许静默 ✗）：
+#   ① 画出来几件、都是哪几个字 ✓（对不上就是件本身变了 ✓）；
+#   ② 盒内两边的缩放**必须相等** ✓ —— 不等 = 字被拉伸 ✗（件自己的 viewBox 就该是这个比例 ✓）；
+#   ③ 跟**同色的色条**对一眼 ✓：字的左缘应当 ≈ 色条末端 ＋ 间隙 ✓（本板实测 9+3 ✓）、
+#      盒心该 ≈ 色条 y ✓ ⇒ 这两个数就是"锚点没搞反"的证据 ✓（✗ 不是口号 ✓）。
+if _logo_ok or _logo_bad:
+    print("✓ 图例文字（`TXT*`）：画出 **%d 件** ✓ %s%s"
+          % (len(_logo_ok), "／".join(t[1] for t in _logo_ok) or "（一件都没有 ✗）",
+             "" if not _logo_bad else "；✗ 画不出来 %d 件：%s" % (len(_logo_bad), "、".join(_logo_bad))))
+    _sk = [t for t in _logo_ok if abs(t[2] - t[3]) > 1e-3]
+    print("   ① 盒内缩放**两边相等** = %s%s"
+          % ("✓" if not _sk else "✗",
+             "" if not _sk else "（%s 被拉伸 ✗）" % "、".join(t[0] for t in _sk)))
+    _dx, _dy, _n = [], [], 0
+    for _t, _txt, _sx, _sy, _lx, _ly, _col, _bw, _bh in _logo_ok:
+        _h_units = _bh                                  # 盒子高（sketch 单位 ✓）
+        # ★ 认它那条色条**不能只看颜色** ✗：真跳线用的也是同一套网色 ✓（实测撞过 ✗ ——
+        #   板那头有条同色的线 ✓ ⇒ 报出 332 单位那种数字 ✓）
+        #   ⇒ 判据 = **同色 ＋ 挨着 ＋ 就在字左边**（Δy ≤ 6 单位、末端离字左缘 0~20 单位 ✓）——
+        #   图例的三条几何就是这么定的 ✓（`bb_legend3.py`：色条长 9 ＋ 间隙 3 ✓）。
+        _bar = None
+        for _w in wires:
+            if _w[4] != _col or abs(_w[1] - _ly) > 6.0 or not (0.0 < _lx - _w[2] < 20.0):
+                continue
+            if _bar is None or abs(_w[1] - _ly) < abs(_bar[1] - _ly):
+                _bar = _w
+        if _bar is None:
+            continue
+        _n += 1
+        _dx.append(_lx - _bar[2])                      # 字左缘 − 色条末端 ✓（应 ≈ 3 ✓）
+        _dy.append(_ly + _h_units / 2 - _bar[1])       # 盒心 − 色条 y ✓
+    if _dx:
+        print("   ② 跟色条对账：配上 **%d/%d** 条 ✓ ⇒ 字左缘 − 色条末端 = %.2f~%.2f 单位 ✓"
+              "（色条线宽 1 ＋ 圆头 1 ⇒ 画出来的间隙还要再小 2 ✓）；"
+              "盒心 − 色条 y = %+.2f~%+.2f 单位 ✓（字墨心比盒心高 ~1.2 ⇒ 视觉上就是对齐的 ✓）"
+              % (_n, len(_logo_ok), min(_dx), max(_dx), min(_dy), max(_dy)))
+    else:
+        print("   ② 跟色条对账：⚠ 一件都没配上同色色条 ⇒ 这条自检**没跑** ✗（别当成「过了」✓）")
 for x1_, y1_, x2_, y2_, col in wires:
     body.append('<line x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f" stroke="%s" '
                 'stroke-width="2" stroke-linecap="round"/>' % (x1_, y1_, x2_, y2_, col))

@@ -415,7 +415,7 @@ if (!n15 || ann || lab) fail('图上还留着文字提示（用户要求去掉�
 //     ③ 动画名字挂 `data-anim` ✓、一轮时长挂根上的 `data-anim-dur` ✓（两者都要有 ✓）；
 //     ④ 两个界面的起播脚本都要**认 `data-anim`** ✓（✗ 不是把 currentTime 拨回 0 那套 ✗ ——
 //        那套只能"重播已经在跑/已跑完"的动画 ✓，进来时根本没动画可拨 ✓）。
-let n16 = 0, noDur = 0, inlineAnim = 0, btn = 0, mismatch = 0;
+let n16 = 0, noDur = 0, inlineAnim = 0, btn = 0, mismatch = 0, n20 = 0, badLeg = 0, badSrc = 0;
 for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch)-.*\.svg$/.test(x))) {
 	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
 	const kf = (svg.match(/@keyframes/g) || []).length;
@@ -425,8 +425,52 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 	if (!/data-anim-dur="[\d.]+"/.test(root)) { noDur++; console.log('   ✗ %s：根上没有 data-anim-dur', f); }
 	if (/style="animation:/.test(svg)) { inlineAnim++; console.log('   ✗ %s：还有内联 animation（会自己播）', f); }
 	if (svg.indexOf('anim-btn') >= 0) { btn++; console.log('   ✗ %s：图里那个播放键还在', f); }
-	const n = (svg.match(/data-anim="/g) || []).length;
-	if (n !== kf) { mismatch++; console.log('   ✗ %s：data-anim %d 条 ≠ keyframes %d 条', f, n, kf); }
+	// ★★ 2026-10-08 改判据 ✗：原来是「`data-anim` 条数 == 关键帧条数」✗ —— 那条口径下
+	//   **一个名字只能挂一个元素** ✓；而 A 图例那三行（导线/元件/文字 ✓）**共用同一个名字** ✓
+	//   ⇒ 21 条 data-anim ↔ 19 条关键帧 ⇒ **当场假失败** ✗。改成**名字集合相等** ✓
+	//   （更强 ✓：每个名字都有关键帧 ✓、每条关键帧都真被用上 ✓ —— 打错一个名字也抓得住 ✓）。
+	const names = new Set(Array.from(svg.matchAll(/data-anim="([^"]+)"/g), (m) => m[1]));
+	const kfs = new Set(Array.from(svg.matchAll(/@keyframes\s+([\w-]+)\s*\{/g), (m) => m[1]));
+	const extra = [...names].filter((x) => !kfs.has(x));
+	const unused = [...kfs].filter((x) => !names.has(x));
+	if (extra.length || unused.length) {
+		mismatch++;
+		console.log('   ✗ %s：名字与关键帧对不上 ⇒ 没关键帧的 %s ／ 没人用的 %s',
+			f, extra.join(',') || '（无）', unused.join(',') || '（无）');
+	}
+	// ⑳ ★★ A 那几行图例（2026-10-08 用户：「播放了差异后，会停在 B，没有 A 了，
+	//   左侧下面也应该隐藏 A 的图例」✓）—— 三件事 ✓：
+	//   ① 三列各一行 A ✓（= 正好 **3** 个同名组 ✓ —— 少一个就是某列漏了 ✓）；
+	//   ② 每行**说的是 A 那一版** ✓（拿文件名里的两个版号对 ✓：必须有 A 的、不许有 B 的 ✗）；
+	//   ③ 那个动画名**有同名关键帧**，而且就是 **1 → 0** 那条 ✓（淡出到底 ✓）。
+	//   ★ 判据取的都是**图里的原文** ✓（✗ 不是"我记得写过" ✗）。
+	const rows = Array.from(svg.matchAll(/<g data-anim="([^"]+-a-leg)">([\s\S]*?)<\/g>/g));
+	const name = rows.length ? rows[0][1] : null;
+	const kfLeg = name && new RegExp('@keyframes\\s+' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+		+ '\\s*\\{\\s*0%\\{opacity:1\\}100%\\{opacity:0\\}\\}').test(svg);
+	const vb = /diff-(?:bb|sch)-(.+?)-(v?\d[\w.]*)\.svg$/.exec(f);   // ⇒ A 名 / B 名 ✓
+	const says = (s, x) => s.indexOf(x) >= 0;
+	const okSides = !vb || rows.every((r) => says(r[2], vb[1]) && !says(r[2], vb[2]));
+	if (rows.length !== 3 || !kfLeg || !okSides) {
+		badLeg++;
+		console.log('   ✗ %s：A 图例三行没守好（组 %d 个、关键帧 1→0 = %s、行的版号 %s）',
+			f, rows.length, kfLeg, okSides ? '对 ✓' : '不对 ✗');
+	}
+	n20++;
+}
+// ⑳ 续：**渲染器那两半**也得在 ✓（这条防"谁把图例文字又改回不画了" ✗）——
+//   ① TXT 分支必须**画**（调 `logo_text(` ＋ 进 `lay_body` ✓）；
+//   ② 画布的 xs/ys 必须**含图例文字盒**（✗ 少了就会被 viewBox 裁掉 ✗ —— 实测过 ✓）。
+const rbb = fs.readFileSync(path.join(EXTDIR, '..', 'render_bb.py'), 'utf8');
+const drawsTxt = rbb.indexOf('logo_text(') >= 0 && /lay_body\.append\(seg\)/.test(rbb)
+	&& rbb.indexOf('图例文字件：不画正文') < 0;              // ✗ 那句"不画"的旧注释就是病灶 ✓
+const canvasHasLogo = rbb.indexOf('_logo_ok:') > 0
+	&& rbb.indexOf('_logo_ok:') < rbb.indexOf('x0, x1 = min(xs)');   // ⇒ 盒子**先**进 xs ✓
+console.log('⑳ A 图例淡出：%d 张带动画的图 ⇒ 没守好的 %d 张；渲染器还在画图例文字 = %s；'
+	+ '图例文字盒算进画布 = %s', n20, badLeg, drawsTxt, canvasHasLogo);
+if (badLeg || !drawsTxt || !canvasHasLogo) {
+	fail('A 图例三行没跟着淡出（停在 B 时它们该没了），或渲染器又不画图例文字 / 又不把字算进画布'
+		+ '（那两半合起来就是用户报的「图例文字都没有显示出来」）');
 }
 // ★★ 2026-10-08 **第二次改口径** ✓（用户：「面包板差异是可以在右侧、『面包板差异清单』上方
 //   显示【播放差异】的吧？」✓）：幻灯片**右栏顶上也放一个** ✓（`#pd-replay` ✓）——
@@ -465,14 +509,13 @@ const fbOk = /querySelector\("\.lbl"\) \|\| btn/.test(fbSrc)
 const reLabelOk = /if \(btn\.__pdT0 == null\) btn\.__pdT0 = lbl\.textContent/.test(fbSrc)
 	&& /clearTimeout\(btn\.__pdTimer\)/.test(fbSrc)
 	&& /btn\.__pdTimer = setTimeout/.test(fbSrc);
-console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
-	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s；'
-	+ '回显只改文字（✗ 不冲掉图形） = %s；**连点也不会卡在「播放中…」** = %s',
+console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、'
+	+ '名字与关键帧对不上 %d；合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；'
+	+ '两处起播同一份实现 = %s；回显只改文字（✗ 不冲掉图形） = %s；'
+	+ '**连点也不会卡在「播放中…」** = %s',
 	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk, reLabelOk);
-if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk || !reLabelOk) {
-	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
-}
-if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk) {
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl
+	|| !fbOk || !reLabelOk) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
 
@@ -723,5 +766,5 @@ console.log('⑲ 模板字符串体检：extension.js 语法 = %s；两种界面
 	n19 === 2 ? 'OK' : 'BAD', n19 === 2 ? 'OK' : 'BAD', cssTicks);
 if (bad19 || cssTicks !== 2) fail('CSS 模板字符串被反引号截断（注释里别写反引号）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十九项都过', bad || '');
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 二十项都过', bad || '');
 process.exit(bad ? 1 : 0);
