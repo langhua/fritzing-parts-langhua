@@ -235,14 +235,19 @@ const ROW_RE_SRC = '^\\s*([A-Za-z][\\w.-]*)[：:]';
  */
 function reLit(src) { return src.replace(/\//g, '\\/'); }
 
-/** 图上**可点名字**的清单 ✓：`#pd-hits` 里那些 `pd-*` 组的组名 ✓（与工具**同一份数据** ✓）。 */
+/** 图上**可点名字**的清单 ✓：`#pd-hits` 里那些 `pd-*` 组的组名 ✓（与工具**同一份数据** ✓）。
+ *
+ *  ★★ 2026-10-08 修 ✗：原来靠"从 `pd-hits` 切到 `pd-labels`"来划范围 ✗ ——
+ *    而**标签层已经撤掉了** ✗（用户：「把这些文字提示去掉」✓）⇒ 那个右边界不存在了 ✓
+ *    ⇒ 切到文末 ⇒ 会把别处的 `pd-*` 也收进来 ✓。⇒ 改成**按名收** ✓：
+ *    凡 `<g id="pd-…">` 都算 ✓，只排除两个**容器**（`pd-hits` / `pd-labels` ✓）。
+ */
 function keysOf(svgText) {
 	if (!svgText) return [];
-	const i = svgText.indexOf('id="pd-hits"');
-	const j = svgText.indexOf('id="pd-labels"', i < 0 ? 0 : i);
-	const seg = i < 0 ? svgText : svgText.slice(i, j < 0 ? undefined : j);
 	const set = new Set();
-	for (const m of seg.matchAll(/<g id="pd-([^"]+)"/g)) set.add(m[1]);
+	for (const m of String(svgText).matchAll(/<g id="pd-([^"]+)"/g)) {
+		if (m[1] !== 'hits' && m[1] !== 'labels') set.add(m[1]);
+	}
 	// ★ 键**长的在前** ✓（`RC.2` 必须先于 `RC` 去比 ✓）
 	return [...set].sort((a, b) => b.length - a.length);
 }

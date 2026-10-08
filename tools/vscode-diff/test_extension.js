@@ -356,5 +356,22 @@ console.log('⑭ 包名字不吃字：%d 份清单 ⇒ 包了 %d 个可点名字
 	n14, totSpans, totNames, lost);
 if (!n14 || !totSpans || lost) fail('「点名字」这一步会吃掉/改动清单文字');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十四项都过', bad || '');
+// ⑮ ★★ 图上**不许有文字提示** ✗（2026-10-08 下午定 ✓）—— 用户原话：
+//   「面包板差异，仍然有新增跳线、线路变了、没了跳线等文字提示，请把这些文字提示去掉」✓。
+//   ⇒ 判据：bb/sch 那两张图上**没有** `pd-labels` 层 ✓、也**没有**任何 `新增/没了/线路变了/Δ …`
+//     的文字 ✓（渲染器自己画的零件字/丝印**不算** ✗ —— 那不是我们的提示 ✓）。
+//   ★ 用**一条正则**判 ✓（见下 ✓），✗ 不逐个数 `<text>` ✗ —— 图里本来就有一百多个**零件**的字 ✓。
+const ANN_RE = /<text[^>]*>[^<]*(新增|没了|线路变了|Δ)/;
+let n15 = 0, ann = 0, lab = 0;
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch)-.*\.svg$/.test(x))) {
+	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
+	n15++;
+	if (ANN_RE.test(svg)) { ann++; console.log('   ✗ %s：图上还有文字提示', f); }
+	if (svg.indexOf('<g id="pd-labels">') >= 0) { lab++; console.log('   ✗ %s：标签层还在', f); }
+}
+console.log('⑮ 图上不写字：%d 张 bb/sch 图 ⇒ 带文字提示 %d 张、带标签层 %d 张（都应为 0 ✓）',
+	n15, ann, lab);
+if (!n15 || ann || lab) fail('图上还留着文字提示（用户要求去掉）');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十五项都过', bad || '');
 process.exit(bad ? 1 : 0);

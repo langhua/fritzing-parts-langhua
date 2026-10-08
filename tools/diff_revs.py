@@ -1297,15 +1297,15 @@ def _wid_key(fzz):
 def _hit_view(a_fzz, b_fzz, view, frame):
     """面包板 / 原理图的**隐藏高亮组** ✓ ⇒ 清单里点一条就能在图上亮出来 ✓。
 
-    ★★ 2026-10-08：**标签另放一层** ✓（`<g id="pd-labels">` ✓、**不隐藏** ✓）——
-      用户原话：「右下角那些『新增跳线 / 没了跳线』的标签，没有显示出来」✓。
-      实测 ✓：那 28 条标签**全都在** `pd-*` 组里 ✓，而那些组是 `display:none` ✓
-      ⇒ 只有**点了清单那一条**才亮 ✓、不点就一条看不见 ✗（上一版按"标签跑出画布"去挪坐标 ✗
-      —— `597.5 ⇒ 540.16` ✓ —— 没有治到根 ✓）。⇒ 标签搬去可见层 ✓，
-      隐藏组里只留圈 / 连线 ✓（点行高亮那一套**一个字不动** ✓）。
+    ★★ 2026-10-08（当天第二轮）：**图上一个字都不写** ✗（用户原话：「仍然有新增跳线、线路变了、
+      没了跳线等文字提示，请把这些文字提示去掉」✓）——
+      上一轮把标签从隐藏组搬到了可见层 ✓（`<g id="pd-labels">` ✓），用户**看见了** ✓ ——
+      然后说**不要它们** ✓。⇒ 那层**整个撤掉** ✗；一处变化现在只有：**空心圈**（A 旧 ✓）、
+      **实心圈**（B 新 ✓）、**两点间的虚线**（走向变了 ✓）✓ —— 三种都是**图**，不是字 ✓。
+      ★ 字去哪儿了：**清单里全都有** ✓（`新增/没了/变了` ＋ 孔位 ＋ 导线名 ＋ Δ mm ✓）——
+      所以「图上不写字」不是丢信息 ✓，是把字**收进清单这一处** ✓（清单还能点 ⇒ 图上高亮 ✓）。
 
-    ★ 词汇与 PCB 那套**一致** ✓（用户已经认过 ✓）：空心圈 = A 旧 ✓、实心圈 = B 新 ✓
-      、虚线连起来 ＋ 标签写 Δ ✓；`新增` / `没了` 只画一个圈 ✓。
+    ★ 词汇与 PCB 那套**一致** ✓（空心圈 / 实心圈 ✓）；`新增` / `没了` 只画**一个**圈 ✓。
     ★ 返回 `(隐藏高亮组 svg, 变化处的 key 集合)` ✓ —— 后者给 `_tag_elements()` 用 ✓
       （✗ 不让打钥匙那边再算一遍差异 ✗：判据只留这一份 ✓）。
     ★ 坐标：实例的 `geometry x/y` 就是 sketch 绝对坐标 ✓ ⇒ 与叠合图**同一坐标系** ✓（不用换算 ✓）。
@@ -1318,14 +1318,11 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     #   ⇒ 两者差一个“盒心 − 原点”的偏移 ✓（小件就是半个身位 ✓）。
     #   盒数学**不另写** ✗：直接调 `part_box` 那套（与渲染器算包围盒同一份 ✓）。
     ca, cb = _centers(a_fzz, vw), _centers(b_fzz, vw)
-    x0, y0, w, h = frame
+    w = frame[2]                                  # ★ 只用画布**宽** ✓（圈多大按它定 ✓）；
+    #   `frame` 的 x0 / y0 / h 是上一版**摆标签**要的 ✓ —— 标签撤掉后就不用了 ✓（别再留着 ✗）。
     r = max(3.0, w * 0.010)                       # 圈多大：按画布宽定 ✓（不然小的视图看不见 ✓）
-    fs = r * 1.7
     refs = set()                                  # ★ 变了哪些（给动画打钥匙用 ✓）
-    out = []                                      # ★ 高亮组**按名字攒** ✓（见 `circles()` ✓）
     hit_geom = {}                                 # name → [几何片段…] ✓（同一个名字可有多处 ✓）
-    lab = []                                      # ★ 标签**另放一层** ✓（可见 ✓，见函数头 ✓）
-    placed = []                                   # ★ 已放下的标签框 (x0, x1, y) ✓ ⇒ 撞了就往下让 ✓
 
     def xy(t):
         return (float(t.get("x") or 0.0), float(t.get("y") or 0.0))
@@ -1337,8 +1334,8 @@ def _hit_view(a_fzz, b_fzz, view, frame):
             return c
         return xy(org[ttl]) if ttl in org else None
 
-    def circles(names, pa, pb, label, anim_key=None):
-        """一处变化 ⇒ **圈 / 连线画一遍** ✓、**每个可点名字各记一份** ✓、**标签只写一条** ✓。
+    def circles(names, pa, pb, anim_key=None):
+        """一处变化 ⇒ **圈 / 连线画一遍** ✓、**每个可点名字各记一份** ✓、**一个字都不写** ✗。
 
         ★ 2026-10-08：*可点名字* 与 *动画钥匙* 现在是**两件事** ✓ ——
           点了要高亮的是**清单里写的名字**（`pd-<名字>` ✓，扩展那套靠它 ✓）；
@@ -1366,67 +1363,21 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                      % (pa[0], pa[1], pb[0], pb[1], A_COLOR_HI, r * 0.3, r * 0.5, r * 0.4))
         for nm in names:
             hit_geom.setdefault(nm, []).append("".join(g))
-        if label:
-            ax, ay = pb if pb is not None else pa
-            ly = ay - r * 1.2
-            # ★★ 标签**别跑出画布** ✗（2026-10-08 修 ✗）：实测右缘那两条
-            #   「新增跳线 / 没了跳线」写到了 x=597.5 ✓，而画布右边界是 611 ✓
-            #   ⇒ 被 viewBox 裁掉、用户看不到 ✗（原话：「右侧的图例文字没有显示出来」✓）。
-            #   ⇒ 先算一个**够用的宽度估计** ✓（中日韩字符算 1 个字宽 ✓、其余 0.62 ✓，
-            #     宁可估宽一点也没有害处 ✓ —— 这里只是收边 ✓）。
-            cjk = sum(1 for ch in label if ord(ch) > 0x2E80)
-            wtxt = (cjk + 0.62 * (len(label) - cjk)) * fs
-            # ★★ 2026-10-08：**先放圈的右边 ✓，被占了就放左边 ✓，还挤就再往左挪一个身位 ✓** ——
-            #   同一处常常**既有「没了」又有「新增」** ✓（实测这份 bb 图 **14 对** ✓：同一根跳线
-            #   两版编号不同 ✓，`pts[0]` 一模一样 ✓）⇒ 两条标签会**叠在一点**、谁也看不清 ✗。
-            #   ✗ 光"往下让"不够 ✓：这一列本来就 12 单位一条 ✓，让一格正好撞在邻条上 ⇒ 连锁 ✓
-            #   （实测：近 20 条挤在 x≈562 这一列上 ⇒ 越挤越乱 ✗）。⇒ **横着也让** ✓。
-            #   ★ 收边：右边放不下就贴画布里侧 ✓；上下都别出画面 ✓（图外那条带子是**图例**的地盘 ✗）。
-            rcand = max(x0 + r, min(ax + r * 1.2, x0 + w - wtxt - r))
-            lcand = ax - r * 1.2 - wtxt
-            xs = [rcand] + ([lcand] if lcand >= x0 + r else [])
-            for _k in range(1, 7):
-                nx = rcand - _k * (wtxt + fs * 1.2)
-                if nx < x0 + r:
-                    break
-                xs.append(nx)
-            step = fs * 1.05
-            ly0 = ay - r * 1.2
-            lo, hi = y0 + fs * 0.6, y0 + h + fs * 0.4
-
-            def _free(x, y):
-                """这个位置放得下吗 ✓（与已放下的框比：**横竖都压着**才算撞 ✓）。"""
-                return not any(abs(y - p_y) < fs * 1.1 and x < p_x1 and p_x0 < x + wtxt
-                               for p_x0, p_x1, p_y in placed)
-
-            def _pick():
-                """⇒ 第一个放得下的位置 ✓；实在挤不下 ⇒ `None` ✓（宁可就地叠着 ✓，绝不越界 ✗）。"""
-                for cx in xs:
-                    for k in range(19):
-                        for cy in ((ly0,) if k == 0 else (ly0 + k * step, ly0 - k * step)):
-                            if lo <= cy <= hi and _free(cx, cy):
-                                return cx, cy
-                return None
-            lx, ly = _pick() or (rcand, ly0)
-            placed.append((lx, lx + wtxt, ly))
-            lab.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
-                       'fill="%s">%s</text>'
-                       % (lx, ly, fs, A_COLOR_HI, esc(label)))
 
     for ttl in sorted(set(ga) | set(gb)):
         if ttl.startswith("Wire") or ttl.startswith("TXT"):
             continue
         if ttl not in ga:
-            circles(ttl, None, p_of(cb, gb, ttl), "新增")
+            circles(ttl, None, p_of(cb, gb, ttl))
         elif ttl not in gb:
-            circles(ttl, p_of(ca, ga, ttl), None, "没了")
+            circles(ttl, p_of(ca, ga, ttl), None)
         else:
             pa, pb = p_of(ca, ga, ttl), p_of(cb, gb, ttl)
             if pa is None or pb is None:
                 continue
             d = (((pb[0] - pa[0]) ** 2 + (pb[1] - pa[1]) ** 2) ** 0.5) * SK
             if d >= JOINT:
-                circles(ttl, pa, pb, "Δ %.3f mm" % d)
+                circles(ttl, pa, pb)
     if view == "bb":                                  # 跳线也让它能点 ✓（② 里的行 ✓）
         import bb_compare as BC
         la, _p1 = BC.load(a_fzz)
@@ -1441,18 +1392,16 @@ def _hit_view(a_fzz, b_fzz, view, frame):
                 continue                              # ★ 没变 ⇒ 不画圈、不打钥匙 ✓（与清单同一份判据 ✓）
             if k not in A:
                 lk = B[k]
-                circles(lk.wids, None, lk.pts[0], "新增跳线", anim_key=k)
+                circles(lk.wids, None, lk.pts[0], anim_key=k)
             elif k not in B:
                 lk = A[k]
-                circles(lk.wids, lk.pts[0], None, "没了跳线", anim_key=k)
+                circles(lk.wids, lk.pts[0], None, anim_key=k)
             else:
-                circles(A[k].wids + B[k].wids, A[k].pts[0], B[k].pts[0], "线路变了", anim_key=k)
+                circles(A[k].wids + B[k].wids, A[k].pts[0], B[k].pts[0], anim_key=k)
     body = ('<g id="pd-hits">'
             + "".join('<g id="pd-%s" style="display:none">%s</g>' % (_gid(nm), "".join(g))
                       for nm, g in hit_geom.items())
             + "</g>")
-    if lab:                                            # ★ 标签层 ✓：**不隐藏** ✓ ⇒ 一打开就看得见 ✓
-        body += '<g id="pd-labels">%s</g>' % "".join(lab)
     return body, refs
 
 
@@ -1615,9 +1564,9 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
         body = body.replace("</svg>", '<style>svg.pd-focus #A, svg.pd-focus #B '\
                             '{opacity:.16}</style>\n' + hits + "\n</svg>")
         print("✓ 高亮层：%d 组（点清单里 ① / ② 的条目 ⇒ 图上亮对应那组 ✓）；"
-              "另有标签层 %d 条 ✓（**不隐藏** ✓ —— 一打开就看得见 ✓）"
-              % (hits.count('<g id="pd-') - 1 - hits.count('<g id="pd-labels">'),
-                 hits.count('<text') if '<g id="pd-labels">' in hits else 0))
+              "**图上一个字都不写** ✓（新增/没了/线路变了只在**清单**里 ✓，"
+              "图上只有空心圈/实心圈/虚线 ✓ —— 用户 2026-10-08 定 ✓）"
+              % hits.count('<g id="pd-'))
     if dur:
         # ★ 播放键（只播一遍 ⇒ 想再看就把动画拨回 0 ✓）：见 `_anim_button()` ✓
         body = body.replace("</svg>", _anim_button(frame) + "\n</svg>")
