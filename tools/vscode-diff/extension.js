@@ -535,11 +535,20 @@ const SLIDE_JS = [
 	'  }',
 	'  $("prev").addEventListener("click", function(){ go(idx - 1); });',
 	'  $("next").addEventListener("click", function(){ go(idx + 1); });',
+	// ★★ 2026-10-08 用户定 ✗：**只用符号 ＋ `title` 提示** ✓ ——
+	//   「▶ 自动播放」⇒ 按钮上只写 **▶** ✓（鼠标悬停显示「自动播放」✓）；
+	//   点了 ⇒ 切成**停止符号 ■** ✓（悬停显示「停止」✓）。
+	//   ★ 明确要求 ✗：**不用暂停符号、也不用「暂停」这个词** ✓（所以是 ■ / 停止 ✓，✗ 不是 ⏸ / 暂停 ✗）。
+	'  function setPlay(on){',
+	'    var b = $("play");',
+	'    b.textContent = on ? "\\u25a0" : "\\u25b6";',
+	'    b.title = on ? "停止" : "自动播放";',
+	'  }',
 	'  $("play").addEventListener("click", function(){',
-	'    if (timer) { clearInterval(timer); timer = null; $("play").textContent = "▶ 自动播放"; return; }',
+	'    if (timer) { clearInterval(timer); timer = null; setPlay(false); return; }',
 	'    var sec = Math.max(1, Number($("sec").value) || 3);',
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
-	'    $("play").textContent = "⏸ 暂停";',
+	'    setPlay(true);',
 	'  });',
 	// ★ 2026-10-08：「▶ 重放动画」**从这条工具条上撤掉了** ✗（用户要求 ✓ ——
 	//   「点击截图1中工具栏上的【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，
@@ -567,16 +576,20 @@ function slideshowHtml(webview, nonce, n) {
   .top { display:flex; gap:8px; align-items:center; padding:6px 10px;
          border-bottom:1px solid var(--vscode-panel-border); font-size:12px; }
   .top button { background: var(--vscode-button-background); color: var(--vscode-button-foreground);
-                border:0; padding:3px 10px; border-radius:3px; cursor:pointer; }
+                border:0; padding:3px 10px; border-radius:3px; cursor:pointer;
+                /* ★★ 2026-10-08 用户定 ✗：按钮上只剩**一个符号**（← → ▶ / ■ ✓），
+                   提示走 title 属性 ✓ ⇒ 三个按钮要**一样宽** ✓ 才不看着一高一低 ✗。
+                   ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当场踩过 ✓）。 */
+                min-width:2.2em; text-align:center; }
   .top input { width:3.2em; background: var(--vscode-input-background);
                color: var(--vscode-input-foreground); border:1px solid var(--vscode-input-border); }
   #pos { opacity:.85; }
 </style></head><body>
 <div class="top">
-  <button id="prev">⟨ 上一条</button><button id="next">下一条 ⟩</button>
-  <button id="play">▶ 自动播放</button><span>每</span><input id="sec" value="3"><span>秒</span>
+  <button id="prev" title="上一条">←</button><button id="next" title="下一条">→</button>
+  <button id="play" title="自动播放">▶</button><span>每</span><input id="sec" value="3"><span>秒</span>
   <span id="pos">共 ${n} 条</span>
-  <span style="opacity:.6">←/→ 翻页　空格 播放/暂停　Esc 取消高亮　点 ①② 里任意一条 高亮</span>
+  <span style="opacity:.6">←/→ 翻页　空格 播放/停止　Esc 取消高亮　点 ①② 里任意一条 高亮</span>
 </div>
 <div class="wrap">
   <div class="pane left"><div class="art" id="art"></div></div>
@@ -738,5 +751,6 @@ module.exports = {
 	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, ROW_RE_SRC, reLit, dirs, pageList,
 	         readPage, CSS, slideshowHtml, html, patRe, keysOf, markNames }
 };
+
 
 

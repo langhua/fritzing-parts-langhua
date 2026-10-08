@@ -432,5 +432,25 @@ console.log('⑰ 注入脚本语法：%d 份 ⇒ 语法错 %d 份（落盘在 _s
 	n17, bad17);
 if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全都没反应');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十七项都过', bad || '');
+// ⑱ ★★ 幻灯片工具的**三个按钮**（2026-10-08 用户定 ✓）——
+//   「1. <上一条 改为←，鼠标放在←上时，显示上一条 2. 下一条> 改为→ … 显示下一条
+//     3. ▶自动播放 改为 ▶，… 显示自动播放；点击▶，切换为停止符号，… 显示停止，
+//     **不用暂停符号和暂停词语**」✓ ⇒ 四件事都要对上 ✓：
+//     ① 按钮上**只有符号** ✓（`←` / `→` / `▶` ✓ —— ✗ 不许再带「上一条 / 自动播放」的字 ✗）；
+//     ② 提示走 **`title`** ✓（`上一条` / `下一条` / `自动播放` ✓）；
+//     ③ 点 ▶ ⇒ 文字变 **`■`** ✓、`title` 变 **`停止`** ✓；
+//     ④ ✗ **不许出现「暂停」二字、也不许出现 ⏸** ✗（用户明确否掉 ✓）。
+const slHtml = slideshowHtml({ cspSource: '' }, 'N', 1);
+const tips = ['上一条', '下一条', '自动播放'];
+const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自动播放|暂停)/.test(slHtml);
+const hasTitles = tips.every((t) => slHtml.indexOf('title="' + t + '"') >= 0);
+const stopOk = slHtml.indexOf('\\u25a0') >= 0 && slHtml.indexOf('停止') >= 0;
+const noPause = slHtml.indexOf('暂停') < 0 && slHtml.indexOf('⏸') < 0 && slHtml.indexOf('\\u23f8') < 0;
+console.log('⑱ 幻灯片按钮：只有符号 = %s；title 三条齐 = %s；点 ▶ 变 ■/停止 = %s；'
+	+ '没有「暂停」/⏸ = %s', noWords, hasTitles, stopOk, noPause);
+if (!noWords || !hasTitles || !stopOk || !noPause) {
+	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止）');
+}
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十八项都过', bad || '');
 process.exit(bad ? 1 : 0);
