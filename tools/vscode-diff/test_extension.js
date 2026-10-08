@@ -456,15 +456,20 @@ if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全�
 //     ⑤ ★ **顺序是 `← ▶ →`** ✓（用户：「把 **▶ 和 → 互换一下位置**」✓ —— 原来是 `← → ▶` ✗）
 //        ⇒ 从 HTML 里**按出现次序**抠出三个 id 来对 ✓（✗ 不是"三个都在"就算过 ✗）；
 //     ⑥ ★ **文件名另起一行** ✓（用户：「把文件名显示在 ← 下面那一行 …… 超了用 … 截断、
-//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.meta` 行 ✓，里面是 `.name` ＋ 提示 ✓；
+//        悬停看全名」✓）⇒ **左列的第 2 行** ✓（见 ⑪ ✓）；
 //     ⑦ ★ **文件名最多 40 个字符** ✓（用户 2026-10-08：「最长 40 个字符吧，再长就省略」✓）
 //        ⇒ 见下面那段：**真跑**注入脚本里的 `clip()` ✓（✗ 别在测试里再抄一遍规则 ✗）；
 //     ⑧ ★ **`每 N 秒` 只能 3..99** ✓（用户：「那个输入框太长了，应限制为只能输入 3-99 的数字」✓）
 //        ⇒ `type=number` ＋ `min`/`max` ✓（箭头用 ✓）＋ **真跑** `secs()` ✓ 钳手打的 0 / 500 ✓；
 //     ⑨ ★ **`2 / 3` 不许折行** ✓（用户：「不能换行，必须在同一行了」✓）⇒ `#pos` 得 `white-space:nowrap` ✓
 //        —— ★ 实测过它真的会折 ✓（520px 窗口下量到 16×27 ✓ = 一列一个字 ✓）；
-//     ⑩ ★ **提示挪到文件名旁边、允许两行** ✓（用户：「←/→ 翻页 空格 播放/停止… 这些是可以两行的，
-//        用文件名后面的空间写两行」✓）⇒ 提示得在 `.meta` 里（✗ 不在工具条里 ✗）、`.tips` 允许折行 ✓。
+//     ⑩ ★ **提示挪到右列** ✓（用户：「←/→ 翻页 空格 播放/停止… 这些是可以两行的，
+//        用文件名后面的空间写两行」✓ ＋「**放到右列**」✓）⇒ 提示在 `.head` 里、
+//        但**不在** `.hcol`（左列）里 ✓，且 `.tips` **允许折行** ✓；
+//     ⑪ ★★ **顶部 = 两列，左列两行，右列一行** ✓（用户 2026-10-08：「把顶部变为两列，
+//        左列两行，右列一行」✓）⇒ `.head` 的直接孩子就是 `.hcol` ＋ `.tips` 两列 ✓；
+//        **左列**里头是 `hrow`（按钮行 ✓）＋ `.name`（文件名 ✓）**两行** ✓，且**文件名在后** ✓
+//        （★ 量的是**标签顺序** ✓ —— ✗ 不是"两个都在"就算过 ✗，顺序反了就是文件名在上面 ✗）。
 const slHtml = slideshowHtml({ cspSource: '' }, 'N', 1);
 const tips = ['上一条', '下一条', '自动播放'];
 const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自动播放|暂停)/.test(slHtml);
@@ -473,14 +478,16 @@ const stopOk = slHtml.indexOf('\\u25a0') >= 0 && slHtml.indexOf('停止') >= 0;
 const noPause = slHtml.indexOf('暂停') < 0 && slHtml.indexOf('⏸') < 0 && slHtml.indexOf('\\u23f8') < 0;
 const btnOrder = (slHtml.match(/<button id="([^"]+)"/g) || []).map((s) => /id="([^"]+)"/.exec(s)[1]).join(',');
 const orderOk = btnOrder === 'prev,play,next';
-const metaRow = /<div class="meta">([\s\S]*?)<\/div>\s*<div class="wrap">/.exec(slHtml);
-const metaInner = metaRow ? metaRow[1] : '';
-const topInner = (/<div class="top">([\s\S]*?)<\/div>/.exec(slHtml) || [, ''])[1];
-const nameRow = slHtml.indexOf('<div class="name" id="name"></div>') >= 0
-	&& metaInner.indexOf('id="name"') >= 0
-	&& /\.name \{[^}]*text-overflow:ellipsis/.test(slHtml);
-const hintMoved = metaInner.indexOf('翻页') >= 0 && topInner.indexOf('翻页') < 0
-	&& /\.tips \{[^}]*white-space:normal/.test(slHtml);
+// ★ 顶部结构：`.head` 里 = `.hcol` ＋ `.tips` 两列；`.hcol` 里 = `hrow` ＋ `.name` 两行。
+const headBlock = (/<div class="head">([\s\S]*?)<div class="wrap">/.exec(slHtml) || [, ''])[1];
+const hcolBlock = (/<div class="hcol">([\s\S]*?)<div class="tips">/.exec(slHtml) || [, ''])[1];
+const hrowBlock = (/<div class="hrow">([\s\S]*?)<\/div>/.exec(slHtml) || [, ''])[1];
+const twoCols = headBlock.indexOf('class="hcol"') >= 0 && headBlock.indexOf('class="tips"') > headBlock.indexOf('class="hcol"');
+const leftTwoRows = hcolBlock.indexOf('class="hrow"') >= 0
+	&& hcolBlock.indexOf('id="name"') > hcolBlock.indexOf('class="hrow"');
+const row1All = ['prev', 'play', 'next', 'sec', 'pos'].every((id) => hrowBlock.indexOf('id="' + id + '"') >= 0);
+const hintInRight = headBlock.indexOf('翻页') > headBlock.indexOf('class="hcol"')
+	&& hcolBlock.indexOf('翻页') < 0 && /\.tips \{[^}]*white-space:normal/.test(slHtml);
 const numbersOnly = /<input id="sec" type="number" min="3" max="99"/.test(slHtml);
 const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
 // ★★ 文件名**最多 40 个字符** ✓ —— ★ 这里**把注入脚本里那个 clip() 抠出来真跑一遍** ✓
@@ -520,15 +527,18 @@ if (secsSrc) {
 	} catch (e) { secsSample = 'secs() 跑不起来：' + e.message; }
 }
 console.log('⑱ 幻灯片按钮：只有符号 = %s；title 三条齐 = %s；点 ▶ 变 ■/停止 = %s；'
-	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；文件名另起一行 = %s；'
+	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；'
 	+ '文件名 ≤ 40 字 = %s（%s）',
-	noWords, hasTitles, stopOk, noPause, btnOrder, nameRow, clipOk, clipSample);
-console.log('   ⑱ 续：每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；'
-	+ '「2 / 3」不折行 = %s；提示挪到文件名旁边且可两行 = %s',
-	numbersOnly, secsOk, secsSample, posNowrap, hintMoved);
-if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow || !clipOk
-	|| !numbersOnly || !secsOk || !posNowrap || !hintMoved) {
-	fail('幻灯片那三个按钮没按用户要求改（符号/title/■/顺序/文件名 ≤ 40 字/秒数 3..99/「2 / 3」不折行/提示挪位）');
+	noWords, hasTitles, stopOk, noPause, btnOrder, clipOk, clipSample);
+console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 行）= %s；'
+	+ '按钮行里 prev/play/next/秒数/页码 齐全 = %s；提示在右列且可折行 = %s；'
+	+ '每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；「2 / 3」不折行 = %s',
+	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
+if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
+	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
+	|| !numbersOnly || !secsOk || !posNowrap) {
+	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
+		+ '，或按钮/秒数/文件名那几条没守住');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：
