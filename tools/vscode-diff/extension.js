@@ -323,17 +323,32 @@ const JS = [
 	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
-	// ★★ 工具条上的「重放」✓（2026-10-08 加 ✓）：svg 里那个按钮只在**把 svg 当文档**打开时
-	//   能点 ✓ —— 在 VS Code 的**图片预览**里它是 `<img>` ✗（脚本一律不跑 ✗）、
-	//   在**合并视图**里又会被 webview 的 CSP（nonce ✓）挡掉 ✗ ⇒ 用户点着没反应 ✗。
-	//   ⇒ 在**外面**给一个按钮 ✓：它只管把动画的 `currentTime` 拨回 0 ✓（只播一遍 + forwards ✓）。
-	//   ★ 同一份逻辑**幻灯片那边也有** ✓（`SLIDE_JS` 的 `#replay` ✓）—— 两处都别漏 ✗
-	//     （工具打印的那句「合并视图/幻灯片另有按钮」必须是**真的** ✓）。
+	// ★★ 「▶ 重放动画」✓（2026-10-08 定：**进入时不自动播** ✓ —— 一进来看到的是静止的
+	//    **A+B 叠合图** ✓；点了才**从 A 开始**、走完**停在 B** ✓。
+	//    ⇒ 图上（svg 里）只有 `data-anim="<名字>"` ＋ 根上的 `data-anim-dur` ✓；
+	//      起播这件事**只在这里**做 ✓ —— 与幻灯片那份**同一套** ✓）。
+	//    ★ 为什么按钮在图上 ✗ 不行：svg 里那个按钮只在**把 svg 当文档**打开时能点 ✓ ——
+	//      VS Code 的**图片预览**里它是 `<img>` ✗（脚本一律不跑 ✗）、webview 里又会被
+	//      CSP（nonce ✓）挡掉 ✗ ⇒ 用户点着没反应 ✓。⇒ 按钮搬到这里（工具条 ✓），
+	//      **图上不放按钮** ✓（用户 2026-10-08 定 ✓）。
+	//    ★ 起播为什么要"先置 none 再赋回" ✗：同一条 `animation` 再赋一遍浏览器**不重启动画** ✗
+	//      ⇒ 得先 `none` ＋ 强制重排（读 `offsetWidth` ✓）⇒ 再赋 ⇒ 才真的从 0 开始 ✓。
+	//    ★ `forwards` ✗ 不能省：不写的话动画一结束元素就**弹回**初始 ✗（A 又全亮、B 又全灭 ✗）
+	//      ⇒ "停留在 B" 当场作废 ✓。
 	'  var rp = document.getElementById("pd-replay");',
 	'  if (rp) rp.addEventListener("click", function(){ replay(); });',
 	'  function replay(){',
-	'    var as = document.getAnimations();',
-	'    for (var i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
+	'    var svg = document.getElementById("pd-svg") || document.querySelector(".left svg")',
+	'      || document.querySelector("svg");',
+	'    var dur = (svg && svg.getAttribute("data-anim-dur")) || "0";',
+	'    var els = document.querySelectorAll("[data-anim]");',
+	'    if (!els.length || !(Number(dur) > 0)) return;',
+	'    var i;',
+	'    for (i = 0; i < els.length; i++) els[i].style.animation = "none";',
+	'    void document.body.offsetWidth;                    // 强制重排 ⇒ 动画才真的从头 ✓',
+	'    for (i = 0; i < els.length; i++) {',
+	'      els[i].style.animation = els[i].getAttribute("data-anim") + " " + dur + "s linear 1 forwards";',
+	'    }',
 	'  }',
 	'})();'
 ].join('\n');
@@ -477,11 +492,20 @@ const SLIDE_JS = [
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
 	'    $("play").textContent = "⏸ 暂停";',
 	'  });',
-	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 桩与合并视图那份**同一套** ✓（`getAnimations()`
-	//   ＋ `currentTime = 0` ✓）：幻灯片一页只有一个 svg ✓ ⇒ 拨到的就是当前这页 ✓。
+	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 与合并视图那份**同一套** ✓
+	//   （`data-anim` ＋ `data-anim-dur` ⇒ 先 none ＋ 重排 ⇒ 再赋 ⇒ 从头播 ✓）。
+	//   幻灯片一页只有一个 svg ✓ ⇒ 拨到的就是当前这页 ✓。
 	'  $("replay").addEventListener("click", function(){',
-	'    var as = document.getAnimations();',
-	'    for (var i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
+	'    var svg = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
+	'    var dur = (svg && svg.getAttribute("data-anim-dur")) || "0";',
+	'    var els = document.querySelectorAll("[data-anim]");',
+	'    if (!els.length || !(Number(dur) > 0)) return;',
+	'    var i;',
+	'    for (i = 0; i < els.length; i++) els[i].style.animation = "none";',
+	'    void document.body.offsetWidth;',
+	'    for (i = 0; i < els.length; i++) {',
+	'      els[i].style.animation = els[i].getAttribute("data-anim") + " " + dur + "s linear 1 forwards";',
+	'    }',
 	'  });',
 	'  document.addEventListener("keydown", function(e){',
 	'    if (e.key === "ArrowRight" || e.key === "PageDown") go(idx + 1);',

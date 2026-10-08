@@ -373,5 +373,34 @@ console.log('⑮ 图上不写字：%d 张 bb/sch 图 ⇒ 带文字提示 %d 张�
 	n15, ann, lab);
 if (!n15 || ann || lab) fail('图上还留着文字提示（用户要求去掉）');
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十五项都过', bad || '');
+// ⑯ ★★ 动画的**起播口径**：进来不自动播（= 看到的静止图是 A+B）；点「▶ 重放动画」才起播 ✓
+//   —— 用户 2026-10-08 定：「进入时不自动播放，而是显示 A+B，点击【重放动画】时，
+//   才从 A 开始变化到 B，并在结束后停留在 B」✓。四处都要对 ✓：
+//     ① 图上**不许**有内联 `style="animation:"` ✗（有 ⇒ 一进页面自己就跑 ✓）；
+//     ② 图上**不许**有那个内置播放键（`anim-btn` ✗ —— 用户要求撤掉 ✓）；
+//     ③ 动画名字挂 `data-anim` ✓、一轮时长挂根上的 `data-anim-dur` ✓（两者都要有 ✓）；
+//     ④ 两个界面的起播脚本都要**认 `data-anim`** ✓（✗ 不是把 currentTime 拨回 0 那套 ✗ ——
+//        那套只能"重播已经在跑/已跑完"的动画 ✓，进来时根本没动画可拨 ✓）。
+let n16 = 0, noDur = 0, inlineAnim = 0, btn = 0, mismatch = 0;
+for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch)-.*\.svg$/.test(x))) {
+	const svg = fs.readFileSync(path.join(PIX, 'diff', f), 'utf8');
+	const kf = (svg.match(/@keyframes/g) || []).length;
+	if (!kf) continue;                                    // 没变化的图没有动画 ✓ 跳过 ✓
+	n16++;
+	const root = (/<svg[^>]*>/.exec(svg) || [''])[0];
+	if (!/data-anim-dur="[\d.]+"/.test(root)) { noDur++; console.log('   ✗ %s：根上没有 data-anim-dur', f); }
+	if (/style="animation:/.test(svg)) { inlineAnim++; console.log('   ✗ %s：还有内联 animation（会自己播）', f); }
+	if (svg.indexOf('anim-btn') >= 0) { btn++; console.log('   ✗ %s：图里那个播放键还在', f); }
+	const n = (svg.match(/data-anim="/g) || []).length;
+	if (n !== kf) { mismatch++; console.log('   ✗ %s：data-anim %d 条 ≠ keyframes %d 条', f, n, kf); }
+}
+const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0
+	&& slBar.indexOf('getAttribute("data-anim")') >= 0;
+console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；两处脚本都认 data-anim = %s',
+	n16, noDur, inlineAnim, btn, mismatch, startCode);
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode) {
+	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
+}
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十六项都过', bad || '');
 process.exit(bad ? 1 : 0);

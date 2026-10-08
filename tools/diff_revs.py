@@ -71,9 +71,9 @@ A_OTH, B_OTH = "#cfcfcf", "#5a5a5a"      # 丝印/板框/位号/孔：浅灰 ⇒
 # ★ 「点清单一条 ⇒ 图上高亮」用的**强调色** ✓（2026-10-07 用户要的 ✓）——
 #   得跟上面六种颜色都分得开 ✓ ⇒ 取玫红 ✓（蓝/橙/灰都不是它 ✓）。
 A_COLOR_HI = "#d81b60"
-# ★ 动画节奏（一处几秒 / 收尾几秒 ✓）—— 要调速就改这一行 ✓（用户 2026-10-08 问过 ✗
+# ★ 动画节奏（一处几秒 ✓）—— 要调速就改这一行 ✓（用户 2026-10-08 问过 ✗
 #   「末态看到的是 B，开始也不是从 A 开始」✓ ⇒ 把一处调小就能一眼看完整个来回 ✓）。
-ANIM_SEC, ANIM_TAIL = 2.0, 2.0
+ANIM_SEC = 2.0        # 一处变化几秒 ✓（✗ 没有"收尾段"了 ✗ —— 用户 2026-10-08 改口径 ✓）
 # ★ svg 路径里给板框留的边距 ✓（同一处既用于 `tf()` 的摆放 ✓、又用于图例的左缘 ✓ ——
 #   ✗ 别一边写 20 一边写别的 ✗，那样图例就不跟板框对齐了 ✓）。
 MARGIN = 20.0
@@ -1405,26 +1405,28 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     return body, refs
 
 
-def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
-    """★ 动画第二步（2026-10-07 ✓）：给每一处变化排一个**时段** ✓，写 `@keyframes`
-    ＋ 每个元素一句 `animation:` ✓ —— ✗ 不用选择器 ✗（幻灯片会把多张图拼在一页里
-    ✓，而 id / class 是**文档级**的 ✗ ⇒ 第一页的规则会去管第二页的元素 ✗）；
-    内联 `style="animation:…"` 只认自己那一句 ✓，再加上**名字里带 token** ✓ ⇒ 永不串台 ✓。
+def _anim_css(ka, kb, refs, token, sec=ANIM_SEC):
+    """★ 给每一处变化排一个**时段** ✓，写 `@keyframes` ＋ 每个元素一个 `data-anim="<名字>"` ✓
+    —— ✗ 不用选择器 ✗（幻灯片把多张图拼在一页里 ✓，而 id / class 是**文档级**的 ✗
+    ⇒ 第一页的规则会去管第二页的元素 ✗）；名字里带 token ✓ ⇒ 永不串台 ✓。
 
-    ★ 时段表（用户 2026-10-07 定的规格 ✓，见 `docs/diff-animation.md` ✓）：
-      一处变化 = A **闪 2 次** ⇒ A **撤掉** ⇒ B **闪 2 次** ⇒ B **留下** ✓，然后进下一处 ✓；
-      全部走完 ⇒ **收尾**：被撤掉的 A **一起淡回来** ✓ ⇒ 末态 = **A+B 叠合图** ✓
-      （= 静止那张叠合图 ✓ —— 用户 2026-10-07 追加：「然后，能回到 A+B 的图吗？」✓）。
-      ⇒ 开始时看到的是 **A 图** ✓、中途是 B 图 ✓、**结束停在 A+B** ✓。
+    ★ 时段表（用户 2026-10-07 定 ✓，见 `docs/diff-animation.md` ✓）：
+      一处变化 = A **闪 2 次** ⇒ A **撤掉** ⇒ B **闪 2 次** ⇒ B **留下** ✓，然后进下一处 ✓。
+      ⇒ 起点 = **A 图** ✓、走完 = **B 图** ✓。
+
+    ★★ 2026-10-08（用户 2026-10-08 改口径 ✓）：
+      ① **不再自动播** ✗ —— 元素上**不写** `animation:` ✓，只写 `data-anim="<名字>"` ✓
+        ⇒ 打开 svg 时看到的是**静止的 A+B 叠合图** ✓，等「▶ 重放动画」被点才由 JS 起播 ✓；
+      ② **不再收尾淡回 A+B** ✗ —— 那段**删掉** ✓ ⇒ 播完**停在 B** ✓
+        （原话：「点击【重放动画】时，才从 A 开始变化到 B，并在结束后**停留在 B**」✓）。
 
     ★ 返回 `(css 文本, {("a"|"b", key): 动画名}, 一轮总时长 s)` ✓ ——
-      总时长**只在这一处算** ✗（✓ 内联 style 与关键帧百分比必须用**同一个**值 ✓）。
+      总时长**只在这一处算** ✗（✓ JS 起播与关键帧百分比必须用**同一个**值 ✓）。
     """
     keys = sorted(refs)
     if not keys:
-        return "", {}, 0.0, sec, tail
-    total = len(keys) * sec + tail
-    end = len(keys) * sec                       # 最后一处时段的结束点 = 收尾段的起点 ✓
+        return "", {}, 0.0
+    total = len(keys) * sec
     pct = lambda t: round(100.0 * t / total, 3)          # noqa: E731  一行小工具 ✓
     out, anim = [], {}
     for i, key in enumerate(keys):
@@ -1432,13 +1434,11 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
         if key in ka:
             nm = "%s-a-%d" % (token, i)
             anim[("a", key)] = nm
+            # ★ 撤掉之后**就停在 0** ✓（原来这里还接一段"收尾淡回 A+B" ✓ —— 已按新要求删掉 ✓）
             out.append("@keyframes %s{0%%{opacity:1}" % nm
                        + "".join("%s%%{opacity:%d}" % (pct(s + T * f), v) for f, v in
                                  ((0.10, 0), (0.20, 1), (0.30, 0), (0.40, 1)))
-                       # ★ 收尾段 ✓：被撤掉的 A **一起淡回来** ✓ ⇒ 末态 = A+B 叠合图 ✓
-                       #   （✗ 没有这段的话，末态会停在 B 图 ✗ —— 用户 2026-10-07 要的就是它 ✓）
-                       + "%s%%{opacity:0}%s%%{opacity:0}%s%%{opacity:1}100%%{opacity:1}}"
-                       % (pct(s + T * 0.50), pct(end), pct(end + tail * 0.6)))
+                       + "%s%%{opacity:0}100%%{opacity:0}}" % pct(s + T * 0.50))
         if key in kb:
             nm = "%s-b-%d" % (token, i)
             anim[("b", key)] = nm
@@ -1446,37 +1446,28 @@ def _anim_css(ka, kb, refs, token, sec=ANIM_SEC, tail=ANIM_TAIL):
                        + "".join("%s%%{opacity:%d}" % (pct(s + T * f), v) for f, v in
                                  ((0.60, 1), (0.70, 0), (0.80, 1), (0.90, 0)))
                        + "%s%%{opacity:1}100%%{opacity:1}}" % pct(s + T * 1.00))
-    # 时长都取同一个 `total` ✓ ⇒ 各元素的关键帧百分比冸在**同一条时间轴**上 ✓
-    return "\n".join(out), anim, total, sec, tail
+    # 时长都取同一个 `total` ✓ ⇒ 各元素的关键帧百分比落在**同一条时间轴**上 ✓
+    return "\n".join(out), anim, total
 
 
-def _anim_button(frame):
-    """★ 播放键（2026-10-08 用户要 ✓：「加个 svg 的播放键比较好」✓）。
+def _anim_data(pa, pb, anim):
+    r"""把动画名字写成 `data-anim="<名字>"` 挂到对应组上 ✓ ⇒ **起播交给外面** ✓。
 
-    ★ 为什么必须用**内联 `<script>`** ✗：动画写的是 `animation: … 1 forwards`（只播一遍 ✓）
-      ⇒ 想再看一遍只有一个办法：把动画的 `currentTime` 拨回 0 ✓（`document.getAnimations()` ✓）。
-      ★ 这个脚本**只在「把 svg 当文档打开」时跑得到** ✓（双击 ✓ / 浏览器直接打开 ✓）；
-      ✗ 在 `<img>` 里跑不到 ✗（浏览器不允许 ✓）—— 那种场合（VS Code 合并视图 / 幻灯片 ✓）
-      另有扩展自己的按钮 ✓ ⇒ 这里不做兜底 ✗。
-    ★ 按钮要放在**动画层外面** ✓（这里插在 `</svg>` 前 ✓）⇒ 它自己不会跟着闪 ✓。
+    ★★ 2026-10-08（用户改口径 ✓）：「**进入时不自动播放**，而是显示 A+B ✓；
+      点击「重放动画」时，才从 A 开始变化到 B ✓，并在结束后**停留在 B**」✓ ——
+      ✗ 所以这里**不写** `style="animation:…"` ✗（写了就一进页面自己跑起来 ✓）；
+      只挂个**名字** ✓，由扩展/幻灯片那两个按钮去起播 ✓（`data-anim` 就是那个名字 ✓）。
+    ★ 一轮时长**不在这里** ✓ —— 它挂在根 `<svg>` 的 `data-anim-dur` 上 ✓（见调用处 ✓），
+      而那个数**只在 `_anim_css()` 算一处** ✗（✗ 别让 JS 自己加起来 ✗）。
     """
-    x0, y0, w, h = frame
-    fs = max(w * 0.016, 8.0)                       # 字号跟画布宽走 ✓（各视图单位不同 ✓）
-    bw, bh = fs * 5.4, fs * 1.9
-    x, y = x0 + fs * 1.2, y0 + fs * 1.2
-    return (
-        '<g id="anim-btn" style="cursor:pointer" onclick="animReplay()">'
-        '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" rx="%.2f" fill="#ffffff"'
-        ' fill-opacity="0.92" stroke="#404040" stroke-width="%.2f"/>'
-        '<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" fill="#404040"'
-        ' text-anchor="middle">\u25b6 重放</text></g>'
-        '<script type="text/javascript"><![CDATA['
-        'function animReplay(){'
-        'var n=document.getAnimations?document.getAnimations():[];'
-        'for(var i=0;i<n.length;i++){try{n[i].currentTime=0;}catch(e){}}'
-        '}]]></script>'
-        % (x, y, bw, bh, bh * 0.25, max(fs * 0.09, 0.2),
-           x + bw / 2.0, y + bh * 0.68, fs))
+    for (side, key), nm in anim.items():
+        # ★ 同一个 key 的几段在**一个** `<g>` 里 ✓ ⇒ 这里一换就换全 ✓
+        gid = '<g id="%s-%s"' % (side, _gid(key))
+        if side == "a":
+            pa = pa.replace(gid, gid + ' data-anim="%s"' % nm)
+        else:
+            pb = pb.replace(gid, gid + ' data-anim="%s"' % nm)
+    return pa, pb
 
 
 def _view_diff(a_fzz, b_fzz, out, na, nb):
@@ -1529,28 +1520,23 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     print("✓ 动画钥匙：**裸在外面、又属于变化处**的线 = %d 根 %s"
           % (len(leak), "✓（动画里都撤得干净 ✓）" if not leak
              else "✗ %s ⇒ 动画撤不掉它们 ✓" % "；".join(leak[:4])))
-    # ★★ 动画第二步：关键帧 ＋ 逐元素内联 `animation` ✓（规格见 `docs/diff-animation.md` ✓）
+    # ★★ 动画：只写**关键帧** ＋ 每个组一个 `data-anim="<名字>"` ✓ —— ✗ 不写 `animation:` ✗
+    #   （写了就一进页面自己播 ✓ —— 用户 2026-10-08 要的是"**进入时显示 A+B**、点了才播" ✓）
     token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
-    css, anim, dur, sec, tail = _anim_css(ka, kb, refs, token)
-    for (side, key), nm in anim.items():
-        gid = '<g id="%s-%s"' % (side, _gid(key))
-        # ★★ 只播一遍 ✓（2026-10-07 用户定 ✓：「可以只播一遍，不循环播放吗？」✓）
-        #   ⇒ 计数写 **1** ✓；★ 而且**必须带 `forwards`** ✗ —— 不写的话，动画一结束元素
-        #   就**弹回**它自己的初始状态 ✗（A 又全亮 ✓、B 又全灭 ✓）⇒ 「结尾 = B 图」这句
-        #   当场作废 ✓（这一条是"只播一遍"最容易漏的一步 ✓）。
-        st = gid + ' style="animation:%s %.3fs linear 1 forwards">' % (nm, dur)
-        pa = pa.replace(gid + ">", st)
-        pb = pb.replace(gid + ">", st)
+    css, anim, dur = _anim_css(ka, kb, refs, token)
+    pa, pb = _anim_data(pa, pb, anim)
     if css:
         # ★ 关键帧**只写一份** ✓：A / B 两张图最终在**同一份文档**里 ✓（叠合图是一
         #   个 `svg` ✓、扩展那边又是整段内联 ✓）⇒ CSS 是文件级的 ✓ ⇒ 写两遍只会让
         #   字节翻倍 ✗（2026-10-07 实测：第一版就写了两份 ⇒ 数出 `@keyframes` 132 条 ✗）。
         pa = pa.replace("</svg>", "<style>%s</style>\n</svg>" % css)
     if dur:
-        print("✓ 动画：关键帧 %d 条（A %d ＋ B %d ✓，共 %d 处变化 ✓）"
-              "—— 一处 %.1f s ＋ 收尾 %.1f s ⇒ 一轮 %.1f s ✓"
-              "（收尾时被撤掉的 A **一起淡回** ⇒ 末态 = A+B 叠合图 ✓）"
-              % (css.count("@keyframes"), len(ka), len(kb), len(refs), sec, tail, dur))
+        print("✓ 动画：关键帧 %d 条（A %d ＋ B %d ✓，共 %d 处变化 ✓）—— 一处 %.1f s ⇒ 一轮 %.1f s ✓"
+              % (css.count("@keyframes"), len(ka), len(kb), len(refs), ANIM_SEC, dur))
+        print("   ★ **不自动播** ✓：图上只有 `data-anim`（名字 ✓）＋ 根上的 `data-anim-dur`"
+              "（%.3f s ✓），起播由「▶ 重放动画」做 ✓" % dur)
+        print("   ★ 口径（用户 2026-10-08 定 ✓）：**进来 = A+B 叠合图** ⇒ 点按钮 ⇒ "
+              "**从 A 开始** ⇒ 走完**停在 B** ✓（原来那段「收尾淡回 A+B」已删 ✓）")
     # ★ 不透明度：视图用 **A 0.6 / B 0.95** ✓（✗ 不要 PCB 那套 0.75/0.55 ✗）——
     #   用户实测（2026-10-07 ✓）：「导线B 没有应用」✗ ⇒ 算术一算就明白了 ✓：
     #   B 的深橙 `#b8440a` 以 **0.55** 贴白底 ≈ `rgb(216,152,120)` ✓，
@@ -1558,6 +1544,9 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     body = overlay(pa, pb, na, nb, pal=pal, frame=frame,
                    rows=_view_rows(na, nb, _common_fill(sa, skip=ska)),
                    op=(0.6, 0.95), pre=True)
+    if dur:
+        # ★ 一轮时长挂在**根 `<svg>`** 上 ✓（起播的 JS 要拿它拼简写 ✓；✗ 别让 JS 自己算 ✗）
+        body = body.replace("<svg ", '<svg data-anim-dur="%.3f" ' % dur, 1)
     # ★ 点清单一条 ⇒ 图上高亮 ✓（与 PCB 那份同词汇 ✓）：隐藏组 + 聚焦样式一起写进 svg 本体 ✓
     #   （组 id = `pd-<位号>` ✓ ⇒ 扩展那边**一套正则**就够 ✓）。
     if hits:
@@ -1568,10 +1557,9 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
               "图上只有空心圈/实心圈/虚线 ✓ —— 用户 2026-10-08 定 ✓）"
               % hits.count('<g id="pd-'))
     if dur:
-        # ★ 播放键（只播一遍 ⇒ 想再看就把动画拨回 0 ✓）：见 `_anim_button()` ✓
-        body = body.replace("</svg>", _anim_button(frame) + "\n</svg>")
-        print("✓ 播放键：图左上角一个「▶ 重放」✓（把 svg 当文档打开时能点 ✓；"
-              "在 `<img>` 里点不动 ✗ ⇒ 合并视图/幻灯片另有按钮 ✓）")
+        print("✓ 图上没有播放键 ✓（用户 2026-10-08 定 ✓：图里那个「▶ 重放」撤掉 ✓）——"
+              "起播统一走**外面**那两个「▶ 重放动画」✓（合并视图工具条 ✓ / 幻灯片工具条 ✓）；"
+              "svg 单独打开就是**静止的 A+B** ✓")
     open(svg_p, "w", encoding="utf-8", newline="\n").write(body)
     print("✓ 叠合差异图 %s（色相 = 类别：导线橙 ✓ 元件蓝 ✓ 文字灰 ✓；深浅 = 版 ✓）" % svg_p)
     try:
