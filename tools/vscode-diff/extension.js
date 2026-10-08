@@ -366,7 +366,10 @@ function replayJs() {
 		'    var btn = document.getElementById("pd-replay") || document.getElementById("replay");',
 		'    if (btn && n) {',
 		'      var t0 = btn.textContent;',
-		'      btn.textContent = "▶ 重放中…";',
+		// ★★ 回显的**符号跟着按钮自己走** ✗ 别写死 ▶ ✗ —— 两个按钮的符号**本来就不同** ✓
+		//   （合并视图 ▶ 重放 ✓ / 幻灯片 ⏭ 步进 ✓，见用户 2026-10-08 那条 ✓）⇒
+		//   写死会让幻灯片那个**闪一下 ▶** ✓（实测撞到过 ✓），符号就白换了 ✗。
+		'      btn.textContent = t0.charAt(0) + " 重放中…";',
 		'      setTimeout(function(){ btn.textContent = t0; }, Number(dur) * 1000 + 200);',
 		'    }',
 		'  }',
@@ -715,8 +718,13 @@ function slideshowHtml(webview, nonce, n) {
          ★ 按钮 id 与合并视图**同名** ✓（pd-replay ✓）⇒ replayJs() 那一份**照旧能绑** ✓
          （✗ 别为幻灯片再写一套 ✓）。
          ★ 为什么按钮进 .bar 而提示留在 .head ✓：右栏没有"文件名/翻页"那些东西 ✓，
-         那条 bar 本来就是右栏的**顶栏** ✓ ⇒ 按钮放这儿**贴着清单** ✓（正是用户指的位置 ✓）。 -->
-    <div class="bar"><button id="pd-replay">▶ 播放差异</button></div>
+         那条 bar 本来就是右栏的**顶栏** ✓ ⇒ 按钮放这儿**贴着清单** ✓（正是用户指的位置 ✓）。
+         ★★ 2026-10-08 用户又指一处 ✗：「两者**完全不同**啊！「▶ 重放动画」是从一个 md，到另一个 md。
+         「▶ 播放差异」是**在一个 md 内，从 A 播放到 B**。⇒ 「▶ 播放差异」的 **▶ 应该换成步进播放含义的字符**」✓
+         ⇒ 这里的符号换成 **⏭**（U+23ED 步进 / 跳到下一处 ✓）✓ ——
+         ★ 两个按钮**符号必须不一样** ✓（合并视图还是 ▶ ✓：那是"**重放**"✓；这边是"**步进**"✓），
+         单测第 ⑱ 项会盯住"两边符号不同"这一条 ✓。 -->
+    <div class="bar"><button id="pd-replay">⏭ 播放差异</button></div>
     <div id="list"></div>
   </div>
 </div>

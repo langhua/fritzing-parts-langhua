@@ -417,17 +417,32 @@ for (const f of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|
 //   ⇒ 这条现在守两件事 ✓：① 顶栏**没有**旧按钮 ✓；② 两处的起播**是同一份实现** ✓ ——
 //   ✗ 不是"幻灯片里有没有按钮" ✗（那是第 ⑱ 项的事 ✓）。
 //   ★ 注意 `edBar`/`slBar` 是在第 ⑫ 项那里生成的 ✓（两处 HTML ✓），这儿直接用 ✓。
-const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
-const pdReplayOf = (s) => {
-	const m = /function pdReplay\(\)\{[\s\S]*?\n\s*\}/.exec(s);
-	return m ? m[0] : '';
+// ★ 抓函数体**不能靠非贪婪正则** ✗ —— `function pdReplay(){…}` 里还有**内层**的 `}` ✓
+//   （`for` / `if` 那些 ✓）⇒ `/…[\s\S]*?\n\s*\}/` 会**提前收尾** ✗（实测：抓到的半截里
+//   连 `btn.textContent` 都没有 ✓ ⇒ 断言假失败 ✓）。⇒ 老老实实**数花括号** ✓。
+const fnSrc = (s, name) => {
+	const i = s.indexOf('function ' + name + '(');
+	if (i < 0) return '';
+	let depth = 0;
+	for (let k = s.indexOf('{', i); k >= 0 && k < s.length; k++) {
+		if (s[k] === '{') depth++;
+		else if (s[k] === '}' && !--depth) return s.slice(i, k + 1);
+	}
+	return '';
 };
+const startCode = edBar.indexOf('getAttribute("data-anim")') >= 0;
+const pdReplayOf = (s) => fnSrc(s, 'pdReplay');
 const noOldButton = slBar.indexOf('id="replay"') < 0;
 const oneImpl = pdReplayOf(edBar) !== '' && pdReplayOf(edBar) === pdReplayOf(slBar);
+// ★★ 回显的符号**不能写死** ✗（2026-10-08 实测撞到 ✓）：两个按钮符号不同 ✓
+//   ⇒ 写死 `"▶ 重放中…"` 会让幻灯片那个**闪一下 ▶** ✓ ⇒ 符号等于白换 ✓。
+//   ⇒ 判据：那段脚本里得**按按钮自己的首字符**拼回显 ✓（`charAt(0)` ✓）、**且不含写死的 ▶** ✗。
+const fbOk = /charAt\(0\) \+ " 重放中/.test(pdReplayOf(slBar)) && !/\u25B6 重放中/.test(pdReplayOf(slBar));
 console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
-	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s',
-	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl);
-if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl) {
+	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s；'
+	+ '回显符号跟按钮走（✗ 不写死 ▶） = %s',
+	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk);
+if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
 
@@ -511,10 +526,26 @@ const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
 // ★★ 2026-10-08 用户定 ✓：「面包板差异**是可以在右侧、『面包板差异清单』上方显示【播放差异】的吧**？」✓
 //   ⇒ 右栏**顶上一条**放着按钮 ✓，**在 `#list` 之前** ✓（`#list` 里就是「面包板差异清单」那份清单 ✓）。
 //   ★ 量**位置关系** ✓（✗ 不是"页面上有这个 id"就算过 ✗ —— 那样它跑到别处也照样过 ✓）。
+//   ★★ 2026-10-08 用户指出的**语义差别** ✓：「两者完全不同啊！「▶ 重放动画」是从一个 md，到另一个 md。
+//     「▶ 播放差异」是**在一个 md 内，从 A 播放到 B**。⇒ 「▶ 播放差异」的 ▶ 应该换成
+//     **步进播放含义的字符**」✓ ⇒ 两处符号 **⏭**（U+23ED ✓，步进/跳到下一处 ✓）——
+//     ★ 这条单测因此**盯住"两边符号不一样"** ✓：合并视图 = ▶（重放 ✓）、幻灯片 = ⏭（步进 ✓）
+//     （✗ 不许又变回同一个符号 ✗ —— 那会把两个不同的动作看成一个 ✓）。
 const slRightPane = (/<div class="pane right">([\s\S]*?)<script/.exec(slHtml) || [, ''])[1];
+// ★ 「▶ 播放差异」的 ▶ 要换成**步进播放**含义的符号 ✓（用户 2026-10-08 ✓）⇒ **⏭**（U+23ED ✓）。
 const replayInRight = slRightPane.indexOf('id="pd-replay"') >= 0
 	&& slRightPane.indexOf('id="pd-replay"') < slRightPane.indexOf('id="list"')
-	&& /<div class="bar"><button id="pd-replay">▶ 播放差异<\/button><\/div>/.test(slRightPane);
+	&& /<div class="bar"><button id="pd-replay">\u23ED 播放差异<\/button><\/div>/.test(slRightPane);
+// ★★ **两处的符号必须不一样** ✓（用户：「两者**完全不同**啊！」✓）——
+//   合并视图 = ▶（**重放** ✓：那份 md 的动画从头再放一遍 ✓）；
+//   幻灯片 = ⏭（**步进** ✓：在本页里一处一处推进 ✓）。
+//   ✗ 判据不是"有没有那个符号" ✗（两边都一样也能"有" ✓）⇒ 得**真把两边抠出来比** ✓。
+const glyphOf = (html) => {
+	const m = /<button id="pd-replay">(.{1,2}?)\s*[\u4e00-\u9fa5]{2,}/.exec(html);
+	return m ? m[1] : '';
+};
+const gEd = glyphOf(edBar), gSl = glyphOf(slHtml);
+const glyphsDiffer = gEd === '\u25B6' && gSl === '\u23ED';
 // ★★ 「文件名不加扩展名吗？」（2026-10-08 用户问 ✓）—— ★ 这条**真读一页** ✓
 //   （✗ 不是"源码里有没有 basename"就算过 ✗）：同名的 `.md` / `.svg` / `.png` 有三个 ✓
 //   ⇒ 名字里**必须**带 `.<ext>` ✓，否则分不出这一页指的是哪个文件 ✗。
@@ -543,11 +574,13 @@ const headHazard = /overflow:hidden/.test(headCss) && !headNoShrink;
 const wrapShrinks = /\.wrap \{[^}]*flex:1 1 auto/.test(slHtml) && /\.wrap \{[^}]*min-height:0/.test(slHtml);
 // ★★ 文件名**最多 40 个字符** ✓ —— ★ 这里**把注入脚本里那个 clip() 抠出来真跑一遍** ✓
 //   （✗ 不是"源码里有 40 这串字"就算过 ✗，也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现 ✓）。
-const clipSrc = /function clip\(s\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
+// ★★ 文件名**最多 40 个字符** ✓ —— ★ 这里**把注入脚本里那个 clip() 抠出来真跑一遍** ✓
+//   （✗ 不是"源码里有 40 这串字"就算过 ✗，也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现 ✓）。
+const clipSrc = fnSrc(slHtml, 'clip');
 let clipOk = false, clipSample = '抠不到 clip()';
 if (clipSrc) {
 	try {
-		const clip = new Function('return (' + clipSrc[0] + ')')();
+		const clip = new Function('return (' + clipSrc + ')')();
 		const A = (s) => Array.from(s);
 		const long = clip('diff-bb-v100-v104_' + 'x'.repeat(60) + '.md');   // 83 字
 		const at40 = clip('y'.repeat(40));
@@ -567,13 +600,13 @@ if (clipSrc) {
 	} catch (e) { clipSample = 'clip() 跑不起来：' + e.message; }
 }
 // ★★ `每 N 秒` 只能 3..99 ✓ —— 同法：**把 secs() 抠出来，喂几个越界的值真跑一遍** ✓。
-const secsSrc = /function secs\(\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
+const secsSrc = fnSrc(slHtml, 'secs');
 let secsOk = false, secsSample = '抠不到 secs()';
 if (secsSrc) {
 	try {
 		// 注入那句是 `$("sec")` ✓ ⇒ 给个假 `$` 就够 ✓（✗ 不用真 DOM ✗）
 		const field = { value: '' };
-		const secs = new Function('$', 'return (' + secsSrc[0] + ')')(() => field);
+		const secs = new Function('$', 'return (' + secsSrc + ')')(() => field);
 		const run = (v) => { field.value = v; const got = secs(); return `${got}（回写 ${field.value}）`; };
 		const s0 = run(0), s500 = run(500), s12 = run(12), sabc = run('abc'), sfrac = run(3.7);
 		secsSample = `0 ⇒ ${s0}；500 ⇒ ${s500}；12 ⇒ ${s12}；abc ⇒ ${sabc}；3.7 ⇒ ${sfrac}`;
@@ -592,14 +625,16 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
 console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
 	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）；'
-	+ '右栏清单上方有【播放差异】 = %s',
-	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight);if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
+	+ '右栏清单上方有【播放差异】 = %s；两个播放按钮符号**不同** = %s（合并视图 %s / 幻灯片 %s ✓）',
+	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight, glyphsDiffer, gEd, gSl);
+if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
 	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
 	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks || !titleOk
-	|| !replayInRight) {
+	|| !replayInRight || !glyphsDiffer) {
 	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
 		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）'
-		+ '，或文件名没带扩展名（同名的 .md/.svg/.png 有三个 ⇒ 分不出是哪个）');
+		+ '，或文件名没带扩展名（同名的 .md/.svg/.png 有三个 ⇒ 分不出是哪个）'
+		+ '，或两个播放按钮的符号不区分（合并视图该是 ▶ 重放 / 幻灯片该是 ⏭ 步进）');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：
