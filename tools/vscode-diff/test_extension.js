@@ -283,37 +283,40 @@ if (bbMds.length) {
 	console.log('⑪ 没有 bb 清单可验（先跑一次 --view bb）✓');
 }
 
-// ⑫ ★★ 「▶ 重放动画」按钮的位置与字（2026-10-08 改过三次口径 ✓）——
+// ⑫ ★★ 「▶ 播放差异」按钮的位置与字（2026-10-08 改过**三回**口径 ✓）——
 //     ① **合并视图要有** ✓（双击 `diff/*.md` = 这个界面 ✓）；
-//     ② **幻灯片那条工具条上要没有** ✗（用户 2026-10-08：「点击截图1中工具栏上的【重放动画】
-//        按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓ ⇒ 撤掉了 ✓）；
-//     ③ ★ 按钮必须在**图那一栏里、图的正下方** ✓（用户：「把这个嵌入在**差异的下面**就好了吧？」✓）
-//        —— ★ 这条单测**真的切开两栏**量位置 ✓（✗ 不是"HTML 里有这个 id"就算过 ✗：
-//        原来按钮在**右栏工具条**上 ✓，图在左栏 ⇒ 离图十万八千里 ✗）；
-//     ④ 它还得**钉在栏底** ✓（`position:sticky; bottom:0` ✓ —— 图比一屏高时也够得着 ✓）；
-//     ⑤ 工具条**钉在顶上** ✓（清单比一屏长时，提示不许跟着滚走 ✗）；
-//     ⑥ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
+//     ② **幻灯片那条顶栏（`← ▶ →`）上要没有** ✗（用户 2026-10-08：「点击截图1中工具栏上的
+//        【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓）；
+//     ③ ★★ 位置：**右栏顶上那条 `.bar` 里** ✓（用户：「▶ 播放差异 **也应放在右侧顶部，
+//        跟幻灯片页面一样，而不是放在左侧底部**」✓）—— ★ 这条**真的切开两栏**量位置 ✓：
+//        按钮必须**在右栏** ✓、**在清单之前** ✓；✗ 不在左栏 ✗（✗ 以前贴在图下面 ✗ —— 那是
+//        上一版口径 ✓，被用户否了 ✓）。
+//     ④ 那条 `.bar` **钉在顶上** ✓（清单比一屏长时，按钮不许跟着滚走 ✗）；
+//     ⑤ **右栏字号 = 按钮字号** ✓（用户：「右侧内容字体可以小一些，跟重放动画几个字的字体一样大即可」✓）
 //        ⇒ `.right` 与 `h1/h2/h3` 都得是 **12px** ✓。
+//     ★ 教训 ✗：这两处**都**是"位置"这种**看着就知道**的事 ✓ ⇒ 判据要量**位置关系** ✓，
+//       ✗ 别只查"页面上有没有这个 id" ✗（那样它跑到哪都算过 ✓）。
 const edBar = html({ cspSource: '' }, fs.readFileSync(md, 'utf8'), readPage(md).svg, '', '', '', 'N');
 const slBar = slideshowHtml({ cspSource: '' }, 'N', 1);
 const hasId = (s, id) => s.indexOf('id="' + id + '"') >= 0;
-const sticky = CSS.indexOf('position:sticky') >= 0;
+const sticky = /\.bar \{[^}]*position:\s*sticky[^}]*top:\s*0/.test(CSS);
 const rightFs = /\.right \{[^}]*font-size:\s*12px/.test(CSS);
 const headFs = /h1,\s*h2,\s*h3\s*\{\s*font-size:\s*1em/.test(CSS);
 const leftPane = (/<div class="pane left">([\s\S]*?)<div class="pane right">/.exec(edBar) || [, ''])[1];
 const rightPane = (/<div class="pane right">([\s\S]*?)<\/div>\s*<script/.exec(edBar) || [, ''])[1];
-const underArt = leftPane.indexOf('class="art"') >= 0
-	&& leftPane.indexOf('id="pd-replay"') > leftPane.indexOf('class="art"');
-const notInRight = rightPane.indexOf('id="pd-replay"') < 0;
-const underSticky = /\.under \{[^}]*position:\s*sticky[^}]*bottom:\s*0/.test(CSS);
+const btnInRightBar = rightPane.indexOf('class="bar"') >= 0
+	&& rightPane.indexOf('id="pd-replay"') > rightPane.indexOf('class="bar"')
+	&& rightPane.indexOf('id="pd-replay"') < rightPane.indexOf('class="dim"');   // ★ 在提示之前 ⇒ 顶栏里 ✓
+const notInLeft = leftPane.indexOf('id="pd-replay"') < 0;                          // ★ 左栏不许有 ✗
+const noUnder = leftPane.indexOf('class="under"') < 0 && CSS.indexOf('.under') < 0; // ★ 那套"图下面"的残留要清掉 ✓
 console.log('⑫ 按钮与字号：合并视图按钮 = %s；幻灯片按钮 = %s（应为 false ✗）；'
-	+ '按钮在图下面 = %s；不在右栏 = %s（应为 true ✓）；栏底钉住 = %s；'
-	+ '工具条钉顶 = %s；右栏 12px = %s；标题 1em = %s',
-	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), underArt, notInRight, underSticky,
+	+ '按钮在**右栏顶栏**里 = %s；左栏没有 = %s（应为 true ✓）；「图下面」那套已清 = %s；'
+	+ '顶栏钉顶 = %s；右栏 12px = %s；标题 1em = %s',
+	hasId(edBar, 'pd-replay'), hasId(slBar, 'replay'), btnInRightBar, notInLeft, noUnder,
 	sticky, rightFs, headFs);
-if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !underArt || !notInRight
-	|| !underSticky || !sticky || !rightFs || !headFs) {
-	fail('「▶ 重放动画」按钮位置不对（该在图下面却没在 / 或右栏字号没跟按钮一样大）');
+if (!hasId(edBar, 'pd-replay') || hasId(slBar, 'replay') || !btnInRightBar || !notInLeft
+	|| !noUnder || !sticky || !rightFs || !headFs) {
+	fail('「▶ 播放差异」按钮位置不对（该在**右栏顶栏**里 / 或左栏还留着 / 或右栏字号没跟按钮一样大）');
 }
 
 // ⑬ ★★ 面包板的**跳线身份是"接的哪两个孔"** ✗ 不是导线名 ✗（2026-10-08 修 ✓）——

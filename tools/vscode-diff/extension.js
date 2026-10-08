@@ -420,37 +420,39 @@ const CSS = `
   body { margin:0; font-family: var(--vscode-font-family); color: var(--vscode-editor-foreground); }
   .wrap { display:flex; height:100vh; }
   .pane { overflow:auto; }
-  /* ★ 图的这一栏改成**竖排** ✓（图 ＋ 图下面那个「▶ 播放差异」✓）——
-     ✗ 原来 justify-content:center 是"图只一个、横向居中"用的 ✓，多一个孩子就变成并排了 ✗。
+  /* ★★ 2026-10-08 用户定 ✓：**两个界面的播放按钮都在右栏顶上** ✓
+     （用户：「▶ 播放差异 **也应放在右侧顶部，跟幻灯片页面一样**，而不是放在左侧底部」✓）——
+     ⇒ 图这一栏**回到单孩子**（只有图 ✓）⇒ 横排 ＋ 居中就够 ✓
+     （✗ 之前为了"图 ＋ 图下面那个按钮"改成竖排 ✗ —— 现在不用了 ✓）。
      ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当天踩过两次 ✓）。 */
-  .left { flex:2 1 0; background:#ffffff; display:flex; flex-direction:column; align-items:center;
+  .left { flex:2 1 0; background:#ffffff; display:flex; align-items:flex-start; justify-content:center;
           padding:8px; box-sizing:border-box; }
   .art { max-width:100%; }
   .left img, .art svg { max-width:100%; height:auto; }
   .art svg { cursor:default; }
-  /* ★★ 2026-10-08 用户定 ✓：「把这个（▶ 播放差异）**嵌入在差异的下面**就好了吧？」✓
-     ⇒ 按钮贴在图的**正下方** ✓；sticky bottom ⇒ 图比一屏高时**始终够得着** ✓。 */
-  .under { position:sticky; bottom:0; margin-top:8px; padding:2px 6px;
-           background: var(--vscode-editor-background); border-radius:3px; }
   .right { flex:1 1 0; padding:10px 14px; border-left:1px solid var(--vscode-panel-border);
            /* ★★ 2026-10-08 用户定 ✗：「右侧内容字体可以小一些，**跟重放动画几个字的字体一样大**即可」✓
               ⇒ 整块右栏统一 **12px** ✓（＝ 那个按钮的字号 ✓），标题也不再放大（见下 ✓）。 */
            font-size:12px; line-height:1.5; }
-  /* ★★ 2026-10-08：这条工具条现在**两个界面共用** ✓ ——
-     · 合并视图：里面是那句高亮提示 ✓（要暗一些 ⇒ 提示自己带 .dim ✓）；
-     · 幻灯片：里面是**「▶ 播放差异」** ✓（用户：「在右侧、『面包板差异清单』上方显示【播放差异】」✓）
+  /* ★★ 2026-10-08：这条工具条**两个界面共用** ✓ ——
+     · 合并视图：**按钮 ＋ 那句高亮提示** ✓（提示要暗一些 ⇒ 自己带 .dim ✓）；
+     · 幻灯片：里面是**「播放差异」** ✓（用户：「在右侧、『面包板差异清单』上方显示【播放差异】」✓）
        ★ ⇒ 那条 opacity:.75 **从 .bar 挪到 .bar .dim** ✓：✗ 放在 .bar 上会把按钮也一起调暗 ✗
        （opacity 不能靠孩子"调回来" ✓ —— 它是在**整棵子树渲染完**之后再统一压暗的 ✓）。
-     ★ 钉在顶上 ✓：清单往往长过一屏 ✓ ⇒ 一滚按钮就"看不见"了 ✗。 */
+     ★ 钉在顶上 ✓：清单往往长过一屏 ✓ ⇒ 一滚按钮就"看不见"了 ✗。
+     ★ 横排 ＋ gap ✓：合并视图那条里是"按钮 ＋ 提示"两个东西 ✓ ——
+       ✗ 不然它们会贴在一起 ✓；顺带让提示**可缩**（min-width:0 ＋ 省略号 ✓），窄窗口不撑破 ✓。 */
   .bar { font-size:12px; padding:4px 8px; border-bottom:1px solid var(--vscode-panel-border);
-         position:sticky; top:0; z-index:2; background: var(--vscode-editor-background); }
-  .bar .dim { opacity:.75; }
+         position:sticky; top:0; z-index:2; background: var(--vscode-editor-background);
+         display:flex; gap:8px; align-items:center; min-width:0; }
+  .bar .dim { opacity:.75; flex:1 1 auto; min-width:0;
+              overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   /* ★★ 2026-10-08：按钮**内容与文字都要竖向居中** ✓ —— 幻灯片那个按钮里是"画出来的图形 ＋ 文字" ✓
      （.step ＋ .lbl ✓），✗ 不是一整串文字 ✗ ⇒ 得让这两块自己对齐 ✓。
      ★ 对合并视图那个按钮**无害** ✓（它只有一个文本节点 ⇒ 匿名 flex item ✓，居中照旧 ✓）。 */
-  .bar button, .under button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
+  .bar button { font-size:12px; cursor:pointer; color:inherit; background:transparent;
                 border:1px solid var(--vscode-panel-border); border-radius:3px; padding:1px 6px;
-                display:inline-flex; align-items:center; gap:4px; vertical-align:middle; }
+                display:inline-flex; align-items:center; gap:4px; vertical-align:middle; flex:0 0 auto; }
   /* ★ 标题一律**跟正文同号** ✓（1em = 12px ✓）⇒ 只剩**粗体**做层级 ✓（用户要"一样大"✓） */
   h1, h2, h3 { font-size:1em; }
   h1 { margin:.2em 0 .4em; } h2 { margin-top:1.1em; } h3 { margin-top:1em; }
@@ -483,8 +485,11 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 		? `<div class="art">${svgText}</div>`
 		: (imgUri ? `<img src="${imgUri}" alt="${esc(imgName || 'diff')}">`
 			: `<div class="hint" style="padding:16px">${esc(hint || '还没生成差异图')}</div>`);
-	// ★★ 2026-10-08：`▶ 播放差异` 从右栏工具条**搬到了图的正下方** ✓（`.under` ✓ —— 见 CSS 与 JS 处的注释 ✓）。
-	//   ★ 原名叫「▶ 重放动画」 ✓ —— 用户 2026-10-08 又定：「▶ 重放差异 改为 **▶ 播放差异** 吧？」✓
+	// ★★ 2026-10-08：`▶ 播放差异` 的**位置改了三回** ✓（写下来免得再翻 ✓）：
+	//   ① 右栏工具条上 ⇒ ② 用户「把这个**嵌入在差异的下面**就好了吧？」⇒ 挪到**图的正下方** ✓
+	//   ⇒ ③ 用户「▶ 播放差异 **也应放在右侧顶部，跟幻灯片页面一样**，而不是放在左侧底部」✓
+	//   ⇒ **搬到右栏顶上那条 `.bar` 里** ✓ —— 与幻灯片那个**同一个位置** ✓（`.bar` ＋ 钉顶 ✓）。
+	//   ★ 名字也改过 ✓：原叫「▶ 重放动画」 ✓ ⇒ 用户定「▶ 重放差异 改为 **▶ 播放差异** 吧？」✓
 	//     ⇒ 跟幻灯片那个**同名**了 ✓（两边都是"播放差异" ✓），**区别只剩记号** ✓：
 	//     这边 ▶（真字符 ✓）、幻灯片那边**画出来的**竖线＋三角（= 步进 ✓）。
 	//   ★ ★ ▶ **放在 .lbl 外面** ✓ ⇒ 起播回显（只改 .lbl ✓）时**它照样在** ✓
@@ -492,17 +497,17 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 	//     （✗ 以前整块文字被换掉 ⇒ 播放中 ▶ 会消失几秒 ✗，两个界面看着不一样 ✓）。
 	//   ★ ▶ 自己包一个 `aria-hidden` 的小块 ✓ ⇒ 与幻灯片那个记号**结构对称** ✓
 	//     （✗ 不然读屏会把"▶"念出来 ✗ —— 「黑右三角 播放差异」✓）。
-	const under = svgText
-		? '<div class="under"><button id="pd-replay"><span class="ic" aria-hidden="true">▶</span>'
-			+ '<span class="lbl">播放差异</span></button></div>'
+	const playBtn = svgText
+		? '<button id="pd-replay"><span class="ic" aria-hidden="true">▶</span>'
+			+ '<span class="lbl">播放差异</span></button>'
 		: '';
 	return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <style>${CSS}</style></head><body>
 <div class="wrap">
-  <div class="pane left">${art}${under}</div>
+  <div class="pane left">${art}</div>
   <div class="pane right">
-    <div class="bar"><span class="dim">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
+    <div class="bar">${playBtn}<span class="dim">${svgText ? '点 ① ② 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
 		: (imgUri ? esc(imgName) : '（无图）')}</span></div>
     ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
