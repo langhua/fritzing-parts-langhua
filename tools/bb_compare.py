@@ -196,6 +196,25 @@ class Link(object):
         return not self.holes and not self.pins
 
     @property
+    def ident(self):
+        r"""这条跳线的**身份** ✓ = 它接的**孔 / 脚** ✓（✗ 与**导线实例名**无关 ✗）。
+
+        ★★ 2026-10-08 加 ✓（用户：「面包板比较是这样的，看着很乱啊」✓）：Fritzing **一存就
+          把所有 Wire 重新编号** ✗（实测 `pixel-breadboard95` ⇒ `104`：`Wire90013052…90013100`
+          ⇒ `Wire90013104…90013153` ✓，**同一个零件名一个都没留** ✗）⇒ 按名字比对时，
+          **14 条连接**（走线、颜色、孔位全都一模一样 ✓）被报成「28 条新增 ＋ 28 条没了」✗
+          ⇒ 图上凭空冒出 28 对红圈红字 ✓ —— 这就是"乱"的来源 ✓。
+        ⇒ 身份取**接的孔**（孔 id = `pin<列><行>` ✓，与 `hole_xy()` 同一套 ✓，跨版本稳定 ✓）：
+          同一对孔 ⇒ 就是**同一条连接** ✓（名字变了、走线变了都不算"没了" ✓）。
+          ✗ 也不拿 `geometry x/y` 当身份 ✗：那只是**原点** ✓，同一对孔换个走线就变了 ✓
+          （实测上面那 14 条里就有几条只挪了原点 ✓）。
+        ★ 没接孔的（图例色条 ✓ / 只接元件脚的 ✓）⇒ 用脚位名 ✓；再没有 ⇒ 退回**导线名** ✓。
+        """
+        ids = tuple(sorted(c for c, _mi in self.holes)) or \
+            tuple(sorted(c for c, _mi in self.pins))
+        return ids or ("name", min(self.wids))
+
+    @property
     def pts(self):
         """按顺序拼出折线点列 ✓"""
         if not self.segs:
@@ -474,6 +493,21 @@ def seg_crosses_box(p, q, box):
         if t0 > t1:
             return False
     return t0 > 1e-9 and t1 < 1 - 1e-9
+
+
+def link_moved(x, y):
+    r"""同一条连接的**两版** ⇒ `(端点最大挪, 长度差, 颜色变了吗)` ✓（单位 = sketch 单位 ✓）——
+    **判据只留这一份** ✓（图 ＋ 清单都调它 ✓；✗ 别两处各判一遍 ✗ —— 实测踩过：图上标了
+    17 处「线路变了」，而清单里同一批写的是「没动 17 条」✗，同一张图自相矛盾 ✓）。
+
+    ★ `pts` / `length` / `color` 全是 `Link` 自己的 ✓ ⇒ 这里只是取最大位移 ✓，不重算几何 ✓。
+    """
+    pa, pb = x.pts, y.pts
+    d = 0.0
+    if pa and pb:
+        d = max((((pb[i][0] - pa[i][0]) ** 2 + (pb[i][1] - pa[i][1]) ** 2) ** 0.5)
+                for i in range(min(len(pa), len(pb))))
+    return d, y.length - x.length, x.color != y.color
 
 
 def metrics(links, plugged, fzz=None, verbose=False):

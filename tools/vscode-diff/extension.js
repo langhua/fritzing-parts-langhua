@@ -234,42 +234,62 @@ const ROW_RE_SRC = '^\\s*([A-Za-z][\\w.-]*)[：:]';
  *    ⇒ 注入与单测**共用这一个 `reLit`** ✓。
  */
 function reLit(src) { return src.replace(/\//g, '\\/'); }
-const RE_INJECT = 'var RE = /' + reLit(PAD_RE_SRC) + '/, RE2 = /' + reLit(ROW_RE_SRC) + '/;';
 
-/** ★★ 「点名字 ⇒ 图上高亮」的脚本 ✓ —— 自定义编辑器与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+/** 图上**可点名字**的清单 ✓：`#pd-hits` 里那些 `pd-*` 组的组名 ✓（与工具**同一份数据** ✓）。 */
+function keysOf(svgText) {
+	if (!svgText) return [];
+	const i = svgText.indexOf('id="pd-hits"');
+	const j = svgText.indexOf('id="pd-labels"', i < 0 ? 0 : i);
+	const seg = i < 0 ? svgText : svgText.slice(i, j < 0 ? undefined : j);
+	const set = new Set();
+	for (const m of seg.matchAll(/<g id="pd-([^"]+)"/g)) set.add(m[1]);
+	// ★ 键**长的在前** ✓（`RC.2` 必须先于 `RC` 去比 ✓）
+	return [...set].sort((a, b) => b.length - a.length);
+}
+
+/** `mdToHtml()` 的产物 ⇒ 把**可点名字**逐个包成 `span.pd-hit` ✓（✗ 只在**文字**里包 ✗，属性里不碰 ✓）。
  *
+ *  ★★ 2026-10-08 把这一步从**运行时 JS** 搬到这里 ✓（原来是往 webview 里塞一段 TreeWalker 脚本 ✗）：
+ *    那段脚本有个**吃字**的 bug ✗ —— 它从头扫文本节点，**遇到第一个名字之前**攒下的字符
+ *    **直接丢掉** ✗（`if (frag) buf += …` ✗，`frag` 还是 null 时就不攒了 ✓）⇒ 实测用户清单里
+ *    「`**新增**：pin11I–pin13I（Wire90013126）`」**渲染出来只剩**「`新增Wire90013126）`」✗✗
+ *    —— 前半句整段没了 ✓。搬到 Node 还有个好处 ✓：这是**纯函数** ✓ ⇒ 单测能直接判
+ *    「**去标签后的文字 == 原文字**」✓（不吃字 ✓），不必开浏览器 ✓。
+ */
+function markNames(htmlText, keys) {
+	if (!keys || !keys.length) return htmlText;
+	const h = String(htmlText);
+	let out = "", i = 0;
+	while (i < h.length) {
+		if (h[i] === '<') {                     // ★ 整段标签跳过 ✓（属性值里的名字**不动** ✓）
+			const j = h.indexOf('>', i);
+			const k = j < 0 ? h.length : j + 1;
+			out += h.slice(i, k); i = k; continue;
+		}
+		let hit = null;
+		for (const kk of keys) if (h.startsWith(kk, i)) { hit = kk; break; }
+		if (!hit) { out += h[i]; i++; continue; }
+		out += '<span class="pd-hit" data-k="pd-' + esc(hit) + '">' + esc(hit) + '</span>';
+		i += hit.length;
+	}
+	return out;
+}
+
+/** ★★ 「点名字 ⇒ 图上高亮」的**点击**那半段 ✓ —— 自定义编辑器与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+ *
+ *  ★ 名字**由 `markNames()` 在 Node 里包好** ✓（见那里为什么搬过来 ✓）；这段只管**点** ✓。
  *  ★★ 2026-10-08 修 ✗：原来靠两条**图案**去文字里猜（`X.connectorN` ✗ / `行首标识符＋冒号` ✗）
  *    ⇒ 面包板/原理图清单里那种「新增：Wire90013119、Wire90013121、…」**两条都不像** ✗
  *    ⇒ 一整串导线名字点不动 ✗（用户截图当场指出 ✗）。
- *    ⇒ 改成**别猜** ✓：谁可点，**图上说了算** ✓ —— 可点名字 = `pd-*` 隐藏组的组名 ✓（与工具同一份数据 ✓）；
- *      文字里出现哪个名字就点哪个 ✓（**逐个**包成 `span.pd-hit` ✓ —— 一条 `li` 里有十多个名字时各点各的 ✓）。
- *  ★ 键**长的在前** ✓（`RC.2` 必须先于 `RC` 去比 ✓），且**全程不用正则** ✗（省掉一层转义坑 ✓）。
+ *    ⇒ 改成**别猜** ✓：谁可点，**图上说了算** ✓ —— 可点名字 = `pd-*` 隐藏组的组名 ✓。
+ *  ★ 高亮组本来就是 `diff_revs.py` **写进 svg** 的隐藏组（id = `pd-<名字>` ✓）
+ *    ⇒ 这里只切 `display` ✓，**不算任何坐标** ✓（坐标只有工具一份 ✓）。
  */
 function markJs(pane) {
 	return [
 		'  (function(){',
 		'    var pane = document.querySelector(' + JSON.stringify(pane) + ');',
 		'    if (!pane) return;',
-		'    var KEYS = [], g = document.querySelectorAll("#pd-hits > g");',
-		'    for (var i = 0; i < g.length; i++) { var id = g[i].id || ""; if (id.indexOf("pd-") === 0) KEYS.push(id.slice(3)); }',
-		'    KEYS.sort(function(a,b){ return b.length - a.length; });',
-		'    function markNode(tn){',
-		'      var t = tn.nodeValue || "", i = 0, frag = null, buf = "";',
-		'      while (i < t.length) {',
-		'        var hit = null;',
-		'        for (var k = 0; k < KEYS.length; k++) { var kk = KEYS[k]; if (t.substr(i, kk.length) === kk) { hit = kk; break; } }',
-		'        if (!hit) { if (frag) buf += t.charAt(i); i++; continue; }',
-		'        if (!frag) frag = document.createDocumentFragment();',
-		'        if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }',
-		'        var s = document.createElement("span");',
-		'        s.className = "pd-hit"; s.setAttribute("data-k", "pd-" + hit); s.textContent = hit;',
-		'        frag.appendChild(s); i += hit.length;',
-		'      }',
-		'      if (frag) { if (buf) frag.appendChild(document.createTextNode(buf)); if (tn.parentNode) tn.parentNode.replaceChild(frag, tn); }',
-		'    }',
-		'    var w = document.createTreeWalker(pane, NodeFilter.SHOW_TEXT, null), ns = [], n;',
-		'    while ((n = w.nextNode())) ns.push(n);',
-		'    for (var q = 0; q < ns.length; q++) markNode(ns[q]);',
 		'    pane.addEventListener("click", function(e){',
 		'      var t = e.target;',
 		'      while (t && t !== pane && !(t.className && ("" + t.className).indexOf("pd-hit") >= 0)) t = t.parentNode;',
@@ -289,7 +309,6 @@ const JS = [
 	'(function(){',
 	'  var SVG = document.getElementById("pd-svg") || document.querySelector(".left svg") || document.querySelector("svg");',
 	'  var li = Array.prototype.slice.call(document.querySelectorAll("li"));',
-	RE_INJECT,
 	'  function clear(){',
 	'    if (SVG) SVG.classList.remove("pd-focus");',
 	'    var g = document.querySelectorAll("#pd-hits > g");',
@@ -368,7 +387,7 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
   <div class="pane right">
     <div class="bar">${svgText ? '<button id="pd-replay">▶ 重放动画</button>　点 ① 里任意一条 ⇒ 图上高亮（Esc 或点图取消）'
 		: (imgUri ? esc(imgName) : '（无图）')}</div>
-    ${mdToHtml(mdText)}
+    ${svgText ? markNames(mdToHtml(mdText), keysOf(svgText)) : mdToHtml(mdText)}
   </div>
 </div>
 <script nonce="${nonce}">${svgText ? JS : ''}</script>
@@ -403,10 +422,13 @@ function pageList(proj) {
 function readPage(mdPath) {
 	const dir = path.dirname(mdPath);
 	const stem = path.basename(mdPath).replace(/\.md$/, '');
+	const svg = inlineSvg(path.join(dir, stem + '.svg'));
+	// ★ 可点名字在**这里**（Node 一侧）就包好 ✓（与合并视图同一份 `markNames()` ✓，
+	//   ✗ 别让 webview 再去猜文字 ✗ —— 见 `markNames()` 里那个"吃字"的教训 ✓）
 	return {
 		title: stem,
-		svg: inlineSvg(path.join(dir, stem + '.svg')),
-		html: mdToHtml(fs.readFileSync(mdPath, 'utf8'))
+		svg,
+		html: markNames(mdToHtml(fs.readFileSync(mdPath, 'utf8')), keysOf(svg))
 	};
 }
 
@@ -419,7 +441,6 @@ const SLIDE_JS = [
 	'  function bindHighlight(){',
 	'    var SVG = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
 	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
-	RE_INJECT,
 	'    function clear(){',
 	'      if (SVG) SVG.classList.remove("pd-focus");',
 	'      var g = document.querySelectorAll("#pd-hits > g");',
@@ -639,5 +660,5 @@ function deactivate() { }
 module.exports = {
 	activate, deactivate,
 	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, ROW_RE_SRC, reLit, dirs, pageList,
-	         readPage, CSS, slideshowHtml, html, patRe }
+	         readPage, CSS, slideshowHtml, html, patRe, keysOf, markNames }
 };

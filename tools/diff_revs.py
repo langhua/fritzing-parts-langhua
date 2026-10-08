@@ -1172,8 +1172,7 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
           **挨着** ✓（实测：`a-Wire90013116` 的竖段与横段就是前后脚 ✓）。
         """
         if buf_key is not None:
-            out.append('<g id="%s-%s">%s</g>'
-                       % (side, re.sub(r"[^\w.-]", "_", buf_key), "".join(buf)))
+            out.append('<g id="%s-%s">%s</g>' % (side, _gid(buf_key), "".join(buf)))
 
     def _at(a):
         """取一个**属性**的值 ✓ —— ✗ 不许拿全文扫数字 ✗：
@@ -1248,18 +1247,41 @@ def _tag_elements(svg, refs, fzz, view, side, skip=None):
     return head + "".join(out) + "</svg>", got, leak
 
 
-def _link_key(lk):
-    r"""一条跳线的 key ✓ = `min(lk.wids)` ✓ —— **只在这一处算** ✗（`_hit_view` 与 `_tag_elements` 共用 ✓）。
+def _link_same(x, y):
+    r"""同一条连接在两版里**没变**吗 ✓ —— 图（`_hit_view`）与清单（`_bb_section`）**共用这一份** ✗。
 
-    ★★ 2026-10-08 修 ✗（用户原话：「箭头所指的红横线仍然没有被删除」✓）：一**条**跳线常常是
-      几**段** Wire 串起来的 ✓（`bb_compare.Link.wids` ✓；实测 v100 的 `Wire90013116`
-      = `[Wire90013116, Wire90013117]` ✓）⇒ 图上它就是**几根 `<line>`** ✓。
-      ✗ 原来按**实例名**打钥匙 ⇒ 只有 `min(wids)` 那段进了动画组 ✗ ⇒ 其余各段**不参与动画** ✓：
-      动画把 A 那一版撤掉了，它们**却一直都在** ✓ —— 用户指的就是它 ✓
-      （实测：`Wire90013116` 的第二段 `(333,117)→(288,117)` 就裸在 `a-Wire90013116`
-      组**外面** ✓，颜色还是 A 的浅红 ✓）。
+    ★★ 2026-10-08 加 ✓（用户：「面包板比较是这样的，看着很乱啊」✓）：这两个地方原来**各判各的** ✗
+      —— 清单那边会跳过"没变"的 ✓，图上那边**一条都不跳** ✗ ⇒ 实测 v100 ⇒ v104：
+      图上多出 **17 条「线路变了」红圈红字** ✗，而**同一张图的清单**写的是「没动 17 条」✗
+      （图与清单自相矛盾 ✓）。⇒ 判据收进这里一份 ✓（阈值仍是 `JOINT` / `SK` 那一对 ✓）。
     """
-    return min(lk.wids)
+    import bb_compare as BC
+    d, dl, dcol = BC.link_moved(x, y)
+    return (not dcol) and d * SK < JOINT and abs(dl) * SK < JOINT
+
+
+def _gid(key):
+    r"""key（**可能是元组** ✓）⇒ 一个安全的 id 串 ✓（`a-` / `b-` / `pd-` 三处**共用这一份** ✗）。
+
+    ★ 2026-10-08：跳线的 key 改成**孔对**（元组 ✓，见 `bb_compare.Link.ident` ✓）
+      ⇒ ✗ 别再各处写 `re.sub(r"[^\w.-]", "_", key)` ✗ —— 元组进了 `%s` 会变成 `('pin..',)` ✗。
+    """
+    s = key if isinstance(key, str) else "_".join(str(x) for x in key)
+    return re.sub(r"[^\w.-]", "_", s)
+
+
+def _link_key(lk):
+    r"""一条跳线的 key ✓ = `bb_compare.Link.ident` ✓ —— **只在这一处算** ✗（全文件共用 ✓）。
+
+    ★★ 2026-10-08 修两次 ✗（两件事都出在"一**条**跳线 ≠ 一个 Wire 实例"上 ✓）：
+      ① 用户：「箭头所指的红横线仍然没有被删除」✓ —— key 按**实例名**给 ✗ ⇒ 一条跳线是几段
+         Wire 串起来的 ✓（实测 `Wire90013116` = `[Wire90013116, Wire90013117]` ✓），只有第一段
+         进了动画组 ✗ ⇒ 其余各段动画撤不掉 ✓（已修：`_wid_key()` 把每段都映到同一条 ✓）；
+      ② 用户：「面包板比较是这样的，看着很乱啊」✓ —— key 是**名字** ✗，而 Fritzing **一存就
+         重新编号** ✗ ⇒ 14 条**完全没变**的连接被报成 28 新增 ＋ 28 没了 ✓ ⇒ 图上凭空多出
+         28 对红圈红字 ✓。⇒ 身份改用**接的孔**（`Link.ident` ✓，跨版本稳定 ✓）。
+    """
+    return lk.ident
 
 
 def _wid_key(fzz):
@@ -1300,8 +1322,8 @@ def _hit_view(a_fzz, b_fzz, view, frame):
     r = max(3.0, w * 0.010)                       # 圈多大：按画布宽定 ✓（不然小的视图看不见 ✓）
     fs = r * 1.7
     refs = set()                                  # ★ 变了哪些（给动画打钥匙用 ✓）
-    out = ['<g id="pd-hits">']                    # ★ 包在 `pd-hits` 里 ✓ —— 扩展的 Esc/点图
-    #   清空靠 `#pd-hits > g` ✓（与 PCB 那份**同一形状** ✓，✗ 别自己另起一套 ✗）。
+    out = []                                      # ★ 高亮组**按名字攒** ✓（见 `circles()` ✓）
+    hit_geom = {}                                 # name → [几何片段…] ✓（同一个名字可有多处 ✓）
     lab = []                                      # ★ 标签**另放一层** ✓（可见 ✓，见函数头 ✓）
     placed = []                                   # ★ 已放下的标签框 (x0, x1, y) ✓ ⇒ 撞了就往下让 ✓
 
@@ -1315,20 +1337,35 @@ def _hit_view(a_fzz, b_fzz, view, frame):
             return c
         return xy(org[ttl]) if ttl in org else None
 
-    def circles(ttl, pa, pb, label):
-        refs.add(ttl)                              # ★ 这处变了 ✓
-        pid = re.sub(r"[^\w.-]", "_", ttl)
-        s = ['<g id="pd-%s" style="display:none">' % pid]
+    def circles(names, pa, pb, label, anim_key=None):
+        """一处变化 ⇒ **圈 / 连线画一遍** ✓、**每个可点名字各记一份** ✓、**标签只写一条** ✓。
+
+        ★ 2026-10-08：*可点名字* 与 *动画钥匙* 现在是**两件事** ✓ ——
+          点了要高亮的是**清单里写的名字**（`pd-<名字>` ✓，扩展那套靠它 ✓）；
+          而动画要一起亮/一起撤的是**整条连接**（key = 孔对 ✓）。
+        ★★ 同一个名字可能在**两版里各指一处** ✓（Fritzing 重新编号 ⇒ A 的 `Wire90013104` 与
+          B 的 `Wire90013104` 是**两条不同的连接** ✓ —— 实测确认 ✓）⇒ **攒到 `hit_geom` 里** ✓、
+          最后**一个名字只出一个组** ✗（否则写出**重复 id** ✓，`getElementById` 只认第一个 ✓
+          ⇒ 点那一行只亮一半 ✗）。攒着的好处：点一下把同名的几处**一起亮** ✓ —— 那正是这一行在说的事 ✓。
+        """
+        if isinstance(names, str):
+            names = [names]
+        names = list(names)
+        k = anim_key if anim_key is not None else names[0]
+        refs.add(k)                                # ★ 这处变了 ✓（给动画打钥匙用 ✓）
+        g = []
         if pa is not None:
-            s.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
+            g.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="%s" '
                      'stroke-width="%.2f"/>' % (pa[0], pa[1], r, A_COLOR_HI, r * 0.35))
         if pb is not None:
-            s.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s"/>'
+            g.append('<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s"/>'
                      % (pb[0], pb[1], r * 0.75, A_COLOR_HI))
         if pa is not None and pb is not None:
-            s.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
+            g.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
                      'stroke-width="%.2f" stroke-dasharray="%.2f %.2f"/>'
                      % (pa[0], pa[1], pb[0], pb[1], A_COLOR_HI, r * 0.3, r * 0.5, r * 0.4))
+        for nm in names:
+            hit_geom.setdefault(nm, []).append("".join(g))
         if label:
             ax, ay = pb if pb is not None else pa
             ly = ay - r * 1.2
@@ -1375,8 +1412,6 @@ def _hit_view(a_fzz, b_fzz, view, frame):
             lab.append('<text x="%.2f" y="%.2f" font-family="DroidSans" font-size="%.2f" '
                        'fill="%s">%s</text>'
                        % (lx, ly, fs, A_COLOR_HI, esc(label)))
-        s.append("</g>")
-        out.append("".join(s))
 
     for ttl in sorted(set(ga) | set(gb)):
         if ttl.startswith("Wire") or ttl.startswith("TXT"):
@@ -1396,16 +1431,26 @@ def _hit_view(a_fzz, b_fzz, view, frame):
         import bb_compare as BC
         la, _p1 = BC.load(a_fzz)
         lb, _p2 = BC.load(b_fzz)
-        A = {_link_key(lk): lk for lk in la}          # ★ key 口径与 `_tag_elements` **同一份** ✓
-        B = {_link_key(lk): lk for lk in lb}
+        # ★★ 2026-10-08：**只比"接上东西的"跳线** ✗ 别把**图例色条**也算进来 ✓ ——
+        #   `Link.legend` 就是"两头都没接" ✓（色条 ✓，`bb_compare` 自己也是这么排除的 ✓）。
+        #   实测：v95 有 28 条 Wire，其中 **9 条**是色条 ✗ ⇒ 老口径把它们当跳线报"新增/没了" ✗。
+        A = {_link_key(lk): lk for lk in la if not lk.legend}
+        B = {_link_key(lk): lk for lk in lb if not lk.legend}
         for k in sorted(set(A) | set(B)):
+            if k in A and k in B and _link_same(A[k], B[k]):
+                continue                              # ★ 没变 ⇒ 不画圈、不打钥匙 ✓（与清单同一份判据 ✓）
             if k not in A:
-                circles(k, None, B[k].pts[0], "新增跳线")
+                lk = B[k]
+                circles(lk.wids, None, lk.pts[0], "新增跳线", anim_key=k)
             elif k not in B:
-                circles(k, A[k].pts[0], None, "没了跳线")
+                lk = A[k]
+                circles(lk.wids, lk.pts[0], None, "没了跳线", anim_key=k)
             else:
-                circles(k, A[k].pts[0], B[k].pts[0], "线路变了")
-    body = "".join(out) + "</g>"
+                circles(A[k].wids + B[k].wids, A[k].pts[0], B[k].pts[0], "线路变了", anim_key=k)
+    body = ('<g id="pd-hits">'
+            + "".join('<g id="pd-%s" style="display:none">%s</g>' % (_gid(nm), "".join(g))
+                      for nm, g in hit_geom.items())
+            + "</g>")
     if lab:                                            # ★ 标签层 ✓：**不隐藏** ✓ ⇒ 一打开就看得见 ✓
         body += '<g id="pd-labels">%s</g>' % "".join(lab)
     return body, refs
@@ -1539,7 +1584,7 @@ def _view_diff(a_fzz, b_fzz, out, na, nb):
     token = re.sub(r"[^\w]", "_", "%s%s" % (na, nb))
     css, anim, dur, sec, tail = _anim_css(ka, kb, refs, token)
     for (side, key), nm in anim.items():
-        gid = '<g id="%s-%s"' % (side, re.sub(r"[^\w.-]", "_", key))
+        gid = '<g id="%s-%s"' % (side, _gid(key))
         # ★★ 只播一遍 ✓（2026-10-07 用户定 ✓：「可以只播一遍，不循环播放吗？」✓）
         #   ⇒ 计数写 **1** ✓；★ 而且**必须带 `forwards`** ✗ —— 不写的话，动画一结束元素
         #   就**弹回**它自己的初始状态 ✗（A 又全亮 ✓、B 又全灭 ✓）⇒ 「结尾 = B 图」这句
@@ -1863,36 +1908,44 @@ def _bb_section(a_fzz, b_fzz):
 
     ★ 读法**只有一份** ✓：`bb_compare.load()` ✓（孔 / 交叉 / 遮挡那套全是它 ✓）——
       本函数只做"A 有 B 没有"这种事 ✓，**不重算几何** ✓。
+    ★★ 2026-10-08 修两处 ✗（用户：「面包板比较是这样的，看着很乱啊」✓）：
+      ① **身份按接的孔**（`Link.ident` ✓）✗ 不按导线名 ✗ —— Fritzing 一存就重新编号 ✓，
+         `v95 ⇒ v104` 实测：19 条连接里 **14 条一模一样** ✓，却被报成「28 新增 ＋ 28 没了」✗；
+      ② **图例色条不算跳线** ✗（`Link.legend` ✓，与 `bb_compare.metrics()` 同一口径 ✓）——
+         老口径把 9 条色条也数进去 ✓ ⇒ 行数、`新增`/`没了` 全是噪声 ✗。
+      ⇒ 每行都写出**孔位**＋**导线名** ✓（孔位让人一眼看懂接了哪儿 ✓，导线名保住"点行高亮" ✓）。
     """
     import bb_compare as BC
     la, _pa = BC.load(a_fzz)
     lb, _pb = BC.load(b_fzz)
-    key = lambda lk: min(lk.wids)                       # 多段拼起来的一根 ⇒ 取 id 最小的 ✓（稳 ✓）
-    A = {key(lk): lk for lk in la}
-    B = {key(lk): lk for lk in lb}
+    A = {_link_key(lk): lk for lk in la if not lk.legend}
+    B = {_link_key(lk): lk for lk in lb if not lk.legend}
     L = ["## ② 跳线变化", ""]
-    add = [k for k in B if k not in A]
-    gone = [k for k in A if k not in B]
+
+    def lab(k, lk):
+        """一条连接的**读法** ✓：孔位（人看的 ✓）＋ 导线名（点了要高亮 ✓）。"""
+        holes = "–".join(k) if isinstance(k, tuple) else str(k)
+        return "%s（%s）" % (holes, "、".join(lk.wids))
+
+    add = sorted(k for k in B if k not in A)
+    gone = sorted(k for k in A if k not in B)
     chg, same = [], 0
     for k in sorted(set(A) & set(B)):
         x, y = A[k], B[k]
-        pa_, pb_ = x.pts, y.pts                       # ★ `pts` / `length` 是 **property** ✓（不是方法 ✗）
-        d = max((((pb_[i][0] - pa_[i][0]) ** 2 + (pb_[i][1] - pa_[i][1]) ** 2) ** 0.5)
-                for i in range(min(len(pa_), len(pb_)))) if pa_ and pb_ else 0.0
-        dl = y.length - x.length
-        if d * SK < JOINT and abs(dl) * SK < JOINT and x.color == y.color:
+        if _link_same(x, y):                          # ★ 判据只有一份 ✓（见 `_link_same()` ✓）
             same += 1
             continue
+        d, dl, dcol = BC.link_moved(x, y)
         chg.append("- **%s**：%s　端点最大挪 **%.3f mm** ✓ 长度 %+.3f mm ✓"
-                   % (k, "颜色 %s⇒%s" % (x.color or "（默认）", y.color or "（默认）")
-                      if x.color != y.color else "走向变了",
+                   % (lab(k, y), "颜色 %s⇒%s" % (x.color or "（默认）", y.color or "（默认）")
+                      if dcol else "走向变了",
                       d * SK, dl * SK))
-    L += ["- A %d 根 / B %d 根 ✓（没动 %d 根 ✓）" % (len(la), len(lb), same), ""]
-    for t in ("**新增**：%s" % "、".join(sorted(add)) if add else "**新增**：无 ✓",
-              "**没了**：%s" % "、".join(sorted(gone)) if gone else "**没了**：无 ✓"):
+    L += ["- A %d 条连接 / B %d 条连接 ✓（没动 %d 条 ✓）" % (len(A), len(B), same), ""]
+    for t in ("**新增**：%s" % "、".join(lab(k, B[k]) for k in add) if add else "**新增**：无 ✓",
+              "**没了**：%s" % "、".join(lab(k, A[k]) for k in gone) if gone else "**没了**：无 ✓"):
         L.append("- " + t)
     if chg:
-        L += ["", "**变了**（%d 根）✓：" % len(chg), ""] + chg
+        L += ["", "**变了**（%d 条）✓：" % len(chg), ""] + chg
     L.append("")
     return L
 

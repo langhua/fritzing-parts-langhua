@@ -215,25 +215,33 @@ if (bad9) fail('有视图的 fzzPattern 没配好（空名单）');
 // ⑩ 两类可点的行都得在**渲染后的文字**上认出来 ✓ —— 这是踩过两次的坑 ✗：
 //   第一次按「反引号」写 ✗、第二次按「markdown 的 `**`」写 ✗ —— 浏览器里那两种标记
 //   **都不在了** ✗（`mdToHtml` 把它们变成了 `<code>` / `<b>` ✓）⇒ 拿**真清单**验 ✓。
-const viewMd = fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-(bb|sch)-.*\.md$/.test(n))
+//   ★★ 2026-10-08 修 ✗：原来只拿"最新的那一份"验 ✗，还要求它**必须有位号行** ✗ ——
+//     而"最新那份"完全可能是一张**什么都没变**的图（实测：`diff-sch-v39-v40.md` 只剩 1 条 ✓，
+//     位号行合法地为 0 ✓）⇒ 误报 ✗（与 ④ 上次那条"最新那份必有脚名行"是**同一个坑** ✓）。
+//     ⇒ 改成**扫全部** bb/sch 清单 ✓：带星号的行**一条都不许**有 ✓（渲染后 ★ 必须没了 ✓）；
+//       两种图案**至少有一种**在真清单上认出来过 ✓（一份都没有才报 ✗ —— 那才说明图案废了 ✓）。
+const viewMds = fs.readdirSync(path.join(PIX, 'diff')).filter((n) => /^diff-(bb|sch)-.*\.md$/.test(n))
 	.map((n) => ({ n, t: fs.statSync(path.join(PIX, 'diff', n)).mtimeMs }))
 	.sort((a, b) => b.t - a.t);
-if (viewMd.length) {
-	const vh = mdToHtml(fs.readFileSync(path.join(PIX, 'diff', viewMd[0].n), 'utf8'));
+if (viewMds.length) {
 	// ★ 逐条 `<li>` 验 ✓ —— webview 是**一条一条**匹配的 ✓（`^` 才有意义 ✓）；
 	//   ✗ 第一版把整篇压成一行再匹配 ⇒ 换行没了 ⇒ 带 `^` 的图案 0 命中 ✗（当场报出来 ✓）。
 	//   ★ 去标签要用**空串** ✗ 不能用空格 ✗ —— 浏览器 `textContent` 里 `<b>C1</b>：` = `C1：`
 	//     （标签不占字符 ✓）；换成空格就变成 ` C1 ：` ✗ ⇒ 带 `^` / 紧跟冒号的图案全废 ✗
 	//     （这个坑今天第三次了：反引号 ✗、星号 ✗、空格 ✗ ⇒ 一律"按渲染后的文字"写 ✓）。
-	const items = (vh.match(/<li>[\s\S]*?<\/li>/g) || [])
-		.map((s) => s.replace(/<[^>]+>/g, '').trim());
 	const padRe = new RegExp(reLit(PAD_RE_SRC)), rowRe = new RegExp(reLit(ROW_RE_SRC));
-	const nPad = items.filter((s) => padRe.test(s)).length;
-	const nRow = items.filter((s) => rowRe.test(s)).length;
-	const nStar = items.filter((s) => /\*\*/.test(s)).length;
-	console.log('⑩ %s：%d 条清单行 ⇒ 脚名行 %d ✓、位号行 %d ✓、带星号的行 %d ✓（应为 0 ✓）',
-		viewMd[0].n, items.length, nPad, nRow, nStar);
-	if (nStar || !nRow) fail('视图清单的行在渲染后的文字里认不出来');
+	let totPad = 0, totRow = 0, totStar = 0, totItems = 0, scanned = 0;
+	for (const v of viewMds) {
+		const items = (mdToHtml(fs.readFileSync(path.join(PIX, 'diff', v.n), 'utf8'))
+			.match(/<li>[\s\S]*?<\/li>/g) || []).map((s) => s.replace(/<[^>]+>/g, '').trim());
+		totItems += items.length; scanned++;
+		totPad += items.filter((s) => padRe.test(s)).length;
+		totRow += items.filter((s) => rowRe.test(s)).length;
+		totStar += items.filter((s) => /\*\*/.test(s)).length;
+	}
+	console.log('⑩ 视图清单 %d 份 / %d 条行 ⇒ 脚名行 %d ✓、位号行 %d ✓、带星号的行 %d ✓（应为 0 ✓）',
+		scanned, totItems, totPad, totRow, totStar);
+	if (totStar || (!totPad && !totRow)) fail('视图清单的行在渲染后的文字里认不出来');
 } else {
 	console.log('⑩ 没有 bb/sch 清单可验（先跑一次 --view bb）✓');
 }
@@ -291,5 +299,62 @@ if (!hasId(edBar, 'pd-replay') || !hasId(slBar, 'replay') || !sticky) {
 	fail('「▶ 重放动画」按钮不在（或工具条没钉顶）');
 }
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十二项都过', bad || '');
+// ⑬ ★★ 面包板的**跳线身份是"接的哪两个孔"** ✗ 不是导线名 ✗（2026-10-08 修 ✓）——
+//   用户原话：「面包板比较是这样的，看着很乱啊」✓。根因：Fritzing **一存就把所有 Wire 重新编号**
+//   （实测 `pixel-breadboard95 ⇒ 104`：19 条连接里 **14 条一模一样** ✓，名字一条没留 ✗）
+//   ⇒ 按名字比对时它们变成「28 条新增 ＋ 28 条没了」✗ ⇒ 图上凭空冒出 28 对红圈红字 ✓。
+//   ⇒ 判据：清单里**必须**出现「没动 N 条」且 **N > 0** ✓（按名字比 ⇒ 恒为 0 ✗ ⇒ 当场报 ✗）；
+//     并且每条连接都要写出**孔位** ✓（人一眼看懂接了哪儿 ✓）。
+if (bbMds.length) {
+	const txt = fs.readFileSync(path.join(PIX, 'diff', bbMds[0].n), 'utf8');
+	const m13 = /没动\s*(\d+)\s*条/.exec(txt);
+	const holes = (txt.match(/(?:^|[（、])(pin\d+[A-Z](?:[–-]pin\d+[A-Z])?)/gm) || []).length;
+	const nLinks = Number(m13 ? m13[1] : -1);
+	console.log('⑬ 跳线身份按孔对：%s ⇒ 没动 %d 条（>0 才说明"只改名"没被当成"没了"✓）；孔位写法 %d 处',
+		bbMds[0].n, nLinks, holes);
+	if (!(nLinks > 0) || !holes) fail('面包板跳线还是按名字比对（改名⇒全成"新增/没了"）');
+} else {
+	console.log('⑬ 没有 bb 清单可验（先跑一次 --view bb）✓');
+}
+
+// ⑭ ★★ 「点名字」**不许吃掉文字** ✗（2026-10-08 修 ✓）—— 用户清单里
+//   「**新增**：pin11I–pin13I（Wire90013126）、…」渲染出来只剩「新增Wire90013126）、…」✗
+//   （**遇到第一个名字之前**攒下的字符被丢掉 ✗ —— 那段 TreeWalker 脚本的 bug ✓）。
+//   现在包名字这一步是 Node 里的**纯函数** `markNames()` ✓ ⇒ 不用开浏览器就能判死 ✓：
+//   ① **去标签后的文字必须一字不差** ✓（等于 `mdToHtml` 的结果去掉标签 ✓）；
+//   ② 包出来的 `span.pd-hit` 个数 == 文字里真出现的名字次数 ✓；
+//   ③ 同一个名字**不许**在别处被误包（属性里不碰 ✓）。
+const { keysOf, markNames } = ext._pure;
+let totSpans = 0, totNames = 0, n14 = 0, lost = 0;
+for (const n of fs.readdirSync(path.join(PIX, 'diff')).filter((x) => /^diff-(bb|sch)-.*\.md$/.test(x))) {
+	const svgp = path.join(PIX, 'diff', n.replace(/\.md$/, '.svg'));
+	if (!fs.existsSync(svgp)) continue;
+	const raw = mdToHtml(fs.readFileSync(path.join(PIX, 'diff', n), 'utf8'));
+	const keys = keysOf(fs.readFileSync(svgp, 'utf8'));
+	const marked = markNames(raw, keys);
+	const plain = (s) => s.replace(/<[^>]+>/g, '');
+	// ① 吃字？⇒ 去标签后逐字节比 ✓（这里比的是"去掉 span 外壳后原样回来" ✓）
+	if (plain(marked) !== plain(raw)) {
+		lost++; console.log('   ✗ %s：包名字时**文字变了**（吃字 ✗）', n);
+	}
+	// ② 个数：文字里出现的名字次数（长的先算 ✓，与实现同序 ✓）应等于 span 个数 ✓
+	const cntIn = (s) => {
+		let c = 0, i = 0;
+		while (i < s.length) {
+			if (s[i] === '<') { const j = s.indexOf('>', i); i = j < 0 ? s.length : j + 1; continue; }
+			const hit = keys.find((k) => s.startsWith(k, i));
+			if (hit) { c++; i += hit.length; } else i++;
+		}
+		return c;
+	};
+	const want = cntIn(raw);
+	const got = (marked.match(/class="pd-hit"/g) || []).length;
+	if (want !== got) { lost++; console.log('   ✗ %s：想包 %d 个、实际包了 %d 个', n, want, got); }
+	n14++; totSpans += got; totNames += keys.length;
+}
+console.log('⑭ 包名字不吃字：%d 份清单 ⇒ 包了 %d 个可点名字（图上共 %d 个键）；文字有出入 %d 份',
+	n14, totSpans, totNames, lost);
+if (!n14 || !totSpans || lost) fail('「点名字」这一步会吃掉/改动清单文字');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十四项都过', bad || '');
 process.exit(bad ? 1 : 0);
