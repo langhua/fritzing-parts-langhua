@@ -458,7 +458,10 @@ if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全�
 //     ⑥ ★ **文件名另起一行** ✓（用户：「把文件名显示在 ← 下面那一行 …… 超了用 … 截断、
 //        悬停看全名」✓）⇒ **左列的第 2 行** ✓（见 ⑪ ✓）；
 //     ⑦ ★ **文件名最多 40 个字符** ✓（用户 2026-10-08：「最长 40 个字符吧，再长就省略」✓）
+//        ＋ ★ **要带扩展名** ✓（用户：「文件名不加扩展名吗？」✓ —— 原来 `title` 是 stem ✗，
+//        可同名的 `.md`/`.svg`/`.png` 有三个 ✓ ⇒ 分不出指的是哪个 ✗）
 //        ⇒ 见下面那段：**真跑**注入脚本里的 `clip()` ✓（✗ 别在测试里再抄一遍规则 ✗）；
+//        ★ 截长名字时**扩展名要留到最后** ✓（截主干 ✓ ⇒ 否则"要看见扩展名"在长名字上失效 ✗）。
 //     ⑧ ★ **`每 N 秒` 只能 3..99** ✓（用户：「那个输入框太长了，应限制为只能输入 3-99 的数字」✓）
 //        ⇒ `type=number` ＋ `min`/`max` ✓（箭头用 ✓）＋ **真跑** `secs()` ✓ 钳手打的 0 / 500 ✓；
 //     ⑨ ★ **`2 / 3` 不许折行** ✓（用户：「不能换行，必须在同一行了」✓）⇒ `#pos` 得 `white-space:nowrap` ✓
@@ -490,6 +493,19 @@ const hintInRight = headBlock.indexOf('翻页') > headBlock.indexOf('class="hcol
 	&& hcolBlock.indexOf('翻页') < 0 && /\.tips \{[^}]*white-space:normal/.test(slHtml);
 const numbersOnly = /<input id="sec" type="number" min="3" max="99"/.test(slHtml);
 const posNowrap = /#pos \{[^}]*white-space:nowrap/.test(slHtml);
+// ★★ 「文件名不加扩展名吗？」（2026-10-08 用户问 ✓）—— ★ 这条**真读一页** ✓
+//   （✗ 不是"源码里有没有 basename"就算过 ✗）：同名的 `.md` / `.svg` / `.png` 有三个 ✓
+//   ⇒ 名字里**必须**带 `.<ext>` ✓，否则分不出这一页指的是哪个文件 ✗。
+let titleOk = false, titleSample = '没找到 diff-*.md 可读';
+{
+	const bbMd = fs.readdirSync(path.join(PIX, 'diff'))
+		.filter((n) => /^diff-.*\.md$/.test(n)).sort()[0];
+	if (bbMd) {
+		const t = readPage(path.join(PIX, 'diff', bbMd)).title;
+		titleOk = t === bbMd && /\.md$/.test(t);
+		titleSample = `${bbMd} ⇒ title = ${t}`;
+	}
+}
 // ★★ 2026-10-08 用户报「**顶部高度不够**」✓ —— 截图上那个「每 N 秒」输入框**下边框没了** ✓、
 //   文件名只剩半截 ✓。根因**不是**"头写矮了" ✗，是**头被压缩了** ✗：
 //   `.head` 是 body 那个**竖排 flex** 的孩子 ✓ ⇒ 默认 `flex-shrink:1` ✓；
@@ -510,15 +526,20 @@ let clipOk = false, clipSample = '抠不到 clip()';
 if (clipSrc) {
 	try {
 		const clip = new Function('return (' + clipSrc[0] + ')')();
+		const A = (s) => Array.from(s);
 		const long = clip('diff-bb-v100-v104_' + 'x'.repeat(60) + '.md');   // 83 字
 		const at40 = clip('y'.repeat(40));
 		const at39 = clip('y'.repeat(39));
 		const at41 = clip('y'.repeat(41));
-		clipSample = `83 字 ⇒ ${Array.from(long).length} 字（末字 ${Array.from(long).slice(-1)[0]}）；`
-			+ `41 字 ⇒ ${Array.from(at41).length}；40 字 ⇒ ${Array.from(at40).length}（原样 = ${at40 === 'y'.repeat(40)}）；`
-			+ `39 字 ⇒ ${Array.from(at39).length}（原样 = ${at39 === 'y'.repeat(39)}）`;
-		clipOk = Array.from(long).length === 40 && Array.from(long).slice(-1)[0] === '…'
-			&& Array.from(at41).length === 40 && at40 === 'y'.repeat(40) && at39 === 'y'.repeat(39)
+		const longNoExt = clip('z'.repeat(60));
+		clipSample = `83 字（带 .md）⇒ ${A(long).length} 字（末四字 ${A(long).slice(-4).join('')}）；`
+			+ `41 字 ⇒ ${A(at41).length}（末字 ${A(at41).slice(-1)[0]}）；`
+			+ `40 字 ⇒ ${A(at40).length}（原样 = ${at40 === 'y'.repeat(40)}）；`
+			+ `39 字 ⇒ ${A(at39).length}（原样 = ${at39 === 'y'.repeat(39)}）；`
+			+ `60 字无扩展名 ⇒ ${A(longNoExt).length}`;
+		clipOk = A(long).length === 40 && long.endsWith('.md') && long.indexOf('…') >= 0   // ★ 扩展名留着 ✓
+			&& A(at41).length === 40 && A(longNoExt).length === 40
+			&& at40 === 'y'.repeat(40) && at39 === 'y'.repeat(39)
 			// ★ 还得**真用上** ✓（✗ 定义了却没人调，等于没限 ✗）
 			&& slHtml.indexOf('$("name").textContent = clip(d.title)') >= 0;
 	} catch (e) { clipSample = 'clip() 跑不起来：' + e.message; }
@@ -548,12 +569,14 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	+ '每 N 秒只用数字 = %s；3..99 真的钳住 = %s（%s）；「2 / 3」不折行 = %s',
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
 console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
-	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）', !headHazard, wrapShrinks);
+	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）',
+	!headHazard, wrapShrinks, titleOk, titleSample);
 if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk
 	|| !twoCols || !leftTwoRows || !row1All || !hintInRight
-	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks) {
+	|| !numbersOnly || !secsOk || !posNowrap || headHazard || !wrapShrinks || !titleOk) {
 	fail('幻灯片顶部没按用户要求（两列：左列两行 = 按钮行＋文件名，右列一行 = 快捷键提示）'
-		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）');
+		+ '，或按钮/秒数/文件名那几条没守住，或头部会被压扁（overflow:hidden 的孩子自动最小高度为 0 ⇒ 得 flex:0 0 auto）'
+		+ '，或文件名没带扩展名（同名的 .md/.svg/.png 有三个 ⇒ 分不出是哪个）');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：

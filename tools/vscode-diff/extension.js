@@ -496,12 +496,16 @@ function pageList(proj) {
 /** 一页的内容 ✓（标题 ＋ 内联 svg ＋ 已转好的清单 HTML ✓）。 */
 function readPage(mdPath) {
 	const dir = path.dirname(mdPath);
-	const stem = path.basename(mdPath).replace(/\.md$/, '');
+	const name = path.basename(mdPath);
+	const stem = name.replace(/\.md$/, '');
 	const svg = inlineSvg(path.join(dir, stem + '.svg'));
 	// ★ 可点名字在**这里**（Node 一侧）就包好 ✓（与合并视图同一份 `markNames()` ✓，
 	//   ✗ 别让 webview 再去猜文字 ✗ —— 见 `markNames()` 里那个"吃字"的教训 ✓）
 	return {
-		title: stem,
+		// ★★ 2026-10-08 用户问 ✓：「**文件名不加扩展名吗**？」✓ —— 原来是 `stem` ✗（`diff-bb-v95-v104` ✓）
+		//   ⇒ 而同一目录里 `.md` / `.svg` / `.png` **同名的有三个** ✓ ⇒ 光看 stem **分不出指的是哪个** ✗。
+		//   这一页本来就是那个 **`.md`**（双击进合并视图的就是它 ✓、幻灯片串的也是它 ✓）⇒ 带上 ✓。
+		title: name,
 		svg,
 		html: markNames(mdToHtml(fs.readFileSync(mdPath, 'utf8')), keysOf(svg))
 	};
@@ -518,13 +522,20 @@ const SLIDE_JS = [
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
 	// ★★ 2026-10-08 用户定 ✓：「最长 40 个字符吧，再长就省略」✓
-	//   ⇒ **显示**最多 40 个字符（把省略号也算进去 ✓），超了用省略号收尾 ✓。
+	//   ＋「**文件名不加扩展名吗**？」✓ ⇒ 显示的是**带扩展名**的名字 ✓（见 `readPage()` ✓）。
+	//   ⇒ **显示**最多 40 个字符（把省略号也算进去 ✓），超了用省略号收尾 ✓，
+	//     但**扩展名留到最后** ✗（超长时截**主干** ✓，尾巴补 `…` ＋ `.md` ✓ ——
+	//     否则"要看见扩展名"这条在长名字上直接失效 ✓，整串仍 ≤ 40 ✓）。
 	//   ★ 为什么不能只靠 CSS ✗：text-overflow:ellipsis 是**按宽度**截的 ✓ ——
 	//     窗口宽时 100 个字符也照样全显示 ✗，压不住"最长 40 个"这条 ✓（两条一起用 ✓：
 	//     这里限**字数** ✓，CSS 限**宽度** ✓）。title 仍挂全名 ✓（悬停看全 ✓）。
 	'  function clip(s){',
-	'    var a = Array.prototype.slice.call(String(s));',   // 按**码位**数 ✓（✗ 别数 UTF-16 单元 ✗）
-	'    return a.length > 40 ? a.slice(0, 39).join("") + "\\u2026" : String(s);',
+	'    s = String(s);',
+	'    var a = Array.prototype.slice.call(s);',   // 按**码位**数 ✓（✗ 别数 UTF-16 单元 ✗）
+	'    if (a.length <= 40) return s;',
+	'    var m = /\\.[0-9A-Za-z]+$/.exec(s);',
+	'    var ext = (m && m[0].length <= 10) ? m[0] : "";',
+	'    return a.slice(0, Math.max(0, 39 - ext.length)).join("") + "\\u2026" + ext;',
 	'  }',
 	// ★★ 2026-10-08 用户定 ✓：「每 3 秒那个输入框……限制为只能输入 3-99 的数字」✓
 	//   ⇒ `min`/`max` **管得住箭头** ✗ 管不住**手打**的 0 或 500 ✗ ⇒ 起播前统一钳 ✓，
