@@ -402,5 +402,31 @@ if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
 }
 
-console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十六项都过', bad || '');
+// ⑰ ★★ **注入 webview 的脚本必须语法正确** ✗ —— 2026-10-08 的实锤 ✓：
+//   为了共用起播那段，我把它抽成 `replayJs()`（返回**数组** ✓），外层却写成 `replayJs(),` ✗
+//   ⇒ `Array.join()` 把**嵌套数组**按 `,` 拼进来 ✗ ⇒ 生成 `function pdReplay(){,    var svg = …` ✗
+//   ⇒ **整段脚本语法错误** ✓ ⇒ webview 里**一个字符都不执行** ✓ ⇒ 用户报「点击重放按钮没有反应」✓
+//   （而且点行高亮、Esc 也一起失效 ✓ —— 症状比"按钮没反应"更宽 ✓）。
+//   ★ 教训 ✗：上一版测试只断言"HTML 里出现过 `data-anim` 这串字" ✓ —— 那**语法错也照样过** ✗。
+//   ⇒ 这里直接 `new Function(脚本)` ✓（**不是**自己再写一条判据 ✓）：语法错就抛 ✓，当场抓住 ✓。
+let n17 = 0, bad17 = 0;
+for (const [name, s] of [['合并视图', edBar], ['幻灯片', slBar]]) {
+	const m = /<script nonce="[^"]*">([\s\S]*?)<\/script>/.exec(s);
+	if (!m || !m[1].trim()) { bad17++; console.log('   ✗ %s：抽不到注入脚本', name); continue; }
+	n17++;
+	try {
+		new Function(m[1]);                        // ★ 只为**语法**检查 ✓（不执行 ✓）
+	} catch (e) {
+		bad17++;
+		console.log('   ✗ %s：注入脚本语法错 ⇒ webview 里整段不跑：%s', name, e.message);
+	}
+	// ★ 顺带把"抽出来的脚本"落盘 ✓ ⇒ 出事时能直接 `node --check` 那份 ✓（= 可复核 ✓）
+	const dump = path.join(__dirname, '..', '..', '_scratch', 'inject-' + (name === '幻灯片' ? 'slide' : 'editor') + '.js');
+	try { fs.writeFileSync(dump, m[1], 'utf8'); } catch (e) { /* 落盘失败不算错 ✓ */ }
+}
+console.log('⑰ 注入脚本语法：%d 份 ⇒ 语法错 %d 份（落盘在 _scratch/inject-*.js ✓ 出事能直接 node --check ✓）',
+	n17, bad17);
+if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全都没反应');
+
+console.log(bad ? '\n✗ 有 %d 项不对' : '\n✓ 十七项都过', bad || '');
 process.exit(bad ? 1 : 0);

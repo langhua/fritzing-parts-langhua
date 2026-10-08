@@ -1,4 +1,4 @@
-// Pixel 差异视图（差异图 + 差异清单）
+﻿// Pixel 差异视图（差异图 + 差异清单）
 //
 // 用户 2026-10-07 要的：「把 md 文件与 svg/png 显示界面结合起来」。
 //
@@ -310,8 +310,69 @@ function markJs(pane) {
 		'  })();'
 	].join('\n');
 }
+/** ★★ 「▶ 重放动画」的**起播那一段** ✓ —— 合并视图与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+ *
+ *  ★★ 2026-10-08 定（用户）：「**进入时不自动播放**，而是显示 A+B ✓；点击【重放动画】时，
+ *    才从 A 开始变化到 B ✓，并在结束后**停留在 B**」✓。
+ *  ★ 所以图（svg ✓）里只有 `data-anim="<名字>"`（每个变化组 ✓）＋ 根上的 `data-anim-dur`
+ *    （一轮时长 s ✓）✓，`animation` 一律**不预先写** ✗ —— 写了就一进页面自己跑 ✓。
+ *  ★ 起播为什么要"先置 `none` ⇒ 强制重排 ⇒ 再赋" ✗：同一条 `animation` 再赋一遍浏览器
+ *    **不重启动画** ✗ ⇒ 点了没反应 ✓（这是"点按钮重播"最容易漏的一步 ✓）。
+ *  ★✗ 为什么**不能**只写 `getAnimations().currentTime = 0` ✗（上一版就是那么写的 ✓）：
+ *    那只能重播**已经在跑或已跑完**的动画 ✓ —— 而进来时**根本没有动画** ✗ ⇒ 点了毫无反应 ✓
+ *    ⇒ 用户当场报「点击重放按钮没有反应」✓。**兜底**留着这一条 ✓：万一图还是**老格式**
+ *    （`animation` 写死在元素上 ✓）也能重播 ✓。
+ *  ★ `forwards` ✗ 不能省：不写的话动画一结束元素就**弹回**初始 ✗（A 又全亮 ✓、B 又全灭 ✓）
+ *    ⇒ "停留在 B" 当场作废 ✓。
+ *  ★ 按钮**回显**（「▶ 重放中…」⇒ 播完还原 ✓）：就一个 `setTimeout` ✓ ——
+ *    它同时是**诊断** ✓：点了字会变 ⇒ 点击**收到了** ✓；字都不变 ⇒ 起播脚本根本没跑 ✓
+ *    （多半是扩展没重载 ✓，见 README ✓）。
+ *
+ *  ★★ 2026-10-08 踩过的坑（**用户当场报「点击重放按钮没有反应」** ✓）：这段原来是**数组** ✓，
+ *    而我在外层写成 `...replayJs(),` ✗ —— `Array.join()` 会把**嵌套数组**按 `,` 拼进来 ✗
+ *    ⇒ 生成的是 `function pdReplay(){,    var svg = …` ✗ ⇒ **整段 webview 脚本语法错误** ✗
+ *    ⇒ 一个字符都不执行 ✓ ⇒ 按钮**点了毫无反应** ✓（而且高亮、Esc 也一起失效 ✓）。
+ *    ⇒ 必须写成 `...replayJs(),`（展开 ✓）；★ 并且**单测第 ⑰ 项**现在直接 `new Function(脚本)`
+ *    做语法检查 ✓ —— ✗ 光"HTML 里有那串字"是不够的 ✗（这个坑就是这么溜过去的 ✓）。
+ */
+function replayJs() {
+	return [
+		'  function pdReplay(){',
+		'    var svg = document.getElementById("pd-svg") || document.querySelector("#art svg")',
+		'      || document.querySelector(".left svg") || document.querySelector("svg");',
+		'    var dur = (svg && svg.getAttribute("data-anim-dur")) || "0";',
+		'    var els = document.querySelectorAll("[data-anim]");',
+		'    var n = 0, i;',
+		'    if (els.length && Number(dur) > 0) {',
+		'      for (i = 0; i < els.length; i++) els[i].style.animation = "none";',
+		'      void document.body.offsetWidth;              // 强制重排 ⇒ 动画才真的从头 ✓',
+		'      for (i = 0; i < els.length; i++) {',
+		'        els[i].style.animation = els[i].getAttribute("data-anim") + " " + dur + "s linear 1 forwards";',
+		'      }',
+		'      n = els.length;',
+		'    } else {',
+		'      var as = document.getAnimations ? document.getAnimations() : [];',
+		'      for (i = 0; i < as.length; i++) { try { as[i].currentTime = 0; } catch (e) {} }',
+		'      n = as.length;',
+		'    }',
+		'    if (window.__pdLog) {',
+		'      window.__pdLog("重放：图上 data-anim 元素 " + els.length + " 个、data-anim-dur = " + dur',
+		'        + " ⇒ 起了 " + n + " 个动画" + (n ? "" : "（✗ 一个都没起 ⇒ 图是不是老格式 / 是不是没重载扩展）"));',
+		'    }',
+		'    var btn = document.getElementById("pd-replay") || document.getElementById("replay");',
+		'    if (btn && n) {',
+		'      var t0 = btn.textContent;',
+		'      btn.textContent = "▶ 重放中…";',
+		'      setTimeout(function(){ btn.textContent = t0; }, Number(dur) * 1000 + 200);',
+		'    }',
+		'  }'
+	];
+}
+
 const JS = [
 	'(function(){',
+	'  var api = null; try { api = acquireVsCodeApi(); } catch (e) {}',
+	'  window.__pdLog = function(t){ try { if (api) api.postMessage({ cmd: "log", text: t }); } catch (e) {} };',
 	'  var SVG = document.getElementById("pd-svg") || document.querySelector(".left svg") || document.querySelector("svg");',
 	'  var li = Array.prototype.slice.call(document.querySelectorAll("li"));',
 	'  function clear(){',
@@ -323,33 +384,12 @@ const JS = [
 	markJs('.right'),
 	'  document.addEventListener("keydown", function(e){ if (e.key === "Escape") clear(); });',
 	'  if (SVG) SVG.addEventListener("click", clear);',
-	// ★★ 「▶ 重放动画」✓（2026-10-08 定：**进入时不自动播** ✓ —— 一进来看到的是静止的
-	//    **A+B 叠合图** ✓；点了才**从 A 开始**、走完**停在 B** ✓。
-	//    ⇒ 图上（svg 里）只有 `data-anim="<名字>"` ＋ 根上的 `data-anim-dur` ✓；
-	//      起播这件事**只在这里**做 ✓ —— 与幻灯片那份**同一套** ✓）。
-	//    ★ 为什么按钮在图上 ✗ 不行：svg 里那个按钮只在**把 svg 当文档**打开时能点 ✓ ——
-	//      VS Code 的**图片预览**里它是 `<img>` ✗（脚本一律不跑 ✗）、webview 里又会被
-	//      CSP（nonce ✓）挡掉 ✗ ⇒ 用户点着没反应 ✓。⇒ 按钮搬到这里（工具条 ✓），
-	//      **图上不放按钮** ✓（用户 2026-10-08 定 ✓）。
-	//    ★ 起播为什么要"先置 none 再赋回" ✗：同一条 `animation` 再赋一遍浏览器**不重启动画** ✗
-	//      ⇒ 得先 `none` ＋ 强制重排（读 `offsetWidth` ✓）⇒ 再赋 ⇒ 才真的从 0 开始 ✓。
-	//    ★ `forwards` ✗ 不能省：不写的话动画一结束元素就**弹回**初始 ✗（A 又全亮、B 又全灭 ✗）
-	//      ⇒ "停留在 B" 当场作废 ✓。
+	// ★ 按钮在**工具条**上 ✓（图上不放按钮 ✗ —— 用户 2026-10-08 定 ✓）：
+	//   图里那个「▶ 重放」只在"把 svg 当文档"打开时能点 ✓，在图片预览里是 `<img>` ✗、
+	//   在 webview 里又被 CSP 挡 ✗ ⇒ 用户点着没反应 ✓。
 	'  var rp = document.getElementById("pd-replay");',
-	'  if (rp) rp.addEventListener("click", function(){ replay(); });',
-	'  function replay(){',
-	'    var svg = document.getElementById("pd-svg") || document.querySelector(".left svg")',
-	'      || document.querySelector("svg");',
-	'    var dur = (svg && svg.getAttribute("data-anim-dur")) || "0";',
-	'    var els = document.querySelectorAll("[data-anim]");',
-	'    if (!els.length || !(Number(dur) > 0)) return;',
-	'    var i;',
-	'    for (i = 0; i < els.length; i++) els[i].style.animation = "none";',
-	'    void document.body.offsetWidth;                    // 强制重排 ⇒ 动画才真的从头 ✓',
-	'    for (i = 0; i < els.length; i++) {',
-	'      els[i].style.animation = els[i].getAttribute("data-anim") + " " + dur + "s linear 1 forwards";',
-	'    }',
-	'  }',
+	'  if (rp) rp.addEventListener("click", function(){ pdReplay(); });',
+	...replayJs(),                       // ★ 展开 ✗ 别写成 `...replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
 	'})();'
 ].join('\n');
 
@@ -456,6 +496,7 @@ function readPage(mdPath) {
 const SLIDE_JS = [
 	'(function(){',
 	'  var api = acquireVsCodeApi();',
+	'  window.__pdLog = function(t){ try { api.postMessage({ cmd: "log", text: t }); } catch (e) {} };',
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
 	'  function bindHighlight(){',
@@ -492,21 +533,10 @@ const SLIDE_JS = [
 	'    timer = setInterval(function(){ go(idx + 1); }, sec * 1000);',
 	'    $("play").textContent = "⏸ 暂停";',
 	'  });',
-	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 与合并视图那份**同一套** ✓
-	//   （`data-anim` ＋ `data-anim-dur` ⇒ 先 none ＋ 重排 ⇒ 再赋 ⇒ 从头播 ✓）。
-	//   幻灯片一页只有一个 svg ✓ ⇒ 拨到的就是当前这页 ✓。
-	'  $("replay").addEventListener("click", function(){',
-	'    var svg = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
-	'    var dur = (svg && svg.getAttribute("data-anim-dur")) || "0";',
-	'    var els = document.querySelectorAll("[data-anim]");',
-	'    if (!els.length || !(Number(dur) > 0)) return;',
-	'    var i;',
-	'    for (i = 0; i < els.length; i++) els[i].style.animation = "none";',
-	'    void document.body.offsetWidth;',
-	'    for (i = 0; i < els.length; i++) {',
-	'      els[i].style.animation = els[i].getAttribute("data-anim") + " " + dur + "s linear 1 forwards";',
-	'    }',
-	'  });',
+	// ★★ 2026-10-08 加 ✓：**本页**动画重放 ✓ —— 与合并视图那份**同一套** ✓（`replayJs()` ✓）。
+	//   幻灯片一页只有一个 svg ✓ ⇒ 起的就一定是当前这页 ✓。
+	'  $("replay").addEventListener("click", function(){ pdReplay(); });',
+	...replayJs(),                       // ★ 展开 ✗ 别写成 `...replayJs(),` ✗ —— 见 `replayJs()` 处的教训 ✓
 	'  document.addEventListener("keydown", function(e){',
 	'    if (e.key === "ArrowRight" || e.key === "PageDown") go(idx + 1);',
 	'    else if (e.key === "ArrowLeft" || e.key === "PageUp") go(idx - 1);',
@@ -563,6 +593,9 @@ async function cmdSlideshow() {
 		vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [vscode.Uri.file(proj)] });
 	panel.webview.html = slideshowHtml(panel.webview, String(Date.now()), pages.length);
 	panel.webview.onDidReceiveMessage((msg) => {
+		// ★ 图里那两段脚本会回话 ✓（`window.__pdLog` ✓）：起播成没成、起了几个动画 ✓ ——
+		//   用户报「点了没反应」时，**先看这一行** ✓（✗ 别靠猜 ✗）。
+		if (msg && msg.cmd === 'log') return void log('[webview] ' + msg.text);
 		if (!msg || (msg.cmd !== 'ready' && msg.cmd !== 'page')) return;
 		const i = msg.cmd === 'ready' ? 0 : ((msg.index % pages.length) + pages.length) % pages.length;
 		const p = readPage(pages[i]);
@@ -595,6 +628,11 @@ class DiffEditor {
 				nonce);
 		};
 		draw();
+		// ★ 图里那两段脚本会回话 ✓（`window.__pdLog` ✓）：起播成没成、起了几个动画 ✓ ——
+		//   用户报「点了没反应」时，**先看「Pixel 差异」输出通道这一行** ✓（✗ 别靠猜 ✗）。
+		panel.webview.onDidReceiveMessage((msg) => {
+			if (msg && msg.cmd === 'log') log('[webview] ' + msg.text);
+		});
 		this.context.subscriptions.push(
 			vscode.workspace.onDidChangeTextDocument((e) => {
 				if (e.document.uri.toString() === document.uri.toString()) draw();
@@ -691,3 +729,5 @@ module.exports = {
 	_pure: { listVersions, newestDiffMd, mdToHtml, PAD_RE_SRC, ROW_RE_SRC, reLit, dirs, pageList,
 	         readPage, CSS, slideshowHtml, html, patRe, keysOf, markNames }
 };
+
+
