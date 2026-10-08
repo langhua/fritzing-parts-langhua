@@ -16,6 +16,9 @@ r"""把 sketch 的 **pcbView** 画成预览图 ✓（2026-09-30 立）
     `pcb_pads.HOLE_DRAW_OFF_MM` 换算 ✓（`<geometry>` **不是**孔心 ✗）。
   · 走线：`pcb_wire` 读出的绝对端点 ✓，**同色分两层** ✓，**线宽 = 实物** ✓
     （`wireExtras@mils` ✓ ⇒ 如 `12 mil` = 0.3048 mm ✓；没写的才回退 0.25 单位 ✓）
+    ★★ **弯曲的走线照弧画** ✓（`<bezier><cp0/><cp1/>` ⇒ 三次贝塞尔 ✓，写法同 Fritzing 导出 ✓）
+    —— 2026-10-08 用户对图指出 ✗：v59 的 `5V/GND` `24 mil` 粗线里 5 根是弧线 ✓，
+    ✗ 旧版画成直弦 ✗ ⇒ 一眼就不一样 ✗。
   · ★★ 过孔：**照 Fritzing 自己导出的画法** ✓ —— **只有环** ✓（`fill="none"` ✓）
     （2026-10-01 二次修 ✗：先修掉了"实心绿点"✗，但我又自己加了个**白心孔**✗ ⇒
      Fritzing 环里是**透的**（透出焊盘铜 ✓）、我的是白点 ✗ ⇒ 同一个孔两种观感 ✗；
@@ -319,12 +322,27 @@ def render(model, px_per_mm=12.0, opts=()):
     #     ✗ 旧版写死 `0.25` 单位 = **0.0705 mm** ✗ ⇒ 比实物（v47 = `12 mil` = **0.3048 mm** ✓）
     #     细 **4.3 倍** ✗ ⇒ 线看着像发丝、过孔看着被“放大” ✗（2026-10-01 用户让改 ✓）。
     #     没写 `wireExtras` 的老线 ⇒ 回退到原来的 0.25 ✓（不改变旧行为 ✓）。
+    # ★★ 曲线走线 ✓：`<bezier>` 的走线在 Fritzing 里是**三次贝塞尔**（导出也照此写成
+    #   `<path d="M…C…">` ✓）—— 实测 v59 的 `5V/GND` `24 mil` 粗线里 **5/15** 根是弧线 ✓。
+    #   ✗ 旧版一律画成**直弦** ✗ ⇒ 弧线被拉直，与 Fritzing 一眼就不一样 ✗
+    #     （2026-10-08 用户对图点名 ✓）⇒ 有控制点就出 `path`（与导出同一种写法 ✓），没有才是 `line` ✓。
+    n_curve, n_curve_drawn = 0, 0
     for t in model["traces"]:
         c = C_W1 if t["layer"] == "copper1" else C_W0
         w = PB.mils_to_units(t.get("mils"), 0.25)
-        o.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
-                 'stroke-width="%.2f" stroke-linecap="round"/>'
-                 % (X(t["a"][0]), Y(t["a"][1]), X(t["b"][0]), Y(t["b"][1]), c, max(0.6, w * k)))
+        sw = max(0.6, w * k)
+        bz = t.get("bez")
+        if bz:
+            n_curve += 1
+            o.append('<path d="M%.2f,%.2f C%.2f,%.2f %.2f,%.2f %.2f,%.2f" fill="none" '
+                     'stroke="%s" stroke-width="%.2f" stroke-linecap="round"/>'
+                     % (X(t["a"][0]), Y(t["a"][1]), X(bz[0][0]), Y(bz[0][1]),
+                        X(bz[1][0]), Y(bz[1][1]), X(t["b"][0]), Y(t["b"][1]), c, sw))
+            n_curve_drawn += 1
+        else:
+            o.append('<line x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" stroke="%s" '
+                     'stroke-width="%.2f" stroke-linecap="round"/>'
+                     % (X(t["a"][0]), Y(t["a"][1]), X(t["b"][0]), Y(t["b"][1]), c, sw))
     # ★★ 焊盘：**不再叠自己画的方块** ✗（2026-10-01 按用户要求改 ✓）
     #   ✗ 以前会在"件自己的铜箔原文"之上再画一层半透明矩形 ✗ ⇒
     #     焊盘的**观感尺寸/边缘**与 Fritzing 不一样 ✗ ⇒ 用户看到"过孔与焊盘的相对位置变了" ✗
@@ -409,7 +427,13 @@ def render(model, px_per_mm=12.0, opts=()):
         vsz = "孔 %.2f / 环 %.2f mm" % szs[0]
     _STATS.update(pads=len(model["pads"]), traces=len(model["traces"]),
                   vias=len(model["vias"]), copper=n_parts, silk=n_silk, holes=len(holes),
-                  via_sz=vsz)
+                  via_sz=vsz, curve=n_curve)
+    # ★ 自检 ✓：模型里带控制点的走线**每条都要落成一个 `<path>`** ✗ ——
+    #   `n_curve` 是模型侧数的 ✓、`n_curve_drawn` 是**写进 svg 的** ✓ ⇒ 两个数必须相等 ✓
+    #   （✗ 不等 = 有人又把弧过滤掉了 ✗ —— 这正是 2026-10-08 那个 bug 的样子 ✓）。
+    if n_curve != n_curve_drawn:
+        print("⚠ 弯曲走线 %d 条，但只写出 %d 条 `<path>` ✗ ⇒ 有弧被丢了 ✗（检查 `bez` 传递 ✓）"
+              % (n_curve, n_curve_drawn))
     return "\n".join(o)
 
 
@@ -425,10 +449,10 @@ def main(argv):
     model = PC.collect(fzz)
     svg = render(model, px, [a for a in argv if a.startswith("--")])
     open(out, "w", encoding="utf-8", newline="\n").write(svg)
-    print("✓ 写出 %s（%d 字节）：焊盘 %d / 走线 %d / 过孔 %d（%s）/ 铜箔块 %d / 丝印块 %d / 孔 %d / 板框 %s"
+    print("✓ 写出 %s（%d 字节）：焊盘 %d / 走线 %d（其中弯曲 %d ✓）/ 过孔 %d（%s）/ 铜箔块 %d / 丝印块 %d / 孔 %d / 板框 %s"
           % (out, len(svg), _STATS.get("pads", 0), _STATS.get("traces", 0),
-             _STATS.get("vias", 0), _STATS.get("via_sz", "—"), _STATS.get("copper", 0),
-             _STATS.get("silk", 0), _STATS.get("holes", 0),
+             _STATS.get("curve", 0), _STATS.get("vias", 0), _STATS.get("via_sz", "—"),
+             _STATS.get("copper", 0), _STATS.get("silk", 0), _STATS.get("holes", 0),
              ("%.2f×%.2f mm" % ((model["board"][2] - model["board"][0]) * PW.SK,
                                 (model["board"][3] - model["board"][1]) * PW.SK))
              if model["board"] else "读不出 ✗"))

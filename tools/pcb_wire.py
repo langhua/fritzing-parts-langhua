@@ -125,6 +125,19 @@ def parse_trace(block):
                 mils=float(we.group(1)) if we else None)
 
 
+def ctrl_pts(geo, bezier):
+    """贝塞尔的**绝对**控制点 ✓ ⇒ `(c0, c1)`；`bezier is None` ⇒ `None` ✓
+
+    口径：`<geometry>` 的 `(x, y)` 是 loc ✓、`x1..y2` 与 `cp0/cp1` 都在这套**局部系**里 ✓
+    ⇒ 控制点 = `loc + cp0` / `loc + cp1` ✓（与 `x1..y2` 同一个原点 ✓，见 `parse_trace` ✓）。
+    """
+    if not bezier:
+        return None
+    x, y = float(geo.get("x", 0)), float(geo.get("y", 0))
+    return ((x + bezier[0][0], y + bezier[0][1]),
+            (x + bezier[1][0], y + bezier[1][1]))
+
+
 def curve_pts(geo, bezier, n=24):
     """走线的**真实路径** ✓ ⇒ 采样点表（绝对坐标 ✓）
 
@@ -135,10 +148,10 @@ def curve_pts(geo, bezier, n=24):
     x, y = float(geo.get("x", 0)), float(geo.get("y", 0))
     p0 = (x + float(geo.get("x1", 0)), y + float(geo.get("y1", 0)))
     p3 = (x + float(geo.get("x2", 0)), y + float(geo.get("y2", 0)))
-    if not bezier:
+    cp = ctrl_pts(geo, bezier)
+    if cp is None:
         return [p0, p3]
-    c0 = (x + bezier[0][0], y + bezier[0][1])
-    c1 = (x + bezier[1][0], y + bezier[1][1])
+    c0, c1 = cp
     out = []
     for i in range(n + 1):
         t = i / float(n)

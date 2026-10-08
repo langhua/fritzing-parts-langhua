@@ -341,6 +341,12 @@ def collect(path):
         mi = re.search(r'modelIndex="(\d+)"', b)
         traces.append(dict(layer=t["layer"][:-5] if t["layer"].endswith("trace") else t["layer"],
                            a=e[0], b=e[1],
+                           # ★★ 曲线走线的**绝对控制点** ✓（`<bezier><cp0/><cp1/>` ⇒ 三次贝塞尔 ✓）
+                           #   ✗ 只带端点 ⇒ 渲染器把弯曲的电源线画成**直弦** ✗ ——
+                           #   2026-10-08 用户对图指出 ✓：v59 的 5V/GND `24 mil` 粗线在 Fritzing 里
+                           #   是弧线 ✓、导出里也是 `<path d="M…C…">` ✓（实测 5/15 根 24mil 带 `bezier` ✓）
+                           #   ⇒ 模型里**必须**带着它 ✓，渲染器才画得出同一条弧 ✓。
+                           bez=PW.ctrl_pts(t["geo"], t.get("bezier")),
                            # ★ 线宽跟着走 ✓（`<wireExtras mils>` ✓）⇒ 渲染器照实物画 ✓
                            #   ✗ 旧版没有它 ⇒ 预览把每根线画成死值 ✗（v47 实宽 0.3048 mm ✓）。
                            mils=t.get("mils"),
