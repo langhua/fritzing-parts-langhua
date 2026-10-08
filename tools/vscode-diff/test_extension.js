@@ -439,18 +439,18 @@ const oneImpl = pdReplayOf(edBar) !== '' && pdReplayOf(edBar) === pdReplayOf(slB
 //   ⇒ 判据：脚本里得**先找 `.lbl`、找不到才回落到按钮** ✓（合并视图那个没有 `.lbl` ✓）。
 // ★★ 还要守**用户刚报的那个坑** ✗：「点击一次，就一直在重放中，不会停止了吗？」✓ ——
 //   连点两次复现了 ✓：原来每次点都 `t0 = 当前文字` ✗ ⇒ 播到一半再点，`t0` 抓到的已经是
-//   **「重放中…」** ✓ ⇒ 到点还原成"重放中…" ⇒ **永远卡住** ✗（实测等 9 秒还是它 ✓）。
+//   **「播放中…」** ✓ ⇒ 到点还原成"播放中…" ⇒ **永远卡住** ✗（实测等 9 秒还是它 ✓）。
 //   ⇒ 判据：原字**只记一次** ✓（`__pdT0` ✓、`== null` 才写 ✓）、计时器**先清再设** ✓（`clearTimeout` ✓）。
 const fbSrc = pdReplayOf(slBar);
 const fbOk = /querySelector\("\.lbl"\) \|\| btn/.test(fbSrc)
-	&& /lbl\.textContent = "重放中/.test(fbSrc)
-	&& !/btn\.textContent\s*=\s*[^;]*重放中/.test(fbSrc);
+	&& /lbl\.textContent = "播放中/.test(fbSrc)              // ★ 用户 2026-10-08 定：回显字是「播放中…」✓
+	&& !/btn\.textContent\s*=\s*[^;]*播放中/.test(fbSrc);
 const reLabelOk = /if \(btn\.__pdT0 == null\) btn\.__pdT0 = lbl\.textContent/.test(fbSrc)
 	&& /clearTimeout\(btn\.__pdTimer\)/.test(fbSrc)
 	&& /btn\.__pdTimer = setTimeout/.test(fbSrc);
 console.log('⑯ 起播口径：%d 张带动画的图 ⇒ 缺 data-anim-dur %d、内联 animation %d、图内播放键 %d、条数不匹配 %d；'
 	+ '合并视图脚本认 data-anim = %s；幻灯片顶栏没有旧按钮 = %s；两处起播同一份实现 = %s；'
-	+ '回显只改文字（✗ 不冲掉图形） = %s；**连点也不会卡在「重放中…」** = %s',
+	+ '回显只改文字（✗ 不冲掉图形） = %s；**连点也不会卡在「播放中…」** = %s',
 	n16, noDur, inlineAnim, btn, mismatch, startCode, noOldButton, oneImpl, fbOk, reLabelOk);
 if (!n16 || noDur || inlineAnim || btn || mismatch || !startCode || !noOldButton || !oneImpl || !fbOk || !reLabelOk) {
 	fail('动画要么会自己播、要么点了播不起来（口径：进来 = A+B、点了从 A 到 B、停在 B）');
