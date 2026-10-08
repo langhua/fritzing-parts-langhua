@@ -510,13 +510,22 @@ function readPage(mdPath) {
 // 幻灯片里的脚本：翻页 ＋ 自动播放 ＋ 键盘 ✓，并**保持**「点行 ⇒ 高亮」✓（每换一页重新绑 ✓）。
 //   ★★ 2026-10-08：**本页没有「▶ 重放动画」按钮了** ✗（用户：「点击截图1中工具栏上的
 //     【重放动画】按钮，没有反应。建议删掉工具栏的【重放动画】按钮，使用截图2的方式」✓）——
-//     重放统一去**合并视图**那条工具条上点 ✓（双击 `diff/*.md` 就是它 ✓）。
+//     重放去**合并视图**里**图下面**那个按钮点 ✓（双击 `diff/*.md` 就是它 ✓）。
 //     ⇒ 于是这里既不绑 `#replay` ✓、也不带 `replayJs()` ✓（✗ 别留死代码 ✗）。
 const SLIDE_JS = [
 	'(function(){',
 	'  var api = acquireVsCodeApi();',
 	'  var idx = -1, total = 0, timer = null;',
 	'  function $(id){ return document.getElementById(id); }',
+	// ★★ 2026-10-08 用户定 ✓：「文件名字太长了吧？最长 60 个字符吧，再长就省略」✓
+	//   ⇒ **显示**最多 60 个字符（把省略号也算进去 ✓），超了用 `…` 收尾 ✓。
+	//   ★ 为什么不能只靠 CSS ✗：`text-overflow:ellipsis` 是**按宽度**截的 ✓ ——
+	//     窗口宽时 100 个字符也照样全显示 ✗，压不住"最长 60 个"这条 ✓（两条一起用 ✓：
+	//     这里限**字数** ✓，CSS 限**宽度** ✓）。`title` 仍挂全名 ✓（悬停看全 ✓）。
+	'  function clip(s){',
+	'    var a = Array.prototype.slice.call(String(s));',   // 按**码位**数 ✓（✗ 别数 UTF-16 单元 ✗）
+	'    return a.length > 60 ? a.slice(0, 59).join("") + "\\u2026" : String(s);',
+	'  }',
 	'  function bindHighlight(){',
 	'    var SVG = $("pd-svg") || document.querySelector("#art svg") || document.querySelector("svg");',
 	'    var li = Array.prototype.slice.call(document.querySelectorAll("#list li"));',
@@ -536,8 +545,9 @@ const SLIDE_JS = [
 		+ '（这一条没找到 svg 图）</div>";',
 	'    $("list").innerHTML = d.html;',
 	'    $("pos").textContent = (idx + 1) + " / " + total;',
-	// ★ 文件名**单独一行** ✓（`.name` ✓，CSS 负责截断 ✓）；`title` 给**全名** ✓（悬停就看得见 ✓）。
-	'    $("name").textContent = d.title;',
+	// ★ 文件名**单独一行** ✓（`.name` ✓）：这里**限 60 个字符** ✓（超了用 `…` 收尾 ✓），
+	//   CSS 再管**宽度**截断 ✓；`title` 给**全名** ✓（悬停就看得见 ✓）。
+	'    $("name").textContent = clip(d.title);',
 	'    $("name").title = d.title;',
 	'    bindHighlight();',
 	'  }',
@@ -610,8 +620,10 @@ function slideshowHtml(webview, nonce, n) {
   #pos { opacity:.85; }
   /* ★★ 2026-10-08 用户定 ✓：「把文件名显示在 ← 下面那一行，如果文件名超过一定字符数，
      则用 ... 截断，鼠标放在上面时显示全文件名」✓
-     ⇒ 第二行 ✓，**超宽自动截断** ✓（text-overflow:ellipsis ✓ —— 宽度随窗口变 ✓，
-       ✗ 比写死"几个字符"更稳 ✓），title 挂全名 ✓。 */
+     ＋「最长 60 个字符吧，再长就省略」✓
+     ⇒ 第二行 ✓；**两层截断** ✓：脚本限**字数**（超 60 ⇒ 收一个省略号 ✓，✗ CSS 做不到这个 ✗）
+       ＋ 这里限**宽度** ✓（text-overflow:ellipsis ✓ —— 窄窗口也不撑破 ✓）；
+       title 挂全名 ✓（悬停看全 ✓）。 */
   .name { padding:2px 10px 6px; font-size:12px; opacity:.9;
           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style></head><body>

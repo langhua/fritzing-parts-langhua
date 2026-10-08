@@ -456,7 +456,9 @@ if (!n17 || bad17) fail('注入 webview 的脚本语法错 → 按钮/高亮全�
 //     ⑤ ★ **顺序是 `← ▶ →`** ✓（用户：「把 **▶ 和 → 互换一下位置**」✓ —— 原来是 `← → ▶` ✗）
 //        ⇒ 从 HTML 里**按出现次序**抠出三个 id 来对 ✓（✗ 不是"三个都在"就算过 ✗）；
 //     ⑥ ★ **文件名另起一行** ✓（用户：「把文件名显示在 ← 下面那一行 …… 超了用 … 截断、
-//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.name` 空行 ✓，且它带 `ellipsis` 截断 ✓。
+//        悬停看全名」✓）⇒ `.top` **后面**得有个 `.name` 空行 ✓，且它带 `ellipsis` 截断 ✓；
+//     ⑦ ★ **文件名最多 60 个字符** ✓（用户 2026-10-08：「文件名字太长了吧？最长 60 个字符吧，
+//        再长就省略」✓）⇒ 见下面那段：**真跑**注入脚本里的 `clip()` ✓（✗ 别在测试里再抄一遍规则 ✗）。
 const slHtml = slideshowHtml({ cspSource: '' }, 'N', 1);
 const tips = ['上一条', '下一条', '自动播放'];
 const noWords = !/<button[^>]*>(?![←→▶■])[^<]*(上一条|下一条|自动播放|暂停)/.test(slHtml);
@@ -468,11 +470,34 @@ const orderOk = btnOrder === 'prev,play,next';
 const nameRow = /<div class="name" id="name"><\/div>/.test(slHtml)
 	&& slHtml.indexOf('id="name"') > slHtml.indexOf('<div class="top">')
 	&& /\.name \{[^}]*text-overflow:ellipsis/.test(slHtml);
+// ★★ 文件名**最多 60 个字符** ✓（用户 2026-10-08：「最长 60 个字符吧，再长就省略」✓）——
+//   ★ 这里**把注入脚本里那个 `clip()` 抠出来真跑一遍** ✓（✗ 不是"源码里有 60 这串字"就算过 ✗，
+//     也不是在这里**再写一遍**截断规则 ✗ —— 那就是两份实现，迟早对不上 ✓）。
+const clipSrc = /function clip\(s\)\{[\s\S]*?\n\s*\}/.exec(slHtml);
+let clipOk = false, clipSample = '抠不到 clip()';
+if (clipSrc) {
+	try {
+		const clip = new Function('return (' + clipSrc[0] + ')')();
+		const n = (s) => clip(s).length;
+		const long = clip('diff-bb-v100-v104_' + 'x'.repeat(60) + '.md');   // 83 字
+		const at60 = clip('y'.repeat(60));
+		const at59 = clip('y'.repeat(59));
+		const at61 = clip('y'.repeat(61));
+		clipSample = `83 字 ⇒ ${Array.from(long).length} 字（末字 ${Array.from(long).slice(-1)[0]}）；`
+			+ `61 字 ⇒ ${Array.from(at61).length}；60 字 ⇒ ${Array.from(at60).length}（原样 = ${at60 === 'y'.repeat(60)}）；`
+			+ `59 字 ⇒ ${Array.from(at59).length}（原样 = ${at59 === 'y'.repeat(59)}）`;
+		clipOk = Array.from(long).length === 60 && Array.from(long).slice(-1)[0] === '…'
+			&& n(at61) === 60 && at60 === 'y'.repeat(60) && at59 === 'y'.repeat(59)
+			// ★ 还得**真用上** ✓（✗ 定义了却没人调，等于没限 ✗）
+			&& slHtml.indexOf('$("name").textContent = clip(d.title)') >= 0;
+	} catch (e) { clipSample = 'clip() 跑不起来：' + e.message; }
+}
 console.log('⑱ 幻灯片按钮：只有符号 = %s；title 三条齐 = %s；点 ▶ 变 ■/停止 = %s；'
-	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；文件名另起一行 = %s',
-	noWords, hasTitles, stopOk, noPause, btnOrder, nameRow);
-if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow) {
-	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止；顺序 ← ▶ →；文件名另起一行）');
+	+ '没有「暂停」/⏸ = %s；顺序 = %s（应为 prev,play,next = ← ▶ → ✓）；文件名另起一行 = %s；'
+	+ '文件名 ≤ 60 字 = %s（%s）',
+	noWords, hasTitles, stopOk, noPause, btnOrder, nameRow, clipOk, clipSample);
+if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !nameRow || !clipOk) {
+	fail('幻灯片那三个按钮没按用户要求改（只要符号 ＋ title 提示；点 ▶ 变 ■/停止；顺序 ← ▶ →；文件名另起一行且 ≤ 60 字）');
 }
 
 // ⑲ ★★ **CSS 注释里不许写反引号** ✗ —— 2026-10-08 一天踩了**三次** ✓，值得一条机器守 ✓：
