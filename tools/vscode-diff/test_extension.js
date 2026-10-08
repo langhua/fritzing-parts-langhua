@@ -573,15 +573,19 @@ const triIsClip = !!stepAfter && /clip-path:\s*polygon\(/.test(stepAfter[1]);
 const heightsEqual = stepH > 0 && barShaved && triFull;            // ★ 量出来的结果就是"看起来等高" ✓
 const stepSample = `容器高 ${stepH}px；竖线收半像素 = ${barShaved}；三角 height:100% = ${triFull}；`
 	+ `竖线是 border-left = ${barIsBorder}；三角 clip-path = ${triIsClip}；居中 = ${stepCentered}`;
-// ★ 两处记号**仍然不同** ✓（用户：「两者**完全不同**啊！」✓）——
-//   合并视图 = **▶ 字符**（重放 ✓）；幻灯片 = **CSS 画的 `.step`**（步进 ✓）。
+// ★ 两边**文字一样** ✓、**记号不一样** ✓（用户：「两者**完全不同**啊！」✓）——
+//   合并视图 = **▶ 字符**（真字符 ✓）；幻灯片 = **CSS 画的 .step**（竖线＋三角 ✓）。
+//   ★ 两边的记号都**在 .lbl 外面** ✓ ⇒ 起播回显（只改 .lbl ✓）时**它们都还在** ✓
+//     ⇒ 播放中两边都显示"记号 ＋ 播放中…" ✓ —— ✗ 不许把记号也换掉 ✗（那样两个界面看着不一样 ✓）。
 //   ★ 判据必须**只看那个按钮自己** ✗（✗ 别看整个页面 ✗ —— 实测栽过 ✓：
 //     `slHtml` 里本来就有别的 ▶ ✓（那是"自动播放"按钮 ✓）、⏭ 也只是**注释里提过** ✓
 //     ⇒ 全页搜字符必然假失败 ✓）。
 const btnOf = (s) => (/<button id="pd-replay">([\s\S]*?)<\/button>/.exec(s) || [, ''])[1].trim();
 const edBtn = btnOf(edBar), slBtn = btnOf(slHtml);
-const glyphsDiffer = edBtn === '\u25B6 重放动画'
-	&& /class="step"/.test(slBtn) && /class="lbl">播放差异</.test(slBtn)
+// ★ 两边**文字一样** ✓（都叫「播放差异」✓ —— 用户 2026-10-08 把合并视图那个也改成了同名 ✓）、
+//   **记号不一样** ✓：合并视图 = **▶ 真字符** ✓、幻灯片 = **CSS 画的**竖线＋三角 ✓。
+const glyphsDiffer = edBtn === '<span class="ic" aria-hidden="true">\u25B6</span><span class="lbl">播放差异</span>'
+	&& /^<span class="step"[^>]*><\/span><span class="lbl">播放差异<\/span>$/.test(slBtn)
 	&& !/[\u25B6\u23ED\u23EE\u21E5\u23F5]/.test(slBtn);     // ★ 幻灯片那个按钮里**不许有字符记号** ✓
 // ★★ 「文件名不加扩展名吗？」（2026-10-08 用户问 ✓）—— ★ 这条**真读一页** ✓
 //   （✗ 不是"源码里有没有 basename"就算过 ✗）：同名的 `.md` / `.svg` / `.png` 有三个 ✓
@@ -662,8 +666,8 @@ console.log('   ⑱ 续：顶部两列 = %s；左列两行（文件名在第 2 �
 	twoCols, leftTwoRows, row1All, hintInRight, numbersOnly, secsOk, secsSample, posNowrap);
 console.log('   ⑱ 再续：头部「不会被压扁」 = %s（窄窗口/矮窗口时不许被切 ✓）；'
 	+ '该缩的是内容区 = %s（flex:1 1 auto ＋ min-height:0 ✓）；文件名**带扩展名** = %s（%s）；'
-	+ '右栏清单上方有【播放差异】 = %s；两处记号**不同** = %s'
-	+ '（合并视图 ›▶ 重放‹ 用字符 ✓ / 幻灯片 ›步进‹ 用 CSS 画 ✓）；'
+	+ '右栏清单上方有【播放差异】 = %s；两处**文字同名、记号不同** = %s'
+	+ '（合并视图 = ▶ 真字符 ✓ / 幻灯片 = **CSS 画的**竖线＋三角 ✓；两边的记号都**在 .lbl 外面** ⇒ 回显时留着 ✓）；'
 	+ '**图形与竖线等高** = %s（%s）',
 	!headHazard, wrapShrinks, titleOk, titleSample, replayInRight, glyphsDiffer, heightsEqual, stepSample);
 if (!noWords || !hasTitles || !stopOk || !noPause || !orderOk || !clipOk

@@ -310,7 +310,9 @@ function markJs(pane) {
 		'  })();'
 	].join('\n');
 }
-/** ★★ 「▶ 重放动画」的**起播那一段** ✓ —— 合并视图与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+/** ★★ 「▶ 播放差异」的**起播那一段** ✓ —— 合并视图与幻灯片**共用这一份** ✗（别抄两遍 ✓）。
+ *   ★ 这名字改过 ✗：原叫「▶ 重放动画」 ✓（用户 2026-10-08 先要「▶ 播放差异」的是幻灯片那个 ✓、
+ *     接着把合并视图这个也改成了同名 ✓）⇒ 两边**文字一样** ✓、**记号不一样** ✓（见 CSS 的 .step ✓）。
  *
  *  ★★ 2026-10-08 定（用户）：「**进入时不自动播放**，而是显示 A+B ✓；点击【重放动画】时，
  *    才从 A 开始变化到 B ✓，并在结束后**停留在 B**」✓。
@@ -418,7 +420,7 @@ const CSS = `
   body { margin:0; font-family: var(--vscode-font-family); color: var(--vscode-editor-foreground); }
   .wrap { display:flex; height:100vh; }
   .pane { overflow:auto; }
-  /* ★ 图的这一栏改成**竖排** ✓（图 ＋ 图下面那个「▶ 重放动画」✓）——
+  /* ★ 图的这一栏改成**竖排** ✓（图 ＋ 图下面那个「▶ 播放差异」✓）——
      ✗ 原来 justify-content:center 是"图只一个、横向居中"用的 ✓，多一个孩子就变成并排了 ✗。
      ★ 这里在**模板字符串**里 ⇒ ✗ 注释里别写反引号 ✗（一写就把模板截断 ✓ —— 当天踩过两次 ✓）。 */
   .left { flex:2 1 0; background:#ffffff; display:flex; flex-direction:column; align-items:center;
@@ -426,7 +428,7 @@ const CSS = `
   .art { max-width:100%; }
   .left img, .art svg { max-width:100%; height:auto; }
   .art svg { cursor:default; }
-  /* ★★ 2026-10-08 用户定 ✓：「把这个（▶ 重放动画）**嵌入在差异的下面**就好了吧？」✓
+  /* ★★ 2026-10-08 用户定 ✓：「把这个（▶ 播放差异）**嵌入在差异的下面**就好了吧？」✓
      ⇒ 按钮贴在图的**正下方** ✓；sticky bottom ⇒ 图比一屏高时**始终够得着** ✓。 */
   .under { position:sticky; bottom:0; margin-top:8px; padding:2px 6px;
            background: var(--vscode-editor-background); border-radius:3px; }
@@ -481,8 +483,19 @@ function html(webview, mdText, svgText, imgUri, imgName, hint, nonce) {
 		? `<div class="art">${svgText}</div>`
 		: (imgUri ? `<img src="${imgUri}" alt="${esc(imgName || 'diff')}">`
 			: `<div class="hint" style="padding:16px">${esc(hint || '还没生成差异图')}</div>`);
-	// ★★ 2026-10-08：`▶ 重放动画` 从右栏工具条**搬到了图的正下方** ✓（`.under` ✓ —— 见 CSS 与 JS 处的注释 ✓）。
-	const under = svgText ? '<div class="under"><button id="pd-replay">▶ 重放动画</button></div>' : '';
+	// ★★ 2026-10-08：`▶ 播放差异` 从右栏工具条**搬到了图的正下方** ✓（`.under` ✓ —— 见 CSS 与 JS 处的注释 ✓）。
+	//   ★ 原名叫「▶ 重放动画」 ✓ —— 用户 2026-10-08 又定：「▶ 重放差异 改为 **▶ 播放差异** 吧？」✓
+	//     ⇒ 跟幻灯片那个**同名**了 ✓（两边都是"播放差异" ✓），**区别只剩记号** ✓：
+	//     这边 ▶（真字符 ✓）、幻灯片那边**画出来的**竖线＋三角（= 步进 ✓）。
+	//   ★ ★ ▶ **放在 .lbl 外面** ✓ ⇒ 起播回显（只改 .lbl ✓）时**它照样在** ✓
+	//     ⇒ 播放中显示「▶ 播放中…」✓ —— 与幻灯片那边"图形留着 ✓"**行为一致** ✓
+	//     （✗ 以前整块文字被换掉 ⇒ 播放中 ▶ 会消失几秒 ✗，两个界面看着不一样 ✓）。
+	//   ★ ▶ 自己包一个 `aria-hidden` 的小块 ✓ ⇒ 与幻灯片那个记号**结构对称** ✓
+	//     （✗ 不然读屏会把"▶"念出来 ✗ —— 「黑右三角 播放差异」✓）。
+	const under = svgText
+		? '<div class="under"><button id="pd-replay"><span class="ic" aria-hidden="true">▶</span>'
+			+ '<span class="lbl">播放差异</span></button></div>'
+		: '';
 	return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <style>${CSS}</style></head><body>
