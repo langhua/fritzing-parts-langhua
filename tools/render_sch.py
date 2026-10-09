@@ -47,6 +47,7 @@ import xml.etree.ElementTree as ET
 
 import part_box as PB                                             # noqa: E402
 import sch_text as ST                                            # ★ 字宽表（唯一实现 ✓）
+import sch_textgap as TG                                         # ★ 文字↔对象判据（唯一实现 ✓）
 import sch_geom as SG                                            # ★ 几何判据（含斜线 ✓，唯一实现 ✓）
 import sch_net                                                   # ★ 网标签规则（唯一实现 ✓，2026-09-29 ✓）
 import sch_box as SB                                             # ★ “本体盒”唯一实现 ✓
@@ -113,10 +114,9 @@ PART_BOX, PINS_REL, BOX_REL = {}, {}, {}          # ★ 本体框 / 相对锚点
 BODY_FACES, BODY_PINS = {}, {}                   # ★ 本体**实际绘制外形**（④b 穿体判据用 ✓ 2026-10-09 ✓）
 LBL_TITLE = set()                                # ★ 网标签的标题 ✓（“标签是元件” ✓ B3.1.1 ✓）
 LAB_REL = {}                                     # ★ 位号内容 + 字号（摆位脚本挑位置用 ✓）
-# ★★ Fritzing **内置的类目单位** ✓（位号会把它补在值后面 ✓）—— **只列实测过的** ✓：
-#   `resistance` ⇒ `Ω` ✓（依据：实例值 `220` ✓、fzp 无 `units` ✓，而 Fritzing 位号画 `220Ω` ✓；
-#   见下面「位号行」一段的注释 ✓）。要再加类目 ⇒ **先要一份含该属性的 Fritzing 导出** ✓。
-_UNIT_BY_PROP = {"resistance": "\u03a9"}
+# ★★ 2026-10-09 ✓ **位号行的内容规则上收到 `sch_text.fritzing_lines()`** ✓（**唯一实现** ✓）——
+#   原来这条规则只写在**本文件**里 ✗ ⇒ 生成器的文字闸门与探针要再抄一份 ✗ ⇒ 两把尺子 ✗。
+#   ★ 本文件里那个 `_UNIT_BY_PROP`（内置类目单位 ✓）也一并搬过去了 ✓（**一行没改** ✓）。
 skipped = []
 for el in root.iter("instance"):
     mid = el.get("moduleIdRef") or ""
@@ -694,39 +694,14 @@ for el in root.iter("instance"):
     fzpmid = el.get("modelIndex") or ""
     fzp = (el.get("path") or "").replace("/", os.sep)
     vals = {c.get("name"): c.get("value") for c in el if tag(c) == "property"}
-    if os.path.isfile(fzp):
-        props = [p.get("name") for p in ET.parse(fzp).getroot().iter("property")]
-        # ★ 规则**由 Fritzing 导出的实测数据定** ✓（9 件逐件对过 ✓，见 `--verify-export` 一节）：
-        #   · `showInLabel="yes"` 的属性 ⇒ 值；**按 fzp 属性顺序的逆序** ✓
-        #     （实测：`R1` = `±5%`,`220Ω` ✓；`C1` = `16V`,`100 nF` ✓ 均是逆序 ✓）
-        #   · 空值**不出行** ✓（`R1` 的 `power` 标了 yes 但值空 ⇒ 未出 ✓）
-        #   · 没一个标 yes 的件 ⇒ 出实例的 `part number` ✓
-        #     （实测：`LED2`→`WS2812B-1010` ✓、`J1/J2`→`SH1.0-3P-LT` ✓、`U1`/`D3` 同 ✓）
-        #   ⚠ 这条是**近似** ✓：Fritzing 的内部顺序没有官方文档，我是拿导出反推的 ✓，
-        #     不保证所有零件都对 ✓ —— 但**位置**（titleGeometry）与**行距**（字号 5 ✓）是机验过的 ✓。
-        yes = [(p.get("name"), (p.text or "").strip())
-               for p in ET.parse(fzp).getroot().iter("property")
-               if (p.get("showInLabel") or "").lower() in ("yes", "true")]
-        for nm, dflt in reversed(yes):
-            # ★ 实例的值优先 ✓；fzp 的**默认值在元素文本里** ✓（不是 `value=` 属性 ✗）
-            v = vals.get(nm) or dflt
-            # ★★ 单位（2026-09-29 实测 ✓）：Fritzing 会给**已知类目**补单位 ✓
-            #   · 实测样本：实例 `resistance` = `220` ✓、fzp = `<property name="Resistance"
-            #     showInLabel="yes">220</property>` ✓ **没有 units** ✗（`fritzing-parts/core`
-            #     全库搜过 `units=` ✓ 一个都没有 ✓）⇒ 而 Fritzing 位号显示 **`220Ω`** ✓
-            #     ⇒ 这个 Ω 是 **Fritzing 内置**的类目单位 ✓（不是文件里的 ✗）。
-            #   · 所以这里只认**实测过**的类目 ✓；值里已经带字母的（如 `100 nF` ✓）**不补** ✓。
-            #   ★ 要再加一个类目，请给一份含该属性的**导出** ✓ —— 本仓规矩：**不编数据** ✗。
-            _u = _UNIT_BY_PROP.get((nm or "").lower())
-            if _u and v and not any(ch.isalpha() for ch in v):
-                v = v + _u
-            if v and v not in lines:
-                lines.append(v)
-        if len(lines) == 1:
-            v = vals.get("part number")
-            if v:
-                lines.append(v)
-        _ = props
+    # ★★ 2026-10-09 ✓ **口径上收** ✗✓：行内容（第 1 行 = 位号 ✓；后续行 = fzp 里
+    #   `showInLabel="yes"` 的字段**逆序** ✓；空值不出行 ✓；`resistance` 补 `Ω` ✓；
+    #   一个 yes 都没有 ⇒ 出实例的 `part number` ✓）现在是 **`sch_text.fritzing_lines()` 一份实现** ✓。
+    #   ★ 为什么要上收 ✗：生成器（文字避让的**硬闸门** ✓）与探针都要知道"这个件画了几行、多宽" ✗
+    #   ⇒ 再抄一份就是**两把尺子** ✗（本仓最贵的那类错 ✗）。★ 判据一行没改 ✓（逐字同义 ✓）。
+    #   ★ 规则来源 = Fritzing **导出实测**反推 ✓（9 件逐件对过 ✓，见 `--verify-export` 一节 ✓）；
+    #     不保证所有零件都对 ✓ —— 但**位置**（`titleGeometry` ✓）与**行距**（字号 5 ✓）是机验过的 ✓。
+    lines = ST.fritzing_lines(ttl, fzp, vals)
     labels.append((ttl, (enum(tg, "x"), enum(tg, "y")), float(enum(tg, "fontSize", 5.0)),
                    tg.get("textColor") or "#000000", lines, fzpmid))
     LAB_REL[fzpmid] = {"lines": lines, "fs": float(enum(tg, "fontSize", 5.0))}
@@ -1093,34 +1068,27 @@ for _t1, _v, _t2, _a2, _b2, _d2 in sorted(fj_near, key=lambda z: z[5]):
           % (_t1, _v[0], _v[1], _t2, _a2[0], _a2[1], _b2[0], _b2[1], _d2, _d2 * MMU))
 
 
-# ── ④d ★ 美学指标之二：**位号文字压到东西** ✓（2026-09-27 用户点名 ✓）──#   配 ① 别的元件的本体框 ✓ ② 导线 ✓ ③ 别的位号 ✓（三类分开报 ✓，且**逐条点名** ✓）。
+# ── ④d ★ 美学指标之二：**文字压到东西** ✓（2026-09-27 用户点名 ✓；2026-10-09 换尺子 ✓）──
+#   ★★ 2026-10-09 ✓ **口径上收到共享实现 `sch_textgap`** ✗✓（第四十九轮 ✓ 用户定 ✓）：
+#     ✗ 原来这里是**自己一份**（位号块 × {别的元件框 ✓ 导线 ✓ 别的位号 ✓} 三类 ✗）——
+#       它**盖不住**用户这轮报的那三类 ✗：**值文字**（行算了 ✓ 但对家里没有接地符号 ✗）、
+#       **接地/电源符号**（`PART_BOX` 里的框是"墨迹近似"✗ ⇒ 与画出来的符号对不上 ✗）、**文字↔文字** ✗。
+#     ✓ 现在 = `sch_textgap.check()` ✓ —— **与生成器的硬闸门 / 自动修、验收探针 ⑫ 同一份** ✓
+#       （本仓最贵的那类错就是"同一个概念两把尺子" ✗）。
+#   ★ 口径 ✓：文字 = 位号块（**所有行** ✓，含值文字 ✓）＋ 网标签旗标 ✓；
+#     对象 = 器件本体（`sch_body` **实绘制外形** ✓，含引脚引线 ✓）／导线／接地符号／网标签／别的文字 ✓；
+#     净距 ≥ `TEXT_GAP_MM`（= **0.15 mm** ✓，与 `--text-gap` 缺省一致 ✓）；
+#     豁免只有一条 ✓（网标签旗标 ↔ 它自己声明连接的那根引线 ✓）。
 LBOX = [(ttl, ST.label_bbox(lx, ly, fs, lines))
         for ttl, (lx, ly), fs, _c, lines, _mi in labels]
-bl = bw = bb2 = 0
-detail = []
-for ttl, bx in LBOX:
-    for t2, box in PART_BOX.items():
-        if t2 == ttl:
-            continue
-        if bx[0] < box[2] and box[0] < bx[2] and bx[1] < box[3] and box[1] < bx[3]:
-            bl += 1
-            detail.append(("压元件", ttl, t2))
-    for t2, a, b, _c, _w in wires:
-        if _hits_box(a, b, (bx[0], bx[1], bx[2], bx[3]), 0.0, 2):
-            bw += 1
-            detail.append(("压导线", ttl, t2))
-    for t2, bx2 in LBOX:
-        if t2 <= ttl:
-            continue
-        if bx[0] < bx2[2] and bx2[0] < bx[2] and bx[1] < bx2[3] and bx2[1] < bx[3]:
-            bb2 += 1
-            detail.append(("压位号", ttl, t2))
-print("── ★ 美学指标之二：位号文字压到 **别的元件 %d 处** ✓｜**导线 %d 处** ✓｜"
-      "**别的位号 %d 处** ✓（字宽表由 `_scratch/adv_measure.py` 实测 ✓）" % (bl, bw, bb2))
-for kind, t1, t2 in detail[:10]:
-    print("      ⚠ 位号 %-6s %s %s" % (t1, kind, t2))
-if len(detail) > 10:
-    print("      ⚠ …… 另有 %d 处" % (len(detail) - 10))
+_tgbad, _tgtexts, _tgobjs, _tgu = TG.check(root, packed, TG.DEFAULT_MM)
+print("── ★ 美学指标之二：**文字 ↔ 被绘制对象 净距 < %.3f mm** ⇒ **%d 对** ✓"
+      "（尺子 = `tools/sch_textgap.py` ✓ **唯一实现** ✓ —— 与生成器闸门 / 探针 ⑫ 同一份 ✓；"
+      "扫了 **%d 文字 × %d 对象** ＝ **%d 组** ✓ ＋ 文字×文字 ✓）"
+      % (TG.DEFAULT_MM, len(_tgbad), len(_tgtexts), len(_tgobjs),
+         len(_tgtexts) * len(_tgobjs)))
+for _v in sorted(_tgbad, key=lambda r: r[2])[:10]:
+    print("      ⚠ %s" % TG.fmt_net(_v, _tgu))
 
 # ── ④c ★ 摆位用纯数据导出 ✓（`--pins-out <file.py>` ✓；单位 = sketch ✓、参考点 = 零件锚点 ✓）──
 if "pins-out" in opts:
