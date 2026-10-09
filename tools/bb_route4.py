@@ -89,7 +89,16 @@ def load_nets(_path=None):
 
 def main(argv):
     _nets, argv = PD.strip_argv(argv)         # ★ 先摘 `--nets=`，再取位置参数 ✗（不错位 ✓）
-    fzz, out = argv[0], argv[1]
+    # ★★ 2026-10-09（用户定 ✓）：两条新规则 = 两个开关 ✓，**缺省都关** ✗
+    #   ⇒ 不给开关时**一字不动** ✓（可实测：与改前逐字节相同 ✓）；规则正文见
+    #   库仓 `docs/breadboard-routing-rules.md` A11 / A12 ✓。
+    FLG = {a.split("=")[0]: a for a in argv if a.startswith("--")}
+    NEAR_HOLE = "--near-hole" in FLG
+    STRAIGHT = "--straight" in FLG
+    KEEP_DECO = "--keep-deco" in FLG
+    NEAR_K = int(FLG["--near-k"].split("=")[1]) if "--near-k" in FLG else 6
+    _pos = [a for a in argv if not a.startswith("--")]
+    fzz, out = _pos[0], _pos[1]
     z = zipfile.ZipFile(fzz)
     name = [n for n in z.namelist() if n.endswith(".fz")][0]
     sroot = ET.fromstring(z.read(name))
@@ -161,14 +170,49 @@ def main(argv):
     #     ② 旧导线会在元件脚上留下 `<connect connectorId="WireNNNNN">` 记录 ✗ ⇒ 被当成
     #        “这个脚插进了名叫 WireNNNNN 的孔” ✗ ⇒ 污染 occupied / plug_of ✗。
     WIRE_TMPL = None
+    DECO = set()                  # ★ 装饰线（图例色条 ✓）：不接任何东西 ⇒ **不许删** ✗
+    GONE = set()                  # ★ 被删掉的旧导线 id ✓（清理"悬空声明"用 ✓）
     for e2 in list(sroot.iter("instance")):
         if not (e2.get("moduleIdRef") or "").startswith("Wire"):
             continue
-        if child(child(e2, "views"), "breadboardView") is None:
+        _vb2 = child(child(e2, "views"), "breadboardView")
+        if _vb2 is None:
+            continue
+        if KEEP_DECO and not list(_vb2.iter("connect")):
+            # ★★ 2026-10-09 ✓：**图例色条**就是"一根不接任何东西的 Wire" ✓ ⇒ 它**不是接线** ✓
+            #   ⇒ 旧版把它一起删掉 ✗ ⇒ 面包板视图的图例**色条全没了** ✗（渲染里看得见 ✓）。
+            DECO.add(e2.get("modelIndex"))
             continue
         if WIRE_TMPL is None:
             WIRE_TMPL = ET.fromstring(ET.tostring(e2))
+        GONE.add(e2.get("modelIndex"))
         host.remove(e2)
+    if DECO:
+        print("保留装饰线（图例色条 ✓）%d 根 ✓（不接任何东西 ⇒ 不参与布线 ✗）" % len(DECO))
+    # ★★ 2026-10-09 ✓ **清掉零件上指向旧导线的记录** ✗（2026-09-26 注释里点过这个病 ✓，
+    #   但当时只清了**板子**那张表 ✗ ⇒ 元件脚上的 `<connect … layer="breadboardWire"/>`
+    #   还留着 ✗）：导线已经删了、记录还在 ✗ ⇒ `pcb_check` ⑫ 报「**悬空声明**」✗
+    #   ⇒ Fritzing 顺着它**当成已连通** ✓ 而铜并不在 ✗ ⇒ 会显示"布线完成"✗（不能出厂 ✗）。
+    #   实测（2026-10-09 ✓）：`U1` 的裸焊盘那根旧线（`90013134`）就在 `connector4` 上留了一条 ✗。
+    _stale = 0
+    for _e2 in (sroot.iter("instance") if (NEAR_HOLE or STRAIGHT) else []):
+        if _e2 is board:
+            continue
+        _vb2 = child(child(_e2, "views"), "breadboardView")
+        if _vb2 is None:
+            continue
+        for _cn2 in list(_vb2.iter("connector")):
+            _cbox = child(_cn2, "connects")
+            if _cbox is None:
+                continue
+            for _c2 in list(_cbox):
+                if tag(_c2) != "connect":
+                    continue
+                if (_c2.get("modelIndex") or "") in GONE:
+                    _cbox.remove(_c2)
+                    _stale += 1
+    if _stale:
+        print("   清掉零件上指向旧导线的记录：%d 条 ✓（避免「悬空声明」✗）" % _stale)
     inst_ids = {e2.get("modelIndex") for e2 in sroot.iter("instance")}
     if WIRE_TMPL is not None:
         print("清掉输入里的旧导线 ✓（保留 1 根当模板 ✓）")
@@ -2266,6 +2310,257 @@ def main(argv):
         print("单条 tie 换接: 动了 %d 处 ✓" % _n_retie)
     _refix()
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ★★★ 2026-10-09（用户定 ✓）：**面包板两条规则** —— 见库仓
+    #   `docs/breadboard-routing-rules.md` A11（就近选孔 ✓）/ A12（能直就直 ✓）。
+    #   ① `--near-hole` ✓ ② `--straight` ✓；**缺省都关** ✗ ⇒ 不给开关时**一字不动** ✓。
+    #   尺子只有一把 ✓ = **`(拐点数, 总长)`** ✓ —— ★ **不比交叉** ✗（面包板上交叉允许 ✓，
+    #     用户原话：「面包板视图里跳线交叉是允许的 ✓ —— 不比交叉，只比拐点/长度/避让 ✓」）
+    #   硬闸门照旧 ✓（与现有线**叠在一起** ✗ / 穿**别的**元件本体 ✗ / 盖住接线孔 ✗ /
+    #     落进已占的孔 ✗）—— 一次也不放宽 ✗，全部由**已有**的 `route_cost()` 判 ✓
+    #   ★ 移完**还要逐网重算连通** ✓（`_graph_ok()` ✓ —— 从零算 ✗：并查集只增不减会骗人 ✓）
+    #     ＋ **一 bus 不许跨两网** ✗（实物短接 ✓）。
+    title2mi = {}
+    for _e in sroot.iter("instance"):
+        if (_e.get("moduleIdRef") or "").startswith("Wire"):
+            continue
+        title2mi[(_e.findtext("title") or "").strip()] = _e.get("modelIndex")
+
+    def _cid_of(ref, pname):
+        if pname.startswith("#"):
+            return "connector" + str(int(pname[1:]) - 1)
+        return name2cid.get(ref, {}).get(pname)
+
+    pin_net = {}
+    for _net, _pins in nets.items():
+        for _ref, _pname in _pins:
+            _cid = _cid_of(_ref, _pname)
+            if _cid:
+                pin_net[(_ref, _cid)] = _net
+
+    def _node_of_end(e):
+        if e is None:
+            return None
+        if e[0] == "hole":
+            return "B%s" % hole_bus[e[1]]
+        return "P%s.%s" % (e[1], e[2])
+
+    def _graph_ok(jl, xl):
+        """从零重算 ✓ ⇒ 一 bus 不跨两网 ✗ ＋ 每张网连通 ✓（两条都过 ⇒ True ✓）"""
+        par = {}
+
+        def f2(x):
+            par.setdefault(x, x)
+            while par[x] != x:
+                par[x] = par[par[x]]
+                x = par[x]
+            return x
+
+        def u2(a, b):
+            ra, rb = f2(a), f2(b)
+            if ra != rb:
+                par[ra] = rb
+
+        for _n, _p, h1, h2, _k in jl:
+            u2("B%s" % hole_bus[h1], "B%s" % hole_bus[h2])
+        for _n, _p, e0, e1, _k in xl:
+            u2(_node_of_end(e0), _node_of_end(e1))
+        busnet = {}
+        for h2, ow in sorted(plug_of.items()):
+            n2 = pin_net.get(ow)
+            if not n2:
+                continue
+            b2 = "B%s" % hole_bus[h2]
+            if busnet.setdefault(b2, n2) != n2:
+                return False                     # 一条 bus 上挂了两个网 ⇒ 实物短接 ✗
+        for net, pins in nets.items():
+            nodes = set()
+            for ref, pname in pins:
+                cid = _cid_of(ref, pname)
+                mi2 = title2mi.get(ref)
+                if not cid or mi2 is None:
+                    continue
+                hs = set()
+                for h2, ow in plug_of.items():
+                    if ow == (ref, cid):
+                        hs.add(h2)
+                if hs:
+                    nodes.update("B%s" % hole_bus[h2] for h2 in hs)
+                else:
+                    nodes.add("P%s.%s" % (mi2, cid))
+            if len({f2(x) for x in nodes}) > 1:
+                return False
+        return True
+
+    def _score(pts):
+        r"""规则用的小尺子 ✓ = `(拐点数, 总长)` ✓ —— **不含交叉** ✗（用户定 ✓）"""
+        q = simplify(list(pts))
+        return (max(0, len(q) - 2), round(_plen(q), 6))
+
+    def _free_hole(h2):
+        return h2 not in used_holes and h2 not in blocked and h2 not in occupied
+
+    def _bus_net_ok(h2, net):
+        for x in bus_of.get(hole_bus[h2], ()):
+            n2 = pin_net.get(plug_of.get(x))
+            if n2 is not None and n2 != net:
+                return False
+        return True
+
+    def _nearest_holes(cur, net, ref_pt, k):
+        """**可用孔集合**里离 `ref_pt` 最近的 k 个 ✓（平手比孔 id ✓ ⇒ 可复现 ✓）"""
+        out = []
+        for h2, xy in hole.items():
+            if h2 == cur or not _free_hole(h2) or not _bus_net_ok(h2, net):
+                continue
+            out.append((abs(xy[0] - ref_pt[0]) + abs(xy[1] - ref_pt[1]), h2))
+        out.sort()
+        return [h2 for _d, h2 in out[:k]]
+
+    def _attic(h2):
+        """离**别的**已占孔多远 ✓（平手第二判据：越远越好 ✓）"""
+        xy = hole[h2]
+        d = 1e9
+        for h3 in used_holes | occupied:
+            if h3 == h2:
+                continue
+            d = min(d, ((hole[h3][0] - xy[0]) ** 2 + (hole[h3][1] - xy[1]) ** 2) ** 0.5)
+        return d
+
+    def pass_near_hole(rounds=3):
+        """**规则 ① 就近选孔** ✓：锚孔取「可用孔集合」里使这条跳线最短的那颗 ✓
+
+        判据 = `(拐点少 ✓ → 总长短 ✓)` ✓；平手再比 `离其它已占孔远 ✓ → 孔编号小 ✓`。
+        可用孔 = **空** ✓ 且 **所在 bus 不跨别的网** ✗；换完还要**逐网重算连通** ✓。
+        ★ 明确**不动**的东西 ✗：**插进孔的脚** ✓（它是摆位 ✓，而且 `pcbView` / `schematicView`
+          里也声明着 ✗ ⇒ 动它会破坏"那两张视图逐字节不变"✗）⇒ 只报不改 ✓。
+        """
+        moved = 0
+        for _rr in range(rounds):
+            any_move = False
+            for i in range(len(jumpers)):
+                net, pts, g1, g2, _k = jumpers[i]
+                base = _score(pts)
+                best = None
+                SKIP[0] = i            # ★ 先把自己**摘出场** ✓（否则"直连"会被**自己**的旧线段判成 ③ 重叠 ✗
+                #                         —— 正是 `pass_clear_way` 里记的那个坑 ✓）
+                for which in (0, 1):
+                    cur = g1 if which == 0 else g2
+                    other = g2 if which == 0 else g1
+                    for h2 in _nearest_holes(cur, net, hole[other], NEAR_K):
+                        nh1, nh2 = (h2, g2) if which == 0 else (g1, h2)
+                        for pts0 in routes(nh1, nh2):
+                            q = simplify(list(pts0))
+                            if len(q) < 2 or route_cost(list(q), own=net) is None:
+                                continue              # ★ None = **非法** ✓（重叠/穿体/盖孔 ✗）
+                            k2 = _score(q)
+                            if k2 >= base:
+                                continue
+                            trial = list(jumpers)
+                            trial[i] = (net, list(q), nh1, nh2, _k)
+                            if not _graph_ok(trial, extra):
+                                continue              # 换完网断了 / 并了网 ✗
+                            tie = (-round(_attic(h2) if which == 0 else _attic(nh2), 3), nh1, nh2)
+                            if best is None or (k2, tie) < best[0]:
+                                best = ((k2, tie), list(q), nh1, nh2)
+                SKIP[0] = None
+                if best:
+                    print("   就近选孔: %s %s→%s 换成 %s→%s ⇒ %d 拐点 → %d 拐点 ｜ %.1f → %.1f mm"
+                          % (net, g1, g2, best[2], best[3], max(0, len(simplify(list(pts))) - 2),
+                             best[0][0][0], _plen(pts) * MMU, _plen(best[1]) * MMU))
+                    jumpers[i] = (net, best[1], best[2], best[3], jumpers[i][4])
+                    _refix()
+                    moved += 1
+                    any_move = True
+            if not any_move:
+                break
+        # ★ 额外线（**引脚 ↔ 孔** ✓，如 `U1` 的裸焊盘 `EPAD` ✓）**也要就近选孔** ✓ ——
+        #   这正是用户 2026-10-09 举的那个例子 ✓（现在的锚孔不是最近的那颗 ✓）。
+        ex_moved = 0
+        for ix in range(len(extra)):
+            net, pts, e0, e1, kind = extra[ix]
+            pen, hen = (e0, e1) if e0[0] == "pin" else (e1, e0)
+            own = extra_owner[ix] if ix < len(extra_owner) else None
+            p_pin = pts[0] if e0[0] == "pin" else pts[-1]
+            base = _score(pts)
+            best = None
+            for h2, xy in sorted(hole.items(), key=lambda kv: (abs(kv[1][0] - p_pin[0])
+                                                              + abs(kv[1][1] - p_pin[1]), kv[0])):
+                if h2 == hen[1] or not _free_hole(h2) or not _bus_net_ok(h2, net):
+                    continue
+                for pts0 in routes_pt(p_pin, xy):
+                    q = simplify(list(pts0))
+                    if len(q) < 2 or route_cost(list(q), own=own) is None:
+                        continue              # ★ None = **非法** ✗（同上 ✓）
+                    k2 = _score(q)
+                    if k2 >= base:
+                        continue
+                    trial = list(extra)
+                    trial[ix] = (net, list(q), pen, ("hole", h2), kind)
+                    if not _graph_ok(jumpers, trial):
+                        continue
+                    tie = (-round(_attic(h2), 3), h2)
+                    if best is None or (k2, tie) < best[0]:
+                        best = ((k2, tie), list(q), h2)
+                if best:
+                    break                         # ★ 就近：**第一个**能被接受的孔就是最近的 ✓
+            if best:
+                print("   就近选孔: 额外线 %s（%s 的 %s）锚孔 %s → %s ⇒ %.1f → %.1f mm"
+                      % (net, own, pen[2], hen[1], best[2], _plen(pts) * MMU, _plen(best[1]) * MMU))
+                extra[ix] = (net, best[1], pen, ("hole", best[2]), kind)
+                _refix()
+                ex_moved += 1
+        if ex_moved:
+            print("就近选孔（额外线 ✓）: 动了 %d 处 ✓" % ex_moved)
+        return moved + ex_moved
+
+    def pass_straight(rounds=2):
+        """**规则 ② 能直就直** ✓：两端**同行或同列** ⇒ **一根直线段**（0 拐点 ✓）；
+        否则取**拐点最少**的走法 ✓（L 1 拐点 ✓ → Z 2 拐点 ✓）；**反正不比交叉** ✗。
+        只有「必须避让」时才允许多拐点 ✓ —— 避让 = 重叠 ✗ / 穿本体 ✗ / 盖接线孔 ✗。
+        """
+        moved = 0
+        blocked_straight = []                 # ✗ 有更直的走法、但被硬闸门挡住 ⇒ **报出来** ✓（不静默 ✗）
+        for _rr in range(rounds):
+            any_move = False
+            for i in range(len(jumpers)):
+                net, pts, h1, h2, _k = jumpers[i]
+                q_old = simplify(list(pts))
+                base = _score(q_old)
+                SKIP[0] = i            # ★ 同上：先摘自己 ✓（不然"直连"会被自己挡 ✗）
+                if abs(hole[h1][0] - hole[h2][0]) < 1e-9 or abs(hole[h1][1] - hole[h2][1]) < 1e-9:
+                    straight = simplify([hole[h1], hole[h2]])
+                    if route_cost(list(straight), own=net) is None:
+                        blocked_straight.append((net, h1, h2, LAST[0]))
+                best = None
+                for pts0 in routes(h1, h2):
+                    q = simplify(list(pts0))
+                    if len(q) < 2 or route_cost(list(q), own=net) is None:
+                        continue              # ★ None = **非法** ✗
+                    k2 = _score(q)
+                    if k2 < base and (best is None or k2 < best[0]):
+                        best = (k2, list(q))
+                SKIP[0] = None
+                if best:
+                    jumpers[i] = (net, best[1], h1, h2, jumpers[i][4])
+                    _refix()
+                    moved += 1
+                    any_move = True
+            if not any_move:
+                break
+        for rec in blocked_straight[:10]:
+            print("   [能直不能直 ✗] %s %s→%s：直连被「%s」挡 ⇒ 保留折线 ✓"
+                  % (rec[0], rec[1], rec[2], rec[3]))
+        return moved
+
+    if NEAR_HOLE:
+        _n = pass_near_hole()
+        print("★ 规则① 就近选孔（`--near-hole` ✓）: 动了 %d 处 ✓" % _n)
+    if STRAIGHT:
+        _n = pass_straight()
+        print("★ 规则② 能直就直（`--straight` ✓）: 动了 %d 处 ✓" % _n)
+    _refix()
+
     # checks
     bad = 0
     for net, hs in net_holes.items():
@@ -2355,8 +2650,11 @@ def main(argv):
             continue
         if child(child(e, "views"), "breadboardView") is None:
             continue
+        if e.get("modelIndex") in DECO:
+            continue                      # ★ 装饰线（图例色条 ✓）留着 ✓（见上面 ✓）
         if tmpl is None:
             tmpl = e
+        GONE.add(e.get("modelIndex"))
         host.remove(e)
     if tmpl is None:
         tmpl = WIRE_TMPL          # ★ 旧导线已在载入时清掉 ✓ ⇒ 用它当时留下的模板 ✓

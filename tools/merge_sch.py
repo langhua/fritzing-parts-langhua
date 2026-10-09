@@ -24,6 +24,9 @@ import sys
 import zipfile
 
 VIEW = "schematicView"
+# ★★ 2026-10-09 ✓：`--view=<名字>` **可换** ✓（缺省仍 `schematicView` ✓ ⇒ 老命令一字不改 ✓）
+#   用途：面包板那一步要的是同一套「按 modelIndex 配对 ✓ + 别的视图逐字节不动 ✗」的机器 ✓
+#   （见项目 `hardware/pixel/README.md` §六十七 ✓）。
 
 
 def inst_spans(text):
@@ -42,7 +45,13 @@ def inst_spans(text):
     #     而 `_r72_views.py` 也数不到它 ✓ —— 同一个根因 ✓）。
     #   ✓ 实例块**不嵌套** ✓ ⇒ 收在**遇到的第一个** `</instance>` ✓ 是安全的 ✓。
     #   ★ 对**多行块零影响** ✓（原来能匹配的，现在还是同一段 ✓）。
-    for m in re.finditer(r"(?ms)^([ \t]*)<instance\b.*?</instance>", text):
+    # ★★★ 2026-10-09 ✓ 再修 ✗：**开标签也不要求"行首"** ✓（去掉 `^` ✓）。
+    #   ✗ 病（实测 ✓，本轮面包板那一步撞上 ✓）：`bb_route4.emit()` 用 `ET.tostring()` 写盘 ✗，
+    #     它**新造**的实例（没有 `tail` 文本 ✗）会**紧贴在**上一块后面 ⇒ 不在行首 ✗
+    #     ⇒ 旧正则（要 `^` ✓）**整批漏匹配** ✗ ⇒ merge 报「插实例 **1**」✗（应该是 27 ✓）
+    #     ⇒ 交付件里**只剩 1 根面包板跳线** ✗（自检 `audit_layout ⑥` 立刻全红 ✓）。
+    #   ✓ 实例块**不嵌套** ✓ ⇒ 去掉 `^` 是安全的 ✓（多行块零影响 ✓）。
+    for m in re.finditer(r"(?ms)([ \t]*)<instance\b.*?</instance>", text):
         b = m.group(0)
         mi = re.search(r'\bmodelIndex="(\d+)"', b)
         t = re.search(r"<title>([^<]*)</title>", b)
@@ -58,6 +67,11 @@ def view_blk(blk):
 
 
 def main(a_path, b_path, out_path):
+    global VIEW
+    import sys as _sys
+    for _a in _sys.argv[1:]:
+        if _a.startswith("--view="):
+            VIEW = _a.split("=", 1)[1]
     za, zb = zipfile.ZipFile(a_path), zipfile.ZipFile(b_path)
     na = [n for n in za.namelist() if n.endswith(".fz")][0]
     nb = [n for n in zb.namelist() if n.endswith(".fz")][0]
