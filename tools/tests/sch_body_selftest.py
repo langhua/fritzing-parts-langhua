@@ -5,13 +5,16 @@ r"""★★ **机器自测**（不用任何 `.fzz` ✓）：`sch_body` 的判据�
   光在真文件上跑**证明不了闸门会响** ✗（可能整张图恰好没有违例 ✓）。⇒ 合成"**该响**"与
   "**不该响**"两类样例 ✓，正反都跑 ✓（与 `pcb_curve_selftest.py` 同一套路 ✓）。
 
-用法：`py -X utf8 sch_body_selftest.py` ⇒ 全过 exit 0 ✓；任一不过 exit 1 ✓（并逐条报出 ✓）。
+用法：`py -X utf8 tests\sch_body_selftest.py` ⇒ 全过 exit 0 ✓；任一不过 exit 1 ✓（并逐条报出 ✓）。
+★ 位置（2026-10-09 用户定 ✓）：**测试一律放 `tools/tests/`** ✓（与 `sch_geom_gap_selftest.py`
+  / `pcb_curve_selftest.py` 同一处 ✓）；**命名保留 `*_selftest.py`** ✓ —— ✗ 故意不叫 `test_*.py` ✗
+  （pytest 会收集它、被模块级 `SystemExit` 打崩 ✓）。一行跑全部见 `tests\run_all.py` ✓。
 """
 import os
 import sys
 import xml.etree.ElementTree as ET
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import sch_body as SBD                                              # noqa: E402
 import sch_box as SB                                                # noqa: E402
 

@@ -14,13 +14,15 @@ r"""★★ 曲线几何**单测** ✓：合出来的模型里放一条**鼓出�
   ⑨ 安装孔落在**弧上**、离弦很远 ⇒ 必须报 ⑨（孔不许被线碰 ✓）
   ④ 弧压到**别的网**的盘 ⇒ 必须报 ④b（✗ 弦离那个盘很远 ⇒ 漏报 ✗）
 
-用法：`py tools\pcb_curve_check.py --selftest` 或直接跑本文件 ✓；退出码 0 = 全过 ✓
+用法：`py -X utf8 tests\pcb_curve_selftest.py`（或 `tests\run_all.py` 一次跑全部 ✓）；退出码 0 = 全过 ✓
+★ 位置（2026-10-09 用户定 ✓）：**测试一律放 `tools/tests/`** ✓；**命名保留 `*_selftest.py`** ✓
+  —— ✗ 故意不叫 `test_*.py` ✗（pytest 会收集它、被模块级 `SystemExit` 打崩 ✓）。
 """
 import math
 import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # tools/ ✓（tests/ 的上一级 ✓）
 sys.path.insert(0, HERE)
 import pcb_check as PC                                             # noqa: E402
 import pcb_wire as PW                                              # noqa: E402
