@@ -14,13 +14,19 @@ r"""`sch_textgap`（第四十九轮：**文字 ↔ 被绘制对象 净距** 判�
   ⑥ `repair` 把压着东西的文字搬到干净处 ⇒ **剩余 0** ✓、且**位移最小** ✓（不许为了好看乱跳 ✗）；
   ⑦ `violations`：**文字 ↔ 文字**也算 ✓（老规则只算"已放的位号" ✗）；
   ⑧ `shapes_in_box`：墨迹顶点落进框 ⇒ True ✓；
-  ⑨ `items()` 在**合成 `.fz`** 上跑通 ✓（实例扫描 / 网标签旗标 / 导线三条路都过一遍 ✓）。
+  ⑨ `items()` 在**合成 `.fz`** 上跑通 ✓（实例扫描 / 网标签旗标 / 导线三条路都过一遍 ✓）；
+  ⑩ **第二档的接头认得出 ＋ 挪与挪回严格互逆** ✓（合成接地符号：脚 = 原点 + (9.001,0.596) ✓；
+     `symbol_attachments` 认那条引线的**末端** ✓；挪一步线端跟着走 ✓、挪回来**逐字复原** ✓；
+     ✗ 反例：两条线端重合在同一个脚上 ⇒ **认不准 ⇒ 返回 None（不动）** ✓ ——
+     这一组是给**实测踩过的那个坑**钉的钉子 ✗：原来"取最近的线端"不是单射 ⇒ 挪回去挪不回来 ✗，
+     `--text-gap 5` 实测把 `Wire90015558` 搞成斜线、**打破了「线距」硬闸门** ✗✗。）
 
 用法：`py -X utf8 tools\tests\sch_textgap_selftest.py` ⇒ 全过打印 `✓ 全过` ＋ exit 0 ✓
 ★ 位置（仓规 ✓）：**测试一律放 `tools/tests/`** ✓（与 `sch_body_selftest.py` 等同一处 ✓）；
   命名保留 `*_selftest.py` ✓（✗ 故意不叫 `test_*.py` ✗）；一行跑全部见 `tests\run_all.py` ✓。
   ★ 路径按 `__file__` 相对定位 ✓（不写死机器路径 ✗）。
 """
+import math
 import os
 import sys
 import xml.etree.ElementTree as ET
@@ -209,6 +215,69 @@ def main():
         texts3[0]["lines"] == ["U9"])
     chk("⑨e 声明对里认得出 网标签2↔Wire3",
         ("2", "3") in TG.declared_pairs(root) and ("3", "2") in TG.declared_pairs(root))
+
+    # ⑩ 第二档的**接头认得出 ＋ 挪与挪回严格互逆** ✓（2026-10-09 ✓ 实测踩过的那个坑 ✗）
+    #    合成一只**接地符号**（原点 (100,20) ⇒ 画出来的脚 = 原点 + (9.001,0.596) ✓）
+    #    ＋ 一条引线，它的**末端**正落在那个脚上 ✓。
+    FZ2 = """<?xml version="1.0" encoding="utf-8"?>
+<module>
+  <instance moduleIdRef="GroundModuleID" modelIndex="7">
+    <title>Ground9</title>
+    <views>
+      <schematicView layer="schematic">
+        <geometry z="3" x="100" y="20" />
+        <connectors><connector connectorId="connector0" layer="schematic">
+          <geometry x="0" y="0" />
+          <connects><connect connectorId="connector0" modelIndex="8" layer="schematicTrace" /></connects>
+        </connector></connectors>
+      </schematicView>
+    </views>
+  </instance>
+  <instance moduleIdRef="WireModuleID" modelIndex="8">
+    <title>Wire9</title>
+    <views>
+      <schematicView layer="schematic">
+        <geometry z="1" x="109.001" y="2.596" x2="0" y2="18" />
+        <connectors><connector connectorId="connector0" layer="schematicTrace">
+          <geometry x="0" y="0" />
+          <connects><connect connectorId="connector0" modelIndex="7" layer="schematic" /></connects>
+        </connector></connectors>
+      </schematicView>
+    </views>
+  </instance>
+</module>
+"""
+    r2 = ET.fromstring(FZ2)
+    i2 = TG.instances(r2)["7"]
+    chk("⑩a 画出来的脚 = 原点 + (9.001,0.596)（%.3f,%.3f = %.3f,%.3f）"
+        % (TG.symbol_pin(i2)[0], TG.symbol_pin(i2)[1],
+           TG.symbol_pin(i2)[0], TG.symbol_pin(i2)[1]),
+        abs(TG.symbol_pin(i2)[0] - 109.001) < 1e-9 and abs(TG.symbol_pin(i2)[1] - 20.596) < 1e-9)
+    att = TG.symbol_attachments(r2, i2)
+    chk("⑩b 认出那条引线（末端的那个线端 ✓）", att is not None and att[2] == "8")
+    chk("⑩c 认的是 `x2/y2`（末端 ✓，不是 `x/y`）", att is not None and att[1] == "xy2")
+    _before = TG.wire_ends(TG.instances(r2)["8"])
+    TG.nudge_symbol(r2, "7", TG.LANE, 0, att)
+    _mid = TG.wire_ends(TG.instances(r2)["8"])
+    TG.nudge_symbol(r2, "7", -TG.LANE, 0, att)
+    _after = TG.wire_ends(TG.instances(r2)["8"])
+    chk("⑩d 挪一步：线端跟着走（%.3f → %.3f）" % (_before[1][0], _mid[1][0]),
+        abs(_mid[1][0] - (_before[1][0] + TG.LANE)) < 1e-9)
+    chk("⑩e **挪回来 = 原样**（逐字互逆 ✓）", _after == _before)
+    chk("⑩f 符号锚点也复原 ✓", TG.instances(r2)["7"]["loc"] == (100.0, 20.0))
+    # ✗ 反例：再加一条线端落在同一个脚上 ⇒ **认不准 ⇒ 一律不动** ✓
+    _e = ET.fromstring(FZ2)
+    _e.append(ET.fromstring(
+        '<instance moduleIdRef="WireModuleID" modelIndex="9"><title>Wire10</title>'
+        '<views><schematicView layer="schematic">'
+        '<geometry z="1" x="109.001" y="20.596" x2="0" y2="4" />'
+        '</schematicView></views></instance>'))
+    _dup = TG.instances(_e)
+    _hits = [1 for omi, d in _dup.items() if "Wire" in d["mid"] and TG.wire_ends(d)
+             for pt in TG.wire_ends(d) if math.dist(pt, (109.001, 20.596)) <= 0.05]
+    chk("⑩g 两条线端重合在同一个脚上 ⇒ 有 %d 条端、`symbol_attachments` 返回 None（不动 ✓）"
+        % len(_hits),
+        len(_hits) == 2 and TG.symbol_attachments(_e, _dup["7"]) is None)
 
     print()
     if FAIL:

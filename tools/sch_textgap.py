@@ -473,43 +473,76 @@ def repair(root, texts, objs, gap_u, pairs=None, log=None, rounds=6):
 
 
 # ── 自动修：② 微调符号（≤ 一个车道 ✓）────────────────────────────────────
-def symbol_attachments(root, mi, inst):
-    """符号件（接地 / 网标签）**声明连接的那些导线**的**对应端点** ✓（= 必须跟着挪的那一头 ✓）"""
-    out = []
-    for omi in {str(c.get("modelIndex")) for c in inst["sv"].iter("connect")}:
-        d = instances(root).get(omi)
-        if d is None or "Wire" not in d["mid"]:
+def symbol_pin(inst):
+    """符号件（接地 / 网标签）**画出来的脚** ✓（视图坐标 ✓）—— 判"哪条线端在它身上"用它 ✓
+
+    ★✗ 踩过的坑 ✓（2026-10-09 ✓）：一开始拿实例的 `<geometry>` 原点当"脚" ✗ ——
+      接地符号的 **脚 ≠ 原点** ✗（实测偏 `(+9.001, +0.596)` ✓，`sch_net.GROUND_PIN_*` ✓）
+      ⇒ 那一条重合都认不出来 ✗ ⇒ 第二档恒等于"不动" ✗（`--text-gap 5 --text-gap-symbol`
+      实测打印的就是"这条认不出" ✗）。
+    """
+    mid, loc = inst["mid"], inst["loc"]
+    if sch_net.is_ground_symbol(mid):
+        return sch_net.ground_pin(loc)
+    if sch_net.is_label_module(mid):
+        nm = sch_net.net_name(mid, inst["title"]) or inst["title"] or "?"
+        return sch_net.label_pin(loc, nm, rot22(inst["gel"]))
+    return None
+
+
+def symbol_attachments(root, inst):
+    """符号件（接地 / 网标签）那条引线的**对应端点** ✓（= 必须跟着挪的那一头 ✓）
+
+    ★★ 2026-10-09 ✓ **判据改正** ✗（实测踩的 ✓）：原来取"**离符号最近**的那个线端" ✓ ——
+      那一支**不是单射** ✗：符号一挪，"最近的那个端"可能**换成另一端** ✗ ⇒ **挪回去挪不回来** ✗
+      （`--text-gap 5` 实测：`Wire90015558` 被搞成一条**斜线** `(179.78,17)→(188.78,26)` ✗，
+      顺带把"线距"闸门**打破**了 ✗✗）。
+    ✓ 现在：只认**与符号画出来的脚重合（≤0.05 ✓）**的线端 ✓，而且**恰好只有一条**才用它 ✓ ——
+      0 条（没有接线 ✓）或 >1 条（认不准 ✓）⇒ **一律不动** ✗（宁可不做 ✗）。
+      ★ 这样**挪与挪回严格互逆** ✓（重合关系跟着一起走 ✓）。
+    ★★ 调用方必须**算一次、apply / revert 共用**这份结果 ✓（✗ 不许每挪一次重算 ✗ —— 那正是上面那个坑 ✗）。
+    ★ 返回 `(geometry 元素, "xy" 或 "xy2", 那条导线的 modelIndex)` ✓ ／ `None` ✓。
+    """
+    pin = symbol_pin(inst)
+    if pin is None:
+        return None
+    att = []
+    for omi, d in instances(root).items():
+        if "Wire" not in d["mid"]:
             continue
         pq = wire_ends(d)
         if not pq:
             continue
         g = child(d["sv"], "geometry")
-        if math.dist(pq[0], inst["loc"]) <= math.dist(pq[1], inst["loc"]):
-            out.append((g, "xy", pq[0]))
-        else:
-            out.append((g, "xy2", pq[1]))
-    return out
+        for which, pt in (("xy", pq[0]), ("xy2", pq[1])):
+            if math.dist(pt, pin) <= 0.05:
+                att.append((g, which, omi))
+    return att[0] if len(att) == 1 else None
 
 
-def nudge_symbol(root, mi, dx, dy, pairs=None):
+def nudge_symbol(root, mi, dx, dy, att=None):
     r"""★ 第二档 ✓：把一个**符号件**（接地 / 网标签）挪 **≤ 一个车道** ✓
-    —— 同时把**它声明连接的那些导线的对应端点**一起挪 ✓ ⇒ 接头原地不动 ✓（电气一字不变 ✓）。
+    —— 同时把**它那条引线的对应端点**一起挪 ✓ ⇒ 接头原地不动 ✓。
 
-    ★ 为什么只给符号件 ✓（用户 2026-10-09 的授权是"微调**该器件/符号**位置 ≤ 一个车道"✓）：
-      符号件的脚**只有一条引线** ✓ ⇒ 挪它只牵动**一个线端** ✓；而挪一个**器件**要牵动**它所有的脚** ✓
-      —— 那已经等于重新布线 ✗（本档不做 ✗，真要做就报出来 ✓）。
+    ★ `att` 必须由 `symbol_attachments()` **先算一次** ✓ 并**原样传进来** ✓
+      （apply 与 revert 用**同一个**元素 ⇒ 挪与挪回**严格互逆** ✓ —— 见上面那段教训 ✗）。
+    ★ 为什么只给符号件 ✓：符号件的脚只有**一条引线** ✓ ⇒ 挪它只牵动**一个线端** ✓；
+      而挪一个**器件**要牵动**它所有的脚** ✓ —— 那已经等于重新布线 ✗（本档不做 ✗、但要报出来 ✓）。
     """
     inst = instances(root).get(str(mi))
     if inst is None:
         return False
-    att = symbol_attachments(root, mi, inst)
+    if att is None:
+        att = symbol_attachments(root, inst)
+    if att is None:
+        return False
     inst["gel"].set("x", "%g" % (inst["loc"][0] + dx))
     inst["gel"].set("y", "%g" % (inst["loc"][1] + dy))
-    for g, which, _pt in att:
-        if which == "xy":
-            g.set("x", "%g" % (num(g.get("x")) + dx))
-            g.set("y", "%g" % (num(g.get("y")) + dy))
-        else:
-            g.set("x2", "%g" % (num(g.get("x2")) + dx))
-            g.set("y2", "%g" % (num(g.get("y2")) + dy))
+    g, which, _wmi = att
+    if which == "xy":
+        g.set("x", "%g" % (num(g.get("x")) + dx))
+        g.set("y", "%g" % (num(g.get("y")) + dy))
+    else:
+        g.set("x2", "%g" % (num(g.get("x2")) + dx))
+        g.set("y2", "%g" % (num(g.get("y2")) + dy))
     return True
