@@ -43,7 +43,8 @@
 - 实测 ✓（这块板）：另存后 `<connect>` **多出 46 条** ✓，**全是 `Wire → Wire`** ✓，
   而且我们一条也没被它删 ✗（"仅我有 = 0" ✓）。
 - ⇒ 它认"**一条走线的端点落在另一条走线身上**"为接上了 ✓ —— 我们的判据原来只认记录 ✗
-  ⇒ 这是"判据与 Fritzing 不一致"的**实证之一** ✓（已补 ✓，见 `hardware/pixel/fz_exact.py` ✓）。
+  ⇒ 这是"判据与 Fritzing 不一致"的**实证之一** ✓（已补 ✓：真几何在 `tools/pcb_pads.py` 的
+  `poly`/`circle` ✓，几何连边在 `tools/pcb_status.py` 的 `pcb_geom_edges()` ✓）。
 
 ## 5. `<buses>` 在**核心件**里，而核心件**不在 `.fzz` 包里** ✗
 
@@ -54,7 +55,8 @@
 - 实测有总线的核心件 ✓：`wire.fzp` → `wirebus` ✓、`netlabel.fzp` → `label` ✓、
   `ground.fzp` → `groundbus` ✓（`via.fzp` **没有** ✓）。
 - ✗ 我们自己在 `.fzz` 包里找 ⇒ 只找到 7 个 `.fzp` ✗ ⇒ "同 `bus()` 合并"**从未生效** ✗
-  （已修 ✓，见 `fz_exact.py` 的 `bus_by_file` ✓）。
+  （已修 ✓，见 `tools/pcb_status.py` 的 `fzp_buses()` ＋ `CORE_BUS` ✓；原理图侧的"按名并网"
+  见 `tools/sch_net.py` 的 `LocalGrounds`／`LocalNetLabels` ✓）。
 - 核法 ✓：`hardware/pixel/fz_buses.py <fzz>` ✓。
 
 ## 6. `wireFlags` 与"算不算铜"

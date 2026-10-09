@@ -334,7 +334,7 @@ def collect(path):
                              # ★ 焊盘**真几何**（旋转后的真矩形 ✓ / 通孔的真圆 ✓）——
                              #   2026-10-02 补 ✓：`box` 是**轴对齐**包围盒 ✗，45° 摆的件会被
                              #   胀大 ✗ ⇒ 「线端落没落在盘上」必须用 `poly`/`circle` ✓
-                             #   （判据见 `_work/fz_exact.py` ✓）
+                             #   （真几何由 `pcb_pads.py` 算一次 ✓，这里只取用 ✓）
                              poly=q.get("poly"), circle=q.get("circle"),
                              layer=q["layer"], thr=bool(q["hole_mm"]),
                              # ★ 是不是**裸露焊盘（EPAD）** ✓ —— ⑦/⑥ 的例外要靠它 ✓

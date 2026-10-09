@@ -44,11 +44,24 @@ for v in ST.VIEWS:
 st.after_drop(view, modelIndex)             # 虚拟删线后的同一个 dict ✓
 ST.pcb_geom_edges(model)                    # PCB 视图的"真几何"连边 ✓（`pcb_check` 的口径 ✓）
 ```
+
+## 命令行 ✓（2026-10-10 ✓ —— 发动机上面的一层**薄打印** ✓，判据仍是上面那唯一一份 ✓）
+
+```bat
+py -X utf8 tools\pcb_status.py <a.fzz> [<b.fzz> …] [--nets=<pixel_nets.py>]   rem 逐视图 M/K ＋ 文案
+py -X utf8 tools\pcb_status.py <a.fzz> --sens                                rem 虚拟删线灵敏度
+```
+
+退出码 ✓：`0` = **A/B/C 三条都成立** ✓（A 每张网每视图都"成型"（≥2 只零件脚 ✓）；B 每张网每视图
+都连通（`K = 0` ✓）；C PCB 视图 **M = 网表张数** ✓）；`1` = 有 ✗；`2` = 没给文件（打印用法 ✓）。
+`--nets` 不给 ⇒ 自动找（当前目录 ➜ 草图同目录 的 `pixel_nets.py` ✓）；找不到就**只报 M/K** ✓（C 不判 ✓）。
+项目侧更细的逐网版 = `hardware/pixel/tools/pcb_rats_probe.py` ✓（**同一个 `Status` 引擎** ✓）。
 """
 import collections
 import math
 import os
 import re
+import sys
 import xml.etree.ElementTree as ET
 
 import pcb_wire as PW
@@ -433,3 +446,110 @@ class Status(object):
                     names.add(net)
         return "、".join(sorted(names)) or ("（%s）" % "、".join(sorted(
             {"%s.%s" % (self.title_of(k), k[1]) for k in rec["parts"]})[:3]))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  ★ 命令行 ✓（2026-10-10 ✓）—— 只是**发动机上面的一层薄打印** ✓
+#    判据（状态栏仿真）仍然是上面那**唯一一份** ✓：项目侧 `tools\pcb_rats_probe.py` 也 import 它 ✓。
+#    ★ 硬闸门只有 A/B/C 三条 ✓（**不奖励**"删线看反应"✗ —— 那件事在 Fritzing 里做不到 ✓，
+#      证明见文件头 ② ✓，并由 `tools\tests\pcb_status_selftest.py` 的 ② / ④ 两段独立钉住 ✓）。
+# ══════════════════════════════════════════════════════════════════════════════
+VIEW_ZH = {"breadboardView": "面包板", "schematicView": "原理图", "pcbView": "PCB"}
+
+
+def load_expect(path):
+    """从 `pixel_nets.py` 那种 `.py`（里面定义 `EXPECT` ✓）读网表 ⇒ `{网名: {「位号.connectorN」…}}`"""
+    ns = {}
+    with open(path, "rb") as f:
+        exec(compile(f.read(), path, "exec"), ns)
+    return {k: set(v) for k, v in (ns.get("EXPECT") or {}).items()}
+
+
+def _auto_nets(args):
+    """`--nets` 不给时的自动找法 ✓：当前目录 ➜ 草图所在目录 的 `pixel_nets.py` ✓（找不到 ⇒ None ✓）"""
+    cand = [os.path.join(os.getcwd(), "pixel_nets.py")]
+    for p in args:
+        cand.append(os.path.join(os.path.dirname(os.path.abspath(p)), "pixel_nets.py"))
+    for c in cand:
+        if os.path.isfile(c):
+            return c
+    return None
+
+
+def _gate(st, expect, probs):
+    """★ 硬闸门 ✓（A 成型 ✓／B 连通 ✓／C M = 网表张数 ✓）⇒ 往 `probs` 里追加 ✗（空 = 全过 ✓）"""
+    for v in VIEWS:
+        for s in st.designed_shortfall(v):
+            probs.append("A %s视图：网 `%s` 只剩 %d 只零件脚 ✗（<2 ⇒ Fritzing 当它**不存在** ✗，"
+                         "`sketchwidget.cpp:7013` ✓）" % (VIEW_ZH[v], s["net"], len(s["got"])))
+        if st.view(v)["K"]:
+            probs.append("B %s视图：还剩 **%d** 条没布 ✗（有网碎成了多块 ✗）"
+                         % (VIEW_ZH[v], st.view(v)["K"]))
+    if expect and st.view("pcbView")["M"] != len(expect):
+        probs.append("C PCB 视图里 Fritzing 会算成 **%d** 张网 ✗，而网表是 **%d** 张 ✗"
+                     % (st.view("pcbView")["M"], len(expect)))
+
+
+def _main_views(path, nets, expect):
+    st = Status(path, expect)
+    print("== %s（包内 %s）==" % (os.path.basename(path), st.inner))
+    print("   网表：%s" % (nets if expect else "（没找到 `pixel_nets.py` ⇒ 只报 M/K ✓，C 不判 ✓）"))
+    for v in VIEWS:
+        r = st.view(v)
+        print("   · %-6s：节点 %d ✓｜本视图声明边 %d ✓｜**M=%d** ✓｜**K=%d** ✓｜文案 `%s` ✓"
+              % (VIEW_ZH[v], r["nodes"], r["dec"], r["M"], r["K"], st.text(v)))
+    probs = []
+    _gate(st, expect, probs)
+    return probs, st
+
+
+def _main_sens(path, nets, expect):
+    st = Status(path, expect)
+    print("== 虚拟删线灵敏度：%s（包内 %s）==" % (os.path.basename(path), st.inner))
+    for v in VIEWS:
+        base = st.view(v)
+        sig0, txt0 = st.partition(v), st.text(v)
+        wires = [i for i in st.insts if i["kind"] == "wire" and v in i["views"]]
+        text = model = red = 0
+        for w in wires:
+            sig, txt = st.partition(v, w["mi"]), st.text(v, w["mi"])
+            if txt != txt0:
+                text += 1
+            if sig == sig0:
+                red += 1
+            else:
+                model += 1
+        print("   · %-6s：底线 M=%d ✓／K=%d ✓／文案 `%s` ｜ 线 %d 根 ⇒ **删完文案变 %d/%d** ✗"
+              "（Fritzing 自身口径 ✓）｜**分组指纹变了 %d** ✓（= 真动过 ✓）｜**并联冗余 %d** ✓"
+              % (VIEW_ZH[v], base["M"], base["K"], txt0, len(wires), text, len(wires), model, red))
+    probs = []
+    _gate(st, expect, probs)
+    return probs, st
+
+
+def main(argv):
+    args = [a for a in argv if not a.startswith("--")]
+    opt = dict(a[2:].split("=", 1) for a in argv if a.startswith("--") and "=" in a)
+    if not args:
+        print(__doc__)
+        return 2
+    nets = opt.get("nets") or _auto_nets(args)
+    expect = load_expect(nets) if nets else {}
+    bad = 0
+    for path in args:
+        probs, st = (_main_sens(path, nets, expect) if "--sens" in argv
+                     else _main_views(path, nets, expect))
+        print("   ⇒ 三视图 K：%s ｜ PCB 视图 M=%d ✓（网表 %s）"
+              % ("／".join("%s %d" % (VIEW_ZH[v], st.view(v)["K"]) for v in VIEWS),
+                 st.view("pcbView")["M"],
+                 "%d 张 ✓" % len(expect) if expect else "未给 ✗"))
+        for p in probs:
+            print("   ✗ %s" % p)
+        print("   ⇒ 判定：%s" % ("✓ 全过 ✓（A 每张网每视图都成型 ✓、B 都连通 ✓、C M 对得上 ✓）"
+                                 if not probs else "✗ %d 处 ✗" % len(probs)))
+        bad += len(probs)
+    return 0 if not bad else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

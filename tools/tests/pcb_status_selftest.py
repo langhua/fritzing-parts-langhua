@@ -16,9 +16,13 @@ r"""pcb_status_selftest：`tools\pcb_status.py`（**Fritzing 状态栏仿真引�
      `collectBreadboard` 会补边 ✓）—— 与④对照即锁死 `setEverVisible` 这条分水岭 ✓
   ⑥ 过孔 ⇒ 两层**算一个节点** ✓、把上下层的线接上 ⇒ K=0 ✓
   ⑦ **空网/无名件**不吃惊 ✓（没有脚的组不计数 ✓）
+  ⑧ ★ **命令行** ✓（2026-10-10 补 ✓）：`tools\pcb_status.py` 的**退出码** 0/1/2 ✓ ——
+     不给文件 ⇒ `2` ✓；A/B/C 全过 ⇒ `0` ✓；网表里有网没"成型" ⇒ `1` ✓（`--sens` 同闸门 ✓）
 
 用法：`py -X utf8 tools\tests\pcb_status_selftest.py` ⇒ 全过 exit 0 ✓
 """
+import contextlib
+import io
 import os
 import sys
 import tempfile
@@ -174,6 +178,63 @@ print("\n== ⑦ 没有脚的空组不吃惊 ✓ ==")
 _st7, r7 = status([part("5", "WireModuleID", "pcbView", [("connector0", "copper0trace", []),
                                                          ("connector1", "copper0trace", [])])])
 chk("M = 0 ✓、无异常 ✓", r7["M"] == 0, "M=%d" % r7["M"])
+
+print("\n== ⑧ 命令行 ✓（退出码 0 / 1 / 2 ✓）==")
+
+
+def cli(argv):
+    """跑 `ST.main` ✓ 并把 stdout 收起来 ✓（免得把用法整篇刷进自测输出 ✗）"""
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = ST.main(argv)
+    return rc, buf.getvalue()
+
+
+def part3(mi, mod, conns, title=None, path=None):
+    """一个件**同时出现在三个视图里** ✓ —— `⑧` 要考"每张网在**每个视图**里都成型" ✓"""
+    if path is None:
+        path = (":/resources/parts/core/wire.fzp" if mod == "WireModuleID"
+                else "/dev/null.fzp")
+    body = []
+    for cid, layer, decl in conns:
+        ds = "".join('<connect connectorId="%s" modelIndex="%s" layer="%s"/>' % (t, m, layer)
+                     for (t, m) in decl)
+        body.append('        <connector connectorId="%s" layer="%s">\n'
+                    '          <geometry x="0" y="0"/>\n'
+                    "          <connects>%s</connects>\n"
+                    "        </connector>" % (cid, layer, ds))
+    vs = "".join('    <%s layer="L">\n      <geometry z="1" x="0" y="0" wireFlags="%d"/>\n'
+                 "      <connectors>\n%s\n      </connectors>\n    </%s>\n"
+                 % (v, ST.TRACE_FLAG[v], "\n".join(body), v) for v in ST.VIEWS)
+    return ('<instance moduleIdRef="%s" modelIndex="%s" path="%s">\n  <title>%s</title>\n'
+            "  <views>\n%s  </views>\n</instance>"
+            % (mod, mi, path, title or ("P" + mi), vs))
+
+
+_rc, _out = cli([])
+chk("不给文件 ⇒ exit 2 ✓ 且打印用法 ✓", _rc == 2 and "## 命令行" in _out, "rc=%d" % _rc)
+
+_NET = tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w", encoding="utf-8")
+_NET.write("# 合成网表 ✓\nEXPECT = {'N': {'P1.connector0', 'P9.connector0'}}\n")
+_NET.close()
+_3V = [part3("1", "SomePartModuleID", [("connector0", "copper0", [("connector0", "5")])]),
+       part3("9", "SomePartModuleID", [("connector0", "copper0", [("connector1", "5")])]),
+       part3("5", "WireModuleID", [("connector0", "copper0trace", [("connector0", "1")]),
+                                   ("connector1", "copper0trace", [("connector0", "9")])])]
+_f1 = sketch(_3V)
+_f2 = sketch([part3("1", "SomePartModuleID", [("connector0", "copper0", [])])])
+try:
+    _rc, _out = cli([_f1, "--nets=" + _NET.name])
+    chk("合格件 ⇒ exit 0 ✓", _rc == 0, "rc=%d" % _rc)
+    chk("逐视图 M/K 都印出来 ✓", "M=" in _out and "K=" in _out, "")
+    _rc, _ = cli([_f1, "--nets=" + _NET.name, "--sens"])
+    chk("`--sens` 同一套闸门 ⇒ exit 0 ✓", _rc == 0, "rc=%d" % _rc)
+    _rc, _out = cli([_f2, "--nets=" + _NET.name])
+    chk("★ 网表里的网没\"成型\" ⇒ exit 1 ✓（A 条 ✓）", _rc == 1, "rc=%d" % _rc)
+    chk("报出 A 条 ✓", "A " in _out, "")
+finally:
+    for _p in (_f1, _f2, _NET.name):
+        os.remove(_p)
 
 print("\n⇒ %s" % ("✓ 全过" if ok else "✗ 有不过"))
 sys.exit(0 if ok else 1)
