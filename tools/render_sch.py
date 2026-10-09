@@ -50,6 +50,7 @@ import sch_text as ST                                            # ★ 字宽表
 import sch_geom as SG                                            # ★ 几何判据（含斜线 ✓，唯一实现 ✓）
 import sch_net                                                   # ★ 网标签规则（唯一实现 ✓，2026-09-29 ✓）
 import sch_box as SB                                             # ★ “本体盒”唯一实现 ✓
+import sch_body as SBD                                          # ★ 本体**实际绘制外形** ✓ 2026-10-09 ✓
 
 # ★★ 下面这段常量与小工具（`UMM/HDR/ATTR_RE/tag/num/enum/attrs/inner/head_of/
 #   viewbox_of/scale_of/layer_of/to_sketch`）**已全部搬到 `sch_box.py`** ✓
@@ -109,6 +110,7 @@ print("== %s ▶ %s（%d 字节）" % (path, fzname, os.path.getsize(path)))
 # ── ① 零件 ──
 body_parts, PIN_SK, ALL_PTS = [], [], []
 PART_BOX, PINS_REL, BOX_REL = {}, {}, {}          # ★ 本体框 / 相对锚点的脚位与框（摆位用 ✓）
+BODY_FACES, BODY_PINS = {}, {}                   # ★ 本体**实际绘制外形**（④b 穿体判据用 ✓ 2026-10-09 ✓）
 LBL_TITLE = set()                                # ★ 网标签的标题 ✓（“标签是元件” ✓ B3.1.1 ✓）
 LAB_REL = {}                                     # ★ 位号内容 + 字号（摆位脚本挑位置用 ✓）
 # ★★ Fritzing **内置的类目单位** ✓（位号会把它补在值后面 ✓）—— **只列实测过的** ✓：
@@ -209,6 +211,8 @@ for el in root.iter("instance"):
         PIN_SK.append((ttl, "connector0", (_px, _py)))
         LBL_TITLE.add(ttl)                      # ★ 见下面“穿体”那条：**标签不豁免自己那根线** ✗
         PART_BOX[ttl] = _bx                     # ★ 与画图**同一个盒子** ✓（“标签是元件” ✓ B3.1.1 ✓）
+        BODY_FACES[ttl] = SBD.poly_region(sch_net.label_flag(_geom, _lbl, _m))
+        BODY_PINS[ttl] = [(_px, _py)]
         for _qc in ((_bx[0], _bx[1]), (_bx[2], _bx[3])):
             ALL_PTS.append(_qc)                 # ★ 画布要**圈住本体框** ✓（不是只圈脚 ✓）
         continue
@@ -231,6 +235,8 @@ for el in root.iter("instance"):
             # ★ 2026-09-30 ✓：口径**搬到 `sch_net.ground_box`** ✓（生成器画接地符号时判碰撞
             #   要用**同一个盒子** ✓ —— 原来这一行只在本文件里 ✓ ⇒ 迟早两边对不上 ✗）。
             PART_BOX[ttl] = sch_net.ground_box((enum(g, "x"), enum(g, "y")))
+            BODY_FACES[ttl] = SBD.shapes_of_markup(_gart)
+            BODY_PINS[ttl] = [(_gpx, _gpy)]
             for _qc in ((PART_BOX[ttl][0], PART_BOX[ttl][1]),
                         (PART_BOX[ttl][2], PART_BOX[ttl][3])):
                 ALL_PTS.append(_qc)
@@ -333,6 +339,10 @@ for el in root.iter("instance"):
         PIN_SK.append((ttl, cid, to_sketch(g, A, p)))
     # 本体包围盒（sketch ✓）—— ★ 只调共享实现 ✓（原来这里和布线器**各算一套** ✗）
     _box, _A2, _note = SB.box_of(txt, g, A)
+    # ★★ 2026-10-09 ✓ ④b“穿体”改用**该视图实际绘制的符号外形** ✓
+    #   （判据 = `sch_body` ✓，与生成器闸门、验收探针**同一把尺子** ✓）
+    BODY_FACES[ttl] = SBD.shapes_of(txt, g)
+    BODY_PINS[ttl] = [to_sketch(g, A, _p) for _p in pins.values()]
     bb = None
     if _box:
         for cx, cy in ((_box[0], _box[1]), (_box[2], _box[1]),
@@ -800,16 +810,24 @@ def _hits_box(p, q, box, infl=1.0, need=4):
 nb = 0
 HITS = []
 for ttl_w, a, b, _c, _w in wires:
-    # ★ 排除**自己两端**的元件 ✓（它的脚本来就在本体里 ✓，穿过自己不算毛病 ✗）
+    # ★★★ 2026-10-09 ✓ **判据换成“该视图实际绘制的符号外形”** ✗✓（`sch_body` ✓ ——
+    #   与**生成器的硬闸门** `body_face_bad()`、**验收探针 ⑨** 同一把尺子 ✓）。
+    #   ✗ 旧口径（`SG.hits_box(PART_BOX[t])` ＝含引脚引线/位号文字的**墨迹盒** ＋
+    #     “整段豁免” ✗）**两侧都会错** ✗：实测 ① **漏报** —— `U1` 那两段从自己的脚
+    #     (58.58,9.00)/(74.78,-43.20) 起脚就往肚子里钻 ✗，`own` 把整段放行了 ✗、
+    #     渲染器跟着报 **0** ✗（用户当场看见线穿过去了 ✗✗）；
+    #     ② **误报** —— 盒含引脚引线与文字 ⇒ 导线在**引线外侧的空档**里走也会被算穿 ✗。
+    #   ✓ 新口径 ✓：本体 = 画出来的外形（闭合外形=区域 ✓、开放外形=描边 ✓；**引脚引线算墨迹** ✓），
+    #     豁免 = **离本件自己的脚 ≤ pin_r**（`sch_body.seg_hit` 内部还会把半径抬到
+    #     “最粗描边半宽 + eps” ✓ ⇒ 从脚上垂直往外走不会刀锋误报 ✓）—— **只按位置，不按整段** ✓。
+    #   ★ 标签/接地符号也走同一份 ✓（标签=旗标多边形 ✓、接地符号=素材描边 ✓）。
     own = {q[0] for q in PIN_SK
            if math.dist(q[2], a) < 0.05 or math.dist(q[2], b) < 0.05}
-    for t, box in PART_BOX.items():
+    for t in BODY_FACES:
         _a2, _b2 = a, b
         if t in LBL_TITLE and t in own:
-            # ★★ 2026-09-29 ✓ **网标签不享受那条豁免** ✗ —— 那条是给**元件本体**的（线要进肚子
-            #   才能接到脚上 ✓）；标签身体若**包住了自己那根线** ✗ ⇒ 人眼一看就是“被穿” ✗
-            #   （用户就是这么发现的 ✓：竖的 `GND` 与两个 `RC` 都被穿了 ✗）。
-            #   ⇒ 只在**引脚处留 2 单位**容差 ✓，其余照判 ✓。
+            # ★★ 2026-09-29 ✓ **网标签的豁免只留引脚处 2 单位** ✗（原样保留 ✓）——
+            #   新判据已经只按位置豁免 ✓，这一层额外收紧仍然成立且更严 ✓。
             _pin = next((q[2] for q in PIN_SK
                          if q[0] == t and (math.dist(q[2], a) < 0.05
                                            or math.dist(q[2], b) < 0.05)), None)
@@ -821,9 +839,9 @@ for ttl_w, a, b, _c, _w in wires:
                 _a2 = (a[0] + (b[0] - a[0]) * _u2, a[1] + (b[1] - a[1]) * _u2)
             else:
                 _b2 = (b[0] + (a[0] - b[0]) * _u2, b[1] + (a[1] - b[1]) * _u2)
-        elif t in own:
-            continue
-        if _hits_box(_a2, _b2, box):
+        # ★ 自己的元件**不再整段豁免** ✗（那是漏报的根 ✓）—— 改成**只按位置**豁免 ✓
+        #   （`seg_hit(..., pins=BODY_PINS[t])` 自己处理 ✓）⇒ 这里**什么都不跳过** ✓。
+        if SBD.seg_hit(_a2, _b2, BODY_FACES[t], BODY_PINS.get(t, ())):
             nb += 1
             HITS.append((ttl_w, t, a, b, own))
 print("── ★ 美学指标：导线**十字交叉 %d 处** ✓｜导线**穿过别的元件本体 %d 段** ✓"

@@ -261,6 +261,32 @@ def d_pt_pad(p, q):
     if q.get("circle"):
         (cx, cy), r = q["circle"]
         return max(0.0, math.hypot(p[0] - cx, p[1] - cy) - r)
+    if q.get("poly"):
+        # ★★ 2026-10-09 修 ✗（**实测** ✓）：45° 摆的矩形盘（U1 的 QFN ✓）**方框**会胀大 ✗ ——
+        #   0.2×0.6 的盘转 45° 后方框 ±0.283 mm ✗，而相邻脚中心只隔 0.400 mm ⇒ 两只脚的
+        #   方框**互叠 0.166 mm** ✗ ⇒ "端点在 A 脚中心"同时被判"在 B 脚盘里" ✗ ⇒
+        #   union 把同一端点并给两只相邻脚 ✗ ⇒ ⑤ 假报"粘上了别的脚" ✓
+        #   （实测 `{PD2,PD3}`、`{PC0,PC1}` ✓）。⇒ 有 `poly`（旋转后的真多边形 ✓）就按它算 ✓。
+        pl = q["poly"]
+        n = len(pl)
+        inside = False
+        for i in range(n):
+            a, b = pl[i], pl[(i + 1) % n]
+            if (a[1] > p[1]) != (b[1] > p[1]):
+                xi = a[0] + (p[1] - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
+                if p[0] < xi:
+                    inside = not inside
+        if inside:
+            return 0.0
+        best = None
+        for i in range(n):
+            a, b = pl[i], pl[(i + 1) % n]
+            vx, vy = b[0] - a[0], b[1] - a[1]
+            L2 = vx * vx + vy * vy
+            t = 0.0 if L2 <= 1e-18 else max(0.0, min(1.0, ((p[0] - a[0]) * vx + (p[1] - a[1]) * vy) / L2))
+            d = math.hypot(a[0] + t * vx - p[0], a[1] + t * vy - p[1])
+            best = d if best is None else min(best, d)
+        return best
     b = q["box"]
     dx = max(b[0] - p[0], 0.0, p[0] - b[2])
     dy = max(b[1] - p[1], 0.0, p[1] - b[3])
@@ -464,7 +490,9 @@ def check(model, expect=None):
             e = endpt(t, k)
             hit = False
             for q in pads:
-                if t["layer"] in pad_layers(q) and in_rect(e, q["box"]):
+                # ★★ 2026-10-09 修 ✗：45° 摆的件，`box` 是**胀大的轴对齐包围盒** ✗
+                #    ⇒ 「线端落没落在盘上」改判**真铜**（`poly`/`circle` ✓）
+                if t["layer"] in pad_layers(q) and d_pt_pad(e, q) <= 0:
                     # ★★ 「线端落在盘框里」也要**按网筛** ✗✓（2026-10-01 ✓）：
                     #   同网的盘 ⇒ 正常接入 ✓；**别的网**的盘 ⇒ **短路桥** ✗（报出来 ✓）。
                     ttl2 = (q["title"], q["cid"])
@@ -484,7 +512,13 @@ def check(model, expect=None):
                     continue
                 # ★ 2026-10-08 改 ✓：`on_seg(e, u.a, u.b)` ⇒ `trace_near_pt(u, e)` ✓
                 #   （判据从"端点落在**弦**上"变成"端点挨着**真几何**" ✓ —— 弧才不会漏 ✓）
-                if trace_near_pt(u, e):
+                # ★★ 2026-10-09 修 ✗（**实测** ✓）：这里原用 `tol=TOL`（带容差 ✗）
+                #   —— QFN 相邻脚在 45° 下**本来就只隔 0.200 mm** ✓ ⇒ 邻脚的线端被判成
+                #   "挨着"邻脚 ⇒ union-find 把两张网**并成一群** ✗ ⇒ ⑤ 假报"粘上了别的脚" ✗
+                #   （实测：`{PD2,PD3}`、`{PC0,PC1}` 各被并成一群 ✓）。端到端**真重合**才算接上 ✓。
+                #   ⇒ 取 **0.10 mm**（= 0.354 文件单位 ✓）：网格吸附噪声（实测 ≤0.05 mm ✓）吃得下 ✓，
+                #     而 0.200 mm 的邻脚间距**不再误并** ✓（实测两处假报的距离都在 0.2–0.3 mm ✓）。
+                if trace_near_pt(u, e, 0.3543):
                     uf.union(end(i, k), end(j, 0))
                     hit = True
             # ★★ 2026-10-08 补 ✗：**弧的线身**也要能"接上东西" ✓ ——
@@ -496,7 +530,7 @@ def check(model, expect=None):
             if k == 1 and t.get("curve"):
                 for mid in t["pts"][1:-1]:
                     for q in pads:
-                        if t["layer"] in pad_layers(q) and in_rect(mid, q["box"]):
+                        if t["layer"] in pad_layers(q) and d_pt_pad(mid, q) <= 0:
                             uf.union(end(i, k), ("pad", q["title"], q["cid"]))
                             hit = True
                     for j, u in enumerate(traces):
@@ -590,12 +624,36 @@ def check(model, expect=None):
                 else:
                     continue
             else:
-                if not trace_rect_hit(t, q["box"], hw):
-                    continue
-                ov = -1.0
-            probs.append("④b 线**中段**压到**别的网**的盘 ⇒ **短路桥** ✗：走线 #%d（网 %s）在 %s 层"
+                # ★★ 2026-10-09 修 ✗（**实测出来的假报** ✓）：`q["box"]` 是**轴对齐包围盒** ✗
+                #   —— 45° 摆的件（`U1` 的 EPAD = 菱形 ✓）它的**方框角点**离真铜 0.9 mm ✗，
+                #   却把 `90015438`(LED 末段) / `90015465`(DATA_IN) 报成"压住 EPAD 短路" ✗。
+                #   ⇒ 有 `poly`（旋转后的真多边形 ✓）就**逐边**量走线 ✓（与上面 circle 同源 ✓）
+                pl = q.get("poly")
+                if not pl:
+                    if not trace_rect_hit(t, q["box"], hw):
+                        continue
+                    ov = -1.0
+                else:
+                    def _d2s(a, b, c):
+                        """点 c 到线段 ab 的距离（**文件单位** ✓）"""
+                        vx, vy = b[0] - a[0], b[1] - a[1]
+                        L2 = vx * vx + vy * vy
+                        tt = 0.0 if L2 <= 1e-18 else max(0.0, min(1.0, ((c[0] - a[0]) * vx + (c[1] - a[1]) * vy) / L2))
+                        return ((a[0] + tt * vx - c[0]) ** 2 + (a[1] + tt * vy - c[1]) ** 2) ** 0.5
+
+                    def _d2seg(a, b, c, d):
+                        """线段 ab ↔ 线段 cd 的最小距离（取 4 个端点-线段距离的最小 ✓）"""
+                        return min(_d2s(a, b, c), _d2s(a, b, d), _d2s(c, d, a), _d2s(c, d, b))
+
+                    n = len(t["pts"])
+                    d = min(_d2seg(t["pts"][k], t["pts"][k + 1], pl[m], pl[(m + 1) % len(pl)])
+                            for k in range(n - 1) for m in range(len(pl)))
+                    if d > hw + 1e-9:
+                        continue
+                    ov = max(0.0, (hw - d) * PW.SK)
+            probs.append("④b 线**中段**压到**别的网**的盘 ⇒ **短路桥** ✗：走线 #%d（`%s`，网 %s）在 %s 层"
                          "压住 `%s.%s`（网 %s）%s"
-                         % (i, "、".join(sorted(na)), t["layer"], q["title"], q["cid"], qn,
+                         % (i, t.get("inst"), "、".join(sorted(na)), t["layer"], q["title"], q["cid"], qn,
                             "" if ov < 0 else "，叠 **%.4f mm** ✓" % ov))
 
     # ③ 过孔挨铜 ＋ 贯通两层 ✓
@@ -682,7 +740,7 @@ def check(model, expect=None):
                 else:
                     q = pad_by.get((midx, cid))
                     if q is not None:
-                        gap = d_pt_rect(e, q["box"]) * PW.SK - _hw(t)
+                        gap = d_pt_pad(e, q) * PW.SK - _hw(t)
                         who = "焊盘 %s.%s" % (q["title"], q["cid"])
                 if gap is not None and gap > DECL_TOL_MM:
                     probs.append("⑩ 声明未兼现：走线 #%d 的%s端在 `<connect>` 里声明接在 %s 上 ✓，"
