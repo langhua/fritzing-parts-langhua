@@ -32,11 +32,15 @@ def load(path=None, need=()):
     return mod
 
 
-def strip_argv(argv):
-    """把 `--nets=<file>` 从参数表里摘出来 ✓ ⇒ 返回 `(file 或 None, 其余参数 ✓)`
+def strip_argv(argv, flag="--nets"):
+    """把 `--<flag>=<file>` 从参数表里摘出来 ✓ ⇒ 返回 `(file 或 None, 其余参数 ✓)`
 
     ★ 位置上必须**先摘再给位置参数** ✗：两个工具都用 `argv[0]/argv[1]` 当
       "输入 fzz / 输出" ✓ ⇒ 不摘掉 `--nets=…` 会把位置参数错位 ✗。
+
+    ★ 2026-10-10 加 `flag` ✓（默认 `--nets` ✓ ⇒ 老调用一个字不改 ✓）：
+      `pcb_check` 多了个 `--allow=<明示例外文件>` ✓ ⇒ 两次调用同一个函数摘两个开关 ✓。
     """
-    val = next((a.split("=", 1)[1] for a in argv if a.startswith("--nets=")), None)
-    return val, [a for a in argv if not a.startswith("--nets=")]
+    pref = flag + "="
+    val = next((a.split("=", 1)[1] for a in argv if a.startswith(pref)), None)
+    return val, [a for a in argv if not a.startswith(pref)]

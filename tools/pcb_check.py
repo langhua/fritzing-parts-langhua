@@ -452,7 +452,13 @@ def pad_layers(q):
 
 
 # ── 五查 ───────────────────────────────────────────────────────────────────
-def check(model, expect=None):
+def check(model, expect=None, allow=None):
+    """⇒ `(probs, notes, groups)` ✓
+
+    `allow` = **明示例外** ✓（2026-10-10 用户定 ✓）：`{(规则, 元组(两位号)): {mm, who, why}}` ✓
+      ★ 只把**指名那一对**的门槛降到它记的 `mm` ✗ —— 比记的值**更差** ⇒ 仍然 FAIL ✓
+        （不掩盖回归 ✗）；命中时也**打印出来** ✓（✗ 不静默 ✗）。
+    """
     pads, traces, vias = model["pads"], model["traces"], model["vias"]
     probs, notes = [], []
     uf = UF()
@@ -954,11 +960,20 @@ def check(model, expect=None):
                     if worst is None or gap < worst:
                         worst, wk = gap, (la, lb)
             if worst is not None and worst < PART_GAP_MM - 1e-9:
-                probs.append("⑧ 元件间隔不足：**%s**（%s）与 **%s**（%s）在同一层只有 %+.3f mm ✗"
-                             "（需要 ≥ %.2f mm ✓；最近处 `%s` × `%s`）"
-                             % (A["title"], ("背面" if A.get("side") == "bottom" else "正面"),
-                                B["title"], ("背面" if B.get("side") == "bottom" else "正面"),
-                                worst, PART_GAP_MM, wk[0], wk[1]))
+                # ★★ 明示例外 ✓（2026-10-10 用户定 ✓）—— 只对**指名的那一对**降门槛 ✓
+                exc = (allow or {}).get(("⑧", tuple(sorted((A["title"], B["title"])))))
+                thr = float(exc["mm"]) if exc else PART_GAP_MM
+                if worst < thr - 1e-9:
+                    probs.append("⑧ 元件间隔不足：**%s**（%s）与 **%s**（%s）在同一层只有 %+.4f mm ✗"
+                                 "（需要 ≥ %.4f mm ✓；最近处 `%s` × `%s`）"
+                                 % (A["title"], ("背面" if A.get("side") == "bottom" else "正面"),
+                                    B["title"], ("背面" if B.get("side") == "bottom" else "正面"),
+                                    worst, thr, wk[0], wk[1]))
+                else:
+                    notes.append("⑧（**明示例外** ✓）**%s** ↔ **%s** 同层 %+.4f mm ✗（低于规则 %.2f ✓）"
+                                 "—— %s ✓：%s ✓（本版允许到 %.4f ✓；更差仍会 FAIL ✗）"
+                                 % (A["title"], B["title"], worst, PART_GAP_MM,
+                                    exc.get("who", "?"), exc.get("why", "?"), thr))
 
     # ⑨ ★★ 安装孔 ✓（2026-10-01 用户定 ✓：「安装孔附近是不能布线的，更不能穿体」✓）
     #   判据 = 「**线段/点到孔心**的距离 − 孔半径」≥ `HOLE_CLEAR_MM` ✓（圆 ✓，不是方框 ✓）。
@@ -1051,6 +1066,7 @@ def check(model, expect=None):
 
 def main(argv):
     nets, rest = projdata.strip_argv(argv)
+    allow_path, rest = projdata.strip_argv(rest, "--allow")
     if not rest:
         print(__doc__)
         return 2
@@ -1061,6 +1077,12 @@ def main(argv):
         print("（网表：%s ✓）" % nets)
     else:
         print("（没给 `--nets` ⇒ **只跑 ①–④ · ⑥ 结构检查** ✓、跳过 ⑤ 网表比对 ✓）")
+    allow = {}
+    if allow_path:
+        items = projdata.load(allow_path, need=("ALLOW",)).ALLOW
+        for it in items:
+            allow[(it["rule"], tuple(sorted(it["pair"])))] = it
+        print("（明示例外：%s ✓ —— %d 条 ✓，逐条会打出来 ✓）" % (allow_path, len(allow)))
     model = collect(path)
     print("== %s（包内 %s）==" % (os.path.basename(path), model["name"]))
     print("   焊盘 %d 个 ✓（%d 个件）｜走线 %d 条 ✓｜过孔 %d 个 ✓｜板框 %s"
@@ -1068,8 +1090,8 @@ def main(argv):
              len(model["traces"]), len(model["vias"]),
              ("(%.2f,%.2f)-(%.2f,%.2f) mm" % tuple(v * PW.SK for v in model["board"]))
              if model["board"] else "读不出 ✗"))
-    probs, notes, _g = check(model, expect)
-    for n in notes[:12]:
+    probs, notes, _g = check(model, expect, allow)
+    for n in notes[:24]:
         print("%s· %s" % (IND, n))
     if model["warns"]:
         for w in model["warns"][:4]:
