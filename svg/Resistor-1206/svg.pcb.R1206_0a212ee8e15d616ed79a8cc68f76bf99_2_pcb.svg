@@ -22,12 +22,10 @@
   </desc>
   <defs
      id="defs13" />
-  <g
-     transform="matrix(1.4,0,0,0.64000003,-17.999987,3.5999912)"
-     id="copper0">
+  
     <g
        gorn="0.1.0"
-       id="copper1">
+       id="copper1" transform="matrix(1.4,0,0,0.64000003,-17.999987,3.5999912)">
       <rect
          gorn="0.1.0.0"
          height="250"
@@ -45,13 +43,16 @@
          x="241.42857"
          y="10" />
     </g>
+  
+    <g
+     id="silkscreen">
+    <rect
+         gorn="0.2"
+         height="171.78827"
+         id="silkoutline"
+         style="fill:none;stroke:#f0f0f0;stroke-width:8.21174;stroke-opacity:1"
+         width="431.7883"
+         x="4.1058698"
+         y="4.1058698" />
   </g>
-  <rect
-     gorn="0.2"
-     height="171.78827"
-     id="silkscreen"
-     style="fill:none;stroke:#ffffff;stroke-width:8.21174;stroke-opacity:1"
-     width="431.7883"
-     x="4.1058698"
-     y="4.1058698" />
 </svg>

@@ -1,0 +1,116 @@
+# -*- coding: utf-8 -*-
+r"""把「**丝印不在 `<g id="silkscreen">` 里**」的图元装进丝印组 ✓（2016-10-11 立 ✓）
+
+★★ 起因 ✓（用户 2026-10-11 看元件箱发现 ✗）：`Resistor-0603` / `Capacitor-0603` 的 pcb 里，
+   丝印是一颗**裸 `<rect id="silkscreen">`** ✗ —— `.fzp` 只声明图层（`<layer layerId="silkscreen"/>`✓），
+   「哪块图形属于哪层」是 Fritzing **按组的 id** 认的 ✓ ⇒ 裸 rect **不属于丝印层** ✗
+   ⇒ 元件箱/指示栏里**多渲一块** ✗。全库同病 10 件（同族电阻 ＋ `Capacitor-0402` ✓）。
+
+★ 判据/扫描 = **唯一实现** ✓（`silk_nest_check.silk_span` ✓）—— ✗ 本工具不另写一份 ✗。
+
+★ 改法（**只挪层级** ✓，几何/坐标/线宽**一字不改** ✗）：
+   ① 把每个裸丝印图元用 `<g id="silkscreen">…</g>` 包起来 ✓；
+   ② 里面的 `id="silkscreen"` 改名 **`silkoutline`** ✓（✗ 免得与组同名 ✗）；
+   ③ 描边色统一成**本库写法** `#f0f0f0` ✓（✗ 原来是 `#ffffff` ✗，与铜/底同色不好辨 ✗）。
+   ④ 改完复验：XML 必须能解析 ✓、`silk_span` 必须空 ✓、丝印组的父组必须为 `None` ✓；
+   ⑤ 然后**重打该件的 `.fzpz`** ✓（照 `breadboard_only_views.pack` ✓ 的口径 ✓）。
+
+★ 行尾/编码**照旧** ✓（`newline=""` 读写 ✓ —— ✗ 不然整文件级假 diff ✗）。
+
+用法：
+  py -3.13 -X utf8 tools\fix_silk_group.py                 # 只报（dry ✓）
+  py -3.13 -X utf8 tools\fix_silk_group.py --do            # 改 + 重打 .fzpz ✓
+  py -3.13 -X utf8 tools\fix_silk_group.py --do svg\Resistor-0402 ...
+退出码：0 = 无遗留 ✗（改完必为 0 ✓）；1 = 还有「丝印不在组里」✗。
+"""
+import argparse
+import os
+import re
+import sys
+import xml.etree.ElementTree as ET
+import zipfile
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.normpath(os.path.join(HERE, ".."))
+sys.path.insert(0, HERE)
+import silk_nest_check as SNC                                       # noqa: E402
+import breadboard_only_views as BOV                                 # noqa: E402
+
+
+def fix_text(text):
+    """⇒ (新文本, 改了几个 ✓)。**只挪层级** ✓（几何一字不动 ✗）。"""
+    spans = SNC.silk_span(text)
+    if not spans:
+        return text, 0
+    out, n = text, 0
+    for _tag, el, a, b in reversed(spans):
+        body = re.sub(r'id="silkscreen"', 'id="silkoutline"', el, count=1)
+        body = re.sub(r'stroke:#ffffff', "stroke:#f0f0f0", body)
+        body = "\n".join(("    " + ln) if ln.strip() else ln for ln in body.split("\n"))
+        group = '  <g\n     id="silkscreen">\n%s\n  </g>' % body.rstrip()
+        out = out[:a] + group + out[b:]
+        n += 1
+    return out, n
+
+
+def process(path, do=False):
+    """⇒ (改了没 ✓, 说明)"""
+    raw = open(path, "rb").read()
+    text = raw.decode("utf-8")
+    if not SNC.silk_span(text):
+        return False, "本来就在组里 ✓"
+    new, n = fix_text(text)
+    try:
+        ET.fromstring(new)
+    except ET.ParseError as exc:
+        return False, "✗ 改完不是合法 XML（%s）⇒ **不写** ✗" % exc
+    if SNC.silk_span(new):
+        return False, "✗ 改完还剩丝印图元在外 ✗ ⇒ **不写** ✗"
+    if SNC.silk_parent(new) is not None:
+        return False, "✗ 改完丝印组的父组 = %s ✗ ⇒ **不写** ✗" % SNC.silk_parent(new)
+    if not do:
+        return True, "（dry ✓）可装 %d 个图元 ⇒ 进 `<g id=\"silkscreen\">` ✓" % n
+    with open(path, "wb") as f:
+        f.write(new.encode("utf-8"))
+    return True, "✓ 已装 %d 个图元 ⇒ 组里 ✓（几何一字未动 ✓）" % n
+
+
+def main(argv):
+    ap = argparse.ArgumentParser(add_help=True)
+    ap.add_argument("paths", nargs="*")
+    ap.add_argument("--do", action="store_true", help="真改（默认只报 ✓）")
+    a = ap.parse_args(argv)
+    roots = a.paths or [os.path.join(ROOT, "svg")]
+    files = []
+    for p in roots:
+        if os.path.isdir(p):
+            for dp, _dn, fn in os.walk(p):
+                for f in sorted(fn):
+                    if f.startswith("svg.pcb.") and f.endswith(".svg"):
+                        files.append(os.path.join(dp, f))
+        else:
+            files.append(p)
+    print("== fix_silk_group：把裸丝印装进 `<g id=\"silkscreen\">` ✓"
+          "（判据/扫描 = `silk_nest_check.silk_span` 唯一实现 ✓）｜%d 个文件 ==" % len(files))
+    changed = []
+    for p in files:
+        ok, why = process(p, do=a.do)
+        if ok:
+            rel = os.path.relpath(p, ROOT).replace("\\", "/")
+            print("   %-62s %s" % (rel, why))
+            changed.append(p)
+    if a.do:
+        for p in changed:
+            d = os.path.dirname(p)
+            BOV.pack(d)                                   # 重打该件的 .fzpz ✓（带逐条校验 ✓）
+        print("⇒ 改了 **%d** 个 pcb 视图 ✓（并重打各自的 `.fzpz` ✓）" % len(changed))
+    else:
+        print("⇒ 待改 **%d** 个 ✓（加 `--do` 才写 ✗）" % len(changed))
+    # 复扫（必须 0 ✓）
+    rest = [p for p in files if SNC.silk_span(open(p, encoding="utf-8").read())]
+    print("⇒ 复扫仍有 '丝印不在组里' ✗：**%d** 个 %s" % (len(rest), "" if not rest else "✗"))
+    return 1 if rest else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

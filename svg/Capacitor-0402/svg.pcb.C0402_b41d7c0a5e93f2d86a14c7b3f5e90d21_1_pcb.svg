@@ -42,12 +42,15 @@
        x="212.85712"
        y="10" />
   </g>
-  <rect
-     gorn="0.2"
-     height="57.278137"
-     id="silkscreen"
-     style="fill:none;stroke:#ffffff;stroke-width:2.72187;stroke-opacity:1"
-     width="142.27814"
-     x="1.360935"
-     y="1.360935" />
+    <g
+     id="silkscreen">
+    <rect
+         gorn="0.2"
+         height="57.278137"
+         id="silkoutline"
+         style="fill:none;stroke:#f0f0f0;stroke-width:2.72187;stroke-opacity:1"
+         width="142.27814"
+         x="1.360935"
+         y="1.360935" />
+  </g>
 </svg>

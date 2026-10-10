@@ -18,12 +18,10 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs13" />
-  <g
-     transform="matrix(1.9087377,0,0,1.3086135,-28.174741,-3.086143)"
-     id="copper0">
+  
     <g
        gorn="0.1.0"
-       id="copper1">
+       id="copper1" transform="matrix(1.9087377,0,0,1.3086135,-28.174741,-3.086143)">
       <rect
          gorn="0.1.0.0"
          height="252.17531"
@@ -41,13 +39,16 @@
          x="250.51884"
          y="10" />
     </g>
+  
+    <g
+     id="silkscreen">
+    <rect
+         gorn="0.2"
+         height="336.6022"
+         id="silkoutline"
+         style="fill:none;stroke:#f0f0f0;stroke-width:13.3978;stroke-opacity:1"
+         width="586.60223"
+         x="6.6989002"
+         y="6.6989002" />
   </g>
-  <rect
-     gorn="0.2"
-     height="336.6022"
-     id="silkscreen"
-     style="fill:none;stroke:#ffffff;stroke-width:13.3978;stroke-opacity:1"
-     width="586.60223"
-     x="6.6989002"
-     y="6.6989002" />
 </svg>

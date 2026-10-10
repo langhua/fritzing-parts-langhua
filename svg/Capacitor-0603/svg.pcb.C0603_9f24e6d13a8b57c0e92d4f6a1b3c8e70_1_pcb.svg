@@ -20,13 +20,11 @@
   </desc>
   <defs
      id="defs13" />
-  <g
-     transform="matrix(0.70000001,0,0,1.04,-8.9999878,-5.4000084)"
-     id="copper0">
+  
     <g
        gorn="0.1.0"
        id="copper1"
-       transform="matrix(1,0,0,0.30769232,0,6.9230768)">
+       transform="matrix(0.70000001,0,0,0.32000001,-8.9999878,1.7999915)">
       <rect
          gorn="0.1.0.0"
          height="250"
@@ -44,7 +42,7 @@
          x="227.14285"
          y="10" />
     </g>
-  </g>
+  
   <g
      id="silkscreen">
     <rect

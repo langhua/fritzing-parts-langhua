@@ -28,14 +28,11 @@
          id="stop5949" />
     </linearGradient>
   </defs>
-  <g
-     transform="matrix(1.4,0,0,1.04,-28.000008,-10.400008)"
-     id="copper0"
-     style="stroke-width:0;stroke-dasharray:none">
+  
     <g
        gorn="0.1.0"
        id="copper1"
-       style="stroke-width:0;stroke-dasharray:none">
+       style="stroke-width:0;stroke-dasharray:none" transform="matrix(1.4,0,0,1.04,-28.000008,-10.400008)">
       <rect
          gorn="0.1.0.0"
          height="317.30771"
@@ -53,13 +50,16 @@
          x="498.57144"
          y="19.615385" />
     </g>
+  
+    <g
+     id="silkscreen">
+    <rect
+         gorn="0.2"
+         height="339.88025"
+         id="silkoutline"
+         style="fill:none;stroke:#f0f0f0;stroke-width:10.1198;stroke-dasharray:none;stroke-opacity:1"
+         width="829.88013"
+         x="5.0598998"
+         y="5.0598998" />
   </g>
-  <rect
-     gorn="0.2"
-     height="339.88025"
-     id="silkscreen"
-     style="fill:none;stroke:#ffffff;stroke-width:10.1198;stroke-dasharray:none;stroke-opacity:1"
-     width="829.88013"
-     x="5.0598998"
-     y="5.0598998" />
 </svg>

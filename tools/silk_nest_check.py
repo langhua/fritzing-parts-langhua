@@ -75,11 +75,10 @@ SILK_HINT = re.compile(r'(?:^|[\s;"\'])stroke\s*[:=]\s*["\']?#(?:f0f0f0|ffffff)'
 DRAW_TAGS = ("rect", "line", "path", "polygon", "polyline", "circle", "ellipse")
 
 
-def silk_outside(text):
-    """⇒ [(标签, 属性片段), …]：**看着是丝印**（`stroke=#f0f0f0/#ffffff` ✓）
-    却**不在 `<g id="silkscreen">` 里** ✗ 的图元 ✓（= 元件箱里那多出来的一块 ✗）。
+def silk_span(text):
+    """⇒ [(标签, 元素全文, 起, 止), …]：**看着是丝印、却不在 `<g id="silkscreen">` 里**的图元 ✓
 
-    ★ 只看**画图元素** ✓（不看 `<g>` 自己的 style ✗），入参 = 该元素**自己的**属性串 ✓。
+    ★ **唯一实现** ✓（闸门 `silk_outside` ✗ 与修具 `fix_silk_group.py` ✓ 都调它 ✓）。
     """
     out, stack = [], []
     for m in re.finditer(r'<(/?)([A-Za-z]+)\b([^>]*?)(/?)>', text):
@@ -97,8 +96,18 @@ def silk_outside(text):
         if "silkscreen" in stack:
             continue
         if SILK_HINT.search(attrs) or re.search(r'id="silkscreen"', attrs):
-            out.append((tag, m.group(0)[:84]))
+            out.append((tag, m.group(0), m.start(), m.end()))
     return out
+
+
+def silk_outside(text):
+    """⇒ [(标签, 属性片段), …]：**看着是丝印**（`stroke=#f0f0f0/#ffffff` ✓）
+    却**不在 `<g id="silkscreen">` 里** ✗ 的图元 ✓（= 元件箱里那多出来的一块 ✗）。
+
+    ★ 只看**画图元素** ✓（不看 `<g>` 自己的 style ✗），入参 = 该元素**自己的**属性串 ✓。
+    """
+    return [(tag, el[:84] if len(el) > 84 else el)
+            for tag, el, _a, _b in silk_span(text)]
 
 
 def scan(paths):
