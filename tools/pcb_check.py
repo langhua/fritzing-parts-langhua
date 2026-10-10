@@ -222,6 +222,11 @@ VIA_INPAD_PITCH_MM = 0.65
 #   两件的图元最近距离必须 ≥ 本值 ✓（相交 ⇒ 负值 ⇒ 必定违规 ✓）。
 #   ★ 取 0.25 mm（与 `VIA_SAFE_MM` 同值 ✓，好记 ✓；工艺上贴片件间距通常 ≥ 0.2 ✓）⇒ 一行可调 ✓。
 PART_GAP_MM = 0.25
+# ★★ **铜与铜**的净距 ✓（走线 ↔ **别的网**的焊盘）—— 2026-10-10 补 ✗（**用户点名** ✓：
+#   「`R1.1` 离 `Wire90016002` 过近」✗ —— 实测 v87 只有 **0.0352 mm** ✗ 而闸门**一声不响** ✗）。
+#   ★ 与 `pcb_route.CLEAR_MM` **同值** ✓（`pcb_route.py:61` ✓，嘉立创 1 oz 最小 0.127 ✓）——
+#     改一处必须同步 ✗（本仓对 `HOLE_CLEAR_MM` 也是这么办的 ✓）。
+CLEAR_MM = 0.15
 #   ★★ ⑦b / ⑧ 为什么必须**逐图元**判 ✗（2026-10-01 实测 ✓）：
 #     ✗ 用"件的**占位框**（墨迹 bbox ✓）"会**大批假报** ✓：`NFC_Coil_20mm_6T_0p2_1`（L1）
 #       的框是 **21.6×22.05 mm**（整块线圈 ✓），而板只有 **25×25 mm** ✓ ⇒ 15/16 个过孔
@@ -604,6 +609,13 @@ def check(model, expect=None):
     #   的**环**走 ⇒ 铜叠进 **1.6 µm** ✗（真有铜 ✓ = 短路 ✗），而 ④/① 两边都没报 ✗。
     #   根因（量出来的 ✓）：布线器的障碍表当时把通孔盘按**孔**算 ✗（少挡 0.25 mm/边 ✗，
     #   已在 `pcb_pads.absbox` 修 ✓）——**但闸门不能指望上游做对** ✗，所以这里补一层 ✓。
+    #
+    # ★★ 2026-10-10 再补一刀 ✗（**用户点名** ✓）：「`R1.1` 离 `Wire90016002` 过近」✗
+    #   —— 原来这条只在 **d ≤ 线半宽**（= 真的**压住** ✗）时报 ✗ ⇒
+    #   「**贴近但没碰上**」是**盲区** ✗ ✗（实测 `v87`：净距只有 **0.0352 mm** ✗，
+    #   而闸门一声不响 ✗ —— 用户的眼睛又赢了一次 ✓）。
+    #   现判据 = **铜与铜的净距** ✓：`(d − 线半宽) × SK < CLEAR_MM` ⇒ 报 ✓
+    #   （`CLEAR_MM` 与 `pcb_route.CLEAR_MM` **同值** ✓ —— 改一处必须同步 ✗）。
     for i, t in enumerate(traces):
         hw = (t.get("mils") or 12.0) * 0.0254 / 2.0 / PW.SK
         na = _nets_of(uf.find(end(i, 0)))
@@ -618,11 +630,7 @@ def check(model, expect=None):
             if q.get("circle"):
                 (cx, cy), r = q["circle"]
                 # ★ 2026-10-08 改 ✓：弦 → **真几何** ✓（`d_pt_trace` 逐段比 ✓）
-                d = d_pt_trace((cx, cy), t)
-                if d <= r + hw + 1e-9:
-                    ov = (r + hw - d) * PW.SK
-                else:
-                    continue
+                d = d_pt_trace((cx, cy), t) - r
             else:
                 # ★★ 2026-10-09 修 ✗（**实测出来的假报** ✓）：`q["box"]` 是**轴对齐包围盒** ✗
                 #   —— 45° 摆的件（`U1` 的 EPAD = 菱形 ✓）它的**方框角点**离真铜 0.9 mm ✗，
@@ -630,9 +638,9 @@ def check(model, expect=None):
                 #   ⇒ 有 `poly`（旋转后的真多边形 ✓）就**逐边**量走线 ✓（与上面 circle 同源 ✓）
                 pl = q.get("poly")
                 if not pl:
-                    if not trace_rect_hit(t, q["box"], hw):
+                    if not trace_rect_hit(t, q["box"], hw + CLEAR_MM / PW.SK):
                         continue
-                    ov = -1.0
+                    d = -1.0
                 else:
                     def _d2s(a, b, c):
                         """点 c 到线段 ab 的距离（**文件单位** ✓）"""
@@ -648,13 +656,13 @@ def check(model, expect=None):
                     n = len(t["pts"])
                     d = min(_d2seg(t["pts"][k], t["pts"][k + 1], pl[m], pl[(m + 1) % len(pl)])
                             for k in range(n - 1) for m in range(len(pl)))
-                    if d > hw + 1e-9:
-                        continue
-                    ov = max(0.0, (hw - d) * PW.SK)
-            probs.append("④b 线**中段**压到**别的网**的盘 ⇒ **短路桥** ✗：走线 #%d（`%s`，网 %s）在 %s 层"
-                         "压住 `%s.%s`（网 %s）%s"
+            gap = (d - hw) * PW.SK          # 铜与铜的净距 ✓（< 0 = 压住 ✗）
+            if gap >= CLEAR_MM - 1e-9:
+                continue
+            probs.append("④b 线**贴着/压住**别的网的盘 ✗：走线 #%d（`%s`，网 %s）在 %s 层"
+                         "与 `%s.%s`（网 %s）的铜净距只有 **%+.4f mm** ✗（需 ≥ %.2f mm ✓）%s"
                          % (i, t.get("inst"), "、".join(sorted(na)), t["layer"], q["title"], q["cid"], qn,
-                            "" if ov < 0 else "，叠 **%.4f mm** ✓" % ov))
+                            gap, CLEAR_MM, "← **压住了** ✗" if gap < 0 else ""))
 
     # ③ 过孔挨铜 ＋ 贯通两层 ✓
     # ★★ 2026-10-05 修 ✗✓（**量出来的** ✓，不是猜 ✗）：判据从「**孔心**落在盘框/线段上」
