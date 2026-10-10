@@ -48,8 +48,8 @@
   </pcbView>
  </views>
  <connectors>
-  <connector id="connector0" name="Pin 0" type="male">
-   <description>A generic capacitor</description>
+  <connector id="connector0" name="1" type="male">
+   <description>1</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector0pin" legId="connector0leg"/>
@@ -62,8 +62,8 @@
     </pcbView>
    </views>
   </connector>
-  <connector id="connector1" name="Pin 1" type="male">
-   <description>A generic capacitor</description>
+  <connector id="connector1" name="2" type="male">
+   <description>2</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector1pin" legId="connector1leg"/>

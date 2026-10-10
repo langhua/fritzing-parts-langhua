@@ -12,12 +12,10 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs13" />
-  <g
-     transform="translate(-9.3866118,-10.347002)"
-     id="copper0">
+  
     <g
        gorn="0.1.0"
-       id="copper1">
+       id="copper1" transform="matrix(1,0,0,1,0,0)">
       <rect
          gorn="0.1.0.0"
          height="70"
@@ -35,7 +33,7 @@
          x="234.66022"
          y="20.102654" />
     </g>
-  </g>
+  
   <g
      transform="matrix(0.44076926,0,0,0.29059692,0.00374796,-0.00246462)"
      id="g19">

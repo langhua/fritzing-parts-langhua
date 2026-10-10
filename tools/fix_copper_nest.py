@@ -87,14 +87,26 @@ def declared_layers(fzp_path):
     """⇒ 这个件的**焊盘**声明在哪几层 ✓（读同目录的 `.fzp` ✓；读不到 ⇒ `None` = 跳过 ✓）
 
     ★ 声明**两层** = THT 件 ✓ ⇒ 它**本来就该两层都有铜** ✗ ⇒ 本规则不管它 ✓。
+    ★★ 2026-10-11 修一个**闸门洞** ✗（`SOD-323`/`SOD-523` 从缝里漏过去了 ✓）：
+       旧写法写死 `svgId="…pad"` ✗ ⇒ 焊盘叫 `connector0pin`（SOD 系列 ✓）时**一个也匹配不到** ✗
+       ⇒ 返回**空集** ✗ ⇒ 调用方按「不是 1 层」**静默跳过** ✗✗（= 用户说的"闸门有洞"✗）。
+       现在改成**按元素读属性** ✓（不看顺序 ✗、不看 `pad` 后缀 ✗）：
+       凡 `<connectors>` 里带 `layer="copperN"` 的 `<p>` ✓ 都算焊盘声明 ✓；
+       **一个都读不到 ⇒ 返回 `None`** ✓（= 不知道 ⇒ 让调用方**不带声明**去判 ✓，
+       宁可多报给人看 ✓，不再静默放过 ✗）。
     """
     if not fzp_path or not os.path.exists(fzp_path):
         return None
     text = open(fzp_path, encoding="utf-8").read()
-    m = re.search(r"<connectors>.*</connectors>", text, re.S)
+    m = re.search(r"<connectors>.*?</connectors>", text, re.S)
     if not m:
         return None
-    return set(re.findall(r'<p\s+layer="(copper[01])"\s+svgId="[^"]*pad"', m.group(0)))
+    out = set()
+    for p in re.finditer(r"<p\b[^>]*/?>", m.group(0)):
+        a = dict(re.findall(r'([\w:-]+)\s*=\s*"([^"]*)"', p.group(0)))
+        if a.get("layer", "").startswith("copper"):
+            out.add(a["layer"])
+    return out or None
 
 
 def find_nest(text, declared=None):
@@ -190,6 +202,22 @@ def main(argv):
             files.append(p)
     print("== fix_copper_nest：**铜组套非空铜组** ✗"
           "（Fritzing 会当成「两层都有这块铜」✗ ⇒ 画面上焊盘多一份 ✗）｜%d 个文件 ==" % len(files))
+    # ★ 洞要**看得见** ✗（2026-10-11 ✓）：本工具只收 `svg.pcb.*` 命名的源文件 ✓
+    #   ⇒ 命名不是这个样子的（老写法 ✓ 例 `svg/lm393-a3144-hall-3pin/…_pcb.svg` ✓）
+    #   它**看不见** ✗ ⇒ 明说出来 ✓，别让人以为"报了 0 就是全库都没事" ✗。
+    unseen = []
+    for p in (a.paths or [os.path.join(ROOT, "svg")]):
+        if not os.path.isdir(p):
+            continue
+        for dp, _dn, fn in os.walk(p):
+            for f in sorted(fn):
+                if f.endswith("_pcb.svg") and not f.startswith("svg.pcb."):
+                    unseen.append(os.path.join(dp, f))
+    if unseen:
+        print("   ⚠ 另有 %d 个 `*_pcb.svg` **没被本工具扫到** ✗（命名不是 `svg.pcb.*` ✓）"
+              "⇒ 它们的结构请用 `tools\\audit_smd_copper.py` 看 ✓：" % len(unseen))
+        for u in unseen[:6]:
+            print("      · %s" % os.path.relpath(u, ROOT).replace("\\", "/"))
     changed = []
     for p in files:
         hit, why = process(p, do=a.do)
