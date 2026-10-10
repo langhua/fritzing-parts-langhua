@@ -274,18 +274,22 @@ def gen_pcb_svg():
                  'stroke-width="%.3f"/>\n'
                  % (sx * SHIELD_SPAN / 2.0, EAR_CD, shield_r, shield_sw))
     y_lo, y_hi = EAR_CD - SHIELD_PAD_D / 2.0 - 0.1, EAR_CD + SHIELD_PAD_D / 2.0 + 0.1
-    s.append('  <g id="silkscreen">\n')
-    s.append('   <path d="M %.2f 0.00 L %.2f 0.00" fill="none" stroke="%s" stroke-width="0.12"/>\n'
+    s.append(' </g>\n')
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    #    嵌在 `<g id="copper1">` 里时 Fritzing 会把丝印**当铜导出** ✗（`.fzp` 的 pcbView
+    #    只声明图层、不声明图形归属 ⇒ 归属按组 id 认 ✓）⇒ 与 `SH-1.0-3P-V` 同一种毛病 ✓
+    s.append(' <g id="silkscreen">\n')
+    s.append('  <path d="M %.2f 0.00 L %.2f 0.00" fill="none" stroke="%s" stroke-width="0.12"/>\n'
              % (-PLATE1_W / 2.0, PLATE1_W / 2.0, PCB_SILK))
     for sx in (-1, 1):
         for y1, y2 in ((0.0, y_lo), (y_hi, TOTAL_D)):
-            s.append('   <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" '
+            s.append('  <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" '
                      'stroke-width="0.12"/>\n'
                      % (sx * PLATE1_W / 2.0, y1, sx * PLATE1_W / 2.0, y2, PCB_SILK))
-    s.append('   <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" stroke-width="0.12"/>\n'
+    s.append('  <path d="M %.2f %.2f L %.2f %.2f" fill="none" stroke="%s" stroke-width="0.12"/>\n'
              % (-PLATE1_W / 2.0, TOTAL_D, PLATE1_W / 2.0, TOTAL_D, PCB_SILK))
-    s.append('  </g>\n')
-    s += [' </g>\n', '</svg>\n']
+    s.append(' </g>\n')
+    s += ['</svg>\n']
     return "".join(s)
 
 

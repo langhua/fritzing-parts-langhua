@@ -10,16 +10,21 @@ r"""`silkscreen` **嵌在铜组里** 的扫描器（2026-10-10 立 ✓，起因 
 
 ★ 规矩（唯一一句）✓：**`<g id="silkscreen">` 必须是 `<g id="copper?">` 的兄弟** ✓
   （放在 `<svg>` 根下、与铜组平级 ✓），**绝不许嵌进铜组** ✗。
+  本工具的实现口径 = 这一句的**等价硬写法** ✓：丝印组必须**直接挂在 `<svg>` 下** ✓
+  （父组 = 无 ✓）。这样**嵌进任何组**（铜组 ✗、或别的外层组 ✗）都报 ✓。
+
+★★ **硬闸门（2026-10-10 第二轮 ✓）**：本仓**曾经**有 7 件老写法（`Crystal-3215`、`Crystal-3225`、
+   `FPC-05F-12P-H15`、`MX-1.25-2P-H`、`MX-1.25-3P-V`、`PH-2.0-3P-V`、`USB-B01` ✓）——
+   已**全部修好** ✓、`KNOWN` **台账已清空** ✓ ⇒ 现在**全库任何**零件违例都**报错** ✗
+   （✗ 不留白名单 ✗）。所以它**进 `tools/tests/run_all.py`** ✓（`silk_nest_selftest.py` ✓）。
+   全库现状：**235 个 pcb 视图，违例 0** ✓（2026-10-10 复验 ✓）。
 
 用法：
   py -3.13 -X utf8 tools\silk_nest_check.py [路径 ...]
     · 不给路径 ⇒ 扫本仓 `svg/` 下全部 `svg.pcb.*.svg` ＋ `fzpz/*.fzpz` 里的 pcb 视图 ✓
     · 给的可以是目录（递归 ✓）、`.svg`、或 `.fzpz` ✓
     · `--list` 只列**有问题的**那些 ✓（默认全列 ✓）
-    · `--baseline <文件>` 读一份"已知台账"（每行一个路径 ✓）⇒ 只报**新出现**的 ✗✓
-退出码：0 = 没有"新"的嵌套 ✗；1 = 有 ✗。
-★ 本仓既有 7 件仍是老写法 ✗（见 `docs/part-dev-guide.md` 的台账 ✓）—— 它们**不在本轮范围** ✓，
-  所以本工具**不进 `tools/tests/run_all.py`** ✓（不拿"历史欠账"当红灯 ✗）。
+退出码：0 = 没有"丝印嵌组" ✗；1 = 有 ✗（**没有白名单** ✓）。
 """
 import argparse
 import os
@@ -30,62 +35,39 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, ".."))
 
-# 本仓**既有**的老写法（2026-10-10 盘点 ✓ —— 只登记、不修 ✗，等用户点头再动 ✓）
-KNOWN = {
-    "svg/Crystal-3215/svg.pcb.Crystal-3215_pcb.svg",
-    "svg/Crystal-3225/svg.pcb.Crystal-3225_pcb.svg",
-    "svg/FPC-05F-12P-H15/svg.pcb.FPC-05F-12P-H15_pcb.svg",
-    "svg/MX-1.25-2P-H/svg.pcb.MX-1.25-2P-H_pcb.svg",
-    "svg/MX-1.25-3P-V/svg.pcb.MX-1.25-3P-V_pcb.svg",
-    "svg/PH-2.0-3P-V/svg.pcb.PH-2.0-3P-V_pcb.svg",
-    "svg/USB-B01/svg.pcb.USB-B01_pcb.svg",
-    "fzpz/Crystal-3215.fzpz",
-    "fzpz/Crystal-3225.fzpz",
-    "fzpz/FPC-05F-12P-H15.fzpz",
-    "fzpz/MX-1.25-2P-H.fzpz",
-    "fzpz/MX-1.25-3P-V.fzpz",
-    "fzpz/PH-2.0-3P-V.fzpz",
-    "fzpz/USB-B01.fzpz",
-}
 
+def group_parents(text):
+    """⇒ {组 id: 父组 id 或 None（= 直接挂在 `<svg>` 下 ✓）}。
 
-def copper_span(text, start):
-    """从 `<g id="copper?">` 的 `start`（= 开始标签之后）扫到配平的 `</g>`。
-
-    ★ 必须认**自闭合**的 `<g id="copper0"/>` ✓（本库既有写法 ✓）——
+    ★ 配平扫描必须认**自闭合**的 `<g id="copper0"/>` ✓（本库既有写法 ✓）——
       不认它就会把外层的 `</g>` 当成自己的 ⇒ 一路吞到文件尾 ⇒ **假阳性** ✗。
     """
-    i, depth = start, 1
-    while depth > 0:
-        n, c = text.find("<g ", i), text.find("</g>", i)
-        if c < 0:
-            return len(text)
-        if 0 <= n < c:
-            end = text.find(">", n)
-            if end < 0:
-                return len(text)
-            if text[end - 1] != "/":          # 自闭合 ⇒ 不入栈 ✓
-                depth += 1
-            i = end + 1
+    out, stack = {}, []
+    for m in re.finditer(r'<g\s+id="([^"]+)"\s*(/?)>|</g>', text):
+        if m.group(0) == "</g>":
+            if stack:
+                stack.pop()
+        elif m.group(2) == "/":                      # 自闭合 ⇒ 不入栈 ✓
+            out[m.group(1)] = stack[-1] if stack else None
         else:
-            depth -= 1
-            i = c + 4
-    return i
-
-
-def bad_groups(text):
-    """返回"里面含 `silkscreen` 组"的那些铜组 id ✓（空 = 合格 ✓）。"""
-    out = []
-    for m in re.finditer(r'<g\s+id="(copper[0-9]*)"\s*>', text):
-        if 'id="silkscreen"' in text[m.end():copper_span(text, m.end())]:
-            out.append(m.group(1))
+            out[m.group(1)] = stack[-1] if stack else None
+            stack.append(m.group(1))
     return out
 
 
+def silk_parent(text):
+    """⇒ 丝印组的父组（`None` = 合格 ✓）。没有丝印组 ⇒ 也返回 `None` ✓（不是本工具的判据 ✗）。"""
+    return group_parents(text).get("silkscreen")
+
+
+def copper_groups(text):
+    """同文件里出现的铜组 id（只作打印用 ✓）。"""
+    return re.findall(r'<g\s+id="(copper[0-9]*)"\s*/?>', text)
+
+
 def scan(paths):
-    """⇒ [(显示名, 铜组 id 列表), …]（只含有问题的 ✓）"""
-    bad = []
-    files = []
+    """⇒ ([(显示名, 丝印的父组, 该文件的铜组), …], 扫过的文件数)（只含有问题的 ✓）"""
+    bad, files = [], []
     for p in paths:
         if os.path.isdir(p):
             for dp, _dn, fn in os.walk(p):
@@ -98,14 +80,18 @@ def scan(paths):
         rel = os.path.relpath(p, ROOT).replace("\\", "/")
         if p.endswith(".fzpz"):
             with zipfile.ZipFile(p) as z:
-                for nm in z.namelist():
+                for nm in sorted(z.namelist()):
                     if nm.startswith("svg.pcb.") and nm.endswith(".svg"):
-                        if bad_groups(z.read(nm).decode("utf-8")):
-                            bad.append((rel, ["(zip) " + nm]))
+                        t = z.read(nm).decode("utf-8")
+                        par = silk_parent(t)
+                        if par is not None:
+                            bad.append((rel + " (zip) " + nm, par, copper_groups(t)))
         else:
-            g = bad_groups(open(p, encoding="utf-8").read())
-            if g:
-                bad.append((rel, g))
+            with open(p, encoding="utf-8") as fh:
+                t = fh.read()
+            par = silk_parent(t)
+            if par is not None:
+                bad.append((rel, par, copper_groups(t)))
     return bad, files
 
 
@@ -116,15 +102,16 @@ def main(argv):
     a = ap.parse_args(argv)
     paths = a.paths or [os.path.join(ROOT, "svg"), os.path.join(ROOT, "fzpz")]
     bad, files = scan(paths)
-    print("== silk_nest_check：`silkscreen` 嵌在铜组里 ✗｜扫了 %d 个文件 ==" % len(files))
-    for rel, g in bad:
-        mark = "（台账内 ✓ 老写法）" if rel in KNOWN else "★**新出现** ✗"
-        print("  ✗ %-62s %s %s" % (rel, ",".join(g), mark))
+    print("== silk_nest_check：`silkscreen` 嵌在组里 ✗"
+          "（判据：丝印组必须**直接挂在 `<svg>` 下** ✓ = 与铜组平级 ✓）｜扫了 %d 个文件 =="
+          % len(files))
+    for rel, par, cu in bad:
+        print("  ✗ %-62s 丝印的父组 = %s%s"
+              % (rel, par, ("｜该文件铜组：" + ",".join(cu)) if cu else ""))
     if not bad:
         print("  ✓ 一个都没有 ✓")
-    fresh = [rel for rel, _g in bad if rel not in KNOWN]
-    print("⇒ 问题 **%d** 个（其中台账外**新**的 **%d** 个）" % (len(bad), len(fresh)))
-    return 1 if fresh else 0
+    print("⇒ 违例 **%d** 个（**无白名单** ✓ ⇒ 0 才算过 ✓）" % len(bad))
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

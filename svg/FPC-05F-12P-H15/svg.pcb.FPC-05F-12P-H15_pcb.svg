@@ -15,8 +15,8 @@
   <rect id="connector11pad" x="2.600" y="3.15" width="0.30" height="0.90" fill="#F7BD13" stroke="none"/>
   <rect x="-5.450" y="0.0" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
   <rect x="4.350" y="0.0" width="1.10" height="1.80" fill="#F7BD13" stroke="none"/>
-  <g id="silkscreen">
-   <path d="M -5.20 -1.15 L 5.20 -1.15 M 5.20 -1.15 L 5.20 -0.10 M 5.20 1.90 L 5.20 3.25 M 5.20 3.25 L 3.00 3.25 M -3.00 3.25 L -5.20 3.25 M -5.20 3.25 L -5.20 1.90 M -5.20 -0.10 L -5.20 -1.15" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
-  </g>
+ </g>
+ <g id="silkscreen">
+  <path d="M -5.20 -1.15 L 5.20 -1.15 M 5.20 -1.15 L 5.20 -0.10 M 5.20 1.90 L 5.20 3.25 M 5.20 3.25 L 3.00 3.25 M -3.00 3.25 L -5.20 3.25 M -5.20 3.25 L -5.20 1.90 M -5.20 -0.10 L -5.20 -1.15" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
  </g>
 </svg>

@@ -237,7 +237,7 @@ python svg/MX-1.25-3P-V/gen_part.py              # 生成器逐字采用你的�
 | `svg/SH-1.0-3P-V/gen_part.py` | `pcb_svg()`：丝印组**移出**铜组 ⇒ 与 `copper1` 平级（并写进函数注释与仓规 ✓） |
 | `svg/SH-1.0-3P-V/svg.pcb.SH-1.0-3P-V_pcb.svg` | 重跑生成器后的产物（`silkscreen` 从 `copper1` 里挪到 `<svg>` 根下 ✓） |
 | `fzpz/SH-1.0-3P-V.fzpz` | 同上（重打包 ✓）；★ 面包板 / 原理图 / icon 三个视图**逐字节未变** ✓（生成器可复现 ✓） |
-| `tools/silk_nest_check.py`（新） | 「丝印组嵌在铜组里」的**扫描器** ✓：判据只有一句（**丝印组必须是铜组的兄弟** ✓）；本仓**既有 7 件**（`Crystal-3215/3225`、`FPC-05F-12P-H15`、`MX-1.25-2P-H`、`MX-1.25-3P-V`、`PH-2.0-3P-V`、`USB-B01`）是同一老写法 ✗ ⇒ 记在脚本的 `KNOWN` 台账里、**只报"台账外新出现的"** ✗ |
+| `tools/silk_nest_check.py`（新） | 「丝印组嵌在**任何组**里」的**扫描器 ＋ 硬闸门** ✓：判据只有一句（**丝印组必须是铜组的兄弟** ✓ ⇒ 实现口径 = **直接挂在 `<svg>` 下** ✓）；**无白名单** ✗（`KNOWN` 台账 2026-10-10 第二轮已**清空** ✓、`--baseline` 已删 ✗）⇒ 全库任何零件违例都**报错** ✗；已进 `tools/tests/run_all.py` ✓ |
 
 **前后 XML**（`svg.pcb.SH-1.0-3P-V_pcb.svg`，只贴形状部分 ✓）：
 
@@ -265,5 +265,73 @@ python svg/MX-1.25-3P-V/gen_part.py              # 生成器逐字采用你的�
 > ⚠ **遗留**（本轮**未处理** ✗，等用户点头 ✓）：上面那 7 件同样是老写法 ✗。它们的丝印线**也会**
 > 被当铜导出 ✗，只是那几块板/那些位置凑巧没踩到 5 mil 下限 ✓ —— 要用时先跑
 > `py -3.13 tools\silk_nest_check.py` 看有没有新的 ✓，改动方式与本件**同一处、同一种** ✓。
+> ⇒ **2026-10-10 第二轮已把这 7 件全部修好 ✓、台账已清空 ✓**，见下一节 ✓。
 > ⚠ **另一条**：本件的丝印线宽 0.12 mm **< 嘉立创丝印下限 0.15 mm** ⚠ ⇒ 可能印不清（`silkBottom`
 > 有 0.12 mm 真丝印线的 ⚠ 提示 ✓）—— 那是**另一个问题** ✗，本轮不动 ✓。
+
+## ★ 2026-10-10（第二轮）：另有 **7 件**同一老写法 ⇒ **全部修好** ✓ ＋ 台账**清空** ⇒ **硬闸门** ✓
+
+上一节修 `SH-1.0-3P-V` 时盘点出**另有 7 件**同病（`<g id="silkscreen">` 嵌在 `<g id="copper1">` 里 ✗）：
+
+| 件 | 丝印组嵌在 | 丝印组里的图元 | 铜组里**别的**非铜组 ✗ |
+|---|---|---|---|
+| `Crystal-3215` | `copper1` | **1** 个 `<rect>`（本体框） | 无（只有丝印这一处 ✓） |
+| `Crystal-3225` | `copper1` | **1** 个 `<rect>` | 无 ✓ |
+| `FPC-05F-12P-H15` | `copper1` | **1** 个 `<path>`（本体轮廓，挖了 3 个缺口） | 无 ✓ |
+| `MX-1.25-2P-H` | `copper1` | **7** 条 `<line>` | 无 ✓ |
+| `MX-1.25-3P-V` | `copper1` | **5** 条 `<line>` | 无 ✓ |
+| `PH-2.0-3P-V` | `copper1` | **9** 条 `<line>` | 无 ✓ |
+| `USB-B01` | `copper1` | **6** 条 `<path>` | 无 ✓ |
+
+**改法** ✓（与 `SH-1.0-3P-V` **完全同一套** ✓）：改**生成器**（✗ 不是只改产物 ✗）——
+`svg/<件>/gen_part.py` 的 `pcb_svg()` 里把 `<g id="silkscreen">` **移出**铜组、放到与
+`<g id="copper1">` **平级** ✓。★ **只挪层级** ✗：id / 几何 / 坐标 / 线宽 / `transform` / **组内顺序**
+**一字未改** ✓（机器证据见下 ✓）。7 件的铜组里**没有**别的非铜组（`outline` / `breadboard` 之类 ✗）
+—— 逐个查过 ✓，**只有 `silkscreen` 这一处 ✗**（上表 ✓）。
+
+**自证** ✓（三路 ✓）：
+1. **其它视图逐字节未变** ✓：`sha256` 对比 ⇒ 7 件的 `svg.icon.*` / `svg.breadboard.*` /
+   `svg.schematic.*` ＋ `part.*.fzp`（＋ `byHand_icon.py` / `icon_art.py` ✓）
+   **哈希与改前完全一致** ✓（只有 `svg.pcb.*` 与 `fzpz/*.fzpz` 变 ✓）；
+2. **pcb svg 的 diff 只有"层级挪动"** ✓：去所有缩进空白后，把新文件里的丝印块**搬回老位置**
+   ⇒ 与老文件**逐字复现** ✓（`_scratch/verify_silk.py` ✓ —— 叶子图元逐字相同 ✓、元素属性多重集相同 ✓、
+   丝印的父元素 = `svg` ✓）；`fzpz` 逐条目比 ⇒ 每个 zip **只有 `svg.pcb.*.svg` 那一条变** ✓
+   （`_scratch/verify_fzpz.py` ✓）；
+3. **闸门复跑** ✓：`py -X utf8 tools\silk_nest_check.py` ⇒ **违例 0** ✓（这 7 件已不在名单里 ✓）。
+
+**前后 XML**（`Crystal-3215` ✓）：
+
+```diff
+   <rect id="connector1pad" x="0.75" y="-0.90" width="1.00" height="1.80" fill="#F7BD13" stroke="none"/>
+-  <g id="silkscreen">
+-   <rect x="-1.90" y="-1.05" width="3.80" height="2.10" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
+-  </g>
++ </g>
++ <g id="silkscreen">
++  <rect x="-1.90" y="-1.05" width="3.80" height="2.10" fill="none" stroke="#f0f0f0" stroke-width="0.08"/>
+  </g>
+ </svg>
+```
+
+（`FPC-05F-12P-H15` 同形 ✓：`<g id="silkscreen">` 连同它唯一的 `<path>` 从 `copper1` 里挪到平级 ✓。）
+
+**改前/改后对照图** ✓（本地、未入库 ✓ —— `_scratch/silk_demo/` ✓）：
+`MX-1.25-3P-V_silk_move.png`、`USB-B01_silk_move.png`、`FPC-05F-12P-H15_silk_move.png`
+⇒ 一眼可见"**上排铜层少掉那几条红线** ✓、**下排丝印层多出那几条线** ✓"（红 = 改前被当铜导出的 0.12 mm 丝印线 ✗）（`_scratch/silk_demo.py` ✓）。
+
+**硬闸门** ✓：`tools/silk_nest_check.py` 的 `KNOWN` 台账**清空** ✓、`--baseline` 也**删掉** ✗
+⇒ 从此**任何**零件"丝印不是铜的兄弟"都**报错** ✗（✗ 不留白名单 ✗）；实现口径 = 判据的等价硬写法
+（丝印组必须**直接挂在 `<svg>` 下** ✓ ⇒ 嵌进**任何**组都报 ✓）；并新增
+`tools/tests/silk_nest_selftest.py` ✓（合成局 5 例 ＋ 自闭合防假阳性 2 例 ＋ **全库 235 个 pcb 视图违例 0** ✓）
+⇒ `py -X utf8 tools\tests\run_all.py` **exit 0** ✓（7 个测试脚本 ✓）。
+
+**反例自测** ✓（证明闸门真能抓**新**病 ✓）：临时造一份"丝印嵌回 `copper1`"的
+`svg.pcb.*.svg` ＋ 一份 `.fzpz` ✓ ⇒ `silk_nest_check.py` **exit 1** ✓ 且点名
+`丝印的父组 = copper1` ✓；造完**已删掉** ✓（`_scratch/bad_silk/` 不存在了 ✓）。
+
+> ⚠ **项目仓影响** ✗（**只报告** ✓，**未改任何 `.fzz`** ✗）：`hardware/pixel/` 下 **1617 个 `.fzz`**
+> **一个都没内嵌这 7 件** ✓（按 zip 条目名**精确 ＋ 子串**两路查 ✓，含 `hardware/prototype/`、
+> `hardware/subboard_4x4/`、`_work/v83cmp/` ✓）⇒ **本轮无需更新任何 `.fzz`** ✓。
+> 对照：上一轮的 `SH-1.0-3P-V` 被 **1615 个 `.fzz`** 内嵌 —— 其中**交付件 `pixel-pcb-v84.fzz` 已是新写法 ✓**
+> （上一轮同步过 ✓），其余是历史快照（`v8 … v83` ✓ **仍是老写法** ✗，要复算/重导才需要同步 ⚠ ✓）。
+

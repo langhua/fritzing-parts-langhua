@@ -556,7 +556,7 @@ def pcb_svg():
                 if px0 - clr <= x <= px1 + clr and py0 - clr < b and py1 + clr > a]
 
     def line(a, b, c, d):
-        return (f'   <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
+        return (f'  <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
                 f'stroke="{SILK}" stroke-width="{lw}" stroke-linecap="round"/>\n')
 
     L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
@@ -572,8 +572,12 @@ def pcb_svg():
         L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
                  f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    #    嵌在铜组里时 Fritzing 会把丝印**当铜导出** ✗（`.fzp` 的 pcbView 只声明图层、
+    #    不声明图形归属 ⇒ 归属按组 id 认 ✓）⇒ 与 `SH-1.0-3P-V` 同一种毛病 ✓
+    L.append(' </g>\n')
     # 丝印：本体轮廓；每条边都按「焊盘 + clr 余量」挖缺口（同 SH-1.0-3P-V 那份的画法）
-    L.append('  <g id="silkscreen">\n')
+    L.append(' <g id="silkscreen">\n')
     for a, b in keep(-sx, sx, holes_h(body_f, -sx, sx)):              # 前缘（2 个信号焊盘）
         L.append(line(a, body_f, b, body_f))
     for a, b in keep(-sx, sx, holes_h(body_b, -sx, sx)):              # 后缘（焊盘够不到 ⇒ 整条）
@@ -582,7 +586,7 @@ def pcb_svg():
         L.append(line(-sx, a, -sx, b))
     for a, b in keep(body_f, body_b, holes_v(sx, body_f, body_b)):    # 右侧边
         L.append(line(sx, a, sx, b))
-    L.append('  </g>\n </g>\n</svg>\n')
+    L.append(' </g>\n</svg>\n')
     return "".join(L)
 
 
