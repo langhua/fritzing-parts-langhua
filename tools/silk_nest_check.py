@@ -65,9 +65,45 @@ def copper_groups(text):
     return re.findall(r'<g\s+id="(copper[0-9]*)"\s*/?>', text)
 
 
+# ★★ 2026-10-11 补：**第二条硬规则** ✓（用户 2026-10-11 看元件箱发现 ✗）
+#   病：`R0603` / `C0603` 的 pcb 里，丝印是**一颗裸 `<rect id="silkscreen">`** ✗
+#       —— **没有 `<g id="silkscreen">`** ✗ ⇒ Fritzing 按**组 id** 认层 ⇒ 那坨丝印
+#       **不属于丝印层** ✗ ⇒ 元件箱/指示栏里渲出来**多一块**（用户截图 ✗）。
+#   而本工具的旧判据（"丝印组的父组必须为 None"✓）对"**根本没有丝印组**"**当合格** ✗✗
+#       —— 这正是"闸门有洞"的写法 ✗ ⇒ 补这条 ✓。
+SILK_HINT = re.compile(r'(?:^|[\s;"\'])stroke\s*[:=]\s*["\']?#(?:f0f0f0|ffffff)', re.I)
+DRAW_TAGS = ("rect", "line", "path", "polygon", "polyline", "circle", "ellipse")
+
+
+def silk_outside(text):
+    """⇒ [(标签, 属性片段), …]：**看着是丝印**（`stroke=#f0f0f0/#ffffff` ✓）
+    却**不在 `<g id="silkscreen">` 里** ✗ 的图元 ✓（= 元件箱里那多出来的一块 ✗）。
+
+    ★ 只看**画图元素** ✓（不看 `<g>` 自己的 style ✗），入参 = 该元素**自己的**属性串 ✓。
+    """
+    out, stack = [], []
+    for m in re.finditer(r'<(/?)([A-Za-z]+)\b([^>]*?)(/?)>', text):
+        closing, tag, attrs, selfclose = m.group(1), m.group(2).lower(), m.group(3), m.group(4)
+        if tag == "g":
+            if closing:
+                if stack:
+                    stack.pop()
+            elif not selfclose:
+                gid = re.search(r'id="([^"]*)"', attrs)
+                stack.append(gid.group(1) if gid else "")
+            continue
+        if closing or tag not in DRAW_TAGS:
+            continue
+        if "silkscreen" in stack:
+            continue
+        if SILK_HINT.search(attrs) or re.search(r'id="silkscreen"', attrs):
+            out.append((tag, m.group(0)[:84]))
+    return out
+
+
 def scan(paths):
     """⇒ ([(显示名, 丝印的父组, 该文件的铜组), …], 扫过的文件数)（只含有问题的 ✓）"""
-    bad, files = [], []
+    bad, loose, files = [], [], []
     for p in paths:
         if os.path.isdir(p):
             for dp, _dn, fn in os.walk(p):
@@ -86,13 +122,17 @@ def scan(paths):
                         par = silk_parent(t)
                         if par is not None:
                             bad.append((rel + " (zip) " + nm, par, copper_groups(t)))
+                        for tag, frag in silk_outside(t):
+                            loose.append((rel + " (zip) " + nm, tag, frag))
         else:
             with open(p, encoding="utf-8") as fh:
                 t = fh.read()
             par = silk_parent(t)
             if par is not None:
                 bad.append((rel, par, copper_groups(t)))
-    return bad, files
+            for tag, frag in silk_outside(t):
+                loose.append((rel, tag, frag))
+    return bad, loose, files
 
 
 def main(argv):
@@ -101,17 +141,21 @@ def main(argv):
     ap.add_argument("--list", action="store_true", help="只列有问题的 ✓")
     a = ap.parse_args(argv)
     paths = a.paths or [os.path.join(ROOT, "svg"), os.path.join(ROOT, "fzpz")]
-    bad, files = scan(paths)
-    print("== silk_nest_check：`silkscreen` 嵌在组里 ✗"
-          "（判据：丝印组必须**直接挂在 `<svg>` 下** ✓ = 与铜组平级 ✓）｜扫了 %d 个文件 =="
-          % len(files))
+    bad, loose, files = scan(paths)
+    print("== silk_nest_check：两件硬规矩 ✓"
+          "｜① `silkscreen` 嵌在组里 ✗（判据：丝印组必须**直接挂在 `<svg>` 下** ✓）"
+          "｜② 丝印图元**不在** `<g id=\"silkscreen\">` 里 ✗（2026-10-11 补 ✓）"
+          "｜扫了 %d 个文件 ==" % len(files))
     for rel, par, cu in bad:
-        print("  ✗ %-62s 丝印的父组 = %s%s"
+        print("  ✗ ① %-58s 丝印的父组 = %s%s"
               % (rel, par, ("｜该文件铜组：" + ",".join(cu)) if cu else ""))
-    if not bad:
-        print("  ✓ 一个都没有 ✓")
-    print("⇒ 违例 **%d** 个（**无白名单** ✓ ⇒ 0 才算过 ✓）" % len(bad))
-    return 1 if bad else 0
+    for rel, tag, frag in loose:
+        print("  ✗ ② %-58s `<%s …` 不在丝印组里 ✗：%s" % (rel, tag, frag))
+    if not bad and not loose:
+        print("  ✓ 两件都没有 ✓")
+    print("⇒ 违例 **%d** 个（不见① %d ✓ 不见② %d ✓；**无白名单** ✓ ⇒ 0 才算过 ✓）"
+          % (len(bad) + len(loose), len(bad), len(loose)))
+    return 1 if (bad or loose) else 0
 
 
 if __name__ == "__main__":
