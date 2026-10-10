@@ -506,6 +506,8 @@ def pcb_svg():
       —— 与嘉立创一致（它那份丝印：前缘被 3 信号焊盘挖 3 个口、后缘被 2 固定焊盘挖 2 个口、
       侧边在固定焊盘那段断开 ⇒ 把该挡的丝印删干净），避免丝印压焊盘
     · **不画 1 脚圆点**（用户 2026-09-25 要求）
+    · ★★ **丝印组与 `copper1` 平级**（2026-10-10 定 ✓）：丝印**绝不嵌进铜组** ✗ ——
+      嵌进去 Fritzing 会把它**当铜导出**（用户 Gerber 实测：底铜多 14 段 0.12 mm 线 ⇒ 3.57 mil ✗）
     · 方向与 icon 一致（icon 是图纸原样：本体在上、端子朝 +y）
 
     ★ 用户 2026-09-25 定：**以嘉立创那份 PCB 文件为准**（不要以图标为准）。
@@ -555,7 +557,7 @@ def pcb_svg():
                 if px0 - clr <= x <= px1 + clr and py0 - clr < b and py1 + clr > a]
 
     def line(a, b, c, d):
-        return (f'   <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
+        return (f'  <line x1="{a:.3f}" y1="{b:.3f}" x2="{c:.3f}" y2="{d:.3f}" '
                 f'stroke="{SILK}" stroke-width="{lw}" stroke-linecap="round"/>\n')
 
     L = ['<?xml version="1.0" encoding="UTF-8"?>\n',
@@ -571,8 +573,13 @@ def pcb_svg():
         L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
                  f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y0:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
+    L.append(' </g>\n')
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    #    嵌在 `<g id="copper1">` 里时，Fritzing 按"在铜组里"把这 7 条线**当铜导出** ✗
+    #    ⇒ 底铜多出 14 段 0.12 mm 细线 ⇒ 与 J2 的 24 mil 线只隔 0.0906 mm = 3.57 mil < 5 mil ✗
+    #    （对照：`WS2812B-1010` 那件丝印与铜是**平级**的 ✓ ⇒ 没这问题 ✓）
+    L.append(' <g id="silkscreen">\n')
     # 丝印：本体轮廓；每条边都按「焊盘 + clr 余量」挖缺口（同嘉立创那份的画法）
-    L.append('  <g id="silkscreen">\n')
     for a, b in keep(-sx, sx, holes_h(BODY_F, -sx, sx)):         # 前缘（3 个信号焊盘）
         L.append(line(a, BODY_F, b, BODY_F))
     for a, b in keep(-sx, sx, holes_h(silk_b, -sx, sx)):         # 后缘（2 个固定焊盘）
@@ -581,7 +588,7 @@ def pcb_svg():
         L.append(line(-sx, a, -sx, b))
     for a, b in keep(silk_b, BODY_F, holes_v(sx, silk_b, BODY_F)):    # 右侧边
         L.append(line(sx, a, sx, b))
-    L.append('  </g>\n </g>\n</svg>\n')
+    L.append(' </g>\n</svg>\n')
     return "".join(L)
 
 

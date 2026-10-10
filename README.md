@@ -217,3 +217,53 @@ python svg/MX-1.25-3P-V/gen_part.py              # 生成器逐字采用你的�
 
 工具细节、以及另一条路（手工版导出**结构化表** `byHand_tables.py`，适合"图形由元件拼出来"的模组类）
 见 [`tools/README.md`](tools/README.md)。
+
+## ★ 2026-10-10：`SH-1.0-3P-V` 的丝印**漏进铜层** ✗ ⇒ 已修 ✓
+
+**现象** ✓（用户从 Fritzing 导出 Gerber 后，`tools/gerber_check.py` 实测）：`pixel-pcb-v83_copperBottom.gbl`
+的底铜里多出 **14 段 Ø0.12 mm** 的细线 ✗，与旁边 J2 的 24 mil 走线只隔 **0.0906 mm = 3.57 mil**（< 5 mil 下限 ✗）
+⇒ **整批 Gerber 判「不可送板」** ✗。
+
+**根因** ✓：`SH-1.0-3P-V` 的 pcb svg 把 `<g id="silkscreen">` **嵌在** `<g id="copper1">` **内部** ✗
+—— `.fzp` 的 `pcbView` **只声明图层**（`copper1` / `silkscreen` ✓）、**不声明"哪块图形属于哪层"** ✗，
+归属是 Fritzing 读 SVG 时按**组的 id** 认的 ✓ ⇒ 嵌在铜组里 ⇒ 那 7 条丝印线**被当铜导出** ✗
+（每个实例 7 条 × `J1`/`J2` 两实例 = **14 段** ✓）。对照件 = `WS2812B-1010` ✓：它的
+`<g id="silkscreen">` 与 `<g id="copper1">` 是**兄弟**（平级 ✓）⇒ 没这问题 ✓。
+
+**改了什么** ✓（只改**层级** ✗，几何 / id / 线宽 / transform **一字未动** ✓）：
+
+| 文件 | 改动 |
+|---|---|
+| `svg/SH-1.0-3P-V/gen_part.py` | `pcb_svg()`：丝印组**移出**铜组 ⇒ 与 `copper1` 平级（并写进函数注释与仓规 ✓） |
+| `svg/SH-1.0-3P-V/svg.pcb.SH-1.0-3P-V_pcb.svg` | 重跑生成器后的产物（`silkscreen` 从 `copper1` 里挪到 `<svg>` 根下 ✓） |
+| `fzpz/SH-1.0-3P-V.fzpz` | 同上（重打包 ✓）；★ 面包板 / 原理图 / icon 三个视图**逐字节未变** ✓（生成器可复现 ✓） |
+| `tools/silk_nest_check.py`（新） | 「丝印组嵌在铜组里」的**扫描器** ✓：判据只有一句（**丝印组必须是铜组的兄弟** ✓）；本仓**既有 7 件**（`Crystal-3215/3225`、`FPC-05F-12P-H15`、`MX-1.25-2P-H`、`MX-1.25-3P-V`、`PH-2.0-3P-V`、`USB-B01`）是同一老写法 ✗ ⇒ 记在脚本的 `KNOWN` 台账里、**只报"台账外新出现的"** ✗ |
+
+**前后 XML**（`svg.pcb.SH-1.0-3P-V_pcb.svg`，只贴形状部分 ✓）：
+
+```diff
+   <rect id="connector2pad" connectorname="3" x="0.750" y="2.384" width="0.50" height="1.20" .../>
+-  <g id="silkscreen">
+-   <line x1="-2.667" y1="2.600" x2="-1.480" y2="2.600" ... stroke-width="0.12" .../>
+-   …（共 7 条）…
+-  </g>
++ </g>
++ <g id="silkscreen">
++  <line x1="-2.667" y1="2.600" x2="-1.480" y2="2.600" ... stroke-width="0.12" .../>
++  …（共 7 条）…
+  </g>
+ </svg>
+```
+
+**复验** ✓（两路 ✓）：① 库仓 `tools/tests/run_all.py` ⇒ **exit 0** ✓；
+② `tools/silk_nest_check.py` ⇒ 本件已不在名单里 ✓、台账外**新**的 **0** 个 ✓；
+③ 项目仓里重新导出/复验后，底铜最小铜↔铜间距 **0.0906 mm（3.57 mil）→ 0.1414 mm（5.57 mil）** ⚠
+（仍在嘉立创可做区内 ✓）、孤立铜岛 **8 → 0** ✓、
+`gerber_check` 判 **「可送板」（exit 0）** ✓ —— 数据与操作步骤见
+`AuroraTessellation-NFC/hardware/pixel/README.md` §五十三 ✓。
+
+> ⚠ **遗留**（本轮**未处理** ✗，等用户点头 ✓）：上面那 7 件同样是老写法 ✗。它们的丝印线**也会**
+> 被当铜导出 ✗，只是那几块板/那些位置凑巧没踩到 5 mil 下限 ✓ —— 要用时先跑
+> `py -3.13 tools\silk_nest_check.py` 看有没有新的 ✓，改动方式与本件**同一处、同一种** ✓。
+> ⚠ **另一条**：本件的丝印线宽 0.12 mm **< 嘉立创丝印下限 0.15 mm** ⚠ ⇒ 可能印不清（`silkBottom`
+> 有 0.12 mm 真丝印线的 ⚠ 提示 ✓）—— 那是**另一个问题** ✗，本轮不动 ✓。
