@@ -488,17 +488,51 @@
          y="0.044872198" />
   </svg>
   <text x="25.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">C 0402</text>
-  <svg id="p11" x="44.00" y="94.50" width="30.00" height="22.00" viewBox="-1.75 -0.90 3.50 1.80" preserveAspectRatio="xMidYMid meet">
-    <g id="p11_icon">
+  <svg id="p11" x="44.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 6.4251967 3.4015749" preserveAspectRatio="xMidYMid meet">
+    <defs
+         id="p11_defs435" /><desc
+         id="p11_desc417" /><rect
+         gorn="0.2"
+         height="3.023622"
+         id="p11_connector0pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.1338583"
+         x="0.18897638"
+         y="0.18897638" /><rect
+         gorn="0.3"
+         height="3.023622"
+         id="p11_connector1pad"
+         style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+         width="1.1338583"
+         x="5.1023622"
+         y="0.18897638" /><rect
+         gorn="0.4"
+         height="3.4015749"
+         id="p11_silkscreen"
+         style="fill:none;stroke:none;stroke-width:0.140957;stroke-opacity:1"
+         width="6.4251966"
+         x="0"
+         y="0" /><rect
+         gorn="0.5"
+         height="3.023622"
+         id="p11_rect787"
+         style="fill:#D9B477;fill-opacity:1;stroke:none"
+         width="3.7795277"
+         x="1.3228346"
+         y="0.18897638" />
+  </svg>
+  <text x="59.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">C 0603</text>
+  <svg id="p12" x="78.00" y="94.50" width="30.00" height="22.00" viewBox="-1.75 -0.90 3.50 1.80" preserveAspectRatio="xMidYMid meet">
+    <g id="p12_icon">
       <rect x="-1.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
       <rect x="0.75" y="-0.90" width="1.00" height="1.80" fill="#f7bf13" stroke="none"/>
       <rect x="-1.60" y="-0.75" width="3.20" height="1.50" rx="0.2" ry="0.2" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
      </g>
   </svg>
-  <text x="59.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3215</text>
-  <text x="59.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.5×1.8mm</text>
-  <svg id="p12" x="78.00" y="94.50" width="30.00" height="22.00" viewBox="-1.65 -1.35 3.30 2.70" preserveAspectRatio="xMidYMid meet">
-    <g id="p12_icon">
+  <text x="93.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3215</text>
+  <text x="93.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.5×1.8mm</text>
+  <svg id="p13" x="112.00" y="94.50" width="30.00" height="22.00" viewBox="-1.65 -1.35 3.30 2.70" preserveAspectRatio="xMidYMid meet">
+    <g id="p13_icon">
       <rect x="-1.65" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
       <rect x="0.55" y="-1.35" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
       <rect x="0.55" y="0.15" width="1.10" height="1.20" fill="#f7bf13" stroke="none"/>
@@ -506,164 +540,10 @@
       <rect x="-1.60" y="-1.25" width="3.20" height="2.50" rx="0.25" ry="0.25" fill="#d9d9d9" stroke="#8a8a8a" stroke-width="0.08"/>
      </g>
   </svg>
-  <text x="93.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3225</text>
-  <text x="93.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.3×2.7mm</text>
-  <svg id="p13" x="112.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 373.236 400" preserveAspectRatio="xMidYMid meet">
-    <defs
-         id="p13_defs84" />
-      <g
-         gorn="0.1"
-         id="p13_breadboard">
-        <g
-           gorn="0.1.0"
-           id="p13_icon">
-          <path
-             d="m 0,0 v 170 a 30.000002,30.000001 0 0 1 0,60 V 400 H 373.236 V 0 Z"
-             fill="#1f7a34"
-             gorn="0.1.0.0"
-             id="p13_path6"
-             stroke="none"
-             stroke-width="0" />
-          <g
-             gorn="0.1.0.1.0.0.0.0.0.0"
-             id="p13_g7970"
-             transform="translate(363.90376,140.96478)">
-            <path
-               d="m -215.31794,-23.94386 h 78.74016"
-               gorn="0.1.0.1.0.0.0.0.0.0.1"
-               id="p13_path3158"
-               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
-            <path
-               d="m -215.31794,142.68158 h 78.74016"
-               gorn="0.1.0.1.0.0.0.0.0.0.2"
-               id="p13_path3158-0"
-               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
-            <g
-               transform="matrix(0.8858577,0,0,0.88586692,69.625044,-111.3274)"
-               id="p13_g9">
-              <g
-                 gorn="0.1.0.1.0.0.0.0.0.0.0.0"
-                 id="p13_rect1358">
-                <path
-                   d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
-                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
-                   id="p13_path1362"
-                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
-                <path
-                   d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
-                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
-                   id="p13_path1364"
-                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
-              </g>
-            </g>
-          </g>
-        </g>
-        <g
-           transform="translate(170.653,334.05512)"
-           id="p13_g31">
-          <g
-             gorn="0.1.1.0"
-             id="p13_g62">
-            <g
-               gorn="0.1.1.0.0"
-               id="p13_g60">
-              <rect
-                 fill="#8d8c8c"
-                 gorn="0.1.1.0.0.0"
-                 height="31.9"
-                 id="p13_connector0pin"
-                 width="31.93"
-                 x="0"
-                 y="0" />
-              <rect
-                 fill="#8c8663"
-                 gorn="0.1.1.0.0.1"
-                 height="16.415199"
-                 id="p13_rect50"
-                 width="16.444201"
-                 x="7.7915301"
-                 y="7.7354398" />
-              <polygon
-                 fill="#b8af82"
-                 gorn="0.1.1.0.0.2"
-                 id="p13_polygon52"
-                 points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 " />
-              <polygon
-                 fill="#80795b"
-                 gorn="0.1.1.0.0.3"
-                 id="p13_polygon54"
-                 points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 " />
-              <polygon
-                 fill="#5e5b43"
-                 gorn="0.1.1.0.0.4"
-                 id="p13_polygon56"
-                 points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 " />
-              <polygon
-                 fill="#9a916c"
-                 gorn="0.1.1.0.0.5"
-                 id="p13_polygon58"
-                 points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 " />
-            </g>
-          </g>
-        </g>
-        <g
-           transform="translate(170.653,34.05)"
-           id="p13_g41">
-          <g
-             gorn="0.1.2.0"
-             id="p13_g77">
-            <g
-               gorn="0.1.2.0.0"
-               id="p13_g75">
-              <rect
-                 fill="#8d8c8c"
-                 gorn="0.1.2.0.0.0"
-                 height="31.9"
-                 id="p13_connector1pin"
-                 width="31.93"
-                 x="0"
-                 y="0" />
-              <rect
-                 fill="#8c8663"
-                 gorn="0.1.2.0.0.1"
-                 height="16.415199"
-                 id="p13_rect65"
-                 width="16.444201"
-                 x="7.7915301"
-                 y="7.7354398" />
-              <polygon
-                 fill="#b8af82"
-                 gorn="0.1.2.0.0.2"
-                 id="p13_polygon67"
-                 points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
-              <polygon
-                 fill="#80795b"
-                 gorn="0.1.2.0.0.3"
-                 id="p13_polygon69"
-                 points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
-              <polygon
-                 fill="#5e5b43"
-                 gorn="0.1.2.0.0.4"
-                 id="p13_polygon71"
-                 points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
-              <polygon
-                 fill="#9a916c"
-                 gorn="0.1.2.0.0.5"
-                 id="p13_polygon73"
-                 points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
-            </g>
-          </g>
-        </g>
-      </g>
-  </svg>
-  <text x="127.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0420</text>
-  <text x="127.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×10.16mm</text>
+  <text x="127.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">Crystal-3225</text>
+  <text x="127.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">3.3×2.7mm</text>
   <svg id="p14" x="146.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 373.236 400" preserveAspectRatio="xMidYMid meet">
-    <desc
-         id="p14_desc2">
-        <referenceFile>SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1_breadboard.svg</referenceFile>
-      </desc>
-      <defs
+    <defs
          id="p14_defs84" />
       <g
          gorn="0.1"
@@ -681,19 +561,19 @@
           <g
              gorn="0.1.0.1.0.0.0.0.0.0"
              id="p14_g7970"
-             transform="translate(364.16747,116.84518)">
+             transform="translate(363.90376,140.96478)">
             <path
-               d="m -211.89079,-21.606339 h 78.74016"
+               d="m -215.31794,-23.94386 h 78.74016"
                gorn="0.1.0.1.0.0.0.0.0.0.1"
                id="p14_path3158"
-               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
             <path
-               d="m -211.89079,189.8862 h 78.74016"
+               d="m -215.31794,142.68158 h 78.74016"
                gorn="0.1.0.1.0.0.0.0.0.0.2"
                id="p14_path3158-0"
-               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:3.93701;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
             <g
-               transform="matrix(1.0967762,0,0,1.0967876,129.76619,-127.93931)"
+               transform="matrix(0.8858577,0,0,0.88586692,69.625044,-111.3274)"
                id="p14_g9">
               <g
                  gorn="0.1.0.1.0.0.0.0.0.0.0.0"
@@ -810,11 +690,165 @@
         </g>
       </g>
   </svg>
-  <text x="161.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0520</text>
+  <text x="161.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0420</text>
   <text x="161.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×10.16mm</text>
-  <svg id="p15" x="10.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 373.23603 499.99999" preserveAspectRatio="xMidYMid meet">
+  <svg id="p15" x="10.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 373.236 400" preserveAspectRatio="xMidYMid meet">
+    <desc
+         id="p15_desc2">
+        <referenceFile>SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1_breadboard.svg</referenceFile>
+      </desc>
+      <defs
+         id="p15_defs84" />
+      <g
+         gorn="0.1"
+         id="p15_breadboard">
+        <g
+           gorn="0.1.0"
+           id="p15_icon">
+          <path
+             d="m 0,0 v 170 a 30.000002,30.000001 0 0 1 0,60 V 400 H 373.236 V 0 Z"
+             fill="#1f7a34"
+             gorn="0.1.0.0"
+             id="p15_path6"
+             stroke="none"
+             stroke-width="0" />
+          <g
+             gorn="0.1.0.1.0.0.0.0.0.0"
+             id="p15_g7970"
+             transform="translate(364.16747,116.84518)">
+            <path
+               d="m -211.89079,-21.606339 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.1"
+               id="p15_path3158"
+               style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <path
+               d="m -211.89079,189.8862 h 78.74016"
+               gorn="0.1.0.1.0.0.0.0.0.0.2"
+               id="p15_path3158-0"
+               style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+            <g
+               transform="matrix(1.0967762,0,0,1.0967876,129.76619,-127.93931)"
+               id="p15_g9">
+              <g
+                 gorn="0.1.0.1.0.0.0.0.0.0.0.0"
+                 id="p15_rect1358">
+                <path
+                   d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
+                   id="p15_path1362"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                <path
+                   d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
+                   gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
+                   id="p15_path1364"
+                   style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,334.05512)"
+           id="p15_g31">
+          <g
+             gorn="0.1.1.0"
+             id="p15_g62">
+            <g
+               gorn="0.1.1.0.0"
+               id="p15_g60">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.1.0.0.0"
+                 height="31.9"
+                 id="p15_connector0pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.1.0.0.1"
+                 height="16.415199"
+                 id="p15_rect50"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.1.0.0.2"
+                 id="p15_polygon52"
+                 points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.1.0.0.3"
+                 id="p15_polygon54"
+                 points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.1.0.0.4"
+                 id="p15_polygon56"
+                 points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.1.0.0.5"
+                 id="p15_polygon58"
+                 points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 " />
+            </g>
+          </g>
+        </g>
+        <g
+           transform="translate(170.653,34.05)"
+           id="p15_g41">
+          <g
+             gorn="0.1.2.0"
+             id="p15_g77">
+            <g
+               gorn="0.1.2.0.0"
+               id="p15_g75">
+              <rect
+                 fill="#8d8c8c"
+                 gorn="0.1.2.0.0.0"
+                 height="31.9"
+                 id="p15_connector1pin"
+                 width="31.93"
+                 x="0"
+                 y="0" />
+              <rect
+                 fill="#8c8663"
+                 gorn="0.1.2.0.0.1"
+                 height="16.415199"
+                 id="p15_rect65"
+                 width="16.444201"
+                 x="7.7915301"
+                 y="7.7354398" />
+              <polygon
+                 fill="#b8af82"
+                 gorn="0.1.2.0.0.2"
+                 id="p15_polygon67"
+                 points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+              <polygon
+                 fill="#80795b"
+                 gorn="0.1.2.0.0.3"
+                 id="p15_polygon69"
+                 points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+              <polygon
+                 fill="#5e5b43"
+                 gorn="0.1.2.0.0.4"
+                 id="p15_polygon71"
+                 points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+              <polygon
+                 fill="#9a916c"
+                 gorn="0.1.2.0.0.5"
+                 id="p15_polygon73"
+                 points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+            </g>
+          </g>
+        </g>
+      </g>
+  </svg>
+  <text x="25.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0520</text>
+  <text x="25.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×10.16mm</text>
+  <svg id="p16" x="44.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 373.23603 499.99999" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p15_defs84">
+         id="p16_defs84">
         
         
         
@@ -827,48 +861,48 @@
       
       <g
          gorn="0.1"
-         id="p15_breadboard">
+         id="p16_breadboard">
         <g
            gorn="0.1.0"
-           id="p15_icon">
+           id="p16_icon">
           <path
              d="m 0,0 v 212.49999 a 30.000002,37.5 0 0 1 0,75 V 499.99998 H 373.236 V 0 Z"
              fill="#1f7a34"
              stroke="none"
              stroke-width="0"
-             id="p15_path6" />
+             id="p16_path6" />
           <g
              transform="translate(100,144.82)"
-             id="p15_g46">
+             id="p16_g46">
             <g
-               id="p15_g44">
+               id="p16_g44">
               <g
-                 id="p15_g42">
+                 id="p16_g42">
                 <g
-                   id="p15_g16">
+                   id="p16_g16">
                   <g
-                     id="p15_g7970"
+                     id="p16_g7970"
                      transform="translate(261.34372)">
                     <g
-                       id="p15_rect1358"
+                       id="p16_rect1358"
                        transform="matrix(1.3920621,0,0,1.3920766,213.37957,-155.86981)">
                       <path
                          style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none"
                          d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
-                         id="p15_path1362" />
+                         id="p16_path1362" />
                       <path
                          style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none"
                          d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
-                         id="p15_path1364" />
+                         id="p16_path1364" />
                     </g>
                     <path
                        style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
                        d="m -211.89079,-21.606339 h 78.74016"
-                       id="p15_path3158" />
+                       id="p16_path3158" />
                     <path
                        style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:8.61205;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
                        d="m -211.89079,246.84823 h 78.74016"
-                       id="p15_path3158-0" />
+                       id="p16_path3158-0" />
                   </g>
                 </g>
               </g>
@@ -877,14 +911,14 @@
         </g>
         <g
            transform="translate(170.653,434.0551)"
-           id="p15_g62">
+           id="p16_g62">
           <g
-             id="p15_g60">
+             id="p16_g60">
             <rect
                fill="#8d8c8c"
                gorn="0.1.1.0.0"
                height="31.9"
-               id="p15_connector0pin"
+               id="p16_connector0pin"
                width="31.93"
                x="0"
                y="0" />
@@ -894,35 +928,35 @@
                width="16.444201"
                x="7.7915301"
                y="7.7354398"
-               id="p15_rect50" />
+               id="p16_rect50" />
             <polygon
                fill="#b8af82"
                points="0,0 0,31.9 7.79153,24.1368 7.79153,6.97162 "
-               id="p15_polygon52" />
+               id="p16_polygon52" />
             <polygon
                fill="#80795b"
                points="31.93,0 24.2079,7.76321 7.90264,7.76321 0,0 "
-               id="p15_polygon54" />
+               id="p16_polygon54" />
             <polygon
                fill="#5e5b43"
                points="31.93,31.9 24.2079,24.1368 24.2079,7.76321 31.93,0 "
-               id="p15_polygon56" />
+               id="p16_polygon56" />
             <polygon
                fill="#9a916c"
                points="31.93,31.9 0,31.9 7.87486,24.1368 24.2079,24.1368 "
-               id="p15_polygon58" />
+               id="p16_polygon58" />
           </g>
         </g>
         <g
            transform="translate(170.653,34.05)"
-           id="p15_g77">
+           id="p16_g77">
           <g
-             id="p15_g75">
+             id="p16_g75">
             <rect
                fill="#8d8c8c"
                gorn="0.1.2.0.0"
                height="31.9"
-               id="p15_connector1pin"
+               id="p16_connector1pin"
                width="31.93"
                x="0"
                y="0" />
@@ -932,93 +966,93 @@
                width="16.444201"
                x="7.7915301"
                y="7.7354398"
-               id="p15_rect65" />
+               id="p16_rect65" />
             <polygon
                fill="#b8af82"
                points="7.79153,6.97162 0,0 0,31.9 7.79153,24.1368 "
-               id="p15_polygon67" />
+               id="p16_polygon67" />
             <polygon
                fill="#80795b"
                points="0,0 31.93,0 24.2079,7.76321 7.90264,7.76321 "
-               id="p15_polygon69" />
+               id="p16_polygon69" />
             <polygon
                fill="#5e5b43"
                points="31.93,0 31.93,31.9 24.2079,24.1368 24.2079,7.76321 "
-               id="p15_polygon71" />
+               id="p16_polygon71" />
             <polygon
                fill="#9a916c"
                points="24.2079,24.1368 31.93,31.9 0,31.9 7.87486,24.1368 "
-               id="p15_polygon73" />
+               id="p16_polygon73" />
           </g>
         </g>
       </g>
   </svg>
-  <text x="25.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0630</text>
-  <text x="25.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×12.7mm</text>
-  <svg id="p16" x="44.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 522.44097 600.00001" preserveAspectRatio="xMidYMid meet">
+  <text x="59.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC0630</text>
+  <text x="59.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.48×12.7mm</text>
+  <svg id="p17" x="78.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 522.44097 600.00001" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p16_defs84" />
+         id="p17_defs84" />
       <g
          gorn="0.1"
-         id="p16_breadboard">
+         id="p17_breadboard">
         <g
            gorn="0.1.0"
-           id="p16_icon">
+           id="p17_icon">
           <path
              d="m 0,0 v 255 a 41.992812,45.000002 0 0 1 0,90 V 600 H 522.44095 V 0 Z"
              fill="#1f7a34"
              gorn="0.1.0.0"
-             id="p16_path6"
+             id="p17_path6"
              stroke="none"
              stroke-width="0" />
           <g
              transform="translate(134.07985,209.06916)"
-             id="p16_g20">
+             id="p17_g20">
             <g
                gorn="0.1.0.1.0"
-               id="p16_g46">
+               id="p17_g46">
               <g
                  gorn="0.1.0.1.0.0"
-                 id="p16_g44">
+                 id="p17_g44">
                 <g
                    gorn="0.1.0.1.0.0.0"
-                   id="p16_g42">
+                   id="p17_g42">
                   <g
                      gorn="0.1.0.1.0.0.0.0"
-                     id="p16_g16">
+                     id="p17_g16">
                     <g
                        transform="translate(261.34372)"
-                       id="p16_g14">
+                       id="p17_g14">
                       <g
                          gorn="0.1.0.1.0.0.0.0.0.0"
-                         id="p16_g7970">
+                         id="p17_g7970">
                         <g
                            transform="matrix(2.109185,0,0,2.109207,455.24993,-315.85569)"
-                           id="p16_g9">
+                           id="p17_g9">
                           <g
                              gorn="0.1.0.1.0.0.0.0.0.0.0.0"
-                             id="p16_rect1358">
+                             id="p17_rect1358">
                             <path
                                d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
                                gorn="0.1.0.1.0.0.0.0.0.0.0.0.0"
-                               id="p16_path1362"
+                               id="p17_path1362"
                                style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
                             <path
                                d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
                                gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
-                               id="p16_path1364"
+                               id="p17_path1364"
                                style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
                           </g>
                         </g>
                         <path
                            d="M -227.87265,-120.68332 H -31.02227"
                            gorn="0.1.0.1.0.0.0.0.0.0.1"
-                           id="p16_path3158"
+                           id="p17_path3158"
                            style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:29.5276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
                         <path
                            d="M -227.87266,302.54502 H -31.022268"
                            gorn="0.1.0.1.0.0.0.0.0.0.2"
-                           id="p16_path3158-0"
+                           id="p17_path3158-0"
                            style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:29.5276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
                       </g>
                     </g>
@@ -1030,18 +1064,18 @@
         </g>
         <g
            transform="translate(245.47244,534.05512)"
-           id="p16_g31">
+           id="p17_g31">
           <g
              gorn="0.1.1.0"
-             id="p16_g62">
+             id="p17_g62">
             <g
                gorn="0.1.1.0.0"
-               id="p16_g60">
+               id="p17_g60">
               <rect
                  fill="#8d8c8c"
                  gorn="0.1.1.0.0.0"
                  height="31.9"
-                 id="p16_connector0pin"
+                 id="p17_connector0pin"
                  width="31.93"
                  x="0"
                  y="0" />
@@ -1049,47 +1083,47 @@
                  fill="#8c8663"
                  gorn="0.1.1.0.0.1"
                  height="16.415199"
-                 id="p16_rect50"
+                 id="p17_rect50"
                  width="16.444201"
                  x="7.7915301"
                  y="7.7354398" />
               <polygon
                  fill="#b8af82"
                  gorn="0.1.1.0.0.2"
-                 id="p16_polygon52"
+                 id="p17_polygon52"
                  points="0,0 0,31.9 7.79153,24.1368 7.79153,6.97162 " />
               <polygon
                  fill="#80795b"
                  gorn="0.1.1.0.0.3"
-                 id="p16_polygon54"
+                 id="p17_polygon54"
                  points="31.93,0 24.2079,7.76321 7.90264,7.76321 0,0 " />
               <polygon
                  fill="#5e5b43"
                  gorn="0.1.1.0.0.4"
-                 id="p16_polygon56"
+                 id="p17_polygon56"
                  points="31.93,31.9 24.2079,24.1368 24.2079,7.76321 31.93,0 " />
               <polygon
                  fill="#9a916c"
                  gorn="0.1.1.0.0.5"
-                 id="p16_polygon58"
+                 id="p17_polygon58"
                  points="31.93,31.9 0,31.9 7.87486,24.1368 24.2079,24.1368 " />
             </g>
           </g>
         </g>
         <g
            transform="translate(245.47244,34.05)"
-           id="p16_g41">
+           id="p17_g41">
           <g
              gorn="0.1.2.0"
-             id="p16_g77">
+             id="p17_g77">
             <g
                gorn="0.1.2.0.0"
-               id="p16_g75">
+               id="p17_g75">
               <rect
                  fill="#8d8c8c"
                  gorn="0.1.2.0.0.0"
                  height="31.9"
-                 id="p16_connector1pin"
+                 id="p17_connector1pin"
                  width="31.93"
                  x="0"
                  y="0" />
@@ -1097,98 +1131,98 @@
                  fill="#8c8663"
                  gorn="0.1.2.0.0.1"
                  height="16.415199"
-                 id="p16_rect65"
+                 id="p17_rect65"
                  width="16.444201"
                  x="7.7915301"
                  y="7.7354398" />
               <polygon
                  fill="#b8af82"
                  gorn="0.1.2.0.0.2"
-                 id="p16_polygon67"
+                 id="p17_polygon67"
                  points="7.79153,24.1368 7.79153,6.97162 0,0 0,31.9 " />
               <polygon
                  fill="#80795b"
                  gorn="0.1.2.0.0.3"
-                 id="p16_polygon69"
+                 id="p17_polygon69"
                  points="7.90264,7.76321 0,0 31.93,0 24.2079,7.76321 " />
               <polygon
                  fill="#5e5b43"
                  gorn="0.1.2.0.0.4"
-                 id="p16_polygon71"
+                 id="p17_polygon71"
                  points="24.2079,7.76321 31.93,0 31.93,31.9 24.2079,24.1368 " />
               <polygon
                  fill="#9a916c"
                  gorn="0.1.2.0.0.5"
-                 id="p16_polygon73"
+                 id="p17_polygon73"
                  points="7.87486,24.1368 24.2079,24.1368 31.93,31.9 0,31.9 " />
             </g>
           </g>
         </g>
       </g>
   </svg>
-  <text x="59.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1040</text>
-  <text x="59.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">13.27×15.24mm</text>
-  <svg id="p17" x="78.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
+  <text x="93.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1040</text>
+  <text x="93.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">13.27×15.24mm</text>
+  <svg id="p18" x="112.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
     <defs
-         id="p17_defs84" />
+         id="p18_defs84" />
       <g
          gorn="0.1"
-         id="p17_breadboard">
+         id="p18_breadboard">
         <g
            gorn="0.1.0"
-           id="p17_icon">
+           id="p18_icon">
           <path
              d="m 0,0 v 339.99999 a 49.998976,60.000001 0 0 1 0,120 V 799.99998 H 622.04723 V 0 Z"
              fill="#1f7a34"
              gorn="0.1.0.0"
-             id="p17_path6"
+             id="p18_path6"
              stroke="none"
              stroke-width="0" />
           <g
              transform="translate(134.07985,209.06916)"
-             id="p17_g24">
+             id="p18_g24">
             <g
                gorn="0.1.0.1.0"
-               id="p17_g20">
+               id="p18_g20">
               <g
                  gorn="0.1.0.1.0.0"
-                 id="p17_g46">
+                 id="p18_g46">
                 <g
                    gorn="0.1.0.1.0.0.0"
-                   id="p17_g44">
+                   id="p18_g44">
                   <g
                      gorn="0.1.0.1.0.0.0.0"
-                     id="p17_g42">
+                     id="p18_g42">
                     <g
                        gorn="0.1.0.1.0.0.0.0.0"
-                       id="p17_g18">
+                       id="p18_g18">
                       <g
                          transform="translate(261.34372)"
-                         id="p17_g16">
+                         id="p18_g16">
                         <g
                            gorn="0.1.0.1.0.0.0.0.0.0.0"
-                           id="p17_g14">
+                           id="p18_g14">
                           <g
                              gorn="0.1.0.1.0.0.0.0.0.0.0.0"
-                             id="p17_g7970">
+                             id="p18_g7970">
                             <g
                                transform="matrix(2.657573,0,0,2.6576007,658.45232,-321.62017)"
-                               id="p17_g10">
+                               id="p18_g10">
                               <g
                                  gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0"
-                                 id="p17_g9">
+                                 id="p18_g9">
                                 <g
                                    gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0"
-                                   id="p17_rect1358">
+                                   id="p18_rect1358">
                                   <path
                                      d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z"
                                      gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0"
-                                     id="p17_path1362"
+                                     id="p18_path1362"
                                      style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
                                   <path
                                      d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z"
                                      gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.1"
-                                     id="p17_path1364"
+                                     id="p18_path1364"
                                      style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
                                 </g>
                               </g>
@@ -1196,12 +1230,12 @@
                             <path
                                d="M -176.69156,-65.153034 H 20.158824"
                                gorn="0.1.0.1.0.0.0.0.0.0.0.0.1"
-                               id="p17_path3158"
+                               id="p18_path3158"
                                style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
                             <path
                                d="M -176.69156,446.84882 H 20.158829"
                                gorn="0.1.0.1.0.0.0.0.0.0.0.0.2"
-                               id="p17_path3158-0"
+                               id="p18_path3158-0"
                                style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
                           </g>
                         </g>
@@ -1215,21 +1249,21 @@
         </g>
         <g
            transform="translate(295.27558,734.0551)"
-           id="p17_g36">
+           id="p18_g36">
           <g
              gorn="0.1.1.0"
-             id="p17_g31">
+             id="p18_g31">
             <g
                gorn="0.1.1.0.0"
-               id="p17_g62">
+               id="p18_g62">
               <g
                  gorn="0.1.1.0.0.0"
-                 id="p17_g60">
+                 id="p18_g60">
                 <rect
                    fill="#8d8c8c"
                    gorn="0.1.1.0.0.0.0"
                    height="31.9"
-                   id="p17_connector0pin"
+                   id="p18_connector0pin"
                    width="31.93"
                    x="0"
                    y="0" />
@@ -1237,29 +1271,29 @@
                    fill="#8c8663"
                    gorn="0.1.1.0.0.0.1"
                    height="16.415199"
-                   id="p17_rect50"
+                   id="p18_rect50"
                    width="16.444201"
                    x="7.7915301"
                    y="7.7354398" />
                 <polygon
                    fill="#b8af82"
                    gorn="0.1.1.0.0.0.2"
-                   id="p17_polygon52"
+                   id="p18_polygon52"
                    points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
                 <polygon
                    fill="#80795b"
                    gorn="0.1.1.0.0.0.3"
-                   id="p17_polygon54"
+                   id="p18_polygon54"
                    points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
                 <polygon
                    fill="#5e5b43"
                    gorn="0.1.1.0.0.0.4"
-                   id="p17_polygon56"
+                   id="p18_polygon56"
                    points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
                 <polygon
                    fill="#9a916c"
                    gorn="0.1.1.0.0.0.5"
-                   id="p17_polygon58"
+                   id="p18_polygon58"
                    points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
               </g>
             </g>
@@ -1267,21 +1301,21 @@
         </g>
         <g
            transform="translate(295.27558,34.05)"
-           id="p17_g47">
+           id="p18_g47">
           <g
              gorn="0.1.2.0"
-             id="p17_g41">
+             id="p18_g41">
             <g
                gorn="0.1.2.0.0"
-               id="p17_g77">
+               id="p18_g77">
               <g
                  gorn="0.1.2.0.0.0"
-                 id="p17_g75">
+                 id="p18_g75">
                 <rect
                    fill="#8d8c8c"
                    gorn="0.1.2.0.0.0.0"
                    height="31.9"
-                   id="p17_connector1pin"
+                   id="p18_connector1pin"
                    width="31.93"
                    x="0"
                    y="0" />
@@ -1289,29 +1323,29 @@
                    fill="#8c8663"
                    gorn="0.1.2.0.0.0.1"
                    height="16.415199"
-                   id="p17_rect65"
+                   id="p18_rect65"
                    width="16.444201"
                    x="7.7915301"
                    y="7.7354398" />
                 <polygon
                    fill="#b8af82"
                    gorn="0.1.2.0.0.0.2"
-                   id="p17_polygon67"
+                   id="p18_polygon67"
                    points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
                 <polygon
                    fill="#80795b"
                    gorn="0.1.2.0.0.0.3"
-                   id="p17_polygon69"
+                   id="p18_polygon69"
                    points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
                 <polygon
                    fill="#5e5b43"
                    gorn="0.1.2.0.0.0.4"
-                   id="p17_polygon71"
+                   id="p18_polygon71"
                    points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
                 <polygon
                    fill="#9a916c"
                    gorn="0.1.2.0.0.0.5"
-                   id="p17_polygon73"
+                   id="p18_polygon73"
                    points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
               </g>
             </g>
@@ -1319,39 +1353,39 @@
         </g>
       </g>
   </svg>
-  <text x="93.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1250</text>
-  <text x="93.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
-  <svg id="p18" x="112.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
+  <text x="127.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1250</text>
+  <text x="127.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
+  <svg id="p19" x="146.00" y="128.50" width="30.00" height="22.00" viewBox="0 0 622.04725 799.99999" preserveAspectRatio="xMidYMid meet">
     <desc>
             <referenceFile>SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_icon.svg</referenceFile>
         </desc>
-        <defs id="p18_defs84" />
-        <g gorn="0.1" id="p18_breadboard" >
-            <g gorn="0.1.0" id="p18_icon" >
-                <path d="m 0,0 v 339.99999 a 49.998976,60.000001 0 0 1 0,120 V 799.99998 H 622.04723 V 0 Z" fill="#1f7a34" gorn="0.1.0.0" id="p18_path6" stroke="none" stroke-width="0" />
+        <defs id="p19_defs84" />
+        <g gorn="0.1" id="p19_breadboard" >
+            <g gorn="0.1.0" id="p19_icon" >
+                <path d="m 0,0 v 339.99999 a 49.998976,60.000001 0 0 1 0,120 V 799.99998 H 622.04723 V 0 Z" fill="#1f7a34" gorn="0.1.0.0" id="p19_path6" stroke="none" stroke-width="0" />
                 <g transform="translate(134.07985,209.06916)" >
-                    <g gorn="0.1.0.1.0" id="p18_g24" >
-                        <g gorn="0.1.0.1.0.0" id="p18_g20" >
-                            <g gorn="0.1.0.1.0.0.0" id="p18_g46" >
-                                <g gorn="0.1.0.1.0.0.0.0" id="p18_g44" >
-                                    <g gorn="0.1.0.1.0.0.0.0.0" id="p18_g42" >
-                                        <g gorn="0.1.0.1.0.0.0.0.0.0" id="p18_g18" >
+                    <g gorn="0.1.0.1.0" id="p19_g24" >
+                        <g gorn="0.1.0.1.0.0" id="p19_g20" >
+                            <g gorn="0.1.0.1.0.0.0" id="p19_g46" >
+                                <g gorn="0.1.0.1.0.0.0.0" id="p19_g44" >
+                                    <g gorn="0.1.0.1.0.0.0.0.0" id="p19_g42" >
+                                        <g gorn="0.1.0.1.0.0.0.0.0.0" id="p19_g18" >
                                             <g transform="translate(261.34372)" >
-                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0" id="p18_g16" >
-                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0" id="p18_g14" >
-                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0" id="p18_g7970" >
+                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0" id="p19_g16" >
+                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0" id="p19_g14" >
+                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0" id="p19_g7970" >
                                                             <g transform="matrix(2.657573,0,0,2.6576007,658.45232,-321.62017)" >
-                                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0" id="p18_g10" >
-                                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p18_g9" >
-                                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p18_rect1358" >
-                                                                            <path d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p18_path1362" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
-                                                                            <path d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1" id="p18_path1364" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                                                <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0" id="p19_g10" >
+                                                                    <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p19_g9" >
+                                                                        <g gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p19_rect1358" >
+                                                                            <path d="m -311.48978,158.588 h 68.54917 v 68.54917 h -68.54917 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0" id="p19_path1362" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-width:118.11;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
+                                                                            <path d="m -337.19617,99.533203 c -32.61358,0.0034 -33.34532,2.293097 -33.34875,34.906687 v 118.79225 c 0.003,32.61359 -0.0438,32.95584 32.56978,32.95927 h 121.51864 c 32.61434,-0.002 32.5683,0.0446 32.57173,-32.56978 V 132.10298 c -0.003,-32.614341 -0.34687,-32.567421 -32.96122,-32.569777 z" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1" id="p19_path1364" style="color:#000000;fill:#b3b3b3;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;-inkscape-stroke:none" />
                                                                         </g>
                                                                     </g>
                                                                 </g>
                                                             </g>
-                                                            <path d="M -176.69156,-65.153034 H 20.158824" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.1" id="p18_path3158" style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
-                                                            <path d="M -176.69156,446.84882 H 20.158829" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.2" id="p18_path3158-0" style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                                                            <path d="M -176.69156,-65.153034 H 20.158824" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.1" id="p19_path3158" style="opacity:1;fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
+                                                            <path d="M -176.69156,446.84882 H 20.158829" gorn="0.1.0.1.0.0.0.0.0.0.0.0.0.0.2" id="p19_path3158-0" style="fill:none;fill-rule:evenodd;stroke:#dcdcdc;stroke-width:16.7323;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1" />
                                                         </g>
                                                     </g>
                                                 </g>
@@ -1365,32 +1399,32 @@
                 </g>
             </g>
             <g transform="translate(295.27558,734.0551)" >
-                <g gorn="0.1.1.0" id="p18_g36" >
-                    <g gorn="0.1.1.0.0" id="p18_g31" >
-                        <g gorn="0.1.1.0.0.0" id="p18_g62" >
-                            <g gorn="0.1.1.0.0.0.0" id="p18_g60" >
-                                <rect fill="#8d8c8c" gorn="0.1.1.0.0.0.0.0" height="31.9" id="p18_connector0pin" width="31.93" x="0"  y="0"/>
-                                <rect fill="#8c8663" gorn="0.1.1.0.0.0.0.1" height="16.415199" id="p18_rect50" width="16.444201" x="7.7915301"  y="7.7354398"/>
-                                <polygon fill="#b8af82" gorn="0.1.1.0.0.0.0.2" id="p18_polygon52" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
-                                <polygon fill="#80795b" gorn="0.1.1.0.0.0.0.3" id="p18_polygon54" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
-                                <polygon fill="#5e5b43" gorn="0.1.1.0.0.0.0.4" id="p18_polygon56" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
-                                <polygon fill="#9a916c" gorn="0.1.1.0.0.0.0.5" id="p18_polygon58" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+                <g gorn="0.1.1.0" id="p19_g36" >
+                    <g gorn="0.1.1.0.0" id="p19_g31" >
+                        <g gorn="0.1.1.0.0.0" id="p19_g62" >
+                            <g gorn="0.1.1.0.0.0.0" id="p19_g60" >
+                                <rect fill="#8d8c8c" gorn="0.1.1.0.0.0.0.0" height="31.9" id="p19_connector0pin" width="31.93" x="0"  y="0"/>
+                                <rect fill="#8c8663" gorn="0.1.1.0.0.0.0.1" height="16.415199" id="p19_rect50" width="16.444201" x="7.7915301"  y="7.7354398"/>
+                                <polygon fill="#b8af82" gorn="0.1.1.0.0.0.0.2" id="p19_polygon52" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                                <polygon fill="#80795b" gorn="0.1.1.0.0.0.0.3" id="p19_polygon54" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                                <polygon fill="#5e5b43" gorn="0.1.1.0.0.0.0.4" id="p19_polygon56" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                                <polygon fill="#9a916c" gorn="0.1.1.0.0.0.0.5" id="p19_polygon58" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
                             </g>
                         </g>
                     </g>
                 </g>
             </g>
             <g transform="translate(295.27558,34.05)" >
-                <g gorn="0.1.2.0" id="p18_g47" >
-                    <g gorn="0.1.2.0.0" id="p18_g41" >
-                        <g gorn="0.1.2.0.0.0" id="p18_g77" >
-                            <g gorn="0.1.2.0.0.0.0" id="p18_g75" >
-                                <rect fill="#8d8c8c" gorn="0.1.2.0.0.0.0.0" height="31.9" id="p18_connector1pin" width="31.93" x="0"  y="0"/>
-                                <rect fill="#8c8663" gorn="0.1.2.0.0.0.0.1" height="16.415199" id="p18_rect65" width="16.444201" x="7.7915301"  y="7.7354398"/>
-                                <polygon fill="#b8af82" gorn="0.1.2.0.0.0.0.2" id="p18_polygon67" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
-                                <polygon fill="#80795b" gorn="0.1.2.0.0.0.0.3" id="p18_polygon69" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
-                                <polygon fill="#5e5b43" gorn="0.1.2.0.0.0.0.4" id="p18_polygon71" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
-                                <polygon fill="#9a916c" gorn="0.1.2.0.0.0.0.5" id="p18_polygon73" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
+                <g gorn="0.1.2.0" id="p19_g47" >
+                    <g gorn="0.1.2.0.0" id="p19_g41" >
+                        <g gorn="0.1.2.0.0.0" id="p19_g77" >
+                            <g gorn="0.1.2.0.0.0.0" id="p19_g75" >
+                                <rect fill="#8d8c8c" gorn="0.1.2.0.0.0.0.0" height="31.9" id="p19_connector1pin" width="31.93" x="0"  y="0"/>
+                                <rect fill="#8c8663" gorn="0.1.2.0.0.0.0.1" height="16.415199" id="p19_rect65" width="16.444201" x="7.7915301"  y="7.7354398"/>
+                                <polygon fill="#b8af82" gorn="0.1.2.0.0.0.0.2" id="p19_polygon67" points="0,31.9 7.79153,24.1368 7.79153,6.97162 0,0 " />
+                                <polygon fill="#80795b" gorn="0.1.2.0.0.0.0.3" id="p19_polygon69" points="24.2079,7.76321 7.90264,7.76321 0,0 31.93,0 " />
+                                <polygon fill="#5e5b43" gorn="0.1.2.0.0.0.0.4" id="p19_polygon71" points="24.2079,24.1368 24.2079,7.76321 31.93,0 31.93,31.9 " />
+                                <polygon fill="#9a916c" gorn="0.1.2.0.0.0.0.5" id="p19_polygon73" points="0,31.9 7.87486,24.1368 24.2079,24.1368 31.93,31.9 " />
                             </g>
                         </g>
                     </g>
@@ -1398,8 +1432,8 @@
             </g>
         </g>
   </svg>
-  <text x="127.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1265</text>
-  <text x="127.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
+  <text x="161.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">SHC1265</text>
+  <text x="161.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">15.8×20.32mm</text>
   <text x="8" y="164" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">格内按各自比例缩放（不同格不同比例）；下方数字 = icon 文件自己声明的尺寸</text>
   <text x="8" y="168" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">本库新做的元件按实物 1:1 画；早年从 fritzing-parts 导入的图标可能是视觉比例</text>
 </svg>

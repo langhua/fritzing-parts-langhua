@@ -113,7 +113,9 @@ SHEETS = {
         ("Resistor-2010", "R 2010"), ("Resistor-2512", "R 2512"),
         # ★ 2026-10-01 新增本库**第一套电容** ✓（默认 100nF / 25V / X7R / ±10% ✓；
         #   焊盘 = 同封装电阻 land pattern ✓，见 `svg/Capacitor-0402/gen_part.py` 的出处注释 ✓）
-        ("Capacitor-0402", "C 0402"),
+        #   ★ 2026-10-10 恢复 **0603** ✓（像素板 R1/C1 要用；Fritzing 自带 0603 那颗的 land
+        #   pattern 太肥 ✗ ⇒ 本库自己出一颗紧凑的 ✓，型号写 `[SMD] 0603` ✓）
+        ("Capacitor-0402", "C 0402"), ("Capacitor-0603", "C 0603"),
         ("Crystal-3215", "Crystal-3215"), ("Crystal-3225", "Crystal-3225"),
         ("molding_power_inductors/SHC0420", "SHC0420"),
         ("molding_power_inductors/SHC0520", "SHC0520"),

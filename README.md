@@ -8,7 +8,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 116 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 117 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -30,7 +30,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 
 **无源件** —— SMD 电阻 11 种尺寸、**SMD 电容 0402**、晶振、模压功率电感
 
-[![无源件：Resistor-01005~2512、Capacitor-0402、Crystal-3215/3225、SHC0420~1265 模压电感](docs/preview/passive.svg)](docs/preview/passive.svg)
+[![无源件：Resistor-01005~2512、Capacitor-0402/0603、Crystal-3215/3225、SHC0420~1265 模压电感](docs/preview/passive.svg)](docs/preview/passive.svg)
 
 **分立器件** —— 肖特基 / TVS、双 MOS、排阻
 
@@ -56,7 +56,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（120 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（121 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -113,6 +113,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | RT9013 / RT9193 | 低压差 LDO（SOT-23-5） | `fzpz/RT9013.fzpz`、`RT9193.fzpz` |
 | Resistor-01005~2512 | SMD 电阻（11 种尺寸：01005/0201/0402/0603/0805/1206/1210/1812/2010/2512） | `fzpz/Resistor-*.fzpz` |
 | Capacitor-0402 | SMD 陶瓷电容 0402（默认属性 **100nF / 25V / X7R / ±10%**，值可在 Fritzing 里改；焊盘 = 同封装电阻的 land pattern；面包板 = Fritzing 自带电容的面包板） | `fzpz/Capacitor-0402.fzpz` |
+| Capacitor-0603 | SMD 陶瓷电容 0603（同上默认属性；★ **焊盘/丝印 = 本库紧凑 land pattern**（0.65×0.80mm、脚距 1.45mm）✓ —— **不是** Fritzing 自带 0603 电容那颗肥盘（1.20×1.10）✗；像素板 R1/C1 用 ✓） | `fzpz/Capacitor-0603.fzpz` |
 | SAM8108 | 开关机 IC（SOT23-6） | `fzpz/SAM8108.fzpz` |
 | SHC0420~SHC1265 | 模压功率电感（0420/0520/0630/1040/1250/1265） | `fzpz/SHC*.fzpz` |
 | SK-12D02VG3 | 滑动开关（SPDT，5 脚 = 3+2；本体 8.6×4.4×4.7mm） | `fzpz/SK-12D02VG3.fzpz` |

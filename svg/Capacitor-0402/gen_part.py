@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-r"""生成 **Capacitor-0402**（SMD 通用电容件 ✓，本库第一套电容 ✓；
-   ★ 0603 已删除 ✓ —— Fritzing 自带的 0603 电容（`SMD_multilayer-capacitor_0603`）已支持 ✓）
+r"""生成 **Capacitor-0402 / Capacitor-0603**（SMD 通用电容件 ✓，本库第一套电容 ✓）
+★ 两档都在这里生成 ✓（本文件在 `svg/Capacitor-0402/` 下，产出写进 `svg/Capacitor-<尺寸>/`）
+  —— 与 `Resistor-*` 家族同一套做法 ✓（那一族也没有各自独立的生成器 ✓）。
 
-   用法：py -3.13 svg\Capacitor-0402\gen_part.py            # 生成 + 打 .fzpz ✓
+   用法：py -3.13 svg\Capacitor-0402\gen_part.py            # 生成两档 + 打 .fzpz ✓
          py -3.13 svg\Capacitor-0402\gen_part.py --check    # 只报数字 ✓（不写文件 ✓）
 
 -----------------------------------------------------------------------------
@@ -51,15 +52,27 @@ ASSET_BB = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_blue_leg.svg"
 #   见 `svg/_assets/LICENSE-ceramic_capacitor_schematic.txt` ✓）
 ASSET_SCHEM = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_schematic.svg")
 
-# ── 单档规格（0402 ✓；几何**沿用同封装电阻** ✓；数值来自本库 `Resistor-*.fzpz` ✓）────
-#   ★ 0603 已删除（2026-10-02 ✓）—— Fritzing 自带的 0603 电容已支持 ✓
+# ── 两档规格（几何**沿用同封装电阻** ✓；数值来自本库 `Resistor-*.fzpz` ✓）────
+#   ★★ 2026-10-10 **恢复 0603** ✓（用户定 ✓，见像素板 README §五十四）：
+#     起因 = 像素板要把 `R1`/`C1` 从 0402 换回 **0603** ✓，而 **Fritzing 自带那颗 0603
+#     电容的 land pattern 太肥** ✗（焊盘 **1.20×1.10**＋**丝印 3.2×1.4 mm** ✓）——
+#     它塞不进线圈内孔那个位置（`D3` 丝印 ↔ `U1` 一脚标记丝印之间只有 **1.69 mm** ✗）✓。
+#     ⇒ 本库自己出一颗 **紧凑 0603**（焊盘 **0.65×0.80**、丝印 **2.159×0.859 mm** ✓，
+#       与 `Resistor-0603` **同一套 land pattern** ✓）✓ —— 这样 `R1`/`C1` 才是同一个封装口径 ✓。
+#     ★ 面包板 / 原理图**仍照 Fritzing 自带电容**那套逐字沿用 ✓（两档只有 PCB 与 icon 不同 ✓）
+#       ⇒ 像素板上 `C1` 换件**只动 PCB 视图** ✓（面包板/原理图逐字节不变 ✓）。
 #   `mod` = 新件的 moduleId ✓（照电阻的 `<字母><尺寸>_<32位hex>_1` 格式 ✓；
-#   hex 是本次新生成的固定值 ✓ —— 一旦发布就不许改 ✗，否则 Fritzing 里会认成另一个件 ✗）
+#   hex 是固定值 ✓ —— **一旦发布就不许改** ✗，否则 Fritzing 里会认成另一个件 ✗；
+#   0603 那颗是 2026-10-01 首次生成、2026-10-10 原样恢复 ✓）
 SPEC = {
     "0402": dict(mod="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1", ref="Resistor-0402",
                  title="Capacitor 0402", pkg="0402 [SMD, multilayer]",
                  body_w=107.14283, body_x=73.571365,        # icon 里本体矩形（用户单位 ✓）
                  can_w=1.45, can_h=0.60000008),             # pcb 画布 mm ✓
+    "0603": dict(mod="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1", ref="Resistor-0603",
+                 title="Capacitor 0603", pkg="[SMD] 0603",
+                 body_w=None, body_x=None,                  # icon 直接沿用电阻那张 ✓
+                 can_w=2.2, can_h=0.90000004),              # pcb 画布 mm ✓（同 `Resistor-0603` ✓）
 }
 
 
@@ -187,7 +200,39 @@ def make_body(files, kind, s):
             'style="opacity:0.75;fill:#000000;fill-opacity:0.74902;fill-rule:evenodd;'
             'stroke-width:260.819;stroke-linecap:round"',
             'style="fill:#D9B477;fill-opacity:1;stroke:none"')
+        # ★ 2026-10-10 补 ✓：`Resistor-0603` 的 icon 是**另一套模板** ✗ —— 本体矩形带
+        #   `opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.379989` ✓、
+        #   而且**上面印着阻值文字**（`<g id="text851">…` 里那个 `221` ✗）✓
+        #   ⇒ 电容件**不能顶着电阻的阻值** ✗（§1 工业风：不加装饰、不误导 ✓）
+        #   ⇒ ① 把本体也染成米黄 ✓ ② 整段删掉那个文字组 ✓。
+        #   ★ 删组**必须按标签配平扫描** ✗ —— 里面套着 `<g id="text351">` ✓，
+        #     非贪婪正则会截到第一个 `</g>` ✗（AGENTS §4 记过这个坑 ✓）。
+        new = new.replace(
+            'style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;'
+            'stroke-width:0.379989"',
+            'style="fill:#D9B477;fill-opacity:1;stroke:none"')
+        new = drop_group(new, "text851")
     return new
+
+
+def drop_group(text, gid):
+    """删掉 `<g … id="gid" …>…</g>` 整段 ✓（**按标签配平**找配对的 `</g>` ✓）
+
+    ★ 为什么不能非贪婪 ✗：这些组里常套着别的 `<g>`（`Resistor-*` 的 icon 就是 ✓）
+      ⇒ `<g id="X".*?</g>` 只吃到**内层**的收尾 ✗，留下半截 ✗（AGENTS §4 记过 ✓）。
+    """
+    m = re.search(r'<g\b[^>]*\bid="%s"[^>]*>' % re.escape(gid), text)
+    if not m:
+        return text
+    depth, i = 1, m.end()
+    for t in re.finditer(r'<g\b|</g>', text[m.end():]):
+        depth += 1 if t.group(0) == "<g" else -1
+        if depth == 0:
+            i = m.end() + t.end()
+            break
+    else:
+        raise SystemExit("✗ `<g id=%s>` 配平不上 ✗" % gid)
+    return text[:m.start()] + text[i:]
 
 
 def build(size, write=True):

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- This xml file is generated through a template. Please don't edit it directly -->
+
+<svg
+   gorn="0"
+   height="3.4015749"
+   id="Layer_1"
+   version="1.1"
+   viewBox="0 0 6.4251967 3.4015749"
+   width="6.4251966"
+   x="0px"
+   xml:space="preserve"
+   y="0px"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs435" /><desc
+     id="desc417" /><rect
+     gorn="0.2"
+     height="3.023622"
+     id="connector0pad"
+     style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+     width="1.1338583"
+     x="0.18897638"
+     y="0.18897638" /><rect
+     gorn="0.3"
+     height="3.023622"
+     id="connector1pad"
+     style="fill:#e3e2db;fill-opacity:1;stroke:none;stroke-width:0"
+     width="1.1338583"
+     x="5.1023622"
+     y="0.18897638" /><rect
+     gorn="0.4"
+     height="3.4015749"
+     id="silkscreen"
+     style="fill:none;stroke:none;stroke-width:0.140957;stroke-opacity:1"
+     width="6.4251966"
+     x="0"
+     y="0" /><rect
+     gorn="0.5"
+     height="3.023622"
+     id="rect787"
+     style="fill:#D9B477;fill-opacity:1;stroke:none"
+     width="3.7795277"
+     x="1.3228346"
+     y="0.18897638" /></svg>
