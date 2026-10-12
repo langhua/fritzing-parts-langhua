@@ -8,7 +8,7 @@ Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 117 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 118 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -56,7 +56,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（121 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（122 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -72,6 +72,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | CH32V003F4U6 | CH32V003 主控（QFN20，20 脚 + EPAD） | `fzpz/CH32V003F4U6.fzpz` |
 | CH32V003J4M6 | CH32V003 主控（SOP8，8 脚） | `fzpz/CH32V003J4M6.fzpz` |
 | CH32V203C8T6 | CH32V203C8T6 主控（QingKe RISC-V MCU，LQFP48，48 脚，与 STM32F103C8T6 兼容排布） | `fzpz/CH32V203C8T6.fzpz` |
+| CH32V203F8U6 | CH32V203 主控（**QFN20** 3×3mm/0.4mm，**20 脚 + 裸露焊盘 pin0 = VSS**；64K flash/20K SRAM/17 GPIO；2×USART（PA9/PA10、PA2/PA3）+ **I2C2 在 PB10/PB11**；**无 NRST/BOOT0 引脚**（BOOT0 内部接 GND）⇒ 只能 SWD 烧录、复位靠断电；用于载板主控） | `fzpz/CH32V203F8U6.fzpz` |
 | CH340C | USB 转串口芯片（SOP-16，TXW8301 模拟器 USB-UART 桥） | `fzpz/CH340C.fzpz` |
 | CH340E | USB 转串口芯片（MSOP-10，内置时钟） | `fzpz/CH340E.fzpz` |
 | CH340K | USB 转串口芯片（essop-10） | `fzpz/CH340K.fzpz` |

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- CH32V203F8U6 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="5.20mm" height="5.20mm" viewBox="-2.60 -2.60 5.20 5.20">
+  <g id="copper1">
+<rect id="connector0pad" x="-2.050" y="-0.900" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA0/WKUP"/>
+<rect id="connector1pad" x="-2.050" y="-0.500" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA1/ADC1"/>
+<rect id="connector2pad" x="-2.050" y="-0.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA2/USART2_TX"/>
+<rect id="connector3pad" x="-2.050" y="0.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA3/USART2_RX"/>
+<rect id="connector4pad" x="-2.050" y="0.700" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA4/ADC4"/>
+<rect id="connector5pad" x="-0.900" y="1.450" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA5/ADC5"/>
+<rect id="connector6pad" x="-0.500" y="1.450" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA7/ADC7"/>
+<rect id="connector7pad" x="-0.100" y="1.450" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PB0/ADC8"/>
+<rect id="connector8pad" x="0.300" y="1.450" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PB1/ADC9"/>
+<rect id="connector9pad" x="0.700" y="1.450" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PB10/I2C2_SCL"/>
+<rect id="connector10pad" x="1.450" y="0.700" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PB11/I2C2_SDA"/>
+<rect id="connector11pad" x="1.450" y="0.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PB14"/>
+<rect id="connector12pad" x="1.450" y="-0.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PB15"/>
+<rect id="connector13pad" x="1.450" y="-0.500" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA8"/>
+<rect id="connector14pad" x="1.450" y="-0.900" width="0.600" height="0.200" fill="#F7BD13" stroke="none" connectorname="PA9/USART1_TX"/>
+<rect id="connector15pad" x="0.700" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA13/SWD"/>
+<rect id="connector16pad" x="0.300" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA14/SWC"/>
+<rect id="connector17pad" x="-0.100" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA10/USART1_RX"/>
+<rect id="connector18pad" x="-0.500" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="VDD"/>
+<rect id="connector19pad" x="-0.900" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA6/ADC6"/>
+<rect id="connector20pad" x="-0.825" y="-0.825" width="1.650" height="1.650" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+<g id="copper0"/>
+  </g>
+  <g id="silkscreen">
+<line x1="-1.500" y1="-1.500" x2="-1.500" y2="-1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="-1.500" x2="-1.280" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="1.500" x2="-1.500" y2="1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="-1.500" y1="1.500" x2="-1.280" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="-1.500" x2="1.500" y2="-1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="-1.500" x2="1.280" y2="-1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="1.500" x2="1.500" y2="1.280" stroke="#f0f0f0" stroke-width="0.12"/>
+<line x1="1.500" y1="1.500" x2="1.280" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>
+<circle cx="-1.830" cy="-1.200" r="0.22" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>
