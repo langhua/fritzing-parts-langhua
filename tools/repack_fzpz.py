@@ -9,10 +9,13 @@
 ⇒ 同一个零件在 Linux/macOS 上解出来与 `svg/` 下**逐字节不一致**，而且"重新打包一遍字节就变了" ✗。
 CI（`tools/run_checks.py` 的 G4）就是照"入库那份"判的 ⇒ 会在 Linux 栏红。
 
-本工具做两件事：
+本工具做三件事：
   ① 按 `svg/` 里的**入库内容**（CRLF→LF 归一化）重写每个**可对照**的条目；
      名字带 32 位 hash 的条目是 Fritzing"另存"产物、仓库没有同名源 ⇒ **原样保留**（`--all` 才一并归一化）；
-  ② 给所有条目**固定时间戳**（1980-01-01）⇒ 在哪个平台跑、跑几次，产物都**逐字节相同** ✓。
+  ② **丢掉非零件条目**：`.fzpz` 里只该有 `part.*.fzp` + 4 个视图 `svg.*.svg` ✗ ——
+     混进来的 `gen_part.py` 之类一律删掉（**点名报出** ✓，不静默；实测 2026-10-13 只有
+     `Capacitor-0402.fzpz` 里有一份 ✗）；
+  ③ 给所有条目**固定时间戳**（1980-01-01）⇒ 在哪个平台跑、跑几次，产物都**逐字节相同** ✓。
 
 用法::
 
@@ -50,12 +53,15 @@ def build_index():
 
 
 def repack_one(zpath, idx, all_entries, check_only):
-    """返回 (是否与原文件不同, 改写条目数, 保留条目数)。"""
+    """返回 (是否与原文件不同, 改写条目数, 保留条目数, 丢掉的非零件条目)。"""
     with zipfile.ZipFile(zpath) as zf:
         entries = [(i.filename, zf.read(i.filename)) for i in zf.infolist()]
 
-    new_entries, changed, kept = [], 0, 0
+    new_entries, changed, kept, dropped = [], 0, 0, []
     for name, data in entries:
+        if Path(name).suffix.lower() not in (".svg", ".fzp"):
+            dropped.append(name)          # 零件包里只该有这两类 ⇒ 丢掉（点名报出）
+            continue
         cand = idx.get(os.path.basename(name))
         if cand and not HASH_RE.search(os.path.basename(name)):
             want = norm(cand[0].read_bytes())
@@ -78,9 +84,9 @@ def repack_one(zpath, idx, all_entries, check_only):
     same = buf.read_bytes() == zpath.read_bytes()
     if check_only or same:
         buf.unlink()
-        return (not same), changed, kept
+        return (not same), changed, kept, dropped
     buf.replace(zpath)
-    return True, changed, kept
+    return True, changed, kept, dropped
 
 
 def main(argv):
@@ -96,9 +102,11 @@ def main(argv):
     zips = sorted(FZPZ.glob("*.fzpz"))
     n_repack = n_entries = n_kept = 0
     for z in zips:
-        diff, changed, kept = repack_one(z, idx, args.all, args.check)
+        diff, changed, kept, dropped = repack_one(z, idx, args.all, args.check)
         n_entries += changed
         n_kept += kept
+        if dropped:
+            print("  %s：丢掉非零件条目 %s" % (z.name, ", ".join(dropped)))
         if diff:
             n_repack += 1
             print("  %s %s（改写 %d 条，保留 %d 条）"

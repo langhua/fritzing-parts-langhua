@@ -1,20 +1,20 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-13 00:26:55 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-13 00:33:01 ｜ python 3.13.14 ｜ 平台 win32
 结果：**4 过 / 1 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
-| G1 文本卫生（全仓） | PASS | 0.5s |
+| G1 文本卫生（全仓） | PASS | 0.4s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 4.7s |
+| G3 生成器可重生成（全仓） | PASS | 4.4s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.1s |
 | G5 元件闸门（改动件） | SKIP | 0.2s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 966 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 967 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> PASS
 - check_readme_table.py rc=0；=== 全部通过 ===
@@ -25,7 +25,7 @@
 - 已知例外（允许清单，理由在代码里）：T-Halow-RJ45（icon 与生成器产物不同（该件是 T-Halow-RJ45 仓的参考件，不进本库预览图/元件箱，见 AGENTS §10））：svg.icon.T-Halow-RJ45_icon.svg
 
 ### G4 fzpz 装箱一致（全仓） -> PASS
-- 比对条目 281 条；跳过（名字带 hash = Fritzing 另存）324 条；找不到源 0 条
+- 比对条目 280 条；跳过（名字带 hash = Fritzing 另存）324 条；找不到源 0 条；非零件条目 0 条
 - 口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 `py -3.13 tools\repack_fzpz.py` 修）
 
 ### G5 元件闸门（改动件） -> SKIP

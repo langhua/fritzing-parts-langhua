@@ -214,10 +214,13 @@ def gate_fzpz():
     zdir = ROOT / "fzpz"
     if not zdir.is_dir():
         return "SKIP", ["没有 fzpz/ 目录"], []
-    fails, skipped_hash, compared, miss = [], 0, 0, []
+    fails, skipped_hash, compared, miss, extra = [], 0, 0, [], []
     for z in sorted(zdir.glob("*.fzpz")):
         with zipfile.ZipFile(z) as zf:
             for n in zf.namelist():
+                if Path(n).suffix.lower() not in (".svg", ".fzp"):
+                    extra.append("%s :: %s" % (z.name, n))     # 零件包里不该有别的东西
+                    continue
                 if HASH_RE.search(os.path.basename(n)):
                     skipped_hash += 1          # Fritzing "另存"命名，仓库没有同名源
                     continue
@@ -229,8 +232,9 @@ def gate_fzpz():
                 if not any(norm(c.read_bytes()) == zf.read(n) for c in cand):
                     fails.append("%s :: %s 与入库源文件内容不一致" % (z.name, n))
     fails += ["源文件找不到：" + m for m in miss]
-    detail = ["比对条目 %d 条；跳过（名字带 hash = Fritzing 另存）%d 条；找不到源 %d 条"
-              % (compared, skipped_hash, len(miss)),
+    fails += ["零件包里不该有非零件条目（跑 tools\\repack_fzpz.py 清）：" + m for m in extra]
+    detail = ["比对条目 %d 条；跳过（名字带 hash = Fritzing 另存）%d 条；找不到源 %d 条；非零件条目 %d 条"
+              % (compared, skipped_hash, len(miss), len(extra)),
               "口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；"
               "zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 "
               "`py -3.13 tools\\repack_fzpz.py` 修）"]
