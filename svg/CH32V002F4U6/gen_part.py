@@ -97,9 +97,19 @@ PCB_DOT_CLEAR = 0.08       # gap between the dot and pin 1's pad (mm)
 #                       pitch left of the top side's last pin
 #   SCHEM_NUM_LEFT    - top/bottom pin numbers go on the LEFT of the pin line
 #   SCHEM_NAME_CENTER - top/bottom pin names are centred across the pin line
+#   SCHEM_EDGE_ALIGN  - top/bottom pin names are anchored by the end NEAREST the
+#                       body edge (one character inside), so every name starts at
+#                       the same distance from its edge and grows inward.
+#                       Off by default (existing parts keep their byte-identical
+#                       output); needed when names have very different lengths
+#                       (e.g. CH32V203F8U6: "PB10/I2C2_SCL" vs "PB14") - with the
+#                       centred layout the long name's inner end sticks out and the
+#                       bottoms no longer line up, and the result also depends on
+#                       whichever font the renderer falls back to.
 PAD_PIN_TOP_LEFT = True
 SCHEM_NUM_LEFT = True
 SCHEM_NAME_CENTER = True
+SCHEM_EDGE_ALIGN = False
 
 
 def pad_counts():
@@ -319,7 +329,10 @@ def schematic_svg():
         cn, s = pin(pno, x, BOX, x, BOX + STUB)
         L.append(s)
         L.append(num(cn, str(pno), x + dx_num, BOX + 55, True))
-        L.append(name(cn, pin_name(pno), x + dx_nam, BOX - off(pin_name(pno)), "middle", True))
+        if SCHEM_EDGE_ALIGN:
+            L.append(name(cn, pin_name(pno), x + dx_nam, BOX - FN, "start", True))
+        else:
+            L.append(name(cn, pin_name(pno), x + dx_nam, BOX - off(pin_name(pno)), "middle", True))
     # right: next block, bottom -> top
     for k in range(PER_SIDE):
         pno = 1 + 2 * PER_SIDE + k
@@ -335,7 +348,10 @@ def schematic_svg():
         cn, s = pin(pno, x, 0, x, -STUB)
         L.append(s)
         L.append(num(cn, str(pno), x + dx_num, -50, True))
-        L.append(name(cn, pin_name(pno), x + dx_nam, off(pin_name(pno)), "middle", True))
+        if SCHEM_EDGE_ALIGN:
+            L.append(name(cn, pin_name(pno), x + dx_nam, FN, "end", True))
+        else:
+            L.append(name(cn, pin_name(pno), x + dx_nam, off(pin_name(pno)), "middle", True))
     # exposed pad (pin 0): top-left (one pitch left of the top side's last pin)
     # or - default - on the bottom side, right of the last pin
     if PAD_PIN_TOP_LEFT:
@@ -343,13 +359,19 @@ def schematic_svg():
         cn, s = pin(0, px, 0, px, -STUB)
         L.append(s)
         L.append(num(cn, "0", px + dx_num, -50, True))
-        L.append(name(cn, PAD_NAME, px + dx_nam, off(PAD_NAME), "middle", True))
+        if SCHEM_EDGE_ALIGN:
+            L.append(name(cn, PAD_NAME, px + dx_nam, FN, "end", True))
+        else:
+            L.append(name(cn, PAD_NAME, px + dx_nam, off(PAD_NAME), "middle", True))
     else:
         px = BOX - 30
         cn, s = pin(0, px, BOX, px, BOX + STUB)
         L.append(s)
         L.append(num(cn, "0", px + dx_num, BOX + 55, True))
-        L.append(name(cn, PAD_NAME, px + dx_nam, BOX - off(PAD_NAME), "middle", True))
+        if SCHEM_EDGE_ALIGN:
+            L.append(name(cn, PAD_NAME, px + dx_nam, BOX - FN, "start", True))
+        else:
+            L.append(name(cn, PAD_NAME, px + dx_nam, BOX - off(PAD_NAME), "middle", True))
     # circuit name in the middle
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
              'font-family="DroidSans">%s</text>\n' % (BOX // 2, BOX // 2 + 12, FN, SCHEM_NAME))

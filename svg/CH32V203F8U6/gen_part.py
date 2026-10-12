@@ -88,6 +88,10 @@ def main():
     g.PIN_DESC = PIN_DESC
     g.PAD_NAME = PAD_NAME
     g.GND_PINS = GND_PINS
+    # 本件名字长短差很大（"PB10/I2C2_SCL" 13 字符 vs "PB14" 4 字符）⇒
+    # 上下两侧的脚名按「靠边框那一端」锚定，各脚**内端对齐**（用户 2026-10-12 指出：
+    # 居中摆法会让长名字的底部比别的脚高一截）。其它 QFN20 件不受影响（默认关）。
+    g.SCHEM_EDGE_ALIGN = True
     files = {
         "svg.icon.%s_icon.svg" % PART_ID: g.icon_svg(),
         "svg.breadboard.%s_breadboard.svg" % PART_ID: g.breadboard_svg(),
