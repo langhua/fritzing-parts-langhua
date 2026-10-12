@@ -809,7 +809,7 @@
   | A | G2 README 一致性 | `tools/check_readme_table.py`（部件表 / 两个数量 / 预览拼版数） |
   | A | G3 可重生成 | 每个带 `gen_part.py` 的件：**在临时副本里**重跑生成器 ⇒ 产物必须与仓库里的 svg/fzp **逐字节一致**（两侧都按 LF 归一化 ⇒ 两个平台同一判据） |
   | A | G4 fzpz 装箱 | `fzpz/*.fzpz` 的条目与 `svg/` 下源文件**逐字节一致** —— 比的是**入库那份（LF）**（⇒ 工作区 CRLF 不算差异 ✓），✗ 不比 zip 字节（时间戳会变）；名字带 32 位 hash 的条目是 Fritzing"另存"产物、仓库没有同名源 ⇒ **计数后**跳过 |
-  | B（只对**本次改动**的件） | G5 元件闸门 | `fzp_check.py` / `schem_check.py` rc=0 |
+  | B（只对**本次改动**的件） | G5 元件闸门 | `fzp_check.py` / `schem_check.py` rc=0；「改动」= 动了 `svg/<部件>/…` **或** `fzpz/<部件>.fzpz` 的**载荷**（只换时间戳/重打包**不算** ✗） |
 
 - ★★ **`.fzpz` 载荷必须是 LF**（2026-10-13 **CI 首跑**抓出来的，本机一直"绿"✗）：老生成器在
   **Windows 工作区**（CRLF，本仓 `core.autocrlf=true`）里打包 ⇒ 把 **CRLF 装进了 zip** ✗，

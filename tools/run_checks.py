@@ -22,6 +22,8 @@ A 档（全仓、便宜、今天应全绿）
                     "另存"产物、仓库没有同名源 ⇒ **计数后跳过**，不静默）
 B 档（只对本次改动到的元件）
   G5 元件闸门       `fzp_check.py` / `schem_check.py` 必须 rc=0（rc 2 = 该件没有这个视图 ⇒ 跳过）
+                    「改动」= 动了 `svg/<部件>/…`，**或**动了 `fzpz/<部件>.fzpz` 且**载荷真的变了**
+                    （只改时间戳 / 重打包不算 ✗ —— 按包内条目反查部件，与 G4 同一套口径 ✓）
 
 判定口径（与兄弟仓一致）
 ------------------------
@@ -34,6 +36,7 @@ B 档（只对本次改动到的元件）
 那是**人眼在 Fritzing 里**的验收，任何脚本都替代不了。
 """
 import argparse
+import io
 import os
 import re
 import shutil
@@ -206,11 +209,23 @@ def gate_regen():
 
 
 # ------------------------------------------------------------- G4 fzpz 装箱
+_SVG_IDX = None
+
+
+def svg_index():
+    """basename -> [路径…]（G4 与 B 档**共用**同一套对照口径，别写第二份）。"""
+    global _SVG_IDX
+    if _SVG_IDX is None:
+        idx = {}
+        for root, _dirs, files in os.walk(ROOT / "svg"):
+            for f in files:
+                idx.setdefault(f, []).append(Path(root) / f)
+        _SVG_IDX = idx
+    return _SVG_IDX
+
+
 def gate_fzpz():
-    idx = {}
-    for root, _dirs, files in os.walk(ROOT / "svg"):
-        for f in files:
-            idx.setdefault(f, []).append(Path(root) / f)
+    idx = svg_index()
     zdir = ROOT / "fzpz"
     if not zdir.is_dir():
         return "SKIP", ["没有 fzpz/ 目录"], []
@@ -242,19 +257,66 @@ def gate_fzpz():
 
 
 # --------------------------------------------------------- G5 元件闸门（B 档）
+def git_blob(rev, rel):
+    """`git show <rev>:<rel>` 的**原始字节**（二进制安全；sh() 是文本模式，不能用 ✗）。"""
+    p = subprocess.run(["git", "show", "%s:%s" % (rev, rel)], cwd=str(ROOT), capture_output=True,
+                       env=dict(os.environ, PYTHONIOENCODING="utf-8"), timeout=300)
+    return p.stdout if p.returncode == 0 else None
+
+
+def zip_payload(data):
+    """zip 载荷 = {条目名: 归一化字节}；解不开返回 None。
+
+    ★ 只比**载荷** ⇒ 时间戳/重打包变化**不算** ✗（否則一次全仓重打包会把上百个件
+    拖进 B 档，把既存 FAIL 变成红 ✗ —— 2026-10-13 实测过）。
+    """
+    if not data:
+        return None
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as zf:
+            return {n: norm(zf.read(n)) for n in zf.namelist()}
+    except (OSError, zipfile.BadZipFile):
+        return None
+
+
+def package_part_dirs(rel):
+    """`fzpz/X.fzpz` 里装的就是某个件的东西 ⇒ 由**条目名**反查 `svg/<部件>/`。
+
+    改了包、没动源文件时也要查那个件（2026-10-13 用户定）—— 口径与 G4 一致（按 basename 对照）。
+    """
+    z = ROOT / rel
+    if not z.exists():
+        return set()
+    try:
+        with zipfile.ZipFile(z) as zf:
+            names = zf.namelist()
+    except (OSError, zipfile.BadZipFile):
+        return set()
+    idx, out = svg_index(), set()
+    for n in names:
+        for c in idx.get(os.path.basename(n), []):
+            out.add(c.parent.name)
+    return out
+
+
 def changed_part_dirs(base):
     paths = []
     if base:
         paths += git("diff", "--name-only", base, "HEAD")
-    paths += git("diff", "--name-only")             # 工作区 vs 索引
-    paths += git("diff", "--name-only", "--cached")  # 索引 vs HEAD
+    paths += git("diff", "--name-only")              # 工作区 vs 索引
+    paths += git("diff", "--name-only", "--cached")   # 索引 vs HEAD
     paths += git("ls-files", "--others", "--exclude-standard")
     dirs = set()
     for p in paths:
         p = p.strip()
         if p.startswith("svg/") and p.count("/") >= 2:
-            dirs.add((ROOT / "svg" / p.split("/")[1]).name)
-    return sorted(dirs)
+            dirs.add(p.split("/")[1])
+        elif p.startswith("fzpz/") and p.endswith(".fzpz"):
+            new = zip_payload((ROOT / p).read_bytes()) if (ROOT / p).is_file() else None
+            old = zip_payload(git_blob(base or "HEAD", p))
+            if new != old:                           # 载荷真变了 ⇒ 那个件也要查
+                dirs |= package_part_dirs(p)
+    return sorted(d for d in dirs if (ROOT / "svg" / d).is_dir())
 
 
 def gate_parts(base, all_parts):
