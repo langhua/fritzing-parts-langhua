@@ -69,6 +69,15 @@ def _out(s=""):
     print(s, flush=True)
 
 
+def norm(b):
+    """入库那份 = LF（git 归一化后的形态）⇒ 工作区是 CRLF（core.autocrlf）不算差异。
+
+    ★ 没有这一步时，G3/G4 会**看平台变脸**：Windows 上"工作区 CRLF 与 zip 里的 CRLF 一起错"
+    ⇒ 本机反而报通过 ✗（2026-10-13 CI 的 Linux 栏一眼看穿 ✓）。
+    """
+    return b.replace(b"\r\n", b"\n")
+
+
 def sh(args, cwd=None, timeout=600):
     """跑子进程。统一给 UTF-8：Windows 控制台是 GBK，脚本里打 ✓/✗ 会直接崩。"""
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
@@ -179,7 +188,7 @@ def gate_regen():
                 if not f.is_file() or f.suffix.lower() not in (".svg", ".fzp"):
                     continue
                 other = b / f.name
-                if not other.exists() or f.read_bytes() != other.read_bytes():
+                if not other.exists() or norm(f.read_bytes()) != norm(other.read_bytes()):
                     diff.append(f.name)
             if not diff:
                 continue
@@ -217,11 +226,14 @@ def gate_fzpz():
                     miss.append("%s :: %s" % (z.name, n))
                     continue
                 compared += 1
-                if not any(c.read_bytes() == zf.read(n) for c in cand):
-                    fails.append("%s :: %s 与源文件内容不一致" % (z.name, n))
+                if not any(norm(c.read_bytes()) == zf.read(n) for c in cand):
+                    fails.append("%s :: %s 与入库源文件内容不一致" % (z.name, n))
     fails += ["源文件找不到：" + m for m in miss]
     detail = ["比对条目 %d 条；跳过（名字带 hash = Fritzing 另存）%d 条；找不到源 %d 条"
-              % (compared, skipped_hash, len(miss))]
+              % (compared, skipped_hash, len(miss)),
+              "口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；"
+              "zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 "
+              "`py -3.13 tools\\repack_fzpz.py` 修）"]
     return ("FAIL" if fails else "PASS"), fails + detail, []
 
 

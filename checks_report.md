@@ -1,20 +1,20 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-13 00:20:47 ｜ python 3.13.14 ｜ 平台 win32
-结果：**5 过 / 0 跳过 / 0 不合格**
+跑的时间：2026-10-13 00:26:55 ｜ python 3.13.14 ｜ 平台 win32
+结果：**4 过 / 1 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
 | G1 文本卫生（全仓） | PASS | 0.5s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 4.4s |
+| G3 生成器可重生成（全仓） | PASS | 4.7s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.1s |
-| G5 元件闸门（改动件） | PASS | 0.4s |
+| G5 元件闸门（改动件） | SKIP | 0.2s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 963 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 966 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> PASS
 - check_readme_table.py rc=0；=== 全部通过 ===
@@ -26,13 +26,10 @@
 
 ### G4 fzpz 装箱一致（全仓） -> PASS
 - 比对条目 281 条；跳过（名字带 hash = Fritzing 另存）324 条；找不到源 0 条
+- 口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 `py -3.13 tools\repack_fzpz.py` 修）
 
-### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 2 个件
-- 已过：CH32V002F4U6 / fzp_check rc=0
-- 已过：CH32V002F4U6 / schem_check rc=0
-- 已过：CH32V203F8U6 / fzp_check rc=0
-- 已过：CH32V203F8U6 / schem_check rc=0
+### G5 元件闸门（改动件） -> SKIP
+- 没有改动到的元件目录 ⇒ B 档跳过（要看全仓就加 --all-parts）
 
 ## 口径与边界
 

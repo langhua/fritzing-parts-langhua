@@ -591,7 +591,9 @@
 新建 / 改完一个元件，**逐项过一遍**；漏了不会报错，但仓库就跟 Fritzing 里对不上 ✗：
 
 1. `svg/<部件>/`：`part.<id>.fzp` + 4 个视图 svg + 生成脚本（`gen_part.py` 等）；
-2. `.fzpz` 出到**顶层 `fzpz/`**；按需部署到 Fritzing 的 MINE 目录 ——
+2. `.fzpz` 出到**顶层 `fzpz/`** —— ★ **打完包先跑一次 `py -3.13 tools\repack_fzpz.py`** ✓
+   （把 zip 载荷统一成入库那份的 LF ＋ 固定时间戳；在 Windows 上直接打出来的包是 **CRLF** ✗，
+   CI 的 G4 会在 Linux 栏红 —— 见 §14）；再按需部署到 Fritzing 的 MINE 目录 ——
    ★ **部署只有一个正确口径** ✓（2026-09-27 踩坑后定 ✗）：
    ① **fzp 文件名 = fzp 里 `moduleId` 的值 + `.fzp`** ✓ ⇒ `parts/user/<moduleId>.fzp`；
    ② **图形 = fzp 里 `image="<view>/<名>.svg"` 那条** ✓ ⇒ `parts/svg/user/<view>/<名>.svg`（原样 ✓）。
@@ -805,10 +807,18 @@
   |---|---|---|
   | A（全仓） | G1 文本卫生 | tracked 文件无 BOM / 合法 UTF-8 / **入库那份行尾是 LF** / 没把 `__pycache__`、`*.pyc`、`*_byHand.svg`、`.bak` 带进库 |
   | A | G2 README 一致性 | `tools/check_readme_table.py`（部件表 / 两个数量 / 预览拼版数） |
-  | A | G3 可重生成 | 每个带 `gen_part.py` 的件：**在临时副本里**重跑生成器 ⇒ 产物必须与仓库里的 svg/fzp **逐字节一致** |
-  | A | G4 fzpz 装箱 | `fzpz/*.fzpz` 的条目与 `svg/` 下源文件**内容一致**（✗ 不比 zip 字节 —— 时间戳会变）；名字带 32 位 hash 的条目是 Fritzing"另存"产物、仓库没有同名源 ⇒ **计数后**跳过 |
+  | A | G3 可重生成 | 每个带 `gen_part.py` 的件：**在临时副本里**重跑生成器 ⇒ 产物必须与仓库里的 svg/fzp **逐字节一致**（两侧都按 LF 归一化 ⇒ 两个平台同一判据） |
+  | A | G4 fzpz 装箱 | `fzpz/*.fzpz` 的条目与 `svg/` 下源文件**逐字节一致** —— 比的是**入库那份（LF）**（⇒ 工作区 CRLF 不算差异 ✓），✗ 不比 zip 字节（时间戳会变）；名字带 32 位 hash 的条目是 Fritzing"另存"产物、仓库没有同名源 ⇒ **计数后**跳过 |
   | B（只对**本次改动**的件） | G5 元件闸门 | `fzp_check.py` / `schem_check.py` rc=0 |
 
+- ★★ **`.fzpz` 载荷必须是 LF**（2026-10-13 **CI 首跑**抓出来的，本机一直"绿"✗）：老生成器在
+  **Windows 工作区**（CRLF，本仓 `core.autocrlf=true`）里打包 ⇒ 把 **CRLF 装进了 zip** ✗，
+  而入库那份是 LF ✓ ⇒ 同一个零件在 Linux / macOS 上解出来与 `svg/` 下**逐字节不一致** ✗。
+  更坑的是：**本机会报通过** ✗（工作区 CRLF 与 zip 里的 CRLF **一起错** ⇒ 又一条"自证不算数" ✓，
+  Windows 栏还多一条 G3 红：工作区 CRLF vs 生成器写出的 LF ✗）—— **CI 的 Linux 栏一眼看穿** ✓✓。
+  ⇒ 修法：**`py -3.13 tools\repack_fzpz.py`**（按入库内容归一化换行 + 给所有条目**固定时间戳**
+  ⇒ 换平台、跑几次产物都逐字节相同 ✓，可重复 ✓）；**新元件 / 改完生成器后跑一次它** ✓。
+  G4 就是它的闸门 ✓；G3 也改成两侧归一化 ⇒ 两个平台同一判据 ✓。
 - **为什么分两档** ✗：全仓现在**还有既存 FAIL** —— `schem_check`：`RJ45-8P8C`、`RJ45-8P8C_rev_1`、
   `CD74HC4067`、`CN3165` 等；`fzp_check`：`T-Halow-RJ45` ⇒ "全仓全绿才放行"会**天天红** ✗。
   要看全仓：`--all-parts` ✓（会把这些既存红暴露出来 ✓）。
