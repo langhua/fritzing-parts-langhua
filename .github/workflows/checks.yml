@@ -8,11 +8,13 @@
 #   · `tools/check_deploy.py` 依赖**本机** Fritzing 的 MINE 目录 ⇒ 不进 CI；
 #   · 全仓审计（audit_green_board / audit_silk_on_board）现状有既存违规 ⇒ 不进 CI，手动跑。
 #
-# 两栏各有不可替代的价值：
+# 三栏各有各的量（★ **macOS 的增量最少**，别把它当新判据 ✗）：
 #   · Windows：**GBK 控制台**把 `✓` / `−` 打成 UnicodeEncodeError 这类**只在 Windows 出现**的崩溃
 #     （2026-10-13 实测：两个生成器就是这样"报错"的 ✗ —— 设 PYTHONIOENCODING=utf-8 就正常 ✓）；
-#   · Linux：**大小写敏感** ⇒ 生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸。
-# macOS 不入矩阵：它和 Windows 一样大小写不敏感，增量信息最少（要加随时加一栏）。
+#   · Linux：**大小写敏感** ⇒ 生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸
+#     （2026-10-13：`.fzpz` 里的 CRLF 就是这么被它一眼看穿的 ✓）；
+#   · macOS：与 Windows 同属**大小写不敏感**、也没有 apt ⇒ 增量信息最少；加它只是"换一台机器
+#     也跑得动"的额外保险（顺带盯 Homebrew / BSD 用户面），✗ 不要指望它抓出新东西。
 name: checks
 
 on:
@@ -28,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +44,11 @@ jobs:
       - name: 系统依赖（Linux：cairo，供 schem_check 渲染）
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libcairo2
+
+      - name: 系统依赖（macOS：cairo，供 schem_check 渲染）
+        if: runner.os == 'macOS'
+        # 装不上也不把这一栏弄红：run_checks 会把"本环境缺依赖 ⇒ 跳过"**明确打出来** ✓
+        run: brew install cairo || echo "::warning::cairo 没装上 ⇒ 依赖它的闸门会在报告里明确跳过"
 
       - name: python 依赖
         run: python -m pip install --disable-pip-version-check cairosvg pillow

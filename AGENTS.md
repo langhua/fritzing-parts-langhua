@@ -826,11 +826,13 @@
   `T-Halow-RJ45`（icon 与生成器不同；该件不进预览/元件箱，见 §10）、
   `Capacitor-0402`（入库那份 fzp 的 `<description>` 是旧版 `1`/`2`，生成器现在写 `A generic capacitor` ⇒
   要统一得重生成并**提交该件**，等用户定）。
-- **CI = Linux + Windows 两栏**（`.github/workflows/checks.yml`，`fail-fast: false`）：两栏各有不可替代的价值 ——
+- **CI = Linux + Windows + macOS 三栏**（`.github/workflows/checks.yml`，`fail-fast: false`）：
   **Windows** 抓 **GBK 控制台**那种"打 `✓`/`−` 就崩"✗（2026-10-13 实测：两个生成器就是这样"报错"的，
   设 `PYTHONIOENCODING=utf-8` 就正常 ✓ —— `run_checks.py` 已给所有子进程统一带上它 ✓）；
-  **Linux** 抓**大小写敏感**✗（生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸）。
-  **macOS 不入矩阵**（与 Windows 同属大小写不敏感，增量最少）。
+  **Linux** 抓**大小写敏感**✗（生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸；
+  2026-10-13 那次 `.fzpz` 里的 CRLF 也是被它一眼看穿的 ✓）；
+  **macOS** 的**增量信息最少** ✗（与 Windows 同属大小写不敏感、也没有 apt）—— 加它只是"换一台机器也跑得动"
+  的额外保险（顺带盯 Homebrew / BSD 用户面），✗ 不要指望它抓出新东西。
 - ★★ **CI 不能证明什么**（别把绿读成"零件没问题"）✗：① **零件在 Fritzing / Inkscape 里长什么样、
   能不能插面包板、颜色与审美** —— 那是**人眼验收** ✓；② `tools/check_deploy.py`（要**本机** Fritzing 的
   MINE 目录）**不在 CI** ✗；③ 全仓审计 `audit_green_board.py` / `audit_silk_on_board.py`
