@@ -795,3 +795,34 @@
 ★★ 其中两条是**我们自己**的坑 ✗、**不是** Fritzing 的 bug ✓（`<instance` 计数把 `<instances>`
 算进去 ✗；我们生成器某处缩进不齐 ✗）——**先核准自己那边，再谈"是不是它的问题"** ✓。
 
+## 14. CI：一键闸门（2026-10-13 加，本仓也上 CI）
+
+- **一键 = `py -3.13 tools\run_checks.py`**（本机与 CI 同一份）；报告写仓库根 `checks_report.md`（**入库**，
+  与另外 5 仓同惯例 —— 跑过之后它会变，提交时带上、或先 `git checkout -- checks_report.md`）。
+- **闸门分两档**（口径：退出码 0 **且** 输出里无 `FAIL` 才算过；**`rc 2` = 明确跳过，不算通过**）：
+
+  | 档 | 闸门 | 判什么 |
+  |---|---|---|
+  | A（全仓） | G1 文本卫生 | tracked 文件无 BOM / 合法 UTF-8 / **入库那份行尾是 LF** / 没把 `__pycache__`、`*.pyc`、`*_byHand.svg`、`.bak` 带进库 |
+  | A | G2 README 一致性 | `tools/check_readme_table.py`（部件表 / 两个数量 / 预览拼版数） |
+  | A | G3 可重生成 | 每个带 `gen_part.py` 的件：**在临时副本里**重跑生成器 ⇒ 产物必须与仓库里的 svg/fzp **逐字节一致** |
+  | A | G4 fzpz 装箱 | `fzpz/*.fzpz` 的条目与 `svg/` 下源文件**内容一致**（✗ 不比 zip 字节 —— 时间戳会变）；名字带 32 位 hash 的条目是 Fritzing"另存"产物、仓库没有同名源 ⇒ **计数后**跳过 |
+  | B（只对**本次改动**的件） | G5 元件闸门 | `fzp_check.py` / `schem_check.py` rc=0 |
+
+- **为什么分两档** ✗：全仓现在**还有既存 FAIL** —— `schem_check`：`RJ45-8P8C`、`RJ45-8P8C_rev_1`、
+  `CD74HC4067`、`CN3165` 等；`fzp_check`：`T-Halow-RJ45` ⇒ "全仓全绿才放行"会**天天红** ✗。
+  要看全仓：`--all-parts` ✓（会把这些既存红暴露出来 ✓）。
+- **例外要带理由、要点名打出**（✗ 不许静默跳过）：`tools/run_checks.py` 的 `GEN_DRIFT_ALLOW` 现有两条 ——
+  `T-Halow-RJ45`（icon 与生成器不同；该件不进预览/元件箱，见 §10）、
+  `Capacitor-0402`（入库那份 fzp 的 `<description>` 是旧版 `1`/`2`，生成器现在写 `A generic capacitor` ⇒
+  要统一得重生成并**提交该件**，等用户定）。
+- **CI = Linux + Windows 两栏**（`.github/workflows/checks.yml`，`fail-fast: false`）：两栏各有不可替代的价值 ——
+  **Windows** 抓 **GBK 控制台**那种"打 `✓`/`−` 就崩"✗（2026-10-13 实测：两个生成器就是这样"报错"的，
+  设 `PYTHONIOENCODING=utf-8` 就正常 ✓ —— `run_checks.py` 已给所有子进程统一带上它 ✓）；
+  **Linux** 抓**大小写敏感**✗（生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸）。
+  **macOS 不入矩阵**（与 Windows 同属大小写不敏感，增量最少）。
+- ★★ **CI 不能证明什么**（别把绿读成"零件没问题"）✗：① **零件在 Fritzing / Inkscape 里长什么样、
+  能不能插面包板、颜色与审美** —— 那是**人眼验收** ✓；② `tools/check_deploy.py`（要**本机** Fritzing 的
+  MINE 目录）**不在 CI** ✗；③ 全仓审计 `audit_green_board.py` / `audit_silk_on_board.py`
+  （现状 35/36 件既存违规）**不进 CI** ✗，只手动跑。
+

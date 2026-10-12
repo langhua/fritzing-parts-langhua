@@ -1,4 +1,4 @@
-﻿# Pixel 差异视图（VS Code 扩展 · v0.0.1）
+# Pixel 差异视图（VS Code 扩展 · v0.0.1）
 
 把 `tools\diff_revs.py` 生成的**叠合差异图**和**差异清单 md** 合成**一个界面**显示 ✓。
 

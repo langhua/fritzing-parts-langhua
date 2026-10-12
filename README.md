@@ -3,7 +3,12 @@
 Aurora Tessellation（极光镶嵌）项目使用的 Fritzing 自定义部件库。
 
 > 本仓库最初是 `fritzing-parts` 的 fork：LM393-A3144-HALL-3Pins、PB86-A0 等用于 SandFlower 的部件仍保留。
-## 元件预览（图 = 各部件自己的 icon 视图，自动拼版）
+[![checks](https://github.com/langhua/fritzing-parts-langhua/actions/workflows/checks.yml/badge.svg)](https://github.com/langhua/fritzing-parts-langhua/actions/workflows/checks.yml)
+
+**一键闸门**：`py -3.13 tools\run_checks.py` —— 全仓查文本卫生 / README 数量一致 / **生成器可重生成（逐字节）** /
+`.fzpz` 装箱一致，并对**本次改动到的元件**跑 `fzp_check` + `schem_check`（档位、例外清单与「它证明不了什么」
+见 `AGENTS.md` §14）。CI 跑同一份（Linux + Windows 两栏）。★ 它**不能**替代人眼：零件在
+Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓。## 元件预览（图 = 各部件自己的 icon 视图，自动拼版）
 
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。

@@ -1,0 +1,60 @@
+# fritzing-parts-langhua 的闸门（Linux + Windows 两栏）
+#
+# 判定 = `python tools/run_checks.py` 退出码 0 **且** 输出里没有 FAIL
+#        （`rc 2` = 明确跳过，**不算通过** —— 报告里单独列出来）。
+#
+# ★ 它**不能**证明什么（别把绿读成"零件没问题"）
+#   · 零件在 Fritzing / Inkscape 里长什么样、能不能插面包板、颜色与审美是否达标 —— 那要人眼验收；
+#   · `tools/check_deploy.py` 依赖**本机** Fritzing 的 MINE 目录 ⇒ 不进 CI；
+#   · 全仓审计（audit_green_board / audit_silk_on_board）现状有既存违规 ⇒ 不进 CI，手动跑。
+#
+# 两栏各有不可替代的价值：
+#   · Windows：**GBK 控制台**把 `✓` / `−` 打成 UnicodeEncodeError 这类**只在 Windows 出现**的崩溃
+#     （2026-10-13 实测：两个生成器就是这样"报错"的 ✗ —— 设 PYTHONIOENCODING=utf-8 就正常 ✓）；
+#   · Linux：**大小写敏感** ⇒ 生成器 / `.fzp` 的 `image=` 里路径大小写写错，只在 Linux 炸。
+# macOS 不入矩阵：它和 Windows 一样大小写不敏感，增量信息最少（要加随时加一栏）。
+name: checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # B 档要能拿到 diff 基线（PR 的 base / push 的 before）
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: 系统依赖（Linux：cairo，供 schem_check 渲染）
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libcairo2
+
+      - name: python 依赖
+        run: python -m pip install --disable-pip-version-check cairosvg pillow
+
+      - name: 跑闸门
+        env:
+          # PR：base sha；push：before（首个提交会是全 0，runner 自己会忽略）
+          DIFF_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python tools/run_checks.py --report checks_report.md
+
+      - name: 上传报告（无论成败）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checks-report-${{ matrix.os }}
+          path: checks_report.md
