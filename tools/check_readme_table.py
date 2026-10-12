@@ -97,4 +97,8 @@ def main():
 
 
 if __name__ == "__main__":
+    # Windows 控制台默认 GBK：下面会打印 ✓ / ✗，不先重编码会在**打印处**抛 UnicodeEncodeError
+    # （现象是"脚本崩了"而不是"检查没过"，最容易误判成不合格）；与同库其它工具同一处理。
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # type: ignore[attr-defined]
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")   # type: ignore[attr-defined]
     sys.exit(main())
