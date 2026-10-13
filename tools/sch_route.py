@@ -4136,6 +4136,14 @@ def main(argv):
                     continue                       # 穿本体 ✗
                 if pin_hard_bad(_seg0, PIN_ALL, _own0):
                     continue                       # 压**别的网**的脚 ✗（自己的脚可以坐上去 ✓）
+                # ★★★ 2026-10-13 ✓ **新增轨行还得不压、不贴别的网的线** ✗（用户看
+                #   `routed_rails.fzz` 报的正是这个 ✓）—— 上面两道只管“本体 / 别人的脚” ✗，
+                #   而实测漏的恰好是**平平地压在同一条 y 上** ✗（`3V3` 内轨 y=-67.2 与 `GND`
+                #   三段支线完全重合 ✗✗）。判据复用**同一套硬闸门** ✓（不另写 ✗）。
+                if ovl_hard_bad(_seg0, used):
+                    continue                       # 与别的网的线**压在同一条直线上** ✗
+                if HARD_GAP and gap_hard_bad(_seg0, net, used):
+                    continue                       # 与别的网的线**贴太近** ✗
                 _picked = (_v, _n)
                 break
             if _picked:
@@ -4189,6 +4197,11 @@ def main(argv):
                             continue                   # 穿本体 ✗
                         if pin_hard_bad(_seg2, PIN_ALL, _own0):
                             continue                   # 压**别的网**的脚 ✗
+                        # ★★★ 2026-10-13 ✓ 与上面那处**同一套** ✓（轨行不许压/贴别的网的线 ✗）
+                        if ovl_hard_bad(_seg2, used):
+                            continue                   # 压在同一条直线上 ✗
+                        if HARD_GAP and gap_hard_bad(_seg2, net, used):
+                            continue                   # 贴太近 ✗
                         # ★★ 硬条件 ✓：新轨必须**把 `_who` 全套接过来** ✗
                         #   ✗ 实测踩的坑（K3 ✗）：只按“支线总长最短”挑 ✗ ⇒ 挑到 **y=68.4** ✓
                         #     —— 它只拿得下 `D3` 那两只（84/98 ✓），`C1.1`（135）还是回 163.8 ✗
