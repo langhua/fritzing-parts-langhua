@@ -21,8 +21,7 @@ A 档（全仓、便宜、今天应全绿）
                     （✗ 不比 zip 字节 —— 时间戳会变；名字带 32 位 hash 的条目是 Fritzing
                     "另存"产物、仓库没有同名源 ⇒ **计数后跳过**，不静默）
 B 档（只对本次改动到的元件）
-  G5 元件闸门       `fzp_check.py` / `schem_check.py` 必须 rc=0（rc 2 = 该件没有这个视图 ⇒ 跳过）
-                    「改动」= 动了 `svg/<部件>/…`，**或**动了 `fzpz/<部件>.fzpz` 且**载荷真的变了**
+  G5 元件闸门       `fzp_check.py` / `schem_check.py` 必须 rc=0（rc 2 = 该件没有这个视图 ⇒ 跳过）                    「改动」= 动了 `svg/<部件>/…`，**或**动了 `fzpz/<部件>.fzpz` 且**载荷真的变了**
                     （只改时间戳 / 重打包不算 ✗ —— 按包内条目反查部件，与 G4 同一套口径 ✓）
 
 判定口径（与兄弟仓一致）
@@ -161,6 +160,25 @@ def gate_readme():
     if _DEP_RE.search(out):
         return "SKIP", ["本环境缺依赖 ⇒ G2 跳过（%s）" % tail[:100]], []
     return "FAIL", ["check_readme_table.py rc=%d" % rc] + out.splitlines()[-6:], []
+
+
+# ---------------------------------------------------------- G6 单位口径（全仓）
+def gate_units():
+    r"""**同一个物理量只许一处定义** ✓（用户 2026-10-13 定 ✓：「总犯这个错误 ⇒ 写入规则」）
+
+    ★ 守什么 ✗：`px` 多长，这个量在库仓曾同时有 **25.4/96 ✗ / 25.4/72 ✓ / 25.4/90 ✗**
+      三个值 ⇒ 原理图那套按 90 算 ⇒ **每个 px 声明件的脚位都偏 20%** ✗ ⇒ 用户看到
+      「线没接到端点上」✗（而我自己那套判据报 (A)(B)=0 ✗ = 自证 ✗）。
+    ★ 判据全在 `tools/check_units.py` 里 ✓（本函数只负责**把它当一个闸门跑** ✓，不另写一份 ✗）。
+    """
+    rc, out = sh([PY, TOOLS / "check_units.py"], timeout=120)
+    if rc == 2:
+        return "SKIP", ["本环境 import 不了库仓工具 ⇒ G6 跳过（%s）" % (out or "")[:100]], []
+    tail = [l for l in (out or "").splitlines() if l.strip()]
+    fails = [l.strip() for l in tail if l.strip().startswith("✗")]
+    if rc == 0 and not fails:
+        return "PASS", tail[-3:], []
+    return "FAIL", (fails or tail[-6:]), []
 
 
 # ------------------------------------------------------------- G3 可重生成
@@ -391,7 +409,8 @@ def main(argv):
              ("G2 README 一致性（全仓）", lambda: gate_readme()),
              ("G3 生成器可重生成（全仓）", lambda: gate_regen()),
              ("G4 fzpz 装箱一致（全仓）", lambda: gate_fzpz()),
-             ("G5 元件闸门（改动件）", lambda: gate_parts(base, args.all_parts))]
+             ("G5 元件闸门（改动件）", lambda: gate_parts(base, args.all_parts)),
+             ("G6 单位口径（全仓）", lambda: gate_units())]
 
     rows, hard = [], []
     for title, fn in gates:
