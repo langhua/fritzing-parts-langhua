@@ -254,6 +254,36 @@
   - **绝不可**把多个 pad 合并成一个 connector——那会只剩一个可接线节点（用户视为"添乱"）。
   - 同一网络总线可命名 `id`（如 `<bus id="GND">`），便于识别。
   - 现实语义：元件一体地壳的多地脚 = "各自可接线 + 物理同地"，两者都要在 `.fzp` 里表达。
+- **★★ `moduleId` 必须以 Fritzing 认的「件类型后缀」结尾** ✓（2026-10-13 用户定 ✓，原话：
+  「电阻有错误，**阻值不可输入，公差不可选**」✗）—— ✗ **这不是审美问题，是功能问题** ✗：
+  - **判据在两处、都靠后缀** ✓（源码可复查 ✓，本机 `F:\build-fritzing\fritzing-app` ✓）：
+    · `src/items/partfactory.cpp:137-141` —— 按后缀决定**造哪个 C++ 类** ✓
+      （`endsWith("ResistorModuleID")` ⇒ `new Resistor(…)` ✓；`CapacitorModuleID` ⇒ `new Capacitor(…)` ✓；
+      还有 `CrystalModuleID` / `InductorModuleID` / `LEDModuleID` / `ZenerDiodeModuleID` /
+      `ThermistorModuleID` / `PotentiometerModuleID` / `ColorLEDModuleID` / `PerfboardModuleID` … ✓）；
+    · `src/items/propertydef.cpp:104-132` —— 按后缀从**编进 exe 的表**（`resources/properties.xml` ✓）
+      里取属性定义 ✓（`if (!moduleID().endsWith(suffix, Qt::CaseInsensitive)) continue;` ✓）。
+    ⇒ 后缀不对 ⇒ 造的是**通用件 `ItemBase`** ✗ ⇒ 属性面板**整块只读** ✗
+      （实证 = 用户两张截图 ✓：core 的电阻**行行带下拉可选** ✓，我们的**填不了** ✗）。
+  - **本库命名格式（2026-10-13 起）** ✓：`<原 moduleId>-<后缀>` ✓
+    例：`R0603_36137a0f26fc46e91e48eb74468f61a7_1-ResistorModuleID` ✓、
+    `C0402_b41d7c…_1-CapacitorModuleID` ✓、`SC474_a3f8…_1-CapacitorModuleID` ✓。
+    ★ 为什么长这样、而不改成 `Langhua-R0603-ResistorModuleID` ✗：**要可机器映射** ✓ ——
+      老草图能一键把 `<旧名>` 换成 `<旧名>-后缀` ✓；且 `_1`/`_2`… 是**同一 hex 上的版本号**
+      （0805/1206/1812/2010/2512 共用 `0a212ee8…` ✓）⇒ ✗ **绝不能丢** ✗（丢了这五个件就撞名 ✓）。
+  - **属性名照旧小写** ✓（`resistance` / `capacitance` ✓）—— `propertydef.cpp:126` 是
+    `properties().value(name.**toLower()**)` ✓、`items/resistor.cpp:98/100` 也按小写读 ✓。
+  - **改件名 = 改身份证** ✗：引用它的草图会**认不出这些件** ✗ ⇒ 必须**同批重跑**那些草图 ✓
+    （2026-10-13 实测影响面：`orpah-client-demo` 载板 9 个 ✓、`AuroraTessellation-NFC` 像素板一大批 ✓）。
+  - **工具** ✓：`tools/rename_moduleid.py --suffix=<后缀> [--check] <部件目录>…` ✓
+    （★ **只给没有生成器的件用** ✗ —— 有生成器的要改 `SPEC` 里的 `mod` 再重生成 ✓，
+      否则下次一跑生成器就把名字冲回去 ✗）；它**顺手重打 `.fzpz`** ✓
+    （改名后 zip 的**条目名不会自己跟着变** ✗ —— `repack_fzpz.py` 按条目名找同名源 ⇒ 旧名只会"原样保留" ✗）。
+  - **部署**：新名写进去 **＋ 旧名的 5 个文件移出 MINE** ✗（不移 ⇒ 元件箱里出现**两套件** ✗；
+    ✗ 别删 ⇒ 移到 `Documents/Fritzing/_stray_<时间>/` ✓，照 §4 口径 ✓）。
+  - ⚠ **本库仍有 9 个件没改** ✗（晶振 `Crystal-3215/3225` → `CrystalModuleID` ✓、模压电感 `SHC*` 6 档
+    → `InductorModuleID` ✓、`3Pin-LED` → `LEDModuleID` ✓）—— 它们**同样填不了属性** ✓，
+    只是暂时没人报 ✓；要用之前先改 ✓。
 - **★ 命名一律尊重原厂（命名权）**（2026-09-25 用户定，原话：「要尊重原厂的命名权」）：
   元件 / 引脚 / 焊盘 / 网络的**名字**一律**照原厂口径**写，不按我们的喜好改名、也不"顺手统一" ✗：
   - **芯片脚名、裸焊盘名** → 照**数据手册**：叫 `EP` / `EPAD` 就用它，**原厂叫 `VSS` 就保留 `VSS`** ✓；
