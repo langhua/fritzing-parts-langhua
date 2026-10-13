@@ -7270,6 +7270,21 @@ def relabel(insts, boxes, used, extra=False):
                 best, bk = b, sc
         if best is None:
             continue
+        # ★★★ 2026-10-13 ✓ **位号的显示属性必须“无条件”补齐** ✗✗（不能只写在“动过”的分支里 ✗）：
+        #   病（用户 2026-10-13 报 ✓）：「**所有元件都没有显示元件编号，电阻电容更是没有阻值容量值** ✗」
+        #   —— 而 `render_sch` **看得见** 11 个位号 ✓（它读 `<title>` ✓）⇒ 两边对“位号靠什么显示”
+        #   认法不同 ✗。★ 拿 **Fritzing 自己保存的台架草图**（`hardware/wiring/cstep-*.fzz` ✓）
+        #   逐字段比出来的 ✓（唯一可靠的办法 ✓）：它写的是
+        #     `<titleGeometry visible="true" x="549.437" y="-62.8702" z="7.00029"
+        #        xOffset="36.875" yOffset="-14" textColor="#000000" fontSize="5"/>` ✓
+        #   ✗ 我们只写 `x/y/z` ⇒ **缺 `visible` ⇒ Fritzing 当作“不显示”** ✗✗
+        #     （`<title>` 里的文字它照收 ✓，画不画由这个属性说了算 ✓）。
+        #   ★★ 而且这三行原来写在「**位号动过**」的分支里 ✗ ⇒ **没动的位号永远补不上** ✗
+        #     （实测：一次只动 6 个 ✓ ⇒ 另外 5 个仍旧不显示 ✗ —— 修一半的典型 ✗）。
+        #   ⇒ 提到分支外 ✓、每个处理到的位号都补 ✓；✗ 不覆盖项目文件里**已显式写死**的值 ✗。
+        tg.set("visible", "true")
+        tg.set("fontSize", tg.get("fontSize") or "5")
+        tg.set("textColor", tg.get("textColor") or "#000000")
         if (abs(best[0] - old[0]) > 0.01 or abs(best[1] - old[1]) > 0.01):
             tg.set("x", fmt(best[0]))
             tg.set("y", fmt(best[1] - 0.25 * fs))            # `label_bbox` 的盒上缘 = y + 0.25fs ✓
