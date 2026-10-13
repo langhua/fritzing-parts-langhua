@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.54mm" height="13.70mm" viewBox="-1.77 -1.77 3.54 13.70">
+ <g id="breadboard">
+  <rect x="-1.27" y="-1.27" width="2.54" height="12.70" fill="#404040" stroke="none"/>
+  <rect id="connector0pin" connectorname="1" x="-0.50" y="-0.50" width="1.00" height="1.00" fill="none" stroke="none"/>
+  <rect id="connector0terminal" x="-0.39" y="-0.39" width="0.78" height="0.78" fill="none" stroke="none"/>
+  <rect id="connector1pin" connectorname="2" x="-0.50" y="2.04" width="1.00" height="1.00" fill="none" stroke="none"/>
+  <rect id="connector1terminal" x="-0.39" y="2.15" width="0.78" height="0.78" fill="none" stroke="none"/>
+  <rect id="connector2pin" connectorname="3" x="-0.50" y="4.58" width="1.00" height="1.00" fill="none" stroke="none"/>
+  <rect id="connector2terminal" x="-0.39" y="4.69" width="0.78" height="0.78" fill="none" stroke="none"/>
+  <rect id="connector3pin" connectorname="4" x="-0.50" y="7.12" width="1.00" height="1.00" fill="none" stroke="none"/>
+  <rect id="connector3terminal" x="-0.39" y="7.23" width="0.78" height="0.78" fill="none" stroke="none"/>
+  <rect id="connector4pin" connectorname="5" x="-0.50" y="9.66" width="1.00" height="1.00" fill="none" stroke="none"/>
+  <rect id="connector4terminal" x="-0.39" y="9.77" width="0.78" height="0.78" fill="none" stroke="none"/>
+  <rect x="-0.32" y="-0.32" width="0.64" height="0.64" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.32" y="2.22" width="0.64" height="0.64" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.32" y="4.76" width="0.64" height="0.64" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.32" y="7.30" width="0.64" height="0.64" fill="#f7bf13" stroke="none"/>
+  <rect x="-0.32" y="9.84" width="0.64" height="0.64" fill="#f7bf13" stroke="none"/>
+ </g>
+</svg>

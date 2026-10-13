@@ -97,12 +97,20 @@ SHEETS = {
         ("MX-1.25-3P-V", "MX-1.25-3P-V"),
         ("PH-2.0-3P-V", "PH-2.0-3P-V"),
         ("SH-1.0-3P-V", "SH-1.0-3P-V"),
-        # ★ 2026-10-13 新增 1×N 公排针 ✓（2.54mm ✓）—— 载板 `orpah-client-demo` 的 J1/J2/J3 要用 ✓
+        # ★ 2026-10-13 新增 1×N 公排针 ✓（2.54mm ✓，**1x2…1x10 九档** ✓）—— 载板
+        #   `orpah-client-demo` 的 J1(4)/J2(6)/J4(7) 要用 ✓
         #   几何出处 = Fritzing 核心库的 3 脚 0.1in 公排针（`svg/core/pcb/Dagu_DGServo_9g_header_male_pcb.svg` ✓）
         #   ＋ 本库 `svg/PH-2.0-3P-V` 的单位/线宽/字号口径 ✓（详见各 `gen_part.py` 文件头 ✓）
+        #   ★ 母版 = `svg/PinHeader-1x4/gen_part.py` ✓（其余档位与它只差 3 行：脚数/件名 ✓）
+        ("PinHeader-1x2", "PinHeader-1x2"),
+        ("PinHeader-1x3", "PinHeader-1x3"),
         ("PinHeader-1x4", "PinHeader-1x4"),
+        ("PinHeader-1x5", "PinHeader-1x5"),
         ("PinHeader-1x6", "PinHeader-1x6"),
         ("PinHeader-1x7", "PinHeader-1x7"),
+        ("PinHeader-1x8", "PinHeader-1x8"),
+        ("PinHeader-1x9", "PinHeader-1x9"),
+        ("PinHeader-1x10", "PinHeader-1x10"),
  ("MX-1.25-2P-H", "MX-1.25-2P-H"),
         ("DPDT7x7-6P", "DPDT7x7-6P"), ("SK-12D02VG3", "SK-12D02VG3"),
         ("DSIC01LS-P", "DSIC01LS-P"), ("TS-D014", "TS-D014"),

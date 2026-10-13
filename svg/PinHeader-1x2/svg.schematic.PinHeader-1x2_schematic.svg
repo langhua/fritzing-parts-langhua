@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="5.60mm" height="5.74mm" viewBox="0.00 -1.60 5.60 5.74">
+ <g id="schematic">
+  <polyline points="2.54,-1.10 4.34,-1.10 4.34,3.64 2.54,3.64 2.54,-1.10" fill="none" stroke="#000000" stroke-width="0.30" stroke-linejoin="round"/>
+  <line class="pin" id="connector0pin" connectorname="1" x1="0" y1="0.00" x2="2.54" y2="0.00" stroke="#787878" stroke-width="0.25" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect id="connector0terminal" x="0" y="0.00" width="0.0001" height="0.0001" stroke="none" fill="none"/>
+  <text x="1.27" y="-0.28" font-size="1.30" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">1</text>
+  <line class="pin" id="connector1pin" connectorname="2" x1="0" y1="2.54" x2="2.54" y2="2.54" stroke="#787878" stroke-width="0.25" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect id="connector1terminal" x="0" y="2.54" width="0.0001" height="0.0001" stroke="none" fill="none"/>
+  <text x="1.27" y="2.26" font-size="1.30" fill="#8C8C8C" text-anchor="middle" font-family="DroidSans">2</text>
+ </g>
+</svg>

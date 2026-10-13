@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.54mm" height="6.08mm" viewBox="-1.77 -1.77 3.54 6.08">
+ <g id="copper1">
+  <g id="copper0">
+   <rect id="connector0pad" connectorname="1" x="-0.74" y="-0.74" width="1.47" height="1.47" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector1pad" connectorname="2" cx="0" cy="2.54" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+  </g>
+ </g>
+ <g id="silkscreen">
+  <rect x="-1.27" y="-1.27" width="2.54" height="5.08" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>
+  <line x1="-1.27" y1="-0.38" x2="-0.38" y2="-1.27" stroke="#f0f0f0" stroke-width="0.12" stroke-linecap="round"/>
+ </g>
+</svg>

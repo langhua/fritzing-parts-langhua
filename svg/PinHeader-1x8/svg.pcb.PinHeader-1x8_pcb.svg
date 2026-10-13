@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.54mm" height="21.32mm" viewBox="-1.77 -1.77 3.54 21.32">
+ <g id="copper1">
+  <g id="copper0">
+   <rect id="connector0pad" connectorname="1" x="-0.74" y="-0.74" width="1.47" height="1.47" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector1pad" connectorname="2" cx="0" cy="2.54" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector2pad" connectorname="3" cx="0" cy="5.08" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector3pad" connectorname="4" cx="0" cy="7.62" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector4pad" connectorname="5" cx="0" cy="10.16" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector5pad" connectorname="6" cx="0" cy="12.70" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector6pad" connectorname="7" cx="0" cy="15.24" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+   <circle id="connector7pad" connectorname="8" cx="0" cy="17.78" r="0.74" fill="none" stroke="#f7bf13" stroke-width="0.51"/>
+  </g>
+ </g>
+ <g id="silkscreen">
+  <rect x="-1.27" y="-1.27" width="2.54" height="20.32" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>
+  <line x1="-1.27" y1="-0.38" x2="-0.38" y2="-1.27" stroke="#f0f0f0" stroke-width="0.12" stroke-linecap="round"/>
+ </g>
+</svg>
