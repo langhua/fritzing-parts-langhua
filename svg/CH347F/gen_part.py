@@ -329,7 +329,17 @@ def _bake_icon(part_id, cx, cy, rot=0):
     下解释不一致，会出现"芯片缩小到看不见"；烘成绝对值就与其它元件（LD1117/USB-B01）一致。
     rect/circle 全部烘成绝对坐标；只有**文字**保留 rotate()（Fritzing 官方也用这个写法）。
     """
-    path = os.path.join(OUT_DIR, "..", part_id, "svg.icon.%s_icon.svg" % part_id)
+    # ★★ 2026-10-13 修 ✗：`part_id` 是**部件目录名**（稳定 ✓），✗ 但它**不等于** moduleId ✗ ——
+    #   本库现在按 AGENTS §5 给 moduleId 加了 Fritzing 认的**件类型后缀**
+    #   （`Crystal-3225` → `Crystal-3225-CrystalModuleID` ✓）⇒ 拿 part_id 拼文件名**找不到文件** ✗
+    #   （G3 闸门当场抓到 ✓：`FileNotFoundError: …\Crystal-3225\svg.icon.Crystal-3225_icon.svg` ✓）。
+    #   ⇒ 改成**按目录里的唯一 icon 文件**找 ✓（目录名 = 部件名 ✓ 稳定 ✓）。
+    _d = os.path.join(OUT_DIR, "..", part_id)
+    _cands = sorted(f for f in os.listdir(_d)
+                    if f.startswith("svg.icon.") and f.endswith("_icon.svg"))
+    if len(_cands) != 1:
+        raise RuntimeError("icon 不唯一（%s）：%s" % (_d, _cands))
+    path = os.path.join(_d, _cands[0])
     art = open(path, encoding="utf-8").read()
     vb = re.search(r'viewBox="([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+) ([-\d.eE]+)"', art)
     body = re.search(r'<g\s+id="icon">(.*)</g>', art, re.S)

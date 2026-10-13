@@ -23,8 +23,12 @@ import re
 import zipfile
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
-PART_ID = "Crystal-3215"
-FZPZ = "Crystal-3215.fzpz"
+# ★★ 2026-10-13：`PART_ID` 追加 Fritzing 认的**件类型后缀** ✗✓ ——
+#   后缀不在 `resources/properties.xml`（编进 exe）里 ⇒ `partfactory.cpp:137` 造的是
+#   **通用件 `ItemBase`** ⇒ 属性面板**整块只读** ✗（"频率"填不了 ✗）。
+#   ⇒ 见 AGENTS §5；`PART_ID` 同时当 moduleId 与文件名 ✓ ⇒ 改这一处就够 ✓。
+PART_ID = "Crystal-3215-CrystalModuleID"
+FZPZ = "Crystal-3215.fzpz"        # ← 包名 = 部件目录名 ✓（不变 ✓）
 TITLE = "Crystal 3215 (3.2x1.5mm SMD)"
 LABEL = "Y"
 

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module moduleId="LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3" fritzingVersion="1.0.3">
+<module moduleId="LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID" fritzingVersion="1.0.3">
  <version>4</version>
  <author>Shi Jinghai</author>
  <title>3Pin LED</title>
@@ -23,24 +23,24 @@
  <description>https://item.taobao.com/item.htm?_u=svhf27tf50c&amp;id=662771110845&amp;spm=a1z09.2.0.0.4c4c2e8d3DS7t0</description>
  <views>
   <breadboardView>
-   <layers image="breadboard/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3_breadboard.svg">
+   <layers image="breadboard/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3_schematic.svg">
+   <layers image="schematic/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3_pcb.svg">
+   <layers image="pcb/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID_pcb.svg">
     <layer layerId="copper0"/>
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
   </pcbView>
   <iconView>
-   <layers image="icon/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3_icon.svg">
+   <layers image="icon/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>

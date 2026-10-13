@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module fritzingVersion="1.0.3" moduleId="SHC1040_29769af91d59cce900be9aa0cad985fa_1">
+<module fritzingVersion="1.0.3" moduleId="SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID">
  <version>4</version>
  <date>Sat Jun 21 2025</date>
  <label>L</label>
@@ -7,11 +7,11 @@
  <description>Molding Power Inductors</description>
  <title>Inductors</title>
  <tags>
-  <tag>1040</tag>
+  <tag>1265</tag>
   <tag>INDUCTOR</tag>
  </tags>
  <properties>
-  <property name="package">1040</property>
+  <property name="package">1265</property>
   <property name="family">SHC Inductor</property>
   <property name="mn"></property>
   <property name="layer"></property>
@@ -20,23 +20,23 @@
  </properties>
  <views>
   <breadboardView>
-   <layers image="breadboard/SHC1040_29769af91d59cce900be9aa0cad985fa_1_breadboard.svg">
+   <layers image="breadboard/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/SHC1040_29769af91d59cce900be9aa0cad985fa_1_schematic.svg">
+   <layers image="schematic/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/SHC1040_29769af91d59cce900be9aa0cad985fa_1_pcb.svg">
+   <layers image="pcb/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
   </pcbView>
   <iconView>
-   <layers image="icon/SHC1040_29769af91d59cce900be9aa0cad985fa_1_icon.svg">
+   <layers image="icon/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>

@@ -73,10 +73,10 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="Crystal-3215" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3215.fzp">
+        <instance moduleIdRef="Crystal-3215-CrystalModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3215-CrystalModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="Crystal-3225" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3225.fzp">
+        <instance moduleIdRef="Crystal-3225-CrystalModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/Crystal-3225-CrystalModuleID.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="模压功率电感">
@@ -86,22 +86,22 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1.fzp">
+        <instance moduleIdRef="SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0420_739b1ade0b7f57a8374eb2a256dec4d0_1-InductorModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SHC0520_b75f63a4f1165cd13d1be47f6e630415_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0520_b75f63a4f1165cd13d1be47f6e630415_1.fzp">
+        <instance moduleIdRef="SHC0520_b75f63a4f1165cd13d1be47f6e630415_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0520_b75f63a4f1165cd13d1be47f6e630415_1-InductorModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1.fzp">
+        <instance moduleIdRef="SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC0630_fbc90cbcf06838b2bd3345bffc5c1d5a_1-InductorModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SHC1040_29769af91d59cce900be9aa0cad985fa_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1040_29769af91d59cce900be9aa0cad985fa_1.fzp">
+        <instance moduleIdRef="SHC1040_29769af91d59cce900be9aa0cad985fa_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1040_29769af91d59cce900be9aa0cad985fa_1-InductorModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1.fzp">
+        <instance moduleIdRef="SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1.fzp">
+        <instance moduleIdRef="SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SHC1265_55f22b93be09cd9313fc73f38dc7b9ff_1-InductorModuleID.fzp">
             <views/>
         </instance>
     </instances>

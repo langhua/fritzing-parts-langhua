@@ -67,7 +67,7 @@
         <instance moduleIdRef="WS2812B_5050_4x4_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WS2812B_5050_4x4_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3.fzp">
+        <instance moduleIdRef="LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LED_RG_common_cathode_976a37b12eba247fbb84cbb38d947347_3-ColorLEDModuleID.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="感应 / 天线">

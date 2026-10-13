@@ -1,21 +1,21 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-13 22:18:08 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-13 22:31:42 ｜ python 3.13.14 ｜ 平台 win32
 结果：**6 过 / 0 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
 | G1 文本卫生（全仓） | PASS | 0.5s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 5.5s |
+| G3 生成器可重生成（全仓） | PASS | 5.3s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
-| G5 元件闸门（改动件） | PASS | 2.8s |
+| G5 元件闸门（改动件） | PASS | 1.1s |
 | G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 1049 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 1050 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> PASS
 - check_readme_table.py rc=0；=== 全部通过 ===
@@ -31,35 +31,15 @@
 - 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 14 个件
-- 已过：Capacitor-0402 / fzp_check rc=0
-- 已过：Capacitor-0603 / fzp_check rc=0
-- 已过：Resistor-01005 / fzp_check rc=0
-- 已过：Resistor-0201 / fzp_check rc=0
-- 已过：Resistor-0402 / fzp_check rc=0
-- 已过：Resistor-0603 / fzp_check rc=0
-- 已过：Resistor-0805 / fzp_check rc=0
-- 已过：Resistor-1206 / fzp_check rc=0
-- 已过：Resistor-1210 / fzp_check rc=0
-- 已过：Resistor-1812 / fzp_check rc=0
-- 已过：Resistor-2010 / fzp_check rc=0
-- 已过：Resistor-2512 / fzp_check rc=0
-- 已过：Supercap-0.47F / fzp_check rc=0
-- 已过：Supercap-1.5F / fzp_check rc=0
-- 跳过：Capacitor-0402 / schem_check rc=2（跳过/提示）：=== 不适用：只有 1/2 个脚的引线贴着框 —— 这套符号的脚不是沿方框四边排的 ===
-- 跳过：Capacitor-0603 / schem_check rc=2（跳过/提示）：=== 不适用：只有 1/2 个脚的引线贴着框 —— 这套符号的脚不是沿方框四边排的 ===
-- 跳过：Resistor-01005 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0201 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0402 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0603 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0805 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1206 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1210 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1812 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-2010 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-2512 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Supercap-0.47F / schem_check rc=2（跳过/提示）：=== 不适用：只有 1/2 个脚的引线贴着框 —— 这套符号的脚不是沿方框四边排的 ===
-- 跳过：Supercap-1.5F / schem_check rc=2（跳过/提示）：=== 不适用：只有 1/2 个脚的引线贴着框 —— 这套符号的脚不是沿方框四边排的 ===
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 4 个件
+- 已过：3Pin-LED / fzp_check rc=0
+- 已过：CH347F / fzp_check rc=0
+- 已过：CH347F / schem_check rc=0
+- 已过：Crystal-3215 / fzp_check rc=0
+- 已过：Crystal-3225 / fzp_check rc=0
+- 跳过：3Pin-LED / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Crystal-3215 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Crystal-3225 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
 
 ### G6 单位口径（全仓） -> PASS
 -    ⚠ ③ part_box.py:357 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★★ 2026-09-27 修 ✓：`px` 由 **25.4/96 ✗ 改成 25.4/72** ✓（= 1/72 英寸 ✓）。

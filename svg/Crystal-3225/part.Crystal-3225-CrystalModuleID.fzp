@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module fritzingVersion="1.0.3" moduleId="Crystal-3225">
+<module fritzingVersion="1.0.3" moduleId="Crystal-3225-CrystalModuleID">
  <version>1</version>
  <date>2026-08-31</date>
  <label>Y</label>
@@ -11,10 +11,10 @@
   <property name="family">crystal</property>
  </properties>
  <views>
-  <iconView><layers image="icon/Crystal-3225_icon.svg"><layer layerId="icon"/></layers></iconView>
-  <breadboardView fliphorizontal="true" flipvertical="true"><layers image="breadboard/Crystal-3225_breadboard.svg"><layer layerId="breadboard"/></layers></breadboardView>
-  <schematicView fliphorizontal="true" flipvertical="true"><layers image="schematic/Crystal-3225_schematic.svg"><layer layerId="schematic"/></layers></schematicView>
-  <pcbView><layers image="pcb/Crystal-3225_pcb.svg"><layer layerId="copper1"/><layer layerId="silkscreen"/></layers></pcbView>
+  <iconView><layers image="icon/Crystal-3225-CrystalModuleID_icon.svg"><layer layerId="icon"/></layers></iconView>
+  <breadboardView fliphorizontal="true" flipvertical="true"><layers image="breadboard/Crystal-3225-CrystalModuleID_breadboard.svg"><layer layerId="breadboard"/></layers></breadboardView>
+  <schematicView fliphorizontal="true" flipvertical="true"><layers image="schematic/Crystal-3225-CrystalModuleID_schematic.svg"><layer layerId="schematic"/></layers></schematicView>
+  <pcbView><layers image="pcb/Crystal-3225-CrystalModuleID_pcb.svg"><layer layerId="copper1"/><layer layerId="silkscreen"/></layers></pcbView>
  </views>
  <connectors>
   <connector id="connector0" name="1" type="male">

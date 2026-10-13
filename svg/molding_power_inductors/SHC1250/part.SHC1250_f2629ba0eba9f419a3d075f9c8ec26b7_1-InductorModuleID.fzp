@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module fritzingVersion="1.0.3" moduleId="SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1" referenceFile="SHC1040_29769af91d59cce900be9aa0cad985fa_1.fzp">
+<module fritzingVersion="1.0.3" moduleId="SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID" referenceFile="SHC1040_29769af91d59cce900be9aa0cad985fa_1.fzp">
  <version>4</version>
  <date>Sat Jun 21 2025</date>
  <label>L</label>
@@ -20,23 +20,23 @@
  </properties>
  <views>
   <breadboardView>
-   <layers image="breadboard/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_breadboard.svg">
+   <layers image="breadboard/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_schematic.svg">
+   <layers image="schematic/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_pcb.svg">
+   <layers image="pcb/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
   </pcbView>
   <iconView>
-   <layers image="icon/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1_icon.svg">
+   <layers image="icon/SHC1250_f2629ba0eba9f419a3d075f9c8ec26b7_1-InductorModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>
