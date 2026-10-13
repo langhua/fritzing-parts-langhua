@@ -281,8 +281,11 @@ ESC_OFFS = (ESC_PIN, ESC_PIN + 7.2)
 #     而 v14 曾经做到**穿体 0** ✓（不靠闸门 ✓，靠**代价函数自己躲** ✓ = 旧档位次序 ✓）。
 #     ⇒ 所以“重叠 0”与“穿体 0”**在当前候选集 + 当前摆位下不能兼得** ✓（两版都有硬数据 ✓）：
 #         v14 = 穿体 0 ✓ / 重叠 4 ✗；v15 = 重叠 0 ✓ / 穿体 6 ✗；硬闸门 = 两者都做不到 ✗。
-#   ⇒ **默认关** ✓（保持 v15 的干净基线 ✓）；留 `--hardbody` 供以后配合“换拓扑/换候选集”再试 ✓。
-HARD_BODY = False
+#   ⇒ **默认开 ✓**（2026-10-13 ✓ **用户定** ✓：「穿体是**绝对禁止**的」✗）——
+#     ✗ 原来是「默认关 ✓（保持 v15 的干净基线 ✓）」✗ ⇒ 换一块板（载板）就没人开它 ✗，
+#     而**规范早在 2026-09-27 就定了**（「穿体必须是 0」✓）⇒ 那就是“共识没成为工具行为” ✗。
+#     回旧行为（只用于 A/B 对照 ✓）：`--nohardbody`（或 `--hardbody=0` ✓）。
+HARD_BODY = True
 # ★★★ 2026-10-09 ✓ **`BODY_OUTLINE`（`--bodyoutline`）：本体闸门改用"该视图**实际绘制的符号外形**"** ✓
 #   ★ 病（用户 2026-10-09 原话 ✓）：「新文件**地线穿过 U1 了**啊！这完全不可接受啊，请修改。」✓
 #     实测（`_work/diag_body.py` ✓）：`_work/v76.4_byHand.fzz` 原理图里 **3 段线真穿进肚子** ✗
@@ -293,8 +296,11 @@ HARD_BODY = False
 #          ⇒ 起脚挂在 `U1.VSS` 上就能横穿 `U1` 整只身体 ✗（实测 2 段 ✗）。
 #   ✓ 本开关打开后：闸门一律改走 `body_face_bad()` ✓（= `sch_body` 的**实际外形** ✓ ＋
 #     **按位置**的极小豁免 `PIN_R = 0.9 单位 = 0.254 mm` ✓），渲染器 ④b 与验收探针**同一条判据** ✓。
-#   ★ **默认关** ✓ ⇒ 不给这个开关时，本文件的行为**一字不差** ✓（仓规 ✓：新规则一律带开关 ✓）。
-BODY_OUTLINE = False
+#   ★ **默认开 ✓**（2026-10-13 ✓）：这就是 2026-10-09 那次定案的判据 ✓（用户原话：「**地线穿过
+#     U1 了**啊！这完全不可接受」✗）—— ✗ 原来默认关 ⇒ 不给开关时**粗盒口径**还在用 ✗
+#     ⇒ 它正是“穿了却报 0”的那个口径 ✗（「穿体绝对禁止」不许用一把会漏的尺子量 ✗）。
+#     回旧行为（只用于 A/B 对照 ✓）：`--nobodyoutline`（或 `--bodyoutline=0` ✓）。
+BODY_OUTLINE = True
 BODYFACES = {}          # {件名: sch_body 外形段表 ✓}（`main()` 里灌 ✓；`--bodyoutline` 才用 ✓）
 BODYFACES_PINS = {}     # {件名: [(x,y)…] 本件自己的脚 ✓}（豁免用 ✓）
 # ★★ `OTHER_BODY`：**不许钻“别人的”元件肚子** ✓（2026-09-28 ✓，判据与 `hits_own_body` 同一个 ✓）
@@ -2597,10 +2603,15 @@ def main(argv):
         print("★ **`--corebox`** ✓：给**网标签 / 接地符号**补算本体盒 ✓（`sch_net.label_box()` / "
               "`ground_box()` ✓ 共享实现 ✓）—— ✗ 不开 ⇒ 它们是“看不见的”✗（导线能从它们身上穿过去 ✗）")
     # ★★★ 2026-10-09 ✓ `--bodyoutline`：**本体闸门改用"该视图实际绘制的符号外形"** ✓
-    #   （口径/病根见 `BODY_OUTLINE` 与 `sch_body.py` 的文件头 ✓：**默认关** ✓ ⇒ 不给它 ⇒ 一字不差 ✓）
-    if "--bodyoutline" in argv:
+    #   （口径/病根见 `BODY_OUTLINE` 与 `sch_body.py` 的文件头 ✓）
+    #   ★ 2026-10-13 ✓：**默认开** ✓ ⇒ 这里只处理**退出**（A/B 对照用 ✓）
+    _bo = next((a.split("=", 1)[1].strip().lower() for a in argv
+                if a.startswith("--bodyoutline=")), None)
+    if "--nobodyoutline" in argv or (_bo is not None and _bo in ("0", "off", "no", "false")):
         global BODY_OUTLINE
-        BODY_OUTLINE = True
+        BODY_OUTLINE = False
+        print("本体外形口径 BODY_OUTLINE：**关** ✗（`--nobodyoutline` ✓ —— 退回**粗盒**口径 ✓，"
+              "只用于 A/B 对照 ✓；那个口径实测会“穿了却报 0” ✗）")
         print("★★ **`--bodyoutline`** ✓：**走线不许穿过器件符号本体** ✗ —— 本体几何改取"
               "**该视图实际绘制的符号外形** ✓（`sch_body` ✓：剔引脚引线/端子/文字 ✓、闭合外形=区域 ✓、"
               "开放外形=描边 ✓、含旋转/镜像 ✓），豁免**只按位置** ✓（离本件自己的脚 ≤ %.1f 单位 = "
@@ -2979,10 +2990,18 @@ def main(argv):
         print("★ **`--railys`** ✓：用户指定轨行 —— %s ✓（只对点名的网生效 ✓；其它网一字节不动 ✓）"
               % "；".join("%s @ %s" % (k, "/".join("%.3f" % _v for _v in v))
                           for k, v in sorted(RAILYS.items())))
-    if "--hardbody" in argv:                   # 实验 ✓：开启“不许进别人本体”的硬闸门（默认关 ✓）
+    # ★★ 2026-10-13 ✓：**默认开** ✓ ⇒ 这里只处理**退出**（A/B 对照用 ✓）
+    _hbo = next((a.split("=", 1)[1].strip().lower() for a in argv
+                 if a.startswith("--hardbody=")), None)
+    if "--nohardbody" in argv or (_hbo is not None and _hbo in ("0", "off", "no", "false")):
         global HARD_BODY
-        HARD_BODY = True
-        print("硬闸门 HARD_BODY：**开启** ✓（`--hardbody` 实验 ✓；实测会多出 68 处“没候选” ✗）")
+        HARD_BODY = False
+        print("硬闸门 HARD_BODY：**关** ✗（`--nohardbody` ✓ —— 只用于 A/B 对照；"
+              "本仓规范是「穿体必须是 0」✓ ⇒ 默认必须开 ✓）")
+    if HARD_BODY:
+        print("★★ 硬闸门 HARD_BODY：**默认开** ✓（用户 2026-09-27 定「**穿体必须是 0**」✓；"
+              "判据 = `body_hard_bad` ⇒ `body_face_bad` ⇒ `sch_body.seg_hit` ✓，"
+              "与渲染器/验收探针**同一把尺子** ✓）")
     if "--otherbody" in argv:                  # ★★ 第二手 ✓：不许**钻“别人的”肚子** ✓（软代价 ✓）
         global OTHER_BODY
         OTHER_BODY = True
@@ -6025,30 +6044,20 @@ def main(argv):
     #     ⇒ **共识成文了、却没成为工具的行为** ✗✓ —— 用户原话就是“两个声音” ✓。
     #   ★ 判据用**共享实现** `SG.seg_hits_box` ✓（面包板侧 `bb_compare.seg_crosses_box` 同精神 ✓，
     #     **不再各写一份** ✗）；**自己的元件豁免** ✓ = 段两端所在的本体框不算（线从自己脚下出来 ✓）。
+    #   ★★ 判据**只有一份** ✗（2026-10-13 改 ✓）：直接调 `body_hard_bad()` ✓ ⇒
+    #     `body_face_bad` ⇒ `sch_body.seg_hit` ✓ —— 与**候选闸门 / 渲染器 / 验收探针**同一把尺子 ✓。
+    #     ✗ 我第一版自己用 `sch_geom.seg_hits_box` 又写了一道 ✗ ⇒ 同一份草图两个数（9 vs 10）✗
+    #     ⇒ 那是本仓最贵的一类错（两套实现各算各的 ✓ —— 面包板那天就是这么坑的 ✓）。
     _tbots = []
-    _bxs = boxes or {}
-
-    #   ★ 判“自己的元件”**必须用脚** ✓，✗ 不能用本体框 ✗：
-    #     第一版我用“端点落在本体框里”当自己件 ✗ ⇒ **U1 的框很大**（122×122 ✓），
-    #     把它下面的坐标都算成 U1 ✓ ⇒ 连 `J2` 的那段**被误当成“自己件”漏免** ✗
-    #     （实测：`[GND] (24.2,-61.2)→(88.4,-125.4) 从 PinHeader-1x6 穿过` ✗ ——
-    #      而这根线正是 **`GND: J2.connector1 → J4.connector1`** ✓ 确实从 J2 本体上穿过去了 ✓）。
-    #   ⇒ 口径：**端点贴在某只脚上 ⇒ 那件就是“自己的元件”** ✓（线是接它去的 ✓ 不算穿 ✓）。
-    def _owners(pt, tol=1.0):
-        return {_t for (_t, _cid, _px, _py) in PIN_ALL
-                if abs(_px - pt[0]) <= tol and abs(_py - pt[1]) <= tol}
-
-    _nm_of = {}
-    for _mi, _d in (insts or {}).items():
-        _nm_of[_mi] = (_d.get("title") or _d.get("mid") or str(_mi)) if isinstance(_d, dict) else str(_mi)
     for _t3 in used:
         _p1, _q1, _n1 = (_t3[0], _t3[1], _t3[2] if len(_t3) > 2 else "?")
-        _own = _owners(_p1) | _owners(_q1)
-        for _mi2, _bx2 in _bxs.items():
-            if _mi2 in _own or not _bx2:
-                continue
-            if SG.seg_hits_box(_p1, _q1, _bx2):
-                _tbots.append((_n1, _p1, _q1, _nm_of.get(_mi2, str(_mi2))))
+        if not body_hard_bad([_p1, _q1], boxes, PIN_ALL):
+            continue
+        _who = []
+        if BODYFACES:                      # ★ 逐件问一次 ⇒ 能说出**是哪件** ✓（同一份 `body_face_bad` ✓）
+            _who = [_t for _t, _shp in BODYFACES.items()
+                    if body_face_bad([_p1, _q1], PIN_ALL, faces={_t: _shp})]
+        _tbots.append((_n1, _p1, _q1, ",".join(sorted(_who)) or "（粗盒口径 ✓）"))
     print("── ★★ 规则自检：**导线穿过别的元件本体 %d 段** %s（面包板侧硬约束第 3 条 ✓ "
           "＋ 用户 2026-09-29「标签…适用不能穿体等规则」✓；**自己的元件豁免** ✓）"
           % (len(_tbots), "✓✓" if not _tbots else "✗✗ 必须 0 ✓"))
