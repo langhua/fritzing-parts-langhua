@@ -215,8 +215,14 @@ OUT_MARGIN = 7.2      # 包围盒外扩（1 格 ✓）：小出界不算往外�
 #      的颜色表 ✓）—— ✗ **不要**自己按顺序另配一套 ✗（我第一版就是这么干的 ✗，与用户不一致 ✗）。
 #   ★ **同一个名字（orange）两个视图取值不同** ✓：面包板 `#ef6100` ✓、**原理图 `#ff7300`** ✓
 #     ⇒ 这里取**原理图**的值 ✓（用户手改版里就是 `#ff7300` ✓ 实测 ✓）。
-SCHEM_PALETTE = ["#418dd9", "#25cc35", "#fff800", "#999999", "#ff7300",
-                 "#a37911", "#33ffc5", "#ab58a2", "#8c3b00", "#fa50e6", "#ffffff"]
+# ★★★ 2026-10-13 ✓ **用户定** ✓：「**限制使用黄色** —— 在有其它颜色可选时，不使用黄色，
+#   因为在 Fritzing 界面上，黄色不明显」✗ ⇒ 把 `#fff800`（yellow ✓）挪到**最后一位** ✓
+#   （= 前十个都被占完才轮到它 ✓）；`#ffffff`（white ✓ —— 原理图底色就是白的 ✗）
+#   比黄**更**看不见 ✗ ⇒ 白再排最后 ✓。（两份项目数据里点名的颜色走 `NET_COLOR` ✓，
+#   本表只管**兜底** ✓；项目文件里写了黄色的，下面有**重分配** ✓。）
+SCHEM_PALETTE = ["#418dd9", "#25cc35", "#999999", "#ff7300",
+                 "#a37911", "#33ffc5", "#ab58a2", "#8c3b00", "#fa50e6",
+                 "#fff800", "#ffffff"]
 NET_COLOR = {
     "GND":      "#404040",     # 黑 ✓（官方 black 的 wire 值 ✓，不是 #000000 ✗）
     "5V":       "#cc1414",     # 红 ✓
@@ -230,6 +236,35 @@ NET_COLOR = {
 }
 for _i, _n in enumerate(sorted(N for N in NETS if N not in NET_COLOR)):   # 兜底：新增网按序分色 ✓
     NET_COLOR[_n] = SCHEM_PALETTE[_i % len(SCHEM_PALETTE)]
+# ★★★ 2026-10-13 ✓ **黄色重分配**（用户定 ✓：「有其它颜色可选时，不使用黄色 ——
+#   Fritzing 界面上黄色不明显」✗）—— 项目文件点名用了黄色也照样换 ✓，
+#   只要**还有没被占的非黄颜色** ✓；真没得选（颜色用光了）才留黄 ✓并**打印** ✓。
+#   ★ 为什么放在这里 ✗：这是**全局口径** ✓ ⇒ 项目文件怎么写都跑不掉 ✓
+#     （改项目文件只能管一个项目 ✗ —— 库里这条才管所有项目 ✓）。
+_YELLOWS = ("#fff800", "#ffff00", "#ffe600", "#fff700")
+
+
+def _free_non_yellow():
+    _used = {str(v).lower() for v in NET_COLOR.values()}
+    for _c in SCHEM_PALETTE:
+        if _c.lower() in _YELLOWS:
+            continue
+        if _c.lower() not in _used:
+            return _c
+    return None
+
+
+for _n in sorted(NET_COLOR):
+    if str(NET_COLOR[_n]).lower() not in _YELLOWS:
+        continue
+    _alt = _free_non_yellow()
+    if _alt:
+        print("★ 网色 **避开黄色** ✓：`%s` %s → %s ✓（用户 2026-10-13 定：有其它颜色可选时"
+              "不用黄色 —— Fritzing 界面上黄色不明显 ✓）" % (_n, NET_COLOR[_n], _alt))
+        NET_COLOR[_n] = _alt
+    else:
+        print("⚠ 网色：`%s` 只能用黄色 %s ✗（**颜色不够用了** ✓：%d 张网 / %d 色 ✓）"
+              % (_n, NET_COLOR[_n], len(NET_COLOR), len(SCHEM_PALETTE)))
 # ★★ `CLEAR_PIN`：**导线与“不相连的引脚”之间要留的安全距离** ✓（2026-09-27 用户定 ✓）
 #   用户原话："导线离芯片引脚太近了 ⇒ 应该有安全距离，让导线和引脚的连接关系**肉眼看得清**" ✓。
 #   实测（把导出放大看 ✓）：U1 右侧 `14/15/12/11` 的**引脚线末端正好落在导线上** ✗、
@@ -374,6 +409,18 @@ WIRE_GAP_MAX_MM = 2.54       # 允许上限 ✓（用户定 ✓）
 U_PER_MM = 90.0 / 25.4       # 1 mm = 3.54331 sketch 单位 ✓（1 单位 = 1/90 in ✓）
 WIRE_GAP = WIRE_GAP_MM * U_PER_MM   # ★ 内部一律用**单位** ✓（与 `used` / 判据同一把尺子 ✓）
 HARD_GAP = True              # ★ 默认**开** ✓（这是本轮的新缺省 ✓；`--wire-gap=0` 关 ✓）
+# ★★★ 2026-10-13 ✓ **`HARD_STRICT`：硬约束删光候选时“**不许兜底**”** ✓（用户 2026-10-13 定 ✓）：
+#   起因 ✓（用户看 `_work/routed_rails.fzz` 的观感 ✓）：**导线真的重合了** ✗ ——
+#   而 `HARD_OVL` / `HARD_GAP` **本来就默认开着** ✓（用户猜是开关没开 ✗，其实不是 ✓）
+#   ⇒ 真因是**兜底** ✗：四道硬闸门里任一道把候选删光时，代码是「**保留旧候选集** + 告警」✗
+#     ⇒ **违规几何照样写进文件** ✗（实测：重叠 0→7 对 ✗、线距不足 3→27 对 ✗），
+#     而外部还挂着“线距 ≥ `--wire-gap`”是硬约束 ✗ —— 那就是**假硬约束** ✗。
+#   ★ 面包板侧早定过这一条 ✓（`router-review.md` §2b ✓）：「**没有合法候选就停下并报告，
+#     绝不产出违规几何**」✗ ⇒ 原理图侧从今天起对齐 ✓。
+#   开（默认 ✓）⇒ 没合法候选的那一对**不画** ✓ + **点名报出来** ✓（→ 人去看那儿要腾地方 ✓）；
+#   关（`--lenient` ✓）⇒ 旧行为（保留旧候选集 + 告警 ✓，供 A/B 对照 ✓）。
+HARD_STRICT = True
+STRICT_SKIP = []         # ★ 严格模式**跳过**的连接（对） ✓ —— 只有这个列表能告诉人「哪里要腾地方」✓
 # ★★ `HARD_CLEAR`：**贴脚零容忍** ✓（2026-09-28 ✓ **用户定**：「**贴脚的容忍度也是 0，
 #   所以，这一项必须改。**」✗）
 #   ★ 病症（用仓里**唯一那份**判据量的 ✓）：`Wire90012757`（GND ✓）在 `x=202.53` 竖走 89 单位 ✓
@@ -3002,6 +3049,21 @@ def main(argv):
         print("★★ 硬闸门 HARD_BODY：**默认开** ✓（用户 2026-09-27 定「**穿体必须是 0**」✓；"
               "判据 = `body_hard_bad` ⇒ `body_face_bad` ⇒ `sch_body.seg_hit` ✓，"
               "与渲染器/验收探针**同一把尺子** ✓）")
+    # ★★★ 2026-10-13 ✓ **`--lenient` / `--hardstrict=0`**：关掉“不许兜底”那一层 ✓
+    #   （旧行为 = 硬闸门删光候选时**保留旧候选集** ✗ ⇒ 违规几何**照样写进文件** ✗；
+    #    只用于 A/B 对照 ✓ —— 它就是线重合/贴线的来源 ✓。）
+    global HARD_STRICT
+    if "--lenient" in argv:
+        HARD_STRICT = False
+    for _a in argv:
+        if _a.startswith("--hardstrict="):
+            HARD_STRICT = _a.split("=", 1)[1].strip().lower() not in ("0", "off", "no", "false")
+    if HARD_STRICT:
+        print("★★ 严格模式 HARD_STRICT：**默认开** ✓（硬约束删光候选 ⇒ **这一对不画** ✓ "
+              "＋ 点名报出 ✓ —— 面包板侧同一条：「没有合法候选就停下并报告，绝不产出违规几何」✓）")
+    else:
+        print("⚠ 严格模式 HARD_STRICT：**关** ✗（`--lenient` ✓ —— 兜底保留旧候选集 ✓，"
+              "违例会进文件 ✗；只用于 A/B 对照 ✓）")
     if "--otherbody" in argv:                  # ★★ 第二手 ✓：不许**钻“别人的”肚子** ✓（软代价 ✓）
         global OTHER_BODY
         OTHER_BODY = True
@@ -3736,6 +3798,24 @@ def main(argv):
             else:
                 warn.append("%s：**没有一条候选**能“端点/折点不搭在别的网上” ✗"
                             "（保留旧候选集 ✓ 否则会接不上 ✗）" % tag)
+        # ★★★ 2026-10-13 ✓ A12.2 **严格模式收口** ✓（**一处管四道闸门** ✓ —— 上面每道闸门那种
+        #   “删到空就保留旧候选集”的旧行为，在这里被推翻 ✓）：候选里**仍带违规且全都是违规**
+        #   ⇒ **一条都不留** ✓ ⇒ 调用处（`best is None`）会**不画这一对** ✓ ＋ 点名报告 ✓。
+        #   ★ 为什么不去改那四处 `else` ✗：改这一处就能管住全部 ✓，且它们的告警文案**一字不动** ✓
+        #     （四条告警照旧打 ✓ ⇒ 人能看到**是哪道闸门**先把候选删光的 ✓）。
+        #   ★ 代价（如实 ✓）：会多出“**没接上**”的网 ✗ —— 那是**故意的诚实输出** ✓
+        #     （面包板侧同一条：没合法候选就停下并报告 ✓，绝不产出违规几何 ✗）。
+        if HARD_STRICT and cands:
+            _bad = [p for p in cands
+                    if body_hard_bad(p, boxes, PIN_ALL)
+                    or pin_hard_bad(p, PIN_ALL, own_pins)
+                    or ovl_hard_bad(p, used)
+                    or (HARD_GAP and gap_hard_bad(p, net, used))]
+            if len(_bad) == len(cands):
+                STRICT_SKIP.append(tag or "(未命名)")
+                warn.append("%s：**没有一条合法候选** ✗（严格模式 ⇒ **这一对不画** ✓ —— "
+                            "请人看这儿的空档 ✓）" % (tag or "(未命名)"))
+                cands = []
         best, best_key, alt, alt_key = None, None, None, None
         esc_best, esc_best_key = None, None
         for path in cands:
@@ -4959,6 +5039,11 @@ def main(argv):
                                                 shape=pr.get("merge", False))
             if best is None:
                 warn.append("%s: 没找到不碰本体的路径 ✗" % tt)
+                if HARD_STRICT:
+                    # ★★★ 2026-10-13 ✓ A12.2：**不兜底** ✗（旧行为 = 拿第一条原始候选画出来 ✗
+                    #   ⇒ 那正是用户在 `routed_rails.fzz` 里看到的**重合/贴线** ✓）
+                    STRICT_SKIP.append("%s（无候选）" % tt)
+                    continue
                 best = candidates(a, b, sorted(chx), sorted(chy))[0]
             for k in range(len(best) - 1):
                 used.append((best[k], best[k + 1], net))
@@ -6068,6 +6153,16 @@ def main(argv):
         ov_fail = 1
         print("── ★★ ⇒ **退出码 1** ✓（“导线不许穿过元件本体”是**面包板侧已达成、搬进库里的**"
               "硬约束 ✓；文件已照常写出 ✓ 供你打开看哪根穿了 ✓）")
+    # ── ★★★ 2026-10-13 ✓ A12.2：**严格模式跳过的连接**必须可见 + 进退出码 ✓ ──
+    #   （它们不是“没接上”的意外 ✗ —— 而是**工具明确拒绝画违规线**的记录 ✓；
+    #     ★ 也是**唯一**能告诉人“这里要腾地方”的清单 ✓ —— 光看“重叠 0”是看不出来的 ✓。）
+    if STRICT_SKIP:
+        print("── ★★ 严格模式**拒画**的连接：**%d 处** ✗（没合法候选 ⇒ 不画 ✓；"
+              "这些就是要腾地方的地方 ✓）：%s"
+              % (len(STRICT_SKIP), "；".join(STRICT_SKIP[:10])))
+        if not ov_fail:
+            ov_fail = 1
+            print("── ★★ ⇒ **退出码 1** ✓（严格模式：有连接因硬约束拒画 ✓）")
     if ov_fail:
         print("── ★★ ⇒ **退出码 1** ✓（“不同的导线重叠”必须 0 ✓；文件已照常写出 ✓ 供你打开看哪儿压了 ✓）")
     # ★★★ 2026-10-09 ✓ **“`--complete-islands` 补不成一个岛”也是真闸门** ✗（用户定的硬规矩 ✓）——
