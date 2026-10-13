@@ -2412,6 +2412,25 @@ def main(argv):
         _mod = PD.load(_nv, need=("NETS",))
         NETS = _mod.NETS
         print("★ 网表：%d 张网 ✓（来自 %s ✓）" % (len(NETS), _nv))
+        # ★★ 2026-10-13 ✓ **电源轨的两个网名也跟着项目数据走** ✗（原来写死在
+        #   `RAIL_NETS = ("5V","GND")` ✓ —— 那是**像素板**的网名 ✗ ⇒ 换一块板就**没有轨** ✗：
+        #   载板是 `3V3`/`GND` ✓，实测 `--rails=GND` ⇒ 只有 GND 走轨、`3V3` 照旧走链 ✗
+        #   ⇒ **半轨半链** ⇒ 比不用还差 ✗（这就是“共识没进库”的又一处 ✓）。
+        #   ★ 约定（两份项目数据**一致** ✓）：`POWER = (电源, 地)` ⇒ 第 1 个 = **内轨**
+        #     （支线短 ✓）、第 2 个 = **外轨** ✓（`rail_y_map()` 的口径 ✓）；
+        #     `POWER_FIRST`（布线次序）= **地先、电源后** ✓（= 原来那对 `("GND","5V")` ✓
+        #     ⇒ 像素板行为**一字不变** ✓）。
+        _pw = getattr(_mod, "POWER", None)
+        if isinstance(_pw, (list, tuple)) and len(_pw) >= 2 \
+                and all(isinstance(_x, str) and _x for _x in _pw[:2]):
+            global RAIL_NETS
+            RAIL_NETS = (str(_pw[0]), str(_pw[1]))
+            print("★ 电源网（轨名 ✓，来自项目文件 `POWER` ✓）：内轨 = `%s` ✓ / 外轨 = `%s` ✓"
+                  % RAIL_NETS)
+            _miss = [n for n in RAIL_NETS if n not in NETS]
+            if _miss:
+                print("   ⚠ `POWER` 里的 %s **不在本项目网表里** ✗ ⇒ 这两条轨不会有脚 ✓"
+                      "（请核对项目数据 ✓）" % ",".join(_miss))
         # ★★ 2026-10-13 补 ✗：`NET_COLOR` 的**兜底分色**是在**模块载入时**跑的 ✓ —— 那时
         #   `NETS` 还是本文件里写死的那份（像素板的网名 ✗）⇒ 用 `--nets=` 换成**项目**网表
         #   之后**没人再补颜色** ✗ ⇒ 项目里的网全落 `NET_COLOR.get(net, "#404040")` ✗
@@ -2798,7 +2817,7 @@ def main(argv):
             RAIL_ONLY = set(v.strip() for v in (_rv2 or "").split(",") if v.strip())
             print("电源轨 RAILS：**开** ✓（%s 每脚就近接上/下轨 ✓，不再走链 ✗）"
                   % ("`%s` 这几个网" % ",".join(sorted(RAIL_ONLY)) if RAIL_ONLY
-                     else "GND/5V"))
+                     else "%s/%s（= 项目 `POWER` ✓）" % RAIL_NETS))
             break
     if "--ring" in argv:                       # 实验 ✓：开“元件外圈环廊”（默认关 ✓）
         global OUTER_RING
@@ -3285,9 +3304,13 @@ def main(argv):
     if RAILS and UBOX is not None:
         _ub = HUG_UBOX or UBOX
         RAIL_Y = rail_y_map(_ub)
-        print("电源轨 ✓：上 GND y=%.1f / 5V y=%.1f ｜ 下 5V y=%.1f / GND y=%.1f ✓"
+        #   ★ 2026-10-13 ✓ 网名**不写死** ✗（原来写 `RAIL_Y["GND"]` / `RAIL_Y["5V"]` ✓
+        #     ⇒ 换一块板（载板 = `3V3`/`GND`）直接 `KeyError` ✗）：一律从 `RAIL_NETS`
+        #     （= 项目 `POWER` ✓）取 ✓。
+        print("电源轨 ✓：上 %s y=%.1f / %s y=%.1f ｜ 下 %s y=%.1f / %s y=%.1f ✓"
               "（锚定盒 y %.1f…%.1f ✓%s）"
-              % (RAIL_Y["GND"][0], RAIL_Y["5V"][0], RAIL_Y["5V"][1], RAIL_Y["GND"][1],
+              % (RAIL_NETS[1], RAIL_Y[RAIL_NETS[1]][0], RAIL_NETS[0], RAIL_Y[RAIL_NETS[0]][0],
+                 RAIL_NETS[0], RAIL_Y[RAIL_NETS[0]][1], RAIL_NETS[1], RAIL_Y[RAIL_NETS[1]][1],
                  _ub[1], _ub[3],
                  "；**锚在“其它件”上** ✓" if HUG_UBOX else ""))
         # ★★★ 2026-10-05 ✓ `--railys=<网>@<y>`：把点名的网**追加**一条轨行 ✓
@@ -3377,7 +3400,11 @@ def main(argv):
     # ★ 布线**次序**：先把电源/地布完 ✓、再布信号 ✓（面包板规则 ⑩ ✓：
     #   “先布电源/地，但**要把中间走廊留给后面的信号线**” ✓）。
     #   这里先只做前半条（次序 ✓）；后半条（给电源/地的“走中间”加权 ✓）还没做 ✗。
-    POWER_FIRST = ("GND", "5V")
+    # ★★ 2026-10-13 ✓ **网名不写死** ✗ —— 原来写成 `("GND","5V")` ✓（像素板的两个网 ✓）
+    #   ⇒ 换一块板（载板 = `3V3`/`GND`）时 `3V3` **不在表里** ✗ ⇒ 被当**信号网**排到后面 ✗
+    #   （直接违反“先布电源/地”这条共识 ✓）。现在从 `RAIL_NETS`（= 项目 `POWER` ✓）取，
+    #   **地先、电源后** ✓ —— 正好等于原来那对 ✓ ⇒ 像素板行为**一字不变** ✓。
+    POWER_FIRST = (RAIL_NETS[1], RAIL_NETS[0])
     net_order = [n for n in POWER_FIRST if n in NETS] + \
                 [n for n in sorted(NETS) if n not in POWER_FIRST]
 
@@ -7195,6 +7222,10 @@ def end_is_free(wires, w_self, pt, pin_all, eps=0.05):
 
 # ★ 2026-10-09 ✓：电源轨那**两个网**（内 / 外 ✓）—— **唯一一份** ✓
 #   `rail_y_map()` 用它出键 ✓、`--decoup` 用它认“内外两条电源网” ✓（✗ 不另抄网名 ✗）。
+# ★★ 2026-10-13 ✓：这两个名字现在是**兜底值** ✓ —— `--nets=<项目数据>` 的文件里写了 `POWER`
+#   时，`main()` 开头会用**项目的** `POWER` 覆盖它 ✓（约定 = `(电源, 地)` ✓：第 1 个内轨 ✓、
+#   第 2 个外轨 ✓）；✗ 原来写死 ⇒ **换板就没轨** ✗（载板 = `3V3`/`GND` ✓：实测 `--rails=GND`
+#   ⇒ 只有 GND 走轨、`3V3` 照旧走链 ✗ ⇒ 半轨半链 ⇒ 比不用还差 ✗）。
 RAIL_NETS = ("5V", "GND")
 
 
@@ -7322,7 +7353,7 @@ def rail_hug_place(insts, hug, ry):
     return log
 
 
-def decoup_place(insts, rail_nets=("5V", "GND"), grid=7.2):
+def decoup_place(insts, rail_nets=None, grid=7.2):
     r"""★★★ `--decoup` ✓：**去耦电容竖插到两条电源轨之间** ✓（2026-10-09 ✓）
 
     ★ 为什么要有这条规则 ✗（用户 2026-10-09 的原话 ✓）：
@@ -7368,7 +7399,9 @@ def decoup_place(insts, rail_nets=("5V", "GND"), grid=7.2):
       （`loc` / `pins` / `box` ＋ XML 几何 ✓ —— **四处一起改** ✗，与 `rail_hug_place` 同一条 ✓）。
     """
     m = pin_net_map(insts)
-    rail_nets = set(rail_nets)
+    #   ★ 2026-10-13 ✓ 缺省 = **`RAIL_NETS`**（= 项目 `POWER` ✓）。✗ 不在 `def` 上写默认值 ✗
+    #     —— 默认参数在 **import 时**求值 ✓ ⇒ 项目数据一改，它还是老的那两个名字 ✗。
+    rail_nets = set(rail_nets or RAIL_NETS)
     log = []
     # ★ 接口插座件的**位号前缀** ✓（KiCad 惯例 ✓ `J` = connector ✓；本板 = `J1`/`J2` ✓）
     #   —— 为什么专门点出它 ✗：**电源是从这里进来的** ✓ ⇒ 去耦电容**不该**贴着插座摆 ✗
