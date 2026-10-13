@@ -14,6 +14,7 @@
  <properties>
   <property name="family">SMD Resistors</property>
   <property name="package">[SMD] 0805</property>
+  <property name="resistance" showInLabel="yes">4.7k</property>
   <property name="power" showInLabel="yes">1/8W</property>
   <property name="tolerance" showInLabel="yes">±1%</property>
  </properties>

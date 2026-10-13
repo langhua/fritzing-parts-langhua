@@ -210,6 +210,45 @@ def main(argv):
                 fails.append("FAIL 面包板里 %d 个同名焊盘「%s」没在同一条总线里（各自属于 %s）"
                              % (len(members), nm, sorted(str(x) for x in b)))
 
+    # ⑧ 无源件**必须有参数数据项**，且**属性名必须小写** ✓（2026-10-13 用户定 ✓，正文 = A13 ✓）
+    #   起因（用户原话 ✓）：「电阻电容更是**没有阻值容量值**，**无法与网表进行校对**」✗
+    #   为什么必须小写 ✗（出处 = Fritzing 源码 ✓，本机 `F:\build-fritzing\fritzing-app\src` ✓）：
+    #     `items/resistor.cpp:100` 读 = `properties().value("resistance", "220")` ✓
+    #       —— QHash 查找是**精确匹配** ✗ ⇒ 部件写 `Resistance`（大写 ✗）时**取不到值** ✗
+    #       ⇒ 用户改完阻值，它内部**还当默认 220** ✗（静默失效 ✗，最难查的一类 ✓）；
+    #     `:161` 写 = `setLocalProp("resistance", …)` ✓、`itembase.cpp:226` 的
+    #       `TranslatedPropertyNames` 也只登记小写 ✓。
+    #     ★ 核心库 `core/resistor_5band.fzp` / `SMD_resistor_0402.fzp` 就是大写 ✗
+    #       —— 那是**它自己的** bug ✗，别照抄 ✗。
+    _label = (root.findtext("label") or "").strip().upper()
+    _tax = (root.findtext("taxonomy") or "").strip()
+    _props = {}
+    for _p in root.iter("property"):
+        _props[_p.get("name") or ""] = (_p.get("showInLabel") or "", (_p.text or "").strip())
+    for _bad in ("Resistance", "Capacitance"):
+        if _bad in _props:
+            fails.append("FAIL 属性名 `%s` 必须小写（`%s`）✗ —— Fritzing 按小写**精确匹配**，"
+                         "大写会**静默取不到值** ✗（items/resistor.cpp:100 ✓；正文 A13 ✓）"
+                         % (_bad, _bad.lower()))
+    _need = None
+    if _tax.startswith("discreteParts.resistor") or _label == "R":
+        _need = ("resistance", "阻值")
+    elif _tax.startswith("discreteParts.capacitor") or _label == "C":
+        _need = ("capacitance", "容值")
+    if _need:
+        _key, _cn = _need
+        if _key not in _props:
+            fails.append("FAIL %s 件缺 `%s`（%s）数据项 ✗ —— 没有它**没法与网表校对** ✗"
+                         "（正文 A13 / B6.3 ✓；电阻件跑 `tools\\add_resistance.py` 补 ✓）"
+                         % (_label or _tax, _key, _cn))
+        else:
+            if _props[_key][0] != "yes":
+                fails.append("FAIL %s 的 `%s` 没有 showInLabel=\"yes\" ✗ ⇒ 标签上看不见参数 ✗"
+                             "（正文 B6.3 ✓）" % (_label or _tax, _key))
+            if not _props[_key][1]:
+                notes.append("注: %s 的 `%s` 值是空的 —— 能填 ✓，但空着标签上就没有数 ✓"
+                             % (_label or _tax, _key))
+
     # ★★ 面包板专用硬规矩 ✓（2026-10-05 用户定，机理见 docs/fritzing-fz-notes.md §10 ✓）：
     #   孔的连接器**只许**在 breadboard 视图里声明 ✗ —— 一旦在 schematic/pcb 里也声明，
     #   那两个视图就会给孔**建连接器项** ⇒ 上百条孔 bus 被塞进它们的网表 ✗（而且看不见 ✗）

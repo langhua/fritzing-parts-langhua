@@ -18,8 +18,9 @@ A 档（全仓、便宜、今天应全绿）
   G3 可重生成       每个带 `gen_part.py` 的件：在**临时副本**里重跑生成器，产物必须与仓库
                     里的 svg/fzp **逐字节一致**（改生成器忘了重跑、或产物被手工改过 ⇒ 立刻红）
   G4 fzpz 装箱      `fzpz/*.fzpz` 里的条目必须与 `svg/` 下的源文件**内容一致**
-                    （✗ 不比 zip 字节 —— 时间戳会变；名字带 32 位 hash 的条目是 Fritzing
-                    "另存"产物、仓库没有同名源 ⇒ **计数后跳过**，不静默）
+                    （✗ 不比 zip 字节 —— 时间戳会变）；★ 2026-10-13 修：判据 = **svg/ 下有没有
+                    唯一同名源** ✓（✗ 原来是“名字带 32 位 hash 就跳过” ✗ —— 本库自己的
+                    moduleId 就带 hash ⇒ 那条把**所有本库件**都放过了 ✗ ⇒ 改了源也报绿 ✗）
 B 档（只对本次改动到的元件）
   G5 元件闸门       `fzp_check.py` / `schem_check.py` 必须 rc=0（rc 2 = 该件没有这个视图 ⇒ 跳过）                    「改动」= 动了 `svg/<部件>/…`，**或**动了 `fzpz/<部件>.fzpz` 且**载荷真的变了**
                     （只改时间戳 / 重打包不算 ✗ —— 按包内条目反查部件，与 G4 同一套口径 ✓）
@@ -54,7 +55,8 @@ TEXT_EXT = (".svg", ".fzp", ".md", ".py", ".txt", ".json", ".yml", ".yaml", ".ip
             ".cmd", ".bat", ".fzb")
 JUNK_RE = re.compile(r"(__pycache__/|\.pyc$|^\.venv/|_byHand\.svg$|\.bak$|\.orig$"
                      r"|\.DS_Store$|Thumbs\.db$|~\$)")
-HASH_RE = re.compile(r"_[0-9a-f]{32}_")
+# ★ 2026-10-13：`HASH_RE` 已删 ✓ —— “名字里带 32 位 hash”**不是**判据 ✗
+#   （本库自己的 moduleId 就带 hash ✓；G4 现在按“svg/ 下有没有唯一同名源”判 ✓）
 _DEP_RE = re.compile(r"(ModuleNotFoundError|ImportError)")
 
 # G3 已知例外：**带理由**的允许清单（不是静默跳过 —— 报告里会点名打出来）
@@ -247,30 +249,51 @@ def gate_fzpz():
     zdir = ROOT / "fzpz"
     if not zdir.is_dir():
         return "SKIP", ["没有 fzpz/ 目录"], []
-    fails, skipped_hash, compared, miss, extra = [], 0, 0, [], []
+    fails, compared, miss, extra, ambiguous, orphan = [], 0, [], [], [], []
     for z in sorted(zdir.glob("*.fzpz")):
+        # ★★ 判据（2026-10-13 第二版 ✓）：**整包都找不到同名源** ⇒ 外来包 ✓（只提示 ✗ 不判 FAIL ✓）。
+        #   ✗ 第一版拿“`svg/<fzpz 名>/` 目录存在吗”判 ✗ ⇒ 把 `WS2812B-5050.fzpz`（源在
+        #   `svg/WS2812B/5050/` ✓ 子目录 ✓）、`SHC0420.fzpz` 这些**本库件**也报了外来 ✗
+        #   （一次多出 85 条假提示 ✗）⇒ **判据锚错了层** ✗（包 ↔ 文件，不是包 ↔ 目录名 ✓）。
+        #   锚在**文件名**上就同时满足两头 ✓：本库件（含子目录布局 ✓）条条对得上 ✓；
+        #   真“另存”包（如 `LM393-A3144-HALL-3PINS.fzpz` ✓）条条对不上 ✓。
         with zipfile.ZipFile(z) as zf:
-            for n in zf.namelist():
+            names = zf.namelist()
+            parts = [n for n in names if Path(n).suffix.lower() in (".svg", ".fzp")]
+            if parts and not any(os.path.basename(n) in idx for n in parts):
+                orphan.append("%s（%d 条）" % (z.name, len(parts)))
+                continue
+            for n in names:
                 if Path(n).suffix.lower() not in (".svg", ".fzp"):
                     extra.append("%s :: %s" % (z.name, n))     # 零件包里不该有别的东西
                     continue
-                if HASH_RE.search(os.path.basename(n)):
-                    skipped_hash += 1          # Fritzing "另存"命名，仓库没有同名源
-                    continue
+                # ★★ 2026-10-13 修 ✓：判据 = **svg/ 下有没有唯一同名源** ✓
+                #   ✗ 原来在这里拿 `HASH_RE` 跳过 ✗ —— 而本库自己的命名规范就是
+                #   `<字母><尺寸>_<32位hex>_<n>` ✓ ⇒ 那一条把**所有本库件都放过** ✗
+                #   ⇒ “改了源、包没跟着变”照样报绿 ✗（自证 ✓，实测 `Resistor-*.fzpz` 中招 ✓）。
                 cand = idx.get(os.path.basename(n))
                 if not cand:
                     miss.append("%s :: %s" % (z.name, n))
                     continue
+                if len(cand) > 1:
+                    ambiguous.append("%s :: %s（svg/ 下有 %d 个同名文件）"
+                                     % (z.name, n, len(cand)))
+                    continue
                 compared += 1
-                if not any(norm(c.read_bytes()) == zf.read(n) for c in cand):
+                if norm(cand[0].read_bytes()) != zf.read(n):
                     fails.append("%s :: %s 与入库源文件内容不一致" % (z.name, n))
-    fails += ["源文件找不到：" + m for m in miss]
+    fails += ["源文件找不到（包里有别的条目能对上、这一条对不上 ⇒ 包与 svg 不同步 ✗）：" + m
+              for m in miss]
+    fails += ["同名源不唯一（对账不了 ⇒ 请人工看）：" + m for m in ambiguous]
     fails += ["零件包里不该有非零件条目（跑 tools\\repack_fzpz.py 清）：" + m for m in extra]
-    detail = ["比对条目 %d 条；跳过（名字带 hash = Fritzing 另存）%d 条；找不到源 %d 条；非零件条目 %d 条"
-              % (compared, skipped_hash, len(miss), len(extra)),
+    detail = ["比对条目 %d 条；外来包 %d 个（整包都没有同名源 ⇒ 只提示）；条目对不上源 %d 条；"
+              "同名源不唯一 %d 条；非零件条目 %d 条"
+              % (compared, len(orphan), len(miss), len(ambiguous), len(extra)),
               "口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；"
               "zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 "
               "`py -3.13 tools\\repack_fzpz.py` 修）"]
+    if orphan:
+        detail.append("注（外来包，仓库里没有同名源文件 ⇒ 不判它）：" + "；".join(orphan))
     return ("FAIL" if fails else "PASS"), fails + detail, []
 
 

@@ -1,20 +1,21 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-13 13:46:02 ｜ python 3.13.14 ｜ 平台 win32
-结果：**5 过 / 0 跳过 / 0 不合格**
+跑的时间：2026-10-13 21:45:28 ｜ python 3.13.14 ｜ 平台 win32
+结果：**6 过 / 0 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
-| G1 文本卫生（全仓） | PASS | 0.8s |
+| G1 文本卫生（全仓） | PASS | 0.5s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
 | G3 生成器可重生成（全仓） | PASS | 5.0s |
-| G4 fzpz 装箱一致（全仓） | PASS | 0.1s |
-| G5 元件闸门（改动件） | PASS | 1.6s |
+| G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
+| G5 元件闸门（改动件） | PASS | 2.1s |
+| G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 990 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 1033 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> PASS
 - check_readme_table.py rc=0；=== 全部通过 ===
@@ -25,29 +26,39 @@
 - 已知例外（允许清单，理由在代码里）：T-Halow-RJ45（icon 与生成器产物不同（该件是 T-Halow-RJ45 仓的参考件，不进本库预览图/元件箱，见 AGENTS §10））：svg.icon.T-Halow-RJ45_icon.svg
 
 ### G4 fzpz 装箱一致（全仓） -> PASS
-- 比对条目 325 条；跳过（名字带 hash = Fritzing 另存）324 条；找不到源 0 条；非零件条目 0 条
+- 比对条目 644 条；外来包 1 个（整包都没有同名源 ⇒ 只提示）；条目对不上源 0 条；同名源不唯一 0 条；非零件条目 0 条
 - 口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 `py -3.13 tools\repack_fzpz.py` 修）
+- 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 9 个件
-- 已过：PinHeader-1x10 / fzp_check rc=0
-- 已过：PinHeader-1x2 / fzp_check rc=0
-- 已过：PinHeader-1x3 / fzp_check rc=0
-- 已过：PinHeader-1x4 / fzp_check rc=0
-- 已过：PinHeader-1x5 / fzp_check rc=0
-- 已过：PinHeader-1x6 / fzp_check rc=0
-- 已过：PinHeader-1x7 / fzp_check rc=0
-- 已过：PinHeader-1x8 / fzp_check rc=0
-- 已过：PinHeader-1x9 / fzp_check rc=0
-- 跳过：PinHeader-1x10 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x2 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x3 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x4 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x5 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x6 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x7 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x8 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PinHeader-1x9 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 11 个件
+- 已过：DW01A / fzp_check rc=0
+- 已过：DW01A / schem_check rc=0
+- 已过：Resistor-01005 / fzp_check rc=0
+- 已过：Resistor-0201 / fzp_check rc=0
+- 已过：Resistor-0402 / fzp_check rc=0
+- 已过：Resistor-0603 / fzp_check rc=0
+- 已过：Resistor-0805 / fzp_check rc=0
+- 已过：Resistor-1206 / fzp_check rc=0
+- 已过：Resistor-1210 / fzp_check rc=0
+- 已过：Resistor-1812 / fzp_check rc=0
+- 已过：Resistor-2010 / fzp_check rc=0
+- 已过：Resistor-2512 / fzp_check rc=0
+- 跳过：Resistor-01005 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-0201 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-0402 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-0603 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-0805 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-1206 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-1210 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-1812 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-2010 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：Resistor-2512 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+
+### G6 单位口径（全仓） -> PASS
+-    ⚠ ③ part_box.py:357 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★★ 2026-09-27 修 ✓：`px` 由 **25.4/96 ✗ 改成 25.4/72** ✓（= 1/72 英寸 ✓）。
+-    ⚠ ③ run_checks.py:171 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★ 守什么 ✗：`px` 多长，这个量在库仓曾同时有 **25.4/96 ✗ / 25.4/72 ✓ / 25.4/90 ✗**
+-    ⚠ ③ sch_box.py:38 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：#     ⇒ 同一个量（px 多长）在库里曾同时存在 **25.4/96 / 25.4/72 / 25.4/90** 三个值 ✗✗。
 
 ## 口径与边界
 
