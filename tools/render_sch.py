@@ -701,7 +701,11 @@ for el in root.iter("instance"):
     #   ⇒ 再抄一份就是**两把尺子** ✗（本仓最贵的那类错 ✗）。★ 判据一行没改 ✓（逐字同义 ✓）。
     #   ★ 规则来源 = Fritzing **导出实测**反推 ✓（9 件逐件对过 ✓，见 `--verify-export` 一节 ✓）；
     #     不保证所有零件都对 ✓ —— 但**位置**（`titleGeometry` ✓）与**行距**（字号 5 ✓）是机验过的 ✓。
-    lines = ST.fritzing_lines(ttl, fzp, vals)
+    # ★★ 2026-10-14 ✓ **实例显式写的 `<displayKey>` 优先** ✗✓（用户定 ✓）：Fritzing 自己保存/读回
+    #   草图的 `partlabel.cpp:336 saveInstance()` / `:414 restoreLabel()` ✓ 就以它为权威 ✓
+    #   ⇒ 有它时按它逐项取 ✓、没有才走上面的推断口径 ✓（旧图一字不改 ✓）。
+    keys = [d.get("key") for d in tg.findall("displayKey")]
+    lines = ST.fritzing_lines(ttl, fzp, vals, keys)
     labels.append((ttl, (enum(tg, "x"), enum(tg, "y")), float(enum(tg, "fontSize", 5.0)),
                    tg.get("textColor") or "#000000", lines, fzpmid))
     LAB_REL[fzpmid] = {"lines": lines, "fs": float(enum(tg, "fontSize", 5.0))}

@@ -34,18 +34,51 @@ CAP_EM = 0.75                 # 基线以上的**字高**（em ✓）—— 与 
 _UNIT_BY_PROP = {"resistance": "\u03a9"}
 
 
-def fritzing_lines(title, fzp_path, vals=None):
+def fritzing_lines(title, fzp_path, vals=None, keys=None):
     r"""位号文字块的行 ✓（= Fritzing 画出来的那几行 ✓，唯一实现 ✓）
 
     `title` = instance 的 `<title>` ✓；`fzp_path` = instance 的 `path=` ✓（磁盘路径 ✓）；
     `vals` = instance 的属性 `name -> value` ✓。★ fzp 文件不在磁盘上 ⇒ **只有位号那一行** ✓
     （与 `render_sch.py` 原实现一字不差 ✓）。
+
+    ★★ 2026-10-14 新口径 ✓（用户定 ✓）：**实例写了 `<displayKey>` ⇒ 那份列表才是权威** ✗✓
+      —— 出处 = Fritzing 自己写/读草图的 `partlabel.cpp:336 saveInstance()` /
+      `:414 restoreLabel()` ✓（`:414` 读回时**先 `clear()`** ✓ ⇒ 文件里那份说了算 ✓；
+      列表**为空**才回落默认 ✓，见 `:421-425` ✓）。
+      ⇒ 判据：`keys` **非空** ⇒ 逐项按序取 ✓（`""` = 位号 ✓；空值跳过 ✓）；
+        `keys` 为空/None ⇒ **走原来的推断口径** ✓（旧图一字不改 ✓ —— 兼容像素板 ✓）。
+      ★ `part number` 要**回落 `.fzp`** ✗（Fritzing 就是这么取值的 ✓）：实例没写它时，
+        用件自带的那一份 ✓ —— 否则渲染图会与 Fritzing **不一致** ✗（实测踩过 ✓）。
     """
     import os as _os
     import xml.etree.ElementTree as _ET
     lines = [title] if title else []
     vals = vals or {}
-    if not (fzp_path and _os.path.isfile(fzp_path)):
+    fzp_ok = bool(fzp_path and _os.path.isfile(fzp_path))
+
+    if keys:
+        pn_fzp = ""
+        if fzp_ok:
+            for p in _ET.parse(fzp_path).getroot().iter("property"):
+                if (p.get("name") or "") == "part number":
+                    pn_fzp = (p.text or "").strip()
+                    break
+        out = []
+        for k in keys:
+            if k == "":
+                v = title
+            elif k == "part number":
+                v = vals.get(k) or pn_fzp            # ★ 回落 `.fzp` ✓
+            else:
+                v = vals.get(k) or ""
+            _u = _UNIT_BY_PROP.get((k or "").lower())
+            if _u and v and not any(ch.isalpha() for ch in v):
+                v = v + _u
+            if v and v not in out:
+                out.append(v)
+        return out or lines
+
+    if not fzp_ok:
         return lines
     yes = [(p.get("name"), (p.text or "").strip())
            for p in _ET.parse(fzp_path).getroot().iter("property")

@@ -975,6 +975,38 @@ def load_geom(fzz, svg):
         #   ★ 所以锚点存**唯一键** `"@<modelIndex>"` ✓（并且**不再用标题键** ✓ ⇒ 不会有两份 ✗）：
         #     `el`/`mi`/`pins` 指向**同一个 XML 元素** ✓ ⇒ 实例不会写两遍 ✓
         #     （实例的写出是**按 XML** 走的 ✓，不是遍历 `insts` ✓）。
+        # ★★★ 2026-10-13 ✓ **重名也要唯一化** ✗✗（不只是网锚点 ✓）：
+        #   `insts` 的键原来是 `<title>` ✗ ⇒ **位号重复**（或**故意留空** ✗ —— 载板用空 title
+        #   把“位号行”跳过 ✓，见 `carrier_board.py` 的说明 ✓）时**后者会把前者盖掉** ✗✗
+        #   ⇒ 布线器**看不见**被盖的那些件（实测：11 件只剩 1 件 ✗）。
+        #   ⇒ 与下面网锚点**同一套唯一键** `@<modelIndex>` ✓（`el`/`mi`/`pins` 指向同一个 XML 元素 ✓
+        #     ⇒ 实例不会写两遍 ✓）。✗ **不**换个新写法 ✗（本仓只允许一份实现 ✓）。
+        if anchor:
+            del insts[title]
+            insts["@%s" % mi] = {"mi": mi, "mid": _mid2, "el": e, "sub": sub,
+                                 "loc": loc, "pins": pins, "box": box, "names": conname,
+                                 "bkind": _bkind, "blabel": _blabel,
+                                 "bsvg": (_txt if (BODY_OUTLINE and _txt) else None),
+                                 "body": _body,
+                                 "ox": (ox, oy) if pid else None, "pins_export": pins_export,
+                                 "anchor": anchor, "anchor_title": title, "anchor_kind": _akind}
+        insts[title] = {"mi": mi, "mid": e.get("moduleIdRef"), "el": e, "sub": sub,
+                        "loc": loc, "pins": pins, "box": box, "names": conname,
+                        "bkind": _bkind, "blabel": _blabel,
+                        "bsvg": (_txt if (BODY_OUTLINE and _txt) else None),
+                        "body": _body,
+                        "ox": (ox, oy) if pid else None, "pins_export": pins_export}
+        # ★★ 2026-10-13 ✓ **试过又回退** ✗✗ —— 别再来一遍 ✗：
+        #   为了「非芯片件不显示位号」（用户 2026-10-13 要 ✓）想把实例 `<title>` 留空 ✗，
+        #   但 `<title>` **同时是这里的认件键** ✗（`insts[title]` ✓ —— 网表按**位号**查脚 ✗）
+        #   ⇒ 一留空就 9 件撞名 ⇒ 改成 `@<mi>` 唯一键 ⇒ **`insts["U1"]` 不见了** ✗
+        #   ⇒ `pin_of()` 当场 `KeyError: 'U1'` ✗（实测 ✓）。
+        #   根因是**设计层面的** ✗：Fritzing 那份「位号行」（`LabelTextKey = ""` ✓
+        #   `partlabel.cpp:109` ✓ 硬编码在构造里 ✗）与工具链的认件键**是同1个字段** ✗；
+        #   而 `partlabel.cpp:275 displayTexts()` 只在 `t.isEmpty()` 时才跳过那一行 ✓
+        #   ⇒ “不显示位号、只显示参数”**只能**靠 `<title>` 空 ✗ ⇒ 与认件键冲突 ✗。
+        #   ⇒ 要真做，得把“显示”与“认件”**拆成两个字段** ✗（改工具链全链 ✗，不是小改 ✗）——
+        #     先与用户对齐再动 ✓（本仓 §0 第 3 条：过拟合信号 = 停手 ✓）。
         if anchor:
             del insts[title]
             insts["@%s" % mi] = {"mi": mi, "mid": _mid2, "el": e, "sub": sub,
@@ -7183,8 +7215,13 @@ def relabel(insts, boxes, used, extra=False):
 
     def score(b, t):
         sc = 0
+        # ★★ 2026-10-14 ✓ **不再排除"自己的元件"** ✗✗（用户定 ✓：「元件标签与任何元件都不应相交遮挡」✓）：
+        #   ✗ 原来写 `t2 != t`（当初的假设：位号总在本体框**外**）⇒ 一旦实例给的初始位置
+        #     落在本体里（载板：初始是"本体框右上角外一点" ✓，但标签有 4 行 ✓ **往下延伸进本体** ✓）
+        #     ⇒ 它**跳过自己的本体** ✗ ⇒ 报「压元件 0→0」✗，而图上明明压着 ✗（用户 2026-10-14 截图 ✓）。
+        #   ✓ 现在：**自己的本体也算障碍** ✓（候选位本来就全在本体框外 ✓ ⇒ 不会误挪 ✓）。
         for t2, box in boxes.items():
-            if t2 != t and box and _ov2(b, box):
+            if box and _ov2(b, box):
                 sc += 10
         for _b3 in _deco_boxes:              # ★ 压**装饰件**（接地符号 …）与压别的元件**同罚** ✓
             if _ov2(b, _b3):
@@ -7222,7 +7259,7 @@ def relabel(insts, boxes, used, extra=False):
     placed, moved, before, after = [], 0, [0, 0, 0, 0], [0, 0, 0, 0]
     for t, d, tg, ln, fs, w, h in items:                     # 先量"现状" ✓
         b = ST.label_bbox(pm.num(tg.get("x")), pm.num(tg.get("y")), fs, ln)
-        before[0] += sum(1 for t2, box in boxes.items() if t2 != t and box and _ov2(b, box))
+        before[0] += sum(1 for t2, box in boxes.items() if box and _ov2(b, box))
         before[1] += sum(1 for _u in used if _seg_in_box(_u[0], _u[1], b))
         before[2] += sum(1 for _t2, b2 in placed if _ov2(b, b2))
         before[3] += sum(1 for _b3 in _deco_boxes if _ov2(b, _b3))      # ★ 压**装饰符号** ✓
@@ -7257,7 +7294,7 @@ def relabel(insts, boxes, used, extra=False):
         if score(old, t) == 0:
             placed.append((t, old))
             after[0] += sum(1 for t2, box in boxes.items()
-                            if t2 != t and box and _ov2(old, box))
+                            if box and _ov2(old, box))
             after[1] += sum(1 for _u in used if _seg_in_box(_u[0], _u[1], old))
             after[2] += sum(1 for _t2, b2 in placed[:-1] if _ov2(old, b2))
             after[3] += sum(1 for _b3 in _deco_boxes if _ov2(old, _b3))
@@ -7293,7 +7330,7 @@ def relabel(insts, boxes, used, extra=False):
             tg.set("yOffset", fmt(best[1] - 0.25 * fs - d2["loc"][1]))
             moved += 1
         placed.append((t, best))
-        after[0] += sum(1 for t2, box in boxes.items() if t2 != t and box and _ov2(best, box))
+        after[0] += sum(1 for t2, box in boxes.items() if box and _ov2(best, box))
         after[1] += sum(1 for _u in used if _seg_in_box(_u[0], _u[1], best))
         after[2] += sum(1 for _t2, b2 in placed[:-1] if _ov2(best, b2))
         after[3] += sum(1 for _b3 in _deco_boxes if _ov2(best, _b3))
