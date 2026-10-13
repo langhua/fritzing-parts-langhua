@@ -13,6 +13,9 @@
         <instance moduleIdRef="CH32V203C8T6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V203C8T6.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="CH32V203F8U6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V203F8U6.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="CH32V002J4M6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/CH32V002J4M6.fzp">
             <views/>
         </instance>
