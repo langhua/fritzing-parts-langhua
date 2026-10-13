@@ -151,7 +151,16 @@ def gen_schematic_svg():
         col = "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
                  f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★★ 2026-10-13 修正 ✗：原来写的是 `width="22" height="22"`（**真尺寸矩形** ✗）
+        #   + `y - 11`（让矩形**中心**落在引脚线上 ✓）—— 违反 AGENTS §5「terminal 用**极小
+        #   不可见 rect** ✓，禁止画夸张端点 ✗」（同库 `CH32V002F4U6` 模板就是 `0.0001` ✓）。
+        #   ★ 后果（实测 ✓）：两种“参考点”算法对同一只脚给出**不同**位置 ——
+        #     渲染器 `sch_box.anchors()` 取 **rect 中心** ✓、布线器取 **rect 左上角** ✗
+        #     ⇒ 差 **11 svg 单位 = 0.99 sketch 单位（≈0.28 mm）** ✗
+        #     ⇒ 布线把线端点到脚外 ✗，图上“**像接上了、实际没接**”✗✗（U2 上 7 处）。
+        #   ⇒ 改成极小不可见 rect（x/y = 引脚线**外端** ✓，两轴不再有中心/左上之分 ✓）。
+        L.append(f'  <rect class="terminal" id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y}" '
+                 f'width="0.0001" height="0.0001" fill="none"/>\n')
         L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{i + 1}</text>\n')
         L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="start" '
@@ -163,7 +172,9 @@ def gen_schematic_svg():
         col = "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★ 同上（右侧）✓：terminal = 极小不可见 rect ✓
+        L.append(f'  <rect class="terminal" id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y}" '
+                 f'width="0.0001" height="0.0001" fill="none"/>\n')
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{per * 2 - i}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="end" '

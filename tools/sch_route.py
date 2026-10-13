@@ -2409,8 +2409,25 @@ def main(argv):
     _pv = next((a.split("=", 1)[1] for a in argv if a.startswith("--pins=")), None)
     if _nv:
         global NETS
-        NETS = PD.load(_nv, need=("NETS",)).NETS
+        _mod = PD.load(_nv, need=("NETS",))
+        NETS = _mod.NETS
         print("★ 网表：%d 张网 ✓（来自 %s ✓）" % (len(NETS), _nv))
+        # ★★ 2026-10-13 补 ✗：`NET_COLOR` 的**兜底分色**是在**模块载入时**跑的 ✓ —— 那时
+        #   `NETS` 还是本文件里写死的那份（像素板的网名 ✗）⇒ 用 `--nets=` 换成**项目**网表
+        #   之后**没人再补颜色** ✗ ⇒ 项目里的网全落 `NET_COLOR.get(net, "#404040")` ✗
+        #   （实测：载板 97 根导线**全黑** ✗，打印出来是 `3V3=?`…✓）。
+        #   ⇒ 载入项目网表之后**补跑一次** ✓，且**优先用项目文件里的 `COLOR`** ✓（那本来就
+        #     是“项目数据” ✓，应该由项目文件说了算 ✓ —— 颜色值仍只能是官方表里的值 ✓）。
+        _col = getattr(_mod, "COLOR", None)
+        if isinstance(_col, dict) and _col:
+            NET_COLOR.update({k: v for k, v in _col.items() if v})
+            print("★ 网色：采用项目文件 `COLOR` 的 %d 条 ✓（%s ✓）" % (len(_col), _nv))
+        _new = sorted(n for n in NETS if n not in NET_COLOR)
+        for _n2 in _new:                       # 剩下的照旧按序兜底 ✓（同一条规则 ✓）
+            NET_COLOR[_n2] = SCHEM_PALETTE[len(NET_COLOR) % len(SCHEM_PALETTE)]
+        if _new:
+            print("★ 网色：剩下 %d 张网按官方调色板兜底 ✓：%s"
+                  % (len(_new), ", ".join("%s=%s" % (n, NET_COLOR[n]) for n in _new)))
     if _pv:
         PR.LAB = getattr(PD.load(_pv, need=("LAB",)), "LAB", {})
         print("★ 位号数据：%d 件 ✓（来自 %s ✓）" % (len(PR.LAB), _pv))
