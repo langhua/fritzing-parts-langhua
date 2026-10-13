@@ -357,7 +357,12 @@ def changed_part_dirs(base):
             old = zip_payload(git_blob(base or "HEAD", p))
             if new != old:                           # 载荷真变了 ⇒ 那个件也要查
                 dirs |= package_part_dirs(p)
-    return sorted(d for d in dirs if (ROOT / "svg" / d).is_dir())
+    # ★ 判据 = 「**这个目录里有 `part.*.fzp`**」✓（= 它到底是不是一个**部件** ✓）——
+    #   ✗ 不能只看「`svg/<名>/` 是个目录」✗：`svg/_assets/` 是**素材目录** ✓
+    #   （外部图形 + 它的许可文件 ✓，AGENTS §4 ✓），拿它去跑 `fzp_check` 会报
+    #   「没找到 .fzp」✗ 并被记成 G5 FAIL ✗（2026-10-13 实测中招 ✓：新加原理图素材后红了一条 ✓）。
+    #   与全仓那支 `part_dirs(with_fzp=True)` **同一把尺子** ✓（一处判据两处用 ✓）。
+    return sorted(d for d in dirs if any((ROOT / "svg" / d).glob("part.*.fzp")))
 
 
 def gate_parts(base, all_parts):

@@ -53,6 +53,19 @@
         <instance moduleIdRef="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="超容（法拉电容）">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="SC474_a3f81c6d04b7e25938ad1f604c8e7b31_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SC474_a3f81c6d04b7e25938ad1f604c8e7b31_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="晶振">
         <views>
             <iconView layer="icon">

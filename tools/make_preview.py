@@ -131,6 +131,10 @@ SHEETS = {
         #   ★ 2026-10-10 恢复 **0603** ✓（像素板 R1/C1 要用；Fritzing 自带 0603 那颗的 land
         #   pattern 太肥 ✗ ⇒ 本库自己出一颗紧凑的 ✓，型号写 `[SMD] 0603` ✓）
         ("Capacitor-0402", "C 0402"), ("Capacitor-0603", "C 0603"),
+        # ★ 2026-10-13 新增本库**第一套超容（法拉电容）** ✓ —— 凯美 C 型 5.5V ✓；
+        #   数据出处 = 厂商《产品规格书》 p1 型号 / p3 容量 / p4 尺寸 ✓，见
+        #   `svg/Supercap-0.47F/gen_part.py` 的文件头（每个数字都能指回去 ✓）。
+        ("Supercap-0.47F", "Supercap 0.47F"), ("Supercap-1.5F", "Supercap 1.5F"),
         ("Crystal-3215", "Crystal-3215"), ("Crystal-3225", "Crystal-3225"),
         ("molding_power_inductors/SHC0420", "SHC0420"),
         ("molding_power_inductors/SHC0520", "SHC0520"),

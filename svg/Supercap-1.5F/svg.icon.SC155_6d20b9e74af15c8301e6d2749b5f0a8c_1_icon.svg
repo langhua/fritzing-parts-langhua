@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     width="23.5mm" height="12.5mm" viewBox="0 0 23.5 12.5">
+ <g id="icon">
+  <g id="body">
+   <!-- 本体：Φ20.5 × 7 mm（厂商规格书 p4 ✓） -->
+   <rect x="1.5" y="1.5" width="20.5" height="7" fill="#2B2B2B"/>
+   <ellipse cx="11.75" cy="1.5" rx="10.25" ry="2.46" fill="#4A4A4A"/>
+   <!-- 引线：间距 6 mm（= 引线距离 P，同上✓）；图上画 2.5 mm（实物 12.5 / 13 mm，见文件头✓） -->
+   <line x1="8.75" y1="8.5" x2="8.75" y2="11" stroke="#8C8C8C" stroke-width="0.45" stroke-linecap="round"/>
+   <rect id="connector0pin" x="8.25" y="11" width="1" height="0.0001" fill="none" stroke="none"/>
+   <line x1="14.75" y1="8.5" x2="14.75" y2="11" stroke="#8C8C8C" stroke-width="0.45" stroke-linecap="round"/>
+   <rect id="connector1pin" x="14.25" y="11" width="1" height="0.0001" fill="none" stroke="none"/>
+  </g>
+  <!-- 极性：“+” 在正极引线旁（原厂图纸标了负极标志 ✓） -->
+  <g stroke="#2B2B2B" stroke-width="0.4" stroke-linecap="round">
+   <line x1="15.55" y1="9.4" x2="16.55" y2="9.4"/>
+   <line x1="16.05" y1="8.9" x2="16.05" y2="9.9"/>
+  </g>
+ </g>
+</svg>

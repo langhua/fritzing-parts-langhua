@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     width="22.5mm" height="22.5mm" viewBox="0 0 22.5 22.5">
+ <g id="silkscreen">
+  <!-- 本体外轮廓（Φ20.5，§10.16：丝印不压焊盘 ✓） -->
+  <circle cx="11.25" cy="11.25" r="10.25" fill="none" stroke="#ffffff" stroke-width="0.12"/>
+  <!-- 极性“+”：正极引脚那侧、画在轮廓圆内 ✓ -->
+  <g stroke="#ffffff" stroke-width="0.15" stroke-linecap="round">
+   <line x1="13.75" y1="8.85" x2="14.75" y2="8.85"/>
+   <line x1="14.25" y1="8.35" x2="14.25" y2="9.35"/>
+  </g>
+ </g>
+ <g id="copper0">
+ </g>
+ <g id="copper1">
+  <circle id="connector0pad" cx="8.25" cy="11.25" r="0.75" fill="none" stroke="#F7BD13" stroke-width="0.5"/>
+  <circle id="connector1pad" cx="14.25" cy="11.25" r="0.75" fill="none" stroke="#F7BD13" stroke-width="0.5"/>
+ </g>
+</svg>

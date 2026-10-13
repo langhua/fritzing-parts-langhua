@@ -1,0 +1,29 @@
+Creative Commons Attribution-ShareAlike 3.0 Unported
+====================================================
+
+The file svg/_assets/polar_capacitor_schematic.svg was extracted verbatim from
+the official Fritzing core part library (fritzing/fritzing-parts),
+path: svg/core/schematic/
+        capacitor_elko_goldcap_4.0F_8647a5c11c9b485c095f1ac7ddec049d_2_schematic.svg
+  https://github.com/fritzing/fritzing-parts
+
+That file is the schematic view of the Fritzing core part
+`capacitor_elko_goldcap_4.0F_92eef0d1d2f548b9db9918a1769107d3_2`
+("Electrolytic Capacitor" / Goldcap), whose author is Christoph Wempe; its own
+`<desc><referenceFile>` names `capacitor_polar.svg`, i.e. Fritzing's built-in
+**polarized** capacitor symbol (used here because a supercapacitor is
+polarized, unlike the ceramic capacitor symbol already used by
+svg/_assets/ceramic_capacitor_schematic.svg).
+
+Fritzing core graphics are licensed under the Creative Commons
+Attribution-ShareAlike 3.0 Unported license.  The official notice (from the
+Fritzing parts repository LICENSE.txt) is:
+
+    All graphics and documentation of Fritzing are licensed under
+    Creative Commons Attribution-ShareALike 3.0 Unported.
+    See http://creativecommons.org/licenses/by-sa/3.0/ for the full description.
+
+    This means that you may publish circuits and diagrams that you create with
+    Fritzing and that use these graphics -- as long as you credit us, and
+    publish your works under the same license.
+    A credit can be as simple as "this image was created with Fritzing."
