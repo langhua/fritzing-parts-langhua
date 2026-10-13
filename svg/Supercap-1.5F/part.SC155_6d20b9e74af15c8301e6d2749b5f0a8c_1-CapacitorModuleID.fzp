@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module fritzingVersion="1.0.3" moduleId="SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1">
+<module fritzingVersion="1.0.3" moduleId="SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID">
  <version>4</version>
  <title>Supercapacitor 1.5F 5.5V</title>
  <label>C</label>
@@ -29,22 +29,22 @@
  </spice>
  <views>
   <iconView>
-   <layers image="icon/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1_icon.svg">
+   <layers image="icon/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>
   <breadboardView>
-   <layers image="breadboard/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1_breadboard.svg">
+   <layers image="breadboard/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1_schematic.svg">
+   <layers image="schematic/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1_pcb.svg">
+   <layers image="pcb/SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>

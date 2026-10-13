@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module fritzingVersion="1.0.3" moduleId="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1">
+<module fritzingVersion="1.0.3" moduleId="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID">
  <version>4</version>
- <title>Capacitor 0402</title>
+ <title>Capacitor 0603</title>
  <label>C</label>
  <date>Thu Oct 10 2024</date>
  <author>Shi Jinghai</author>
@@ -13,7 +13,7 @@
  </tags>
  <properties>
   <property name="family">Capacitor [bidirectional]</property>
-  <property name="package">0402 [SMD, multilayer]</property>
+  <property name="package">[SMD] 0603</property>
   <property name="capacitance" showInLabel="yes">100nF</property>
   <property name="voltage" showInLabel="yes">25V</property>
   <property name="dielectric">X7R</property>
@@ -26,22 +26,22 @@
  </spice>
  <views>
   <iconView>
-   <layers image="icon/C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1_icon.svg">
+   <layers image="icon/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>
   <breadboardView fliphorizontal="true" flipvertical="true">
-   <layers image="breadboard/C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1_breadboard.svg">
+   <layers image="breadboard/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1_schematic.svg">
+   <layers image="schematic/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1_pcb.svg">
+   <layers image="pcb/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
@@ -49,7 +49,7 @@
  </views>
  <connectors>
   <connector id="connector0" name="1" type="male">
-   <description>1</description>
+   <description>A generic capacitor</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector0pin" legId="connector0leg"/>
@@ -63,7 +63,7 @@
    </views>
   </connector>
   <connector id="connector1" name="2" type="male">
-   <description>2</description>
+   <description>A generic capacitor</description>
    <views>
     <breadboardView>
      <p layer="breadboard" svgId="connector1pin" legId="connector1leg"/>

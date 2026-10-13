@@ -65,11 +65,11 @@ ASSET_SCHEM = os.path.join(ROOT, "svg", "_assets", "ceramic_capacitor_schematic.
 #   hex 是固定值 ✓ —— **一旦发布就不许改** ✗，否则 Fritzing 里会认成另一个件 ✗；
 #   0603 那颗是 2026-10-01 首次生成、2026-10-10 原样恢复 ✓）
 SPEC = {
-    "0402": dict(mod="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1", ref="Resistor-0402",
+    "0402": dict(mod="C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1-CapacitorModuleID", ref="Resistor-0402",
                  title="Capacitor 0402", pkg="0402 [SMD, multilayer]",
                  body_w=107.14283, body_x=73.571365,        # icon 里本体矩形（用户单位 ✓）
                  can_w=1.45, can_h=0.60000008),             # pcb 画布 mm ✓
-    "0603": dict(mod="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1", ref="Resistor-0603",
+    "0603": dict(mod="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1-CapacitorModuleID", ref="Resistor-0603",
                  title="Capacitor 0603", pkg="[SMD] 0603",
                  body_w=None, body_x=None,                  # icon 直接沿用电阻那张 ✓
                  can_w=2.2, can_h=0.90000004),              # pcb 画布 mm ✓（同 `Resistor-0603` ✓）

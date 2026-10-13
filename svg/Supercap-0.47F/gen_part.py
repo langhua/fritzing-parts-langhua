@@ -62,14 +62,14 @@ ASSET_SCHEM = os.path.join(ROOT, "svg", "_assets", "polar_capacitor_schematic.sv
 # ── 规格（**全部来自厂商 PDF** ✓，逐项标出处见文件头 ✓）──────────────────────
 SPEC = {
     "0.47F": dict(
-        mod="SC474_a3f81c6d04b7e25938ad1f604c8e7b31_1",   # ★ 一旦发布不许改 ✗（改=另认一个件 ✗）
+        mod="SC474_a3f81c6d04b7e25938ad1f604c8e7b31_1-CapacitorModuleID",   # ★ 后缀 = 让 Fritzing 当它是**电容** ✓
         title="Supercapacitor 0.47F 5.5V",
         part_no="SE-5R5-D474VYC3H",
         d=13.0, h=6.5, pitch=5.0, lead_p=12.0, lead_n=12.5, lead_t=0.4,
         cap="0.47F", tol="-10~+30%", pkg="C\u578b 13\u00d76.5 [THT, supercapacitor]",
     ),
     "1.5F": dict(
-        mod="SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1",
+        mod="SC155_6d20b9e74af15c8301e6d2749b5f0a8c_1-CapacitorModuleID",
         title="Supercapacitor 1.5F 5.5V",
         part_no="SE-5R5-D155VYC3G",
         d=20.5, h=7.0, pitch=6.0, lead_p=13.0, lead_n=12.5, lead_t=0.45,

@@ -1,47 +1,46 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<module fritzingVersion="1.0.3" moduleId="C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1">
+<module fritzingVersion="1.0.3" moduleId="R2010_0a212ee8e15d616ed79a8cc68f76bf99_4-ResistorModuleID">
  <version>4</version>
- <title>Capacitor 0603</title>
- <label>C</label>
- <date>Thu Oct 10 2024</date>
+ <title>Resistor 2010</title>
+ <label>R</label>
+ <date>Fri Oct 11 2024</date>
  <author>Shi Jinghai</author>
  <tags>
-  <tag>Capacitor</tag>
-  <tag>basic capacitor</tag>
+  <tag>Resistor</tag>
+  <tag>basic resistor</tag>
   <tag>fritzing parts of Langhua</tag>
   <tag>SMD</tag>
  </tags>
  <properties>
-  <property name="family">Capacitor [bidirectional]</property>
-  <property name="package">[SMD] 0603</property>
-  <property name="capacitance" showInLabel="yes">100nF</property>
-  <property name="voltage" showInLabel="yes">25V</property>
-  <property name="dielectric">X7R</property>
-  <property name="tolerance" showInLabel="yes">±10%</property>
+  <property name="family">SMD Resistors</property>
+  <property name="package">[SMD] 2010</property>
+  <property name="resistance" showInLabel="yes">4.7k</property>
+  <property name="power" showInLabel="yes">3/4W</property>
+  <property name="tolerance" showInLabel="yes">±1%</property>
  </properties>
- <taxonomy>discreteParts.capacitor</taxonomy>
- <description>A generic capacitor</description>
+ <taxonomy>discreteParts.resistor</taxonomy>
+ <description>A generic resistor</description>
  <spice>
-  <line>C{instanceTitle} {net connector0} {net connector1} {capacitance}</line>
+  <line>R{instanceTitle} {net connector0} {net connector1} {resistance}</line>
  </spice>
  <views>
   <iconView>
-   <layers image="icon/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1_icon.svg">
+   <layers image="icon/R2010_0a212ee8e15d616ed79a8cc68f76bf99_4-ResistorModuleID_icon.svg">
     <layer layerId="icon"/>
    </layers>
   </iconView>
-  <breadboardView fliphorizontal="true" flipvertical="true">
-   <layers image="breadboard/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1_breadboard.svg">
+  <breadboardView>
+   <layers image="breadboard/R2010_0a212ee8e15d616ed79a8cc68f76bf99_4-ResistorModuleID_breadboard.svg">
     <layer layerId="breadboard"/>
    </layers>
   </breadboardView>
   <schematicView>
-   <layers image="schematic/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1_schematic.svg">
+   <layers image="schematic/R2010_0a212ee8e15d616ed79a8cc68f76bf99_4-ResistorModuleID_schematic.svg">
     <layer layerId="schematic"/>
    </layers>
   </schematicView>
   <pcbView>
-   <layers image="pcb/C0603_9f24e6d13a8b57c0e92d4f6a1b3c8e70_1_pcb.svg">
+   <layers image="pcb/R2010_0a212ee8e15d616ed79a8cc68f76bf99_4-ResistorModuleID_pcb.svg">
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
