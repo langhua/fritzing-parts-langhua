@@ -351,19 +351,19 @@
   <connector id="connector41" name="3V3" type="male">
    <description>Dev-board extra power header pin</description>
    <views>
-    <breadboardView><p layer="breadboard" svgId="connector41pin" terminalId="connector41terminal"/></breadboardView>
+    <breadboardView><p layer="breadboard" svgId="connector41pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector42" name="5Vin" type="male">
    <description>Dev-board extra power header pin</description>
    <views>
-    <breadboardView><p layer="breadboard" svgId="connector42pin" terminalId="connector42terminal"/></breadboardView>
+    <breadboardView><p layer="breadboard" svgId="connector42pin"/></breadboardView>
    </views>
   </connector>
   <connector id="connector43" name="GND" type="male">
    <description>Dev-board extra power header pin</description>
    <views>
-    <breadboardView><p layer="breadboard" svgId="connector43pin" terminalId="connector43terminal"/></breadboardView>
+    <breadboardView><p layer="breadboard" svgId="connector43pin"/></breadboardView>
    </views>
   </connector>
 </connectors>

@@ -1075,25 +1075,45 @@
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="73.019" y1="73.002" x2="7.272" x1="0.001" gorn="0.42"  id="connector34pin"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="80.187" y1="80.172" x2="7.272" x1="0.001" gorn="0.43"  id="connector33pin"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="87.402" y1="87.388" x2="7.272" x1="0.001" gorn="0.44"  id="connector19pin"/>
+    <rect id="connector19terminal" x="0.0010" y="87.3880" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="94.603" y1="94.588" x2="7.272" x1="0.001" gorn="0.45"  id="connector18pin"/>
+    <rect id="connector18terminal" x="0.0010" y="94.5880" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="101.873" y1="101.856" x2="7.272" x1="0.001" gorn="0.46"  id="connector17pin"/>
+    <rect id="connector17terminal" x="0.0010" y="101.8560" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="109.088" y1="109.072" x2="7.272" x1="0.001" gorn="0.47"  id="connector16pin"/>
+    <rect id="connector16terminal" x="0.0010" y="109.0720" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="116.289" y1="116.272" x2="7.272" x1="0.001" gorn="0.48"  id="connector15pin"/>
+    <rect id="connector15terminal" x="0.0010" y="116.2720" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="15.455" y1="15.439" x2="64.872" x1="57.602" gorn="0.49"  id="connector0pin"/>
+    <rect id="connector0terminal" x="64.8720" y="15.4550" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="22.671" y1="22.655" x2="64.873" x1="57.602" gorn="0.50"  id="connector1pin"/>
+    <rect id="connector1terminal" x="64.8730" y="22.6710" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="29.871" y1="29.855" x2="64.873" x1="57.602" gorn="0.51"  id="connector2pin"/>
+    <rect id="connector2terminal" x="64.8730" y="29.8710" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="37.039" y1="37.024" x2="64.872" x1="57.602" gorn="0.52"  id="connector3pin"/>
+    <rect id="connector3terminal" x="64.8720" y="37.0390" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="44.255" y1="44.24" x2="64.873" x1="57.602" gorn="0.53"  id="connector4pin"/>
+    <rect id="connector4terminal" x="64.8730" y="44.2550" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="51.455" y1="51.439" x2="64.873" x1="57.602" gorn="0.54"  id="connector5pin"/>
+    <rect id="connector5terminal" x="64.8730" y="51.4550" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="58.656" y1="58.64" x2="64.872" x1="57.602" gorn="0.55"  id="connector6pin"/>
+    <rect id="connector6terminal" x="64.8720" y="58.6560" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="65.871" y1="65.855" x2="64.873" x1="57.602" gorn="0.56"  id="connector7pin"/>
+    <rect id="connector7terminal" x="64.8730" y="65.8710" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="73.071" y1="73.057" x2="64.873" x1="57.602" gorn="0.57"  id="connector8pin"/>
+    <rect id="connector8terminal" x="64.8730" y="73.0710" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="80.24" y1="80.226" x2="64.872" x1="57.602" gorn="0.58"  id="connector9pin"/>
+    <rect id="connector9terminal" x="64.8720" y="80.2400" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="87.457" y1="87.44" x2="64.873" x1="57.602" gorn="0.59"  id="connector10pin"/>
+    <rect id="connector10terminal" x="64.8730" y="87.4570" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="94.656" y1="94.642" x2="64.873" x1="57.602" gorn="0.60"  id="connector11pin"/>
+    <rect id="connector11terminal" x="64.8730" y="94.6560" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="101.927" y1="101.91" x2="64.872" x1="57.602" gorn="0.61"  id="connector12pin"/>
+    <rect id="connector12terminal" x="64.8720" y="101.9270" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="109.143" y1="109.127" x2="64.873" x1="57.602" gorn="0.62"  id="connector13pin"/>
+    <rect id="connector13terminal" x="64.8730" y="109.1430" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <line stroke-miterlimit="10" stroke-width="1" fill="none" stroke="#231F20" y2="116.343" y1="116.326" x2="64.873" x1="57.602" gorn="0.63"  id="connector14pin"/>
+    <rect id="connector14terminal" x="64.8730" y="116.3430" width="0.0001" height="0.0001" fill="none" stroke="none"/>
     <g transform="matrix(1 0 0 1 23.9336 53.4004)" >
         <g >
             <g >

@@ -618,7 +618,14 @@ def fzp_xml():
         conns.append('  <connector id="connector%d" name="%s" type="male">\n' % (cn, label))
         conns.append('   <description>Dev-board extra power header pin</description>\n')
         conns.append('   <views>\n')
-        conns.append('    <breadboardView><p layer="breadboard" svgId="connector%dpin" terminalId="connector%dterminal"/></breadboardView>\n' % (cn, cn))
+        # ★ 只给 `svgId` ✗ 不写 `terminalId`（2026-10-15 修 ✓）：
+        #   面包板视图里这些排针画的是 `<circle id="connectorNpin">` ✓，**没有**独立的
+        #   `connectorNterminal` 元素 ✗ ⇒ 写 `terminalId="connectorNterminal"` 就成了
+        #   "声明了一个 svg 里不存在的端子" ✗ ⇒ `fzp_check` 第 ② 条判 FAIL ✓
+        #   （实测 3 项：connector41/42/43 ✓）。
+        #   Fritzing 侧没有 terminalId 时**直接用 `svgId` 元素的包围盒中心**当连接点 ✓
+        #   —— 与同件另外 41 个连接器**写法一致** ✓（孔照样变绿、照样可布线 ✓）。
+        conns.append('    <breadboardView><p layer="breadboard" svgId="connector%dpin"/></breadboardView>\n' % cn)
         conns.append('   </views>\n')
         conns.append('  </connector>\n')
     return (

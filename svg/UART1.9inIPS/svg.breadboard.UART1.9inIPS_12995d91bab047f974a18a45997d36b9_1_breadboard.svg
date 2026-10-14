@@ -109,18 +109,22 @@
          id="connector3pin"
          style="fill:none;stroke:#9a916c;stroke-width:0.5"
          d="m 56.704707,124.46775 a 0.5,0.5 0 0 1 -0.5,0.5 0.5,0.5 0 0 1 -0.5,-0.5 0.5,0.5 0 0 1 0.5,-0.5 0.5,0.5 0 0 1 0.5,0.5 z" />
+      <rect id="connector3terminal" x="56.2047" y="124.4677" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <path
          id="connector2pin"
          style="fill:none;stroke:#9a916c;stroke-width:0.5"
          d="m 54.164706,124.46775 a 0.5,0.5 0 0 1 -0.5,0.5 0.5,0.5 0 0 1 -0.5,-0.5 0.5,0.5 0 0 1 0.5,-0.5 0.5,0.5 0 0 1 0.5,0.5 z" />
+      <rect id="connector2terminal" x="53.6647" y="124.4677" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <path
          id="connector1pin"
          style="fill:none;stroke:#9a916c;stroke-width:0.5"
          d="m 51.624712,124.46775 a 0.5,0.5 0 0 1 -0.5,0.5 0.5,0.5 0 0 1 -0.5,-0.5 0.5,0.5 0 0 1 0.5,-0.5 0.5,0.5 0 0 1 0.5,0.5 z" />
+      <rect id="connector1terminal" x="51.1247" y="124.4677" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <path
          id="connector0pin"
          style="fill:none;stroke:#9a916c;stroke-width:0.5"
          d="m 49.084711,124.46775 a 0.5,0.5 0 0 1 -0.5,0.5 0.5,0.5 0 0 1 -0.5,-0.5 0.5,0.5 0 0 1 0.5,-0.5 0.5,0.5 0 0 1 0.5,0.5 z" />
+      <rect id="connector0terminal" x="48.5847" y="124.4677" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <path
          id="connector1pin-8"
          style="fill:none;stroke:#9a916c;stroke-width:0.5"

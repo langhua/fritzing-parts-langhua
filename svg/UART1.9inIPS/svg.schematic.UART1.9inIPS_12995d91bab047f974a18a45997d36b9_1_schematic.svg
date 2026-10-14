@@ -53,6 +53,7 @@
          width="14.4"
          x="0"
          y="6.8499999" />
+      <rect id="connector0terminal" x="7.2000" y="7.2000" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <text
          fill="#8c8c8c"
          font-size="2.8px"
@@ -94,6 +95,7 @@
          width="14.4"
          x="0"
          y="14.05" />
+      <rect id="connector1terminal" x="7.2000" y="14.4000" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <text
          fill="#8c8c8c"
          font-size="2.8px"
@@ -135,6 +137,7 @@
          width="14.4"
          x="0"
          y="21.25" />
+      <rect id="connector2terminal" x="7.2000" y="21.6000" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <text
          fill="#8c8c8c"
          font-size="2.8px"
@@ -176,6 +179,7 @@
          width="14.4"
          x="0"
          y="28.450001" />
+      <rect id="connector3terminal" x="7.2000" y="28.8000" width="0.0001" height="0.0001" fill="none" stroke="none"/>
       <text
          class="text"
          fill="#8c8c8c"
