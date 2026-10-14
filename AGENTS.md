@@ -213,6 +213,21 @@
 - 每个视图 `<svg>` 头部**必须同时有 `width` 和 `height`**；breadboard/pcb 视图用 **mm 单位**
   （如 `width="9mm" height="9mm" viewBox="7 7 18 18"`）。
   只写 width 缺 height → Fritzing「不能为 svg 创建渲染」，导入报错。
+- ★★ **`iconView` 的 `<layer layerId>` 必须是 `icon`** ✓（2026-10-15 用户报「看不到图标」后钉死 ✓）：
+  写成别的（如 `breadboard`）时，**元件箱里那一格没有图标**（名字 / tooltip 仍在 ✓）
+  —— 而 Fritzing **一句错都不报** ✗，所以只能靠人眼或机器守 ✓。
+  - **判据（源码可复查 ✓）**：`src/model/modelpartshared.cpp:674-684` 的
+    `imageFileName(viewID, viewLayerID)`：
+    `if ((viewImage->layers & (one << viewLayerID)) == 0) return "";` ✓
+    ⇒ fzp 里 `<layer layerId="breadboard"/>` 给这个视图置的是 **Breadboard** 位 ⇒
+    `imageFileName(IconView, Icon)` 返回**空串** ✗ ⇒
+    `partsbinlistview.cpp` `loadImage` → `FSvgRenderer::getPixmap` 拿不到文件 ⇒ 空白格 ✓。
+  - **实测**（本仓 ✓）：`BAS70BRW` / `BAS70DW-04`（后者**复用**前者生成器 ✓）就是这么写的
+    ⇒ 两个件在 MINE 箱里一直只剩空白格 ✓；把那一行改成 `icon` 即恢复 ✓（4 张 svg 一字未动 ✓）。
+  - **机器守** = `tools/fzp_check.py` 第 **⑨** 条 ✓ —— 全仓量过：**117 个件的 iconView 都是 `icon`**
+    ⇒ 这条**零例外**，可以硬判 ✓。
+  - ★ **只查 icon 视图** ✗：另三个视图**允许跨用图层**（面包板件复用面包板图、
+    `SYB-118` 的 schematic/pcb 也写 `breadboardbreadboard` ✓）⇒ 那三处硬判 = 假报警制造机 ✗。
 - **schematic 视图的物理尺寸由 `width/height` 属性决定**（带单位）：若只写无单位数字，
   Fritzing 按默认 DPI 解释 → 尺寸会超大（2026-09-01 FPC 原理图遇到的问题）。要精确控制 mm 尺寸：
   用 **in 单位 + 1000 单位=1in** 比例（如 FPC05-2H10PX 参考 `width="0.20448959in" height="1.17305in"`
@@ -281,6 +296,25 @@
     （改名后 zip 的**条目名不会自己跟着变** ✗ —— `repack_fzpz.py` 按条目名找同名源 ⇒ 旧名只会"原样保留" ✗）。
   - **部署**：新名写进去 **＋ 旧名的 5 个文件移出 MINE** ✗（不移 ⇒ 元件箱里出现**两套件** ✗；
     ✗ 别删 ⇒ 移到 `Documents/Fritzing/_stray_<时间>/` ✓，照 §4 口径 ✓）。
+    ★★ **还要改「元件箱」（`.fzb`）里的引用** ✗（2026-10-15 用户点 MINE 撞出来的 ✓）：
+    改 moduleId = **改身份证** ⇒ **引用它的地方全都要改** —— 草图之外还有**元件箱** ✓：
+    Fritzing 自维护的 MINE 箱（`<Documents>/Fritzing/bins/my_parts.fzb` ✓，出处
+    `partsbinpalette/binmanager/binmanager.cpp:920` `MyPartsBinLocation` ✓）里存的是
+    `<instance moduleIdRef="<旧名>" modelIndex="…" path="…/parts/user/<旧名>.fzp">` ✓
+    ⇒ 只改 `parts/user` ✗ ⇒ 点 MINE 弹「**不能够找到如下 N 个元件**」✗
+    （出处 `src/model/modelbase.cpp:418` ✓）；
+    **2026-10-15 实测**：18 条旧引用（10 电阻 + 6 电感 + 2 晶振 = 那轮改名过的那批 ✓），
+    工具箱里那两个新工具/新参数就是为它加的 ✓：
+    ① **`tools/rename_moduleid.py` 现在顺手改箱** ✓（`--no-bins` 可关 ✓、箱目录 `--bins-dir` ✓；
+       改前备份到 `_deploy_backup_<时间>/` ✓）；
+    ② **新闸门 `tools/check_bins.py`** ✓ —— 判据 = **每条 `moduleIdRef` 都要能在"已装的件"里解析出来**
+       ✓；`my_parts.fzb` + 我们自己的 `fzh_*.fzb` **判 FAIL** ✓、别人家的箱只**报告** ✓（`--all` 才判 ✓）；
+       `--fix` 用**保守映射**（旧名 ⇒ 已装的件里 `old + "-<后缀>"` **恰好一个**才改 ✓，找不到/多个只点名 ✗）。
+    ⚠ **尺子要够宽** ✗（当天连踩两次 ✓）："已装的件"= MINE 的 `parts/user` **＋ Fritzing 自带的
+    `fritzing-parts/{core,obsolete,contrib}`** ✓ —— 只拿 MINE 当尺子会把 Fritzing **找得到**的
+    自带件（如 `2910BBEC34`/`603ColorLEDModuleID`）也报成"缺"✗，并把 Adafruit 那些箱全报成"解析不到"✗
+    （本机实测：含自带库后 **17 个箱全部解析得到** ✓）。
+    ★ **它不进 CI** ✗：要**本机** Fritzing 的箱目录 ⇒ 与 `tools/check_deploy.py` 同一档 ✓（§14 ✓）。
   - ⚠ **本库仍有 9 个件没改** ✗（晶振 `Crystal-3215/3225` → `CrystalModuleID` ✓、模压电感 `SHC*` 6 档
     → `InductorModuleID` ✓、`3Pin-LED` → `LEDModuleID` ✓）—— 它们**同样填不了属性** ✓，
     只是暂时没人报 ✓；要用之前先改 ✓。

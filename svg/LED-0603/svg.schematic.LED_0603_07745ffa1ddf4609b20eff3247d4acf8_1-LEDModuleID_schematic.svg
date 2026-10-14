@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" x="0in" y="0in" width="0.3in" height="0.25in" viewBox="0 0 7.62 6.35">
+<g id="schematic">
+<line class="pin" id="connector0pin" connectorname="A" x1="2.5400" y1="3.1750" x2="0.0000" y2="3.1750" stroke="#787878" stroke-width="0.246944" stroke-linecap="round"/>
+<rect class="terminal" id="connector0terminal" x="0.0000" y="3.1750" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+<line class="pin" id="connector1pin" connectorname="C" x1="5.0800" y1="3.1750" x2="7.6200" y2="3.1750" stroke="#787878" stroke-width="0.246944" stroke-linecap="round"/>
+<rect class="terminal" id="connector1terminal" x="5.0800" y="3.1750" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+<polygon class="other" points="2.5400,1.9050 2.5400,4.4450 5.0800,3.1750" fill="#000000" stroke="none"/>
+<line class="other" x1="5.0800" y1="1.9050" x2="5.0800" y2="4.4450" stroke="#000000" stroke-width="0.3048" stroke-linecap="round"/>
+<line x1="5.8500" y1="1.4500" x2="6.8500" y2="0.4500" stroke="#000000" stroke-width="0.1524" stroke-linecap="round"/><polygon points="6.8500,0.4500 6.6089,1.0857 6.2143,0.6911" fill="#000000" stroke="none"/>
+<line x1="6.8500" y1="2.0500" x2="7.4500" y2="1.4500" stroke="#000000" stroke-width="0.1524" stroke-linecap="round"/><polygon points="7.4500,1.4500 7.2089,2.0857 6.8143,1.6911" fill="#000000" stroke="none"/>
+<text class="text" font-family="'Droid Sans'" stroke="none" stroke-width="0" fill="#8c8c8c" font-size="0.881944" x="1.2700" y="2.75" text-anchor="middle">1</text>
+<text class="text" font-family="'Droid Sans'" stroke="none" stroke-width="0" fill="#8c8c8c" font-size="0.881944" x="6.3500" y="2.75" text-anchor="middle">2</text>
+</g>
+</svg>

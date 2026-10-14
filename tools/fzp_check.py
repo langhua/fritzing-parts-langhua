@@ -21,6 +21,8 @@ fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对�
      它是独立网络，必须**布线时特意接到 GND** —— 并进总线＝看着连上其实没连
   ⑦ **面包板里同名（connectorname）的焊盘必须在同一条总线里**（NC/DNP 除外）
   ⑧ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
+  ⑨ **`iconView` 的 `<layer layerId>` 必须是 `icon`** —— 写别的（如 `breadboard`）会让
+     元件箱里那一格**没有图标**（名字还在），而 Fritzing 一句错都不报（判据 + 实测见正文）
 
 判定：退出码 0 且输出里没有 `FAIL`。
 """
@@ -92,13 +94,39 @@ def main(argv):
     print("视图: %s" % ", ".join("%s=%s" % (v, os.path.basename(files[v]) if files[v] else "缺")
                                 for v in VIEWS))
 
+    # ⑨ **iconView 的图层必须写 `icon`** ✓（2026-10-15 用户报「看不到图标」后钉死 ✓）
+    #   为什么 ✗：Fritzing 用「该视图的图层位」判断图标文件能不能用 ——
+    #     `src/model/modelpartshared.cpp:674-684` 的 `imageFileName(viewID, viewLayerID)`：
+    #         if ((viewImage->layers & (one << viewLayerID)) == 0) return "";
+    #     ⇒ 写成 `breadboard` 时 `imageFileName(IconView, Icon)` 返回**空串** ⇒
+    #       渲染器（`partsbinlistview.cpp` `loadImage` → `FSvgRenderer::getPixmap`）
+    #       拿不到文件 ⇒ 元件箱里那一格**没有图标** ✗（名字/tooltip 仍在 ✓，
+    #       所以人看到的现象就是"空白格" ✗，而 Fritzing **一句错都不报** ✗）。
+    #   2026-10-15 实测 ✓：`BAS70BRW` / `BAS70DW-04`（后者复用前者的生成器）就是
+    #     这么写的 —— 两个件在 MINE 箱里一直只剩空白格 ✓；改成 `icon` 即恢复 ✓。
+    #   ★ 全仓量过 ✓：**117 个件的 iconView 全是 `icon`** ✓ ⇒ 这条**零例外**，可以硬判 ✗；
+    #   ★ 只查 icon 视图 ✗：另三个视图**允许跨用图层**（面包板件复用面包板图、
+    #     `SYB-118` 的 schematic/pcb 也写 `breadboardbreadboard` ✓）⇒ 那三处硬判只会
+    #     变成假报警制造机 ✗。
+    icon_layers = root.findall("./views/iconView/layers/layer")
+    bad_layers = [l.get("layerId") for l in icon_layers if l.get("layerId") != "icon"]
+    if bad_layers:
+        fails.append("FAIL iconView 的 layer layerId=%s（**必须**是 `icon`）—— 写别的会让"
+                     "图标整格空白（判据：modelpartshared.cpp:679 图层位）" % bad_layers)
+
     # 各 svg 的 id 集合（顺便查重复 id = ④）
     ids_of = {}
     for v, p in files.items():
         if not p:
             continue
         a = open(p, encoding="utf-8").read()
-        all_ids = re.findall(r'\bid="([^"]+)"', a)
+        # ★★ 2026-10-15 ✓ **引号两种都认** ✗（原来只写 `id="…"` ✗）：
+        #   起因 = 新建 `LED-0603` 时，它的 **pcb/icon/breadboard 三张沿用 Fritzing core 原图** ✓
+        #   （`svg/_assets/led0603_core_*.svg` ✓），而那批老图用的是**单引号**属性 ✗
+        #   （`<line id='connector0pad' …>` ✓）⇒ 旧正则 **一条也读不到** ✗ ⇒ 误报
+        #   「connector0pad 在 pcb 视图 svg 里找不到」✗ —— 那是**尺子错**、不是数据错 ✗
+        #   （仓规：报 FAIL 先量清是哪一边 ✗）。
+        all_ids = re.findall(r"""\bid\s*=\s*["']([^"']+)["']""", a)
         dup = sorted({i for i in all_ids if all_ids.count(i) > 1})
         if dup and v != "icon":
             fails.append("FAIL %s 视图 svg 里有重复 id：%s" % (v, dup[:6]))
@@ -197,7 +225,8 @@ def main(argv):
         a = open(bb, encoding="utf-8").read()
         groups = {}
         for tag in re.findall(r"<(?:circle|rect|path)\b[^>]*>", a):
-            at = dict(re.findall(r'([\w:-]+)="([^"]*)"', tag))
+            # ★ 属性引号两种都认 ✓（同上面那条：core 老图用单引号 ✗）
+            at = dict(re.findall(r"""([\w:-]+)\s*=\s*["']([^"']*)["']""", tag))
             cid, nm = at.get("id", ""), at.get("connectorname", "")
             if re.fullmatch(r"connector\d+pin", cid) and nm:
                 groups.setdefault(nm, []).append(cid)

@@ -133,6 +133,7 @@ SECTIONS = {
     "discrete": [
         ("二极管（肖特基 / TVS）", ["SOD-123", "SOD-123FL", "SOD-323", "SOD-523",
                                    "BAT54S", "SS34", "BAS70BRW", "BAS70DW-04"]),
+        ("LED（发光二极管）", ["LED 0603"]),
         ("MOSFET", ["8205HA", "8205S"]),
         ("排阻", ["YC164"]),
     ],

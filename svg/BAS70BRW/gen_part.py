@@ -321,7 +321,15 @@ def fzp_xml(outdir):
         ' <description>%s</description>\n'
         ' <views>\n'
         '  <iconView>\n   <layers image="icon/%s_icon.svg">\n'
-        '    <layer layerId="breadboard"/>\n   </layers>\n  </iconView>\n'
+        # ★ icon 视图的图层必须写 "icon"（写 breadboard 会让图标整格空白）：
+        #   Fritzing 用「该视图的图层位」判断图标文件能不能用 ——
+        #   src/model/modelpartshared.cpp:674-684 的 imageFileName()：
+        #       if ((viewImage->layers & (one << viewLayerID)) == 0) return "";
+        #   ⇒ 写成 breadboard 时 imageFileName(IconView, Icon) 返回**空串**
+        #     ⇒ 渲染器拿不到文件 ⇒ 元件箱里那一格没有图标（名字/tooltip 仍在）。
+        #   2026-10-15 实测：BAS70BRW / BAS70DW-04（后者复用本生成器）曾如此，
+        #     两个件在 MINE 箱里都只剩空白格；改成 icon 即恢复。
+        '    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n'
         '  <breadboardView>\n   <layers image="breadboard/%s_breadboard.svg">\n'
         '    <layer layerId="breadboard"/>\n   </layers>\n  </breadboardView>\n'
         '  <schematicView fliphorizontal="true" flipvertical="true">\n'

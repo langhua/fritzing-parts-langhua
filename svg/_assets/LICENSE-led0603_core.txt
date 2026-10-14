@@ -1,0 +1,12 @@
+led0603_core_{icon,breadboard,pcb}.svg —— 来源与许可
+
+来源：Fritzing 官方元件库 fritzing-parts（core 部件）
+      part  = SparkFun-LED-LED-0603（sparkfun-led-led-0603.fzp）
+      icon       ← svg/core/icon/LED-0603.svg
+      breadboard ← svg/core/breadboard/sparkfun-led_led-0603_breadboard.svg
+      pcb        ← svg/core/pcb/sparkfun-led_led-0603_pcb.svg
+作者/版权：www.fritzing.org（原件注释写明 generated from Sparkfun Eagle Library 'SparkFun-LED'）
+许可：CC-BY-SA 3.0（同 fritzing-parts 仓库）
+用途：本库 `svg/LED-0603/` 新件的 icon / breadboard / pcb 视图**逐字沿用**这三张图；
+      该件的**原理图符号为本库自绘**（不在这份素材内）。
+改动：未改动（逐字节拷贝）。

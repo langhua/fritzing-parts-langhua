@@ -15,7 +15,7 @@
  <views>
   <iconView>
    <layers image="icon/BAS70DW_04_SOT363_1_icon.svg">
-    <layer layerId="breadboard"/>
+    <layer layerId="icon"/>
    </layers>
   </iconView>
   <breadboardView>

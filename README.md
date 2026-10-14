@@ -13,7 +13,7 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 129 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 130 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -37,9 +37,9 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 
 [![无源件：Resistor-01005~2512、Capacitor-0402/0603、Supercap-0.47F/1.5F、Crystal-3215/3225、SHC0420~1265 模压电感](docs/preview/passive.svg)](docs/preview/passive.svg)
 
-**分立器件** —— 肖特基 / TVS、双 MOS、排阻
+**分立器件** —— 肖特基 / TVS、LED、双 MOS、排阻
 
-[![分立器件：SOD-123/323/523/123FL、BAT54S、SS34、8205HA/8205S、YC164](docs/preview/discrete.svg)](docs/preview/discrete.svg)
+[![分立器件：SOD-123/323/523/123FL、BAT54S、SS34、BAS70BRW/DW-04、LED-0603、8205HA/8205S、YC164](docs/preview/discrete.svg)](docs/preview/discrete.svg)
 
 > 尺寸口径：图上的数字是 icon 文件里 `width`/`height` **写明的**值（本库新做的元件按实物 1:1 画）；
 > 早年从 `fritzing-parts` 导入的旧件若只写无单位数字（那是视觉比例、不是实物尺寸），图上就**不标数字**。
@@ -61,7 +61,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（133 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（134 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -98,6 +98,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | H1102NLT | Pulse 网络隔离变压器（16 脚 SOIC；4/5/12/13 = NC） | `fzpz/H1102NLT.fzpz` |
 | IP101GR | 单口快速以太网 PHY（IC+，QFN-32 + EPAD） | `fzpz/IP101GR.fzpz` |
 | LD1117 | 三端 LDO 稳压器（SOT-223，可调/固定） | `fzpz/LD1117.fzpz` |
+| LED-0603 | 发光二极管（0603 SMD；icon/面包板/PCB 沿用 Fritzing core 的 SparkFun 原图，**原理图符号本库自绘、两端子显式**） | `fzpz/LED-0603.fzpz` |
 | LM393-A3144-HALL-3PINS | LM393 + A3144 霍尔传感器模块（3 脚） | `fzpz/LM393-A3144-HALL-3PINS.fzpz` |
 | Li300mAh | 3.7V 300mAh 锂聚合物电池（302050，XH2.54 座） | `fzpz/Li300mAh.fzpz` |
 | Li300mAh-1.25 | 3.7V 300mAh 锂聚合物电池（302050，MX1.25 座） | `fzpz/Li300mAh-1.25.fzpz` |

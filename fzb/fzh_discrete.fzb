@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
 <module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_discrete.png">
-    <title>分立器件（二极管 / MOS / 排阻）</title>
+    <title>分立器件（二极管 / LED / MOS / 排阻）</title>
     <instances>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="二极管（肖特基 / TVS）">
         <views>
@@ -32,6 +32,16 @@
             <views/>
         </instance>
         <instance moduleIdRef="BAS70DW_04_SOT363_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/BAS70DW_04_SOT363_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="LED（发光二极管）">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="LED_0603_07745ffa1ddf4609b20eff3247d4acf8_1-LEDModuleID" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LED_0603_07745ffa1ddf4609b20eff3247d4acf8_1-LEDModuleID.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="MOSFET">

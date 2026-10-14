@@ -1,15 +1,15 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-14 10:26:40 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-15 01:17:46 ｜ python 3.13.14 ｜ 平台 win32
 结果：**6 过 / 0 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
-| G1 文本卫生（全仓） | PASS | 0.5s |
+| G1 文本卫生（全仓） | PASS | 0.6s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
 | G3 生成器可重生成（全仓） | PASS | 5.4s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
-| G5 元件闸门（改动件） | PASS | 1.5s |
+| G5 元件闸门（改动件） | PASS | 0.9s |
 | G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
@@ -21,37 +21,23 @@
 - check_readme_table.py rc=0；=== 全部通过 ===
 
 ### G3 生成器可重生成（全仓） -> PASS
-- 带 gen_part.py 的件 63 个；逐字节不一致 0 个；已知例外 2 个
+- 带 gen_part.py 的件 64 个；逐字节不一致 0 个；已知例外 2 个
 - 已知例外（允许清单，理由在代码里）：Capacitor-0402（入库那份 fzp 的 <description> 写的是 1 / 2，而生成器现在写 A generic capacitor（其余字节全同）⇒ 入库产物是旧版/手工版；要统一得重生成并提交该件（用户 2026-10-13 定：其它件先不动））：svg.pcb.C0402_b41d7c0a5e93f2d86a14c7b3f5e90d21_1-CapacitorModuleID_pcb.svg
 - 已知例外（允许清单，理由在代码里）：T-Halow-RJ45（icon 与生成器产物不同（该件是 T-Halow-RJ45 仓的参考件，不进本库预览图/元件箱，见 AGENTS §10））：svg.icon.T-Halow-RJ45_icon.svg
 
 ### G4 fzpz 装箱一致（全仓） -> PASS
-- 比对条目 654 条；外来包 1 个（整包都没有同名源 ⇒ 只提示）；条目对不上源 0 条；同名源不唯一 0 条；非零件条目 0 条
+- 比对条目 659 条；外来包 1 个（整包都没有同名源 ⇒ 只提示）；条目对不上源 0 条；同名源不唯一 0 条；非零件条目 0 条
 - 口径：与**入库那份**（LF）逐字节比 ✓ —— 工作区 CRLF 不算差异；zip 载荷本身必须是 LF（否则换平台解出来与 svg/ 不一致 ✗，跑 `py -3.13 tools\repack_fzpz.py` 修）
 - 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 10 个件
-- 已过：CH347T / fzp_check rc=0
-- 已过：CH347T / schem_check rc=0
-- 已过：Capacitor-0402 / fzp_check rc=0
-- 已过：Crystal-3215 / fzp_check rc=0
-- 已过：Crystal-3225 / fzp_check rc=0
-- 已过：FPC-05F-12P-H15 / fzp_check rc=0
-- 已过：MX-1.25-2P-H / fzp_check rc=0
-- 已过：MX-1.25-3P-V / fzp_check rc=0
-- 已过：PH-2.0-3P-V / fzp_check rc=0
-- 已过：SH-1.0-3P-V / fzp_check rc=0
-- 已过：USB-B01 / fzp_check rc=0
-- 已过：USB-B01 / schem_check rc=0
-- 跳过：Capacitor-0402 / schem_check rc=2（跳过/提示）：=== 不适用：只有 1/2 个脚的引线贴着框 —— 这套符号的脚不是沿方框四边排的 ===
-- 跳过：Crystal-3215 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Crystal-3225 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：FPC-05F-12P-H15 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：MX-1.25-2P-H / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：MX-1.25-3P-V / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：PH-2.0-3P-V / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：SH-1.0-3P-V / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 3 个件
+- 已过：BAS70BRW / fzp_check rc=0
+- 已过：BAS70DW-04 / fzp_check rc=0
+- 已过：LED-0603 / fzp_check rc=0
+- 跳过：BAS70BRW / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：BAS70DW-04 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
+- 跳过：LED-0603 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
 
 ### G6 单位口径（全仓） -> PASS
 -    ⚠ ③ part_box.py:357 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★★ 2026-09-27 修 ✓：`px` 由 **25.4/96 ✗ 改成 25.4/72** ✓（= 1/72 英寸 ✓）。
