@@ -74,8 +74,8 @@
        gorn="0.0.1"
        width="7.5834675"
        id="connector0terminal"
-       x="0"
-       y="37.621033"
+       x="4.8611974"
+       y="37.509918"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -125,8 +125,8 @@
        gorn="0.0.6"
        width="7.5834675"
        id="connector1terminal"
-       x="0"
-       y="137.6228"
+       x="4.8611974"
+       y="137.51169"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -176,8 +176,8 @@
        gorn="0.0.11"
        width="7.5834675"
        id="connector2terminal"
-       x="0"
-       y="237.62456"
+       x="4.8611974"
+       y="237.51346"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -227,8 +227,8 @@
        gorn="0.0.16"
        width="7.5834675"
        id="connector3terminal"
-       x="0"
-       y="337.62634"
+       x="4.8611974"
+       y="337.51525"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -278,8 +278,8 @@
        gorn="0.0.21"
        width="7.5834675"
        id="connector4terminal"
-       x="0"
-       y="437.62811"
+       x="4.8611974"
+       y="437.51702"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -329,8 +329,8 @@
        gorn="0.0.26"
        width="7.5834675"
        id="connector5terminal"
-       x="0"
-       y="537.62994"
+       x="4.8611974"
+       y="537.51879"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -380,8 +380,8 @@
        gorn="0.0.31"
        width="7.5834675"
        id="connector6terminal"
-       x="0"
-       y="637.63165"
+       x="4.8611974"
+       y="637.52056"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -431,8 +431,8 @@
        gorn="0.0.36"
        width="7.5834675"
        id="connector7terminal"
-       x="0"
-       y="737.63342"
+       x="4.8611974"
+       y="737.52233"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -482,8 +482,8 @@
        gorn="0.0.41"
        width="7.5834675"
        id="connector8terminal"
-       x="0"
-       y="837.63519"
+       x="4.8611974"
+       y="837.52416"
        fill="none"
        stroke-width="13.8889" />
     <polyline
@@ -533,8 +533,8 @@
        gorn="0.0.46"
        width="7.5834675"
        id="connector9terminal"
-       x="0"
-       y="937.63696"
+       x="4.8611974"
+       y="937.52581"
        fill="none"
        stroke-width="13.8889" />
     <polyline

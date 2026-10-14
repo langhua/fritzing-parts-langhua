@@ -69,8 +69,8 @@
    height="1.135"
    id="connector0terminal"
    width="0.688"
-   x="3.803"
-   y="20.465" />
+   x="3.801"
+   y="20.6785" />
         <g
    transform="translate(3.429,6.4262)"
    id="g25">
@@ -127,8 +127,8 @@
    height="1.134"
    id="connector1terminal"
    width="0.688"
-   x="3.803"
-   y="-0.003" />
+   x="3.801"
+   y="-0.22" />
         <line
    fill="none"
    gorn="0.1.8"

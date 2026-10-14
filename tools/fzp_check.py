@@ -38,19 +38,16 @@ import zipfile
 
 VIEWS = ("breadboard", "schematic", "pcb", "icon")
 
-# ★ 第 ⑩ 条的**待修清单** ✓（2026-10-15 ✓）：这些件的 schematic 端子用了老写法
-#   （22×22 rect、`x/y` 写在引脚线外端 ⇒ 端子**中心**偏里 11 单位 ✗）。
-#   为什么不一次改完 ✗：改了会影响**引用它们的草图**（线端要同批重跑 ✗）⇒
-#   用户 2026-10-15 定「**先拿几个典型的试试，我帮你检验**」✓ ⇒
-#   清单内的件**只提示、不判 FAIL** ✓；不在清单里的一律硬判 ✗（防新增/防修好的又退回去 ✓）。
-#   已修（已从本清单移出 ✓）：AT24C02 / LD1117 / USB-B01 / TXW8301 ✓。
-TERM_BACKLOG = {
-    "CH340C", "CH340E", "CH340K", "CH340N", "CH340X", "CN3165", "ESP-12F",
-    "ETA3425S2F", "FPC-05F-12P-H15", "FPC05-2H10PX", "H1102NLT", "PC817_SOP4",
-    "RT6150AGQW_rev_1", "RT9013", "RT9193", "SOD-123", "SOD-123FL", "SOD-323",
-    "SOD-523", "SY8089", "TPS63051RMWR", "W25Q16JV", "XC6206P332MR",
-    "CH32V203C8T6", "TX-AH-R900PNR", "TX-AH-R900PNR_rev_1",
-}
+# ★ 第 ⑩ 条的**待修清单**已于 2026-10-15 **删除** ✓ —— 全仓 26 件 / 271 个端子已推平，
+#   现在这条**零例外硬判** ✓（不必再编“容差”或豁免 ✗）。
+#   当时的底账：`22×22` rect 的 `x/y` 写在外端 ⇒ 端子**中心**偏里 11 单位（≈0.28 mm ✗）、
+#   `CN3165` 更跨了**整条引脚**（偏 65 单位 ≈ 1.65 mm ✗✗）、`FPC*` / `SOD-*` / `PC817_SOP4`
+#   把端子贴画布边 ✗、`ESP-12F` 贴了画布外（x 为负 ✗）。
+#   修法分两类 ✓：① **有 `gen_part.py`** 的 13 件（`CH340C/CH340E/CH340N/ETA3425S2F/H1102NLT/`
+#   `RT6150AGQW_rev_1/SY8089/W25Q16JV/XC6206P332MR/CH32V203C8T6/TX-AH-R900PNR{,_rev_1}/CN3165/`
+#   `FPC-05F-12P-H15`）改**生成器**再重跑 ✓；② **无生成器的老件** 12 件（`CH340K/CH340X/ESP-12F/`
+#   `RT9013/RT9193/SOD-123{,FL}/SOD-323/SOD-523/PC817_SOP4/TPS63051RMWR/FPC05-2H10PX`）
+#   直接改 svg（只在 terminal 元素内部换 `x/y`，保留原格式 ✓）。
 
 
 def main(argv):
@@ -138,7 +135,9 @@ def main(argv):
     #     否则连接点会偏：`LED-0603` 的 2 脚曾把 rect 写在**阴极杠**上（偏半个引脚 ✗，用户截图 ✓）；
     #     一批老件则是 22×22 rect 的 `x/y` 写在外端 ⇒ 中心偏里 11 单位 ✗。
     #   外端 = 离**本体包围盒中心**较远的那一端 ✓（不赌引脚自左向右 ✗）。
-    #   ★ 待修清单 `TERM_BACKLOG`（带理由、点名打出 ✓，同 §14 口径）⇒ 清单内只提示 ✓。
+    #   ★ 外端 = 离**本体包围盒中心**较远的那一端 ✓（不赌引脚自左向右 ✗）。
+    #   ★ 2026-10-15 起**零例外** ✓（待修清单已删）：全仓 26 件 / 271 个端子推平后，
+    #     再无一件偏离 ✓；改完先拿 4 件样本让用户检验（他说 ok ✓）再推平全仓 ✓。
     if files.get("schematic"):
         _sch = open(files["schematic"], encoding="utf-8", errors="replace").read()
 
@@ -197,12 +196,8 @@ def main(argv):
                 if _dist > max(0.01, _span * 0.02):
                     _bad.append("%s 偏 %.3f" % (_pid, _dist))
             if _bad:
-                if part in TERM_BACKLOG:
-                    notes.append("注: （待修清单 ✓）%d 个端子不在引线外端：%s"
-                                 % (len(_bad), "; ".join(_bad[:3])))
-                else:
-                    fails.append("FAIL 端子不在引脚线**外端**（应居中 ✓）：%s"
-                                 % "; ".join(_bad[:4]))
+                fails.append("FAIL 端子不在引脚线**外端**（应居中 ✓）：%s"
+                             % "; ".join(_bad[:4]))
         else:
             notes.append("注: （跳过 ⑩）原理图引脚不是 `<line>` 或没有本体图形 ⇒ 量不了外端 ✓")
 

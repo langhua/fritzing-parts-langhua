@@ -493,8 +493,8 @@
        stroke="none"
        stroke-width="0"
        width="9.9999997e-05"
-       x="17.384277"
-       y="-2.7562313" />
+       x="17.413572"
+       y="-2.6705287" />
     <text
        class="text"
        fill="#8c8c8c"
@@ -561,8 +561,8 @@
        stroke="none"
        stroke-width="0"
        width="9.9999997e-05"
-       x="11.811003"
-       y="-2.7940006" />
+       x="11.840656"
+       y="-2.6705287" />
     <line
        class="pin"
        connectorname="GND"
@@ -584,8 +584,8 @@
        stroke="none"
        stroke-width="0"
        width="9.9999997e-05"
-       x="17.399004"
-       y="18.698673" />
+       x="17.39049"
+       y="18.530817" />
     <line
        class="pin"
        connectorname="RSDVG"
@@ -607,8 +607,8 @@
        stroke="none"
        stroke-width="0"
        width="9.9999997e-05"
-       x="11.836403"
-       y="18.669004" />
+       x="11.817574"
+       y="18.530817" />
     <text
        class="text"
        fill="#8c8c8c"

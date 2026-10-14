@@ -237,7 +237,14 @@ def gen_schematic_svg():
                  f'x1="8.6529312" y1="{y:.4f}" x2="107.55747" y2="{y:.4f}" '
                  f'stroke="#000000" stroke-width="9.72223" stroke-linecap="round" stroke-linejoin="round"/>\n')
         # terminal
-        s.append(f'  <rect id="connector{i}terminal" x="0" y="{y - 1.333:.4f}" '
+        # ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 必须让**中心**落在引脚线**外端**（此处 = x2 那侧的
+        #   反端 `8.6529312` ✓）：x = 外端 − 宽/2 = 4.8612 ✓、y = 引脚 y − 高/2 ✓。
+        #   判据 = Fritzing 取端子元素的**包围盒中心**（`fsvgrenderer.cpp:757-795`
+        #   `calcTerminalPoint()` ✓）⇒ 否则拉出来的导线接不到引脚尖 ✗。
+        #   ✗ 原来写 `x="0"` / `y="{y - 1.333}"` ⇒ 端子**贴画布左边缘** ⇒ 中心偏外
+        #     （x 偏 4.86、y 偏 0.11 ✗，2026-10-15 修 ✓）。
+        s.append(f'  <rect id="connector{i}terminal" x="{8.6529312 - 7.5834675 / 2:.4f}" '
+                 f'y="{y - 2.8889401 / 2:.4f}" '
                  f'width="7.5834675" height="2.8889401" fill="none"/>\n')
         # 箭头 polyline（尖端朝右，变换同参考）
         mid = 3.6 + i * 7.2

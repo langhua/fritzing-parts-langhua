@@ -122,7 +122,12 @@ def gen_schematic_svg():
         tx = BX0 + CH if left else BX1 - CH
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
                  f'x1="{px0}" y1="{y}" x2="{px1}" y2="{y}" stroke="#000000" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{min(px0, px1)}" y="{y - 11}" width="{WIRE}" height="22" fill="none"/>\n')
+        # ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 22×22 的要**居中**在引脚线**外端**：
+        #   `px1` 就是外端（左右两侧都是 ✓，因为 `px1 = px0 ∓ WIRE`）⇒ x = `px1 - 11` ✓。
+        #   判据 = Fritzing 取端子**包围盒中心**（`fsvgrenderer.cpp:757-795` ✓）。
+        #   ✗ 原来写 `x=min(px0,px1)`、`width=WIRE` ⇒ 端子**跨整条引脚** ⇒ 中心落在引脚
+        #     **中点**（偏 65 单位 ≈ 1.65 mm ✗✗，2026-10-15 修 ✓）。
+        L.append(f'  <rect id="connector{cn}terminal" x="{px1 - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{(px0 + px1) // 2}" y="{y - 24}" font-size="{FN}" fill="#000000" text-anchor="middle" '
                  f'font-family="DroidSans">{cn + 1}</text>\n')
         L.append(f'  <text x="{tx}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="#000000" text-anchor="{anchor}" '
@@ -136,7 +141,7 @@ def gen_schematic_svg():
     y = BY1
     L.append(f'  <line class="pin" id="connector{EPAD_CN}pin" connectorname="EPAD" '
              f'x1="{BX0 + BW // 2}" y1="{y}" x2="{BX0 + BW // 2}" y2="{y + WIRE}" stroke="#000000" stroke-width="5"/>\n')
-    L.append(f'  <rect id="connector{EPAD_CN}terminal" x="{BX0 + BW // 2 - 11}" y="{y + WIRE}" width="22" height="22" fill="none"/>\n')
+    L.append(f'  <rect id="connector{EPAD_CN}terminal" x="{BX0 + BW // 2 - 11}" y="{y + WIRE - 11}" width="22" height="22" fill="none"/>\n')
     L.append(f'  <text x="{BX0 + BW // 2 - 24}" y="{y + WIRE // 2}" font-size="{FN}" fill="#000000" '
              f'text-anchor="middle" font-family="DroidSans" '
              f'transform="rotate(270 {BX0 + BW // 2 - 24} {y + WIRE // 2})">9</text>\n')

@@ -158,7 +158,12 @@ def gen_schematic_svg():
         col = BLUE if cn in SCHEM_BLUE else "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 22×22 的要**居中**在引脚线**外端**：
+        #   中心 = x + 11（或 y + 11）⇒ 一律写「外端 − 11」✗ 别写「外端」。
+        #   判据 = Fritzing 取端子元素的**包围盒中心**（`fsvgrenderer.cpp:757-795`
+        #   `calcTerminalPoint()` ✓）⇒ 写在外端 = 连接点**偏里 11 单位**（≈0.28 mm ✗，
+        #   拉出来的导线接不到引脚尖 ✗）。2026-10-15 修 ✓（先在 4 件样本上检验认可再推平 ✓）。
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{i + 1}</text>\n')
         L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="start" '
@@ -171,7 +176,7 @@ def gen_schematic_svg():
         lab = PINS[cn]
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{x}" y1="{BY1}" x2="{x}" y2="{BY1 + WIRE}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY1 + WIRE}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY1 + WIRE - 11}" width="22" height="22" fill="none"/>\n')
         # 数字在引脚左侧、从下至上（rotate 270），与名同字号同色
         # 数字右侧距引脚半个字符高（FN/2）→ 锚点 x-FN（右缘 x-FN/2，与名左缘对齐）
         L.append(f'  <text x="{x - FN}" y="{BY1 + 55}" font-size="{FN}" fill="{col}" text-anchor="middle" '
@@ -186,7 +191,7 @@ def gen_schematic_svg():
         col = BLUE if cn in SCHEM_BLUE else "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{25 + i}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="end" '
@@ -199,7 +204,7 @@ def gen_schematic_svg():
         lab = PINS[cn]
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{x}" y1="{BY0}" x2="{x}" y2="{BY0 - WIRE}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY0 - WIRE}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY0 - WIRE - 11}" width="22" height="22" fill="none"/>\n')
         # 数字在引脚左侧、从下至上（rotate 270），与名同字号同色
         # 数字右侧距引脚半个字符高（FN/2）→ 锚点 x-FN（右缘 x-FN/2，与名左缘对齐）
         L.append(f'  <text x="{x - FN}" y="{BY0 - 50}" font-size="{FN}" fill="{col}" text-anchor="middle" '

@@ -232,8 +232,8 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="0.13315836"
-         y="8.2508965" />
+         x="0.123472"
+         y="8.2893963" />
       <line
          class="pin"
          connectorname="STAT1"
@@ -267,8 +267,8 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="0.12347201"
-         y="14.042097" />
+         x="0.123472"
+         y="14.035265" />
       <text
          class="text"
          fill="#8c8c8c"
@@ -317,7 +317,7 @@
          stroke-width="0"
          width="9.9999997e-05"
          x="0.123472"
-         y="19.757099" />
+         y="19.781132" />
       <text
          class="text"
          fill="#8c8c8c"
@@ -427,7 +427,7 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="30.867165"
+         x="30.873823"
          y="2.6736126" />
       <text
          class="text"
@@ -463,8 +463,8 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="30.867165"
-         y="8.2762966" />
+         x="30.873823"
+         y="8.2960091" />
       <text
          class="text"
          fill="#8c8c8c"
@@ -499,8 +499,8 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="30.867165"
-         y="14.016698" />
+         x="30.873823"
+         y="14.041878" />
       <text
          class="text"
          fill="#8c8c8c"
@@ -535,7 +535,7 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="30.867165"
+         x="30.873823"
          y="25.533613" />
       <text
          class="text"
@@ -571,8 +571,8 @@
          stroke="none"
          stroke-width="0"
          width="9.9999997e-05"
-         x="30.765566"
-         y="19.807899" />
+         x="30.873823"
+         y="19.787745" />
       <text
          class="text"
          fill="#8c8c8c"

@@ -59,8 +59,8 @@
        height="1.135"
        id="connector0terminal"
        width="0.688"
-       x="3.803"
-       y="20.465" /><g
+       x="3.801"
+       y="20.6785" /><g
        transform="translate(3.429,6.4262)"
        id="g24"><g
          id="g22"><g
@@ -78,8 +78,8 @@
        height="1.134"
        id="connector1terminal"
        width="0.688"
-       x="3.803"
-       y="-0.003" /><line
+       x="3.801"
+       y="-0.22" /><line
        fill="none"
        gorn="0.0.8"
        id="connector1pin"

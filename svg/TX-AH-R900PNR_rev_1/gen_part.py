@@ -356,7 +356,12 @@ def schematic_svg():
         y = BY1 - CM - (12 - i) * P
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 22×22 的要**居中**在引脚线**外端**：
+        #   中心 = x + 11（或 y + 11）⇒ 一律写「外端 − 11」✗ 别写「外端」。
+        #   判据 = Fritzing 取端子元素的**包围盒中心**（`fsvgrenderer.cpp:757-795`
+        #   `calcTerminalPoint()` ✓）⇒ 写在外端 = 连接点**偏里 11 单位**（≈0.28 mm ✗，
+        #   拉出来的导线接不到引脚尖 ✗）。2026-10-15 修 ✓（先在 4 件样本上检验认可再推平 ✓）。
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
                  f'font-family="DroidSans">{i + 1}</text>\n')
         L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="start" '
@@ -368,7 +373,7 @@ def schematic_svg():
         lab = PINS_EDGE[cn]
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{x}" y1="{BY1}" x2="{x}" y2="{BY1 + WIRE}" stroke="{BLK}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY1 + WIRE}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{x - 11}" y="{BY1 + WIRE - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{x - FN}" y="{BY1 + 55}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
                  f'font-family="DroidSans" transform="rotate(270 {x - FN} {BY1 + 55})">{14 + i}</text>\n')
         ln = int(len(lab) * FN * 0.58)
@@ -380,7 +385,7 @@ def schematic_svg():
         y = BY1 - CM - i * P
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{cn}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="{BLK}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{BLK}" text-anchor="middle" '
                  f'font-family="DroidSans">{24 + i}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{BLK}" text-anchor="end" '

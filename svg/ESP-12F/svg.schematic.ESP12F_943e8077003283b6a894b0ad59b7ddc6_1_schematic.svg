@@ -83,8 +83,8 @@
              height="0.246944"
              id="connector0terminal"
              width="0.246944"
-             x="-0.123472"
-             y="4.9565" />
+             x="0"
+             y="4.956528" />
           <line
              gorn="0.0.1.0.0.3"
              id="connector1pin"
@@ -104,8 +104,8 @@
              height="0.246944"
              id="connector1terminal"
              width="0.246944"
-             x="-0.123472"
-             y="7.4965" />
+             x="0"
+             y="7.496528" />
           <line
              gorn="0.0.1.0.0.6"
              id="connector2pin"
@@ -125,8 +125,8 @@
              height="0.246944"
              id="connector2terminal"
              width="0.246944"
-             x="-0.123472"
-             y="10.0365" />
+             x="0"
+             y="10.036528" />
           <line
              gorn="0.0.1.0.0.9"
              id="connector3pin"
@@ -146,8 +146,8 @@
              height="0.246944"
              id="connector3terminal"
              width="0.246944"
-             x="-0.123472"
-             y="12.5765" />
+             x="0"
+             y="12.576528" />
           <line
              gorn="0.0.1.0.0.12"
              id="connector4pin"
@@ -167,8 +167,8 @@
              height="0.246944"
              id="connector4terminal"
              width="0.246944"
-             x="-0.123472"
-             y="15.1165" />
+             x="0"
+             y="15.116528" />
           <line
              gorn="0.0.1.0.0.15"
              id="connector5pin"
@@ -188,8 +188,8 @@
              height="0.246944"
              id="connector5terminal"
              width="0.246944"
-             x="-0.123472"
-             y="17.6565" />
+             x="0"
+             y="17.656528" />
           <line
              gorn="0.0.1.0.0.18"
              id="connector6pin"
@@ -209,8 +209,8 @@
              height="0.246944"
              id="connector6terminal"
              width="0.246944"
-             x="-0.123472"
-             y="20.1965" />
+             x="0"
+             y="20.196528" />
           <line
              gorn="0.0.1.0.0.21"
              id="connector7pin"
@@ -230,8 +230,8 @@
              height="0.246944"
              id="connector7terminal"
              width="0.246944"
-             x="-0.123472"
-             y="22.7365" />
+             x="0"
+             y="22.736528" />
         </g>
         <g
            gorn="0.0.1.0.1"
@@ -256,8 +256,8 @@
              height="0.246944"
              id="connector15terminal"
              width="0.246944"
-             x="32.8965"
-             y="4.9565" />
+             x="32.773028"
+             y="4.956528" />
           <line
              gorn="0.0.1.0.1.3"
              id="connector14pin"
@@ -277,8 +277,8 @@
              height="0.246944"
              id="connector14terminal"
              width="0.246944"
-             x="32.8965"
-             y="7.4965" />
+             x="32.773028"
+             y="7.496528" />
           <line
              gorn="0.0.1.0.1.6"
              id="connector13pin"
@@ -298,8 +298,8 @@
              height="0.246944"
              id="connector13terminal"
              width="0.246944"
-             x="32.8965"
-             y="10.0365" />
+             x="32.773028"
+             y="10.036528" />
           <line
              gorn="0.0.1.0.1.9"
              id="connector12pin"
@@ -319,8 +319,8 @@
              height="0.246944"
              id="connector12terminal"
              width="0.246944"
-             x="32.8965"
-             y="12.5765" />
+             x="32.773028"
+             y="12.576528" />
           <line
              gorn="0.0.1.0.1.12"
              id="connector11pin"
@@ -340,8 +340,8 @@
              height="0.246944"
              id="connector11terminal"
              width="0.246944"
-             x="32.8965"
-             y="15.1165" />
+             x="32.773028"
+             y="15.116528" />
           <line
              gorn="0.0.1.0.1.15"
              id="connector10pin"
@@ -361,8 +361,8 @@
              height="0.246944"
              id="connector10terminal"
              width="0.246944"
-             x="32.8965"
-             y="17.6565" />
+             x="32.773028"
+             y="17.656528" />
           <line
              gorn="0.0.1.0.1.18"
              id="connector9pin"
@@ -382,8 +382,8 @@
              height="0.246944"
              id="connector9terminal"
              width="0.246944"
-             x="32.8965"
-             y="20.1965" />
+             x="32.773028"
+             y="20.196528" />
           <line
              gorn="0.0.1.0.1.21"
              id="connector8pin"
@@ -403,8 +403,8 @@
              height="0.246944"
              id="connector8terminal"
              width="0.246944"
-             x="32.8965"
-             y="22.7365" />
+             x="32.773028"
+             y="22.736528" />
         </g>
       </g>
       <g
