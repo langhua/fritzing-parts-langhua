@@ -220,7 +220,10 @@ def gen_schematic_svg():
                  'x2="%d" y2="%d" stroke="#000000" stroke-width="5"/>\n'
                  % (i, name, BX0, y, BX0 - WIRE, y))
         L.append('  <rect id="connector%dterminal" x="%d" y="%d" width="22" height="22" '
-                 'fill="none"/>\n' % (i, BX0 - WIRE, y - 11))
+                 'fill="none"/>\n' % (i, BX0 - WIRE - 11, y - 11))
+        # ↑ ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 要**居中**在引脚线外端（`BX0-WIRE`）：x = 外端 − 11 ✓
+        #   （Fritzing 取端子元素的**包围盒中心** —— `fsvgrenderer.cpp:757-795 calcTerminalPoint()` ✓，
+        #    核心库同此 ✓）。✗ 原来写 `x = 外端` ⇒ 连接点偏里 11 单位 ✗（2026-10-15 修 ✓）。
         L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
                  'font-family="DroidSans">%d</text>\n' % (BX0 - WIRE // 2, y - 24, FN, i + 1))
         L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="start" '

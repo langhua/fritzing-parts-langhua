@@ -108,7 +108,11 @@ def gen_schematic_svg():
         col = "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
                  f'x1="{BX0}" y1="{y}" x2="{BX0 - WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★★ 端子 rect 的 `x/y` 是**左上角** ⇒ 22×22 的要**居中**在引脚线外端（`BX0-WIRE`）：
+        #   x = 外端 − 11 ✓（Fritzing 取的是端子元素的**包围盒中心** ——
+        #   `fsvgrenderer.cpp:757-795` 的 `calcTerminalPoint()` ✓，核心库同此 ✓）。
+        #   ✗ 原来写 `x = 外端` ⇒ 连接点**偏里 11 单位**、导线接不到引脚尖 ✗（2026-10-15 修 ✓）。
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX0 - WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX0 - WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{i + 1}</text>\n')
         L.append(f'  <text x="{BX0 + CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="start" '
@@ -120,7 +124,10 @@ def gen_schematic_svg():
         col = "#000000"
         L.append(f'  <line class="pin" id="connector{cn}pin" connectorname="{esc(PINS[cn])}" '
                  f'x1="{BX1}" y1="{y}" x2="{BX1 + WIRE}" y2="{y}" stroke="{col}" stroke-width="5"/>\n')
-        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
+        # ★ 右侧同理，但 **x 仍要「外端 − 11」** ✗（不是 +11 ✗）：rect 的中心永远是 `x + 11`，
+        #   与它在左在右无关 ⇒ 两侧同一条式子 ✓（2026-10-15 尺子当场抓到过这个镜像错 ✗：
+        #   +11 ⇒ 连接点跑到引脚尖**外面 22 单位** ✗）。
+        L.append(f'  <rect id="connector{cn}terminal" x="{BX1 + WIRE - 11}" y="{y - 11}" width="22" height="22" fill="none"/>\n')
         L.append(f'  <text x="{BX1 + WIRE // 2}" y="{y - 24}" font-size="{FN}" fill="{col}" text-anchor="middle" '
                  f'font-family="DroidSans">{per * 2 - i}</text>\n')
         L.append(f'  <text x="{BX1 - CH}" y="{y + BASELINE_OFF}" font-size="{FN}" fill="{col}" text-anchor="end" '

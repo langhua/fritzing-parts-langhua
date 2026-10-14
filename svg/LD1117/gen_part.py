@@ -155,7 +155,9 @@ def gen_schematic_svg():
     L.append('  <line class="pin" id="connector2pin" connectorname="VIN" x1="%d" y1="%d" x2="%d" y2="%d" '
              'stroke="#000000" stroke-width="5"/>\n' % (BX0, y, BX0 - WIRE, y))
     L.append('  <rect id="connector2terminal" x="%d" y="%d" width="22" height="22" fill="none"/>\n'
-             % (BX0 - WIRE, y - 11))
+             % (BX0 - WIRE - 11, y - 11))       # ★ 端子 rect 的 x/y = 左上角 ⇒ 居中在外端：外端 − 11 ✓
+                                             #   （Fritzing 取端子元素的**包围盒中心** ✓
+                                             #    `fsvgrenderer.cpp:757-795` ✓；2026-10-15 修 ✓）
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
              'font-family="DroidSans">3</text>\n' % (BX0 - WIRE // 2, y - 24, FN))
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="start" '
@@ -164,7 +166,7 @@ def gen_schematic_svg():
     L.append('  <line class="pin" id="connector1pin" connectorname="VOUT" x1="%d" y1="%d" x2="%d" y2="%d" '
              'stroke="#000000" stroke-width="5"/>\n' % (BX1, y, BX1 + WIRE, y))
     L.append('  <rect id="connector1terminal" x="%d" y="%d" width="22" height="22" fill="none"/>\n'
-             % (BX1 + WIRE, y - 11))
+             % (BX1 + WIRE - 11, y - 11))       # ★ 右侧也走「外端 − 11」✗（中心 = x+11，与左右无关 ✓）
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
              'font-family="DroidSans">2</text>\n' % (BX1 + WIRE // 2, y - 24, FN))
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="end" '
@@ -174,7 +176,7 @@ def gen_schematic_svg():
     L.append('  <line class="pin" id="connector0pin" connectorname="ADJ/GND" x1="%d" y1="%d" x2="%d" y2="%d" '
              'stroke="#000000" stroke-width="5"/>\n' % (x, BY1, x, BY1 + WIRE))
     L.append('  <rect id="connector0terminal" x="%d" y="%d" width="22" height="22" fill="none"/>\n'
-             % (x - 11, BY1 + WIRE))
+             % (x - 11, BY1 + WIRE - 11))       # ★ 竖直脚 ⇒ 偏在 y 上：外端 − 11 ✓（x 已居中 ✓）
     L.append('  <text x="%d" y="%d" font-size="%d" fill="#000000" text-anchor="middle" '
              'font-family="DroidSans" transform="rotate(270 %d %d)">1</text>\n'
              % (x - FN // 2 - 10, BY1 + WIRE // 2, FN, x - FN // 2 - 10, BY1 + WIRE // 2))

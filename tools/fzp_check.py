@@ -23,6 +23,9 @@ fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对�
   ⑧ `--fzpz`：包里成员是**平铺**的（part.<id>.fzp + 4 个 svg，无子目录），且与本目录文件一致
   ⑨ **`iconView` 的 `<layer layerId>` 必须是 `icon`** —— 写别的（如 `breadboard`）会让
      元件箱里那一格**没有图标**（名字还在），而 Fritzing 一句错都不报（判据 + 实测见正文）
+  ⑩ **`schematic` 视图的 `connectorNterminal` 必须落在它自己引脚线的**外端**（居中 ✓）**
+     —— 否则连接点会偏（导线接不到引脚尖 ✗）。Fritzing 取的是端子元素的**包围盒中心**
+     （`fsvgrenderer.cpp:757-795 calcTerminalPoint()`）⇒ 22×22 那种 rect 必须写成“外端 − 11” ✓
 
 判定：退出码 0 且输出里没有 `FAIL`。
 """
@@ -34,6 +37,20 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 VIEWS = ("breadboard", "schematic", "pcb", "icon")
+
+# ★ 第 ⑩ 条的**待修清单** ✓（2026-10-15 ✓）：这些件的 schematic 端子用了老写法
+#   （22×22 rect、`x/y` 写在引脚线外端 ⇒ 端子**中心**偏里 11 单位 ✗）。
+#   为什么不一次改完 ✗：改了会影响**引用它们的草图**（线端要同批重跑 ✗）⇒
+#   用户 2026-10-15 定「**先拿几个典型的试试，我帮你检验**」✓ ⇒
+#   清单内的件**只提示、不判 FAIL** ✓；不在清单里的一律硬判 ✗（防新增/防修好的又退回去 ✓）。
+#   已修（已从本清单移出 ✓）：AT24C02 / LD1117 / USB-B01 / TXW8301 ✓。
+TERM_BACKLOG = {
+    "CH340C", "CH340E", "CH340K", "CH340N", "CH340X", "CN3165", "ESP-12F",
+    "ETA3425S2F", "FPC-05F-12P-H15", "FPC05-2H10PX", "H1102NLT", "PC817_SOP4",
+    "RT6150AGQW_rev_1", "RT9013", "RT9193", "SOD-123", "SOD-123FL", "SOD-323",
+    "SOD-523", "SY8089", "TPS63051RMWR", "W25Q16JV", "XC6206P332MR",
+    "CH32V203C8T6", "TX-AH-R900PNR", "TX-AH-R900PNR_rev_1",
+}
 
 
 def main(argv):
@@ -113,6 +130,81 @@ def main(argv):
     if bad_layers:
         fails.append("FAIL iconView 的 layer layerId=%s（**必须**是 `icon`）—— 写别的会让"
                      "图标整格空白（判据：modelpartshared.cpp:679 图层位）" % bad_layers)
+
+    # ⑩ **端子必须落在引脚线的外端** ✓（2026-10-15 用户报「端点位置放错了」后加 ✓）
+    #   判据出处：Fritzing 取端子元素的**包围盒中心**（`fsvgrenderer.cpp:757-795` 的
+    #     `calcTerminalPoint()` ✓）；而**核心库**的端子 rect 是“以引脚线末端为中心”画的
+    #     （实测离两端 0.0x / 95.0x ✓）⇒ 我们的件也必须 `端子中心 == 引脚线外端` ✓，
+    #     否则连接点会偏：`LED-0603` 的 2 脚曾把 rect 写在**阴极杠**上（偏半个引脚 ✗，用户截图 ✓）；
+    #     一批老件则是 22×22 rect 的 `x/y` 写在外端 ⇒ 中心偏里 11 单位 ✗。
+    #   外端 = 离**本体包围盒中心**较远的那一端 ✓（不赌引脚自左向右 ✗）。
+    #   ★ 待修清单 `TERM_BACKLOG`（带理由、点名打出 ✓，同 §14 口径）⇒ 清单内只提示 ✓。
+    if files.get("schematic"):
+        _sch = open(files["schematic"], encoding="utf-8", errors="replace").read()
+
+        def _attrs(tag):
+            return dict(re.findall(r'''([\w:.-]+)\s*=\s*["']([^"']*)["']''', tag))
+
+        _pins, _terms = {}, {}
+        for _m in re.finditer(r"<line\b[^>]*>", _sch):
+            _a = _attrs(_m.group(0))
+            _i = _a.get("id", "")
+            if _i.startswith("connector") and _i.endswith("pin") and "x2" in _a:
+                _pins[_i[:-3]] = (float(_a["x1"]), float(_a["y1"]),
+                                  float(_a["x2"]), float(_a["y2"]))
+        for _m in re.finditer(r"<(?:rect|circle)\b[^>]*>", _sch):
+            _a = _attrs(_m.group(0))
+            _i = _a.get("id", "")
+            if not (_i.startswith("connector") and _i.endswith("terminal")):
+                continue
+            if "cx" in _a:                      # 圆/椭圆：中心就是 cx,cy ✓
+                _terms[_i] = (float(_a["cx"]), float(_a["cy"]))
+            else:                                # rect：x/y 是**左上角** ⇒ 要加半宽/半高 ✓
+                _terms[_i] = (float(_a["x"]) + float(_a.get("width", 0)) / 2,
+                              float(_a["y"]) + float(_a.get("height", 0)) / 2)
+        _xs, _ys = [], []
+        for _m in re.finditer(r"<(?:rect|line|polygon|circle|path)\b[^>]*>", _sch):
+            _a = _attrs(_m.group(0))
+            _i = _a.get("id", "")
+            if _i.endswith("pin") or _i.endswith("terminal"):
+                continue                        # 引脚/端子不算“本体” ✓
+            try:
+                if "x" in _a and "width" in _a:
+                    _xs += [float(_a["x"]), float(_a["x"]) + float(_a["width"])]
+                    _ys += [float(_a["y"]), float(_a["y"]) + float(_a.get("height", 0))]
+                elif "x1" in _a:
+                    _xs += [float(_a["x1"]), float(_a["x2"])]
+                    _ys += [float(_a["y1"]), float(_a["y2"])]
+                elif "points" in _a:
+                    for _p in _a["points"].split():
+                        _px, _py = _p.split(",")[:2]
+                        _xs.append(float(_px))
+                        _ys.append(float(_py))
+            except (ValueError, IndexError):
+                continue
+        if _pins and _xs:
+            _cx, _cy = (min(_xs) + max(_xs)) / 2, (min(_ys) + max(_ys)) / 2
+            _bad = []
+            for _pid, (_x1, _y1, _x2, _y2) in sorted(_pins.items()):
+                _t = _terms.get(_pid + "terminal")
+                if _t is None:
+                    continue
+                _d1 = (_x1 - _cx) ** 2 + (_y1 - _cy) ** 2
+                _d2 = (_x2 - _cx) ** 2 + (_y2 - _cy) ** 2
+                _out = (_x1, _y1) if _d1 > _d2 else (_x2, _y2)
+                _span = ((_x2 - _x1) ** 2 + (_y2 - _y1) ** 2) ** 0.5
+                _dist = ((_t[0] - _out[0]) ** 2 + (_t[1] - _out[1]) ** 2) ** 0.5
+                if _dist > max(0.01, _span * 0.02):
+                    _bad.append("%s 偏 %.3f" % (_pid, _dist))
+            if _bad:
+                if part in TERM_BACKLOG:
+                    notes.append("注: （待修清单 ✓）%d 个端子不在引线外端：%s"
+                                 % (len(_bad), "; ".join(_bad[:3])))
+                else:
+                    fails.append("FAIL 端子不在引脚线**外端**（应居中 ✓）：%s"
+                                 % "; ".join(_bad[:4]))
+        else:
+            notes.append("注: （跳过 ⑩）原理图引脚不是 `<line>` 或没有本体图形 ⇒ 量不了外端 ✓")
 
     # 各 svg 的 id 集合（顺便查重复 id = ④）
     ids_of = {}
