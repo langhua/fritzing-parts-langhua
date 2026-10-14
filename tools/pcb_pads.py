@@ -331,7 +331,7 @@ def _placer(part):
 
     ★★ 口径**只留这一份** ✗（2026-10-01 抽出来 ✓）：`part_pads` 原来把这段写在函数体里 ✗，
       新增的 `part_body`（元件占位框 ✓）要用**同一套**矩阵/镜像/画布原点数学 ✓ ——
-      抄一份就是“两套实现，找不到原因” ✗（本仓的老坑 ✓）。
+      抄一份就是“两套实现，找不到原因” ✗（本仓的老问题 ✓）。
     返回 `(root, k, ox, oy, vbw, flip, M, loc, abs_of)` ✓；换算不了 ⇒ `(None, …)` ✓。
     """
     if part.get("svg_text") is None:
@@ -436,7 +436,7 @@ def part_pads(part):
         return None, None, ["`%s` 的 svg %s" % (part["title"], part["src"])], 0
     # ★★ 换算（画布原点 / 单位比例 / 背面镜像 / 实例矩阵）**只有 `_placer` 一份** ✓
     #   （2026-10-01 抽出来 ✓）：`part_body`（占位框 ✓）与这里的焊盘**用同一套** ✗，
-    #   否则“两套实现找不到原因” ✗（本仓老坑 ✓）。
+    #   否则“两套实现找不到原因” ✗（本仓老问题 ✓）。
     pl = _placer(part)
     if pl is None:
         return None, None, ["`%s` 的 svg 尺寸算不出（`width` 没单位 ✗）⇒ 焊盘位置换算不了 ✗"

@@ -73,9 +73,9 @@
   ⇒ 唯一实现 = `tools/part_box.ring_off_mm(hole, ring)` ✓（`pcb-rules.md` §12 ✓）。
 - 核法 ✓：`hardware/pixel/fz_via_probe.py <fzz> Via1` ✓（打印"离铜心 0.000 mm" ✓）。
 
-## 8. ★ 我们踩过的两个坑（都不是 Fritzing 的 bug ✗）
+## 8. ★ 我们踩过的两个问题（都不是 Fritzing 的 bug ✗）
 
-| 坑 | 真相 |
+| 问题 | 真相 |
 |---|---|
 | 以为 `<instance>` 少了闭合 ✗ | 是 `<instances>` 容器 ✓（见第 1 条 ✓） |
 | 以为"按缩进配对读不全"是 Fritzing 的毛病 ✗ | 是**我们生成器**的缩进不齐 ✗（第 2 条 ✓） |

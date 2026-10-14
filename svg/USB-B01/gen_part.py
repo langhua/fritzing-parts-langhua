@@ -275,7 +275,7 @@ def gen_pcb_svg():
                  % (sx * SHIELD_SPAN / 2.0, EAR_CD, shield_r, shield_sw))
     y_lo, y_hi = EAR_CD - SHIELD_PAD_D / 2.0 - 0.1, EAR_CD + SHIELD_PAD_D / 2.0 + 0.1
     s.append(' </g>\n')
-    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测遇到的问题 ✓）：
     #    嵌在 `<g id="copper1">` 里时 Fritzing 会把丝印**当铜导出** ✗（`.fzp` 的 pcbView
     #    只声明图层、不声明图形归属 ⇒ 归属按组 id 认 ✓）⇒ 与 `SH-1.0-3P-V` 同一种毛病 ✓
     s.append(' <g id="silkscreen">\n')

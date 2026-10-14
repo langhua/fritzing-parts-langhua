@@ -22,7 +22,7 @@ r"""机器守：**有没有导线穿过网标签的旗标** ✓（只读 ✓；�
     横的那个 `GND` 没穿 ✓ = 与用户当时看到的**完全一致** ✓ ⇒ 判据可信 ✓。
     （当时 `v39` 也报 **1/4** ✓，而渲染器自己的指标同时报 **1 段** ✓ ⇒ 两个独立实现互证 ✓。）
 
-★ 两个坑（都当场露馅 ✓，记下免得再踩 ✓）：
+★ 两个问题（都当场露馅 ✓，记下免得再踩 ✓）：
   ① svg 带**默认命名空间** ⇒ `iter("g")` 一个也找不到 ✗ ⇒ 会打印“旗标 0 个”**还判 ✓✓**
      —— **空集当然没违例** ✗（与“自检式瞎”同一类 ✓）⇒ 先**脱命名空间** ✓。
   ② `partID` 写在**外层** `<g>` 上、`<polygon>` 在里层 ✗ ⇒ `partID` 必须**往下传** ✓；
@@ -92,7 +92,7 @@ def load(svg):
     """从渲染 svg 里取 (旗标 `[(partID, 顶点…)]`, 导线 `[((x1,y1),(x2,y2),色)]`) ✓"""
     root = ET.parse(svg).getroot()
     ns = root.tag[:root.tag.index("}") + 1] if root.tag.startswith("{") else ""
-    for e in root.iter():                        # ★ 坑① ✓：先脱命名空间 ✓
+    for e in root.iter():                        # ★ 问题① ✓：先脱命名空间 ✓
         if ns and e.tag.startswith(ns):
             e.tag = e.tag[len(ns):]
     flags, lines = [], []
@@ -100,7 +100,7 @@ def load(svg):
     def walk(el, m, pid0):
         t = el.get("transform")
         m2 = parse_tf(t, m) if t else m
-        pid = el.get("partID") or pid0            # ★ 坑② ✓：partID 往下传 ✓
+        pid = el.get("partID") or pid0            # ★ 问题② ✓：partID 往下传 ✓
         if el.tag == "polygon" and pid:
             p = [(float(a), float(b)) for a, b in
                  (q.split(",") for q in el.get("points", "").split())]

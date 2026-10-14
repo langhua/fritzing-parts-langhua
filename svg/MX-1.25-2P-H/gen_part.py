@@ -572,7 +572,7 @@ def pcb_svg():
         L.append(f'  <rect id="connector{i}pad" connectorname="{i + 1}" '
                  f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
-    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测遇到的问题 ✓）：
     #    嵌在铜组里时 Fritzing 会把丝印**当铜导出** ✗（`.fzp` 的 pcbView 只声明图层、
     #    不声明图形归属 ⇒ 归属按组 id 认 ✓）⇒ 与 `SH-1.0-3P-V` 同一种毛病 ✓
     L.append(' </g>\n')

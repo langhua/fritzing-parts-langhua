@@ -1,12 +1,12 @@
 # Fritzing 自定义部件开发指南
 
-本文档总结了为 `fritzing-parts-langhua` 部件库制作 `NFC Coil`（通孔电感）和 `BAT54S`（SOT-23 贴片肖特基双二极管）部件过程中踩过的坑和验证过的做法（最初源自 Aurora Tessellation 项目）。**做下一个部件（TS3A44159 等）时，先读本文，按清单操作，避免重复踩坑。**
+本文档总结了为 `fritzing-parts-langhua` 部件库制作 `NFC Coil`（通孔电感）和 `BAT54S`（SOT-23 贴片肖特基双二极管）部件过程中踩过的问题和验证过的做法（最初源自 Aurora Tessellation 项目）。**做下一个部件（TS3A44159 等）时，先读本文，按清单操作，避免重复出问题。**
 
 ---
 
 ## 1. 核心原则
 
-1. **不要凭空设计 SVG，先抄官方部件**。官方部件（`Fritzing安装目录/fritzing-parts/svg/core/`）的每个视图都是经过验证的格式，直接仿照能避开 90% 的坑。
+1. **不要凭空设计 SVG，先抄官方部件**。官方部件（`Fritzing安装目录/fritzing-parts/svg/core/`）的每个视图都是经过验证的格式，直接仿照能避开 90% 的问题。
 2. **`.fzpz` 是最终交付物**，Fritzing 通过导入 `.fzpz` 使用部件。`.fzp` + 4 个视图 SVG 是它的内部构成。
 3. **连接器（connector）是灵魂**。图标/符号/焊盘画得再好，连接器定义不对，就无法连线/布线。
 
@@ -34,7 +34,7 @@
 <pcbView><layers image="pcb/NFC_Coil_xxx_pcb.svg">...</layers></pcbView>
 ```
 
-> ⚠️ **坑**：`.fzp` 里如果直接写 `svg.icon.xxx.svg`（平铺名），Fritzing 找不到视图 → 部件库图标空白、视图缺失。这是 NFC Coil 第一版"空白方格"的根因。
+> ⚠️ **注意**：`.fzp` 里如果直接写 `svg.icon.xxx.svg`（平铺名），Fritzing 找不到视图 → 部件库图标空白、视图缺失。这是 NFC Coil 第一版"空白方格"的根因。
 
 **仓库目录约定**：
 - 源文件（`.fzp` + 4 个 `svg.*` + 生成脚本）放在 `svg/<部件名>/`。
@@ -90,7 +90,7 @@
 </connector>
 ```
 
-> ⚠️ **坑**：如果只映射 `copper1`，切到底层视图看不到焊盘、也无法在底层布线。
+> ⚠️ **注意**：如果只映射 `copper1`，切到底层视图看不到焊盘、也无法在底层布线。
 
 ### 3.3 SMD（贴片）元件 —— BAT54S 验证
 
@@ -111,17 +111,17 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 <pcbView><p layer="copper1" svgId="connector0pin"/></pcbView>
 ```
 
-> ⚠️ **坑**：贴片件若照抄通孔件的 `copper0` + `copper1` 映射，会错误生成过孔。
+> ⚠️ **注意**：贴片件若照抄通孔件的 `copper0` + `copper1` 映射，会错误生成过孔。
 
 ### 3.4 `type` 属性必须用 Fritzing 标准下拉值
 
 `<property name="type">` 会进入 Fritzing 的属性下拉框，**必须用标准值**（diode 家族：`Schottky`、`Zener`、`LED`…）。自定义值（如 `Schottky dual series`）不在下拉列表里，Fritzing 加载时会回退显示成第一个标准值（如 `Zener`）。
 
-> ⚠️ **坑**：BAT54S 曾写成 `Schottky dual series`，属性面板类型显示成了 `Zener`。改成标准值 `Schottky` 后正常。
+> ⚠️ **注意**：BAT54S 曾写成 `Schottky dual series`，属性面板类型显示成了 `Zener`。改成标准值 `Schottky` 后正常。
 
 ---
 
-## 4. 各视图规范与坑
+## 4. 各视图规范与注意点
 
 ### 4.1 schematic（原理图符号）
 
@@ -137,13 +137,13 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 </g>
 ```
 
-> ⚠️ **坑（关键）**：`connectorXpin` 必须带 `class='pin'` 和 `connectorname`，`connectorXterminal` 必须带 `class='terminal'`。**缺少这些属性，导线无法吸附到端子**（原理图里连不上线）。这是 NFC Coil 第二版"原理图无法连线"的根因。
+> ⚠️ **注意（关键）**：`connectorXpin` 必须带 `class='pin'` 和 `connectorname`，`connectorXterminal` 必须带 `class='terminal'`。**缺少这些属性，导线无法吸附到端子**（原理图里连不上线）。这是 NFC Coil 第二版"原理图无法连线"的根因。
 >
 > `terminal`（端子）是导线吸附点，必须放在引脚线的最外端。
 
 **SMD 多脚器件的符号**参考 Sparkfun 双二极管（`sparkfun-discretesemi-bav99-.fzp`）的"封装框"画法：白色矩形封装框内画内部电路（两只串联二极管），脚 1 左 / 脚 2 右 / 脚 3 下引出。
 
-> ⚠️ **坑（关键）**：`terminal` 矩形必须是非零尺寸（`width="0.0001" height="0.0001"`）。写成 `0×0` 时 Fritzing 算不出接线点，导线会接到**引脚中间**而不是外端（BAT54S 第一版就这样）。
+> ⚠️ **注意（关键）**：`terminal` 矩形必须是非零尺寸（`width="0.0001" height="0.0001"`）。写成 `0×0` 时 Fritzing 算不出接线点，导线会接到**引脚中间**而不是外端（BAT54S 第一版就这样）。
 
 ### 4.2 breadboard（面包板视图）
 
@@ -155,7 +155,7 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 - 引脚间距**必须是 2.54mm 的整数倍**（标准面包板孔距），例如 7×2.54 = 17.78mm。
 - SVG 的 viewBox/灰框尺寸应**与 PCB 视图一致**，避免部件在面包板上看起来过大/过小。
 
-> ⚠️ **坑**：引脚（leg/pin）不要画到板体外；如果部件是"板载元件"，引脚应在板体轮廓内。
+> ⚠️ **注意**：引脚（leg/pin）不要画到板体外；如果部件是"板载元件"，引脚应在板体轮廓内。
 
 **开发板上的排针 / 跳线区要"能接线"（2026-09-16，TX-AH-R900PNR 的 J4/J5）**：
 
@@ -197,13 +197,13 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 <g id="silkscreen">...</g>
 ```
 
-> ⚠️ **坑 1（关键）**：`connectorXpin` 每个 id **只能在 SVG 里出现一次**。如果 copper0、copper1 各画一次，Fritzing 把它当成两个独立 SMD 焊盘，不会生成过孔 → 上下层不通。
+> ⚠️ **注意 1（关键）**：`connectorXpin` 每个 id **只能在 SVG 里出现一次**。如果 copper0、copper1 各画一次，Fritzing 把它当成两个独立 SMD 焊盘，不会生成过孔 → 上下层不通。
 >
-> ⚠️ **坑 2**：不要把预布线（stub/引出线）画进 PCB 视图，布线是用户自己的事，否则底部会多出一根"幽灵导线"。
+> ⚠️ **注意 2**：不要把预布线（stub/引出线）画进 PCB 视图，布线是用户自己的事，否则底部会多出一根"幽灵导线"。
 >
-> ⚠️ **坑 3**：焊盘要小，阵列排列时避免与相邻元件焊盘短路。用 `circle`（环形，fill=none + stroke）比实心方块更好——不"盖住"旁边的铜线。
+> ⚠️ **注意 3**：焊盘要小，阵列排列时避免与相邻元件焊盘短路。用 `circle`（环形，fill=none + stroke）比实心方块更好——不"盖住"旁边的铜线。
 >
-> ⚠️ **坑 4（关键，2026-10-10 定 ✓）**：`<g id="silkscreen">` **必须是铜组的兄弟** —— 放 `<svg>` 根下、与
+> ⚠️ **注意 4（关键，2026-10-10 定 ✓）**：`<g id="silkscreen">` **必须是铜组的兄弟** —— 放 `<svg>` 根下、与
 > `<g id="copper1">`（通孔件还有 `copper0`）**平级** ✓，**绝不许嵌进铜组** ✗。
 > 根因：`.fzp` 的 `pcbView` **只声明图层**（`copper1` / `silkscreen` ✓）、**不声明"哪块图形属于哪层"** ✗ ——
 > 归属是 Fritzing 读 SVG 时**按组的 id** 认的 ✓ ⇒ 嵌进铜组 ⇒ 那几条丝印线**被当铜导出** ✗
@@ -217,7 +217,7 @@ connector 的 `pcbView` 也只映射 `copper1`（不加 `copper0`）：
 
 **SMD 器件**：封装就是一层 `copper1` 的铜焊盘（参考官方 `svg/core/pcb/SMD_SOT-23.svg`），丝印层只画外框 + 脚1 标记点即可。
 
-**★ 封装尺寸必须有出处，不许照抄另一个元件（2026-09-17 踩坑，CH340N）**
+**★ 封装尺寸必须有出处，不许照抄另一个元件（2026-09-17 遇到的问题，CH340N）**
 
 CH340N（**SOP-8**）的 pcb 当初直接沿用了 `svg/CH340C`（**SOP-16**）的 `row=3.7` 与焊盘 `0.7×2.2`，
 只把本体长改成 4.9 —— 结果**焊盘中心跑到引脚末端之外 0.7mm**（用户一眼看出不对）。
@@ -282,7 +282,7 @@ icon 里的引脚伸出长度也要对得上（本例引脚伸 1.05mm → 端点
 
 ---
 
-## 5. 已验证的坑速查表
+## 5. 已验证的问题速查表
 
 | # | 症状 | 根因 | 解决 |
 |---|---|---|---|

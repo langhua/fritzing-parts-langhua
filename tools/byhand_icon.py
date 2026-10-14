@@ -19,7 +19,7 @@
 
 ★ **图层里面**的 Inkscape 命名空间也要清（2026-09-25 踩到，PH-2.0-3P-V）：
   手工版里一个 `<path>` 带着 `sodipodi:nodetypes="cccc"` ⇒ 生成的 icon 是**非法 XML**
-  （`unbound prefix`）⇒ cairosvg / `make_preview.py` 整张炸（与 make_preview 里那个坑同理）。
+  （`unbound prefix`）⇒ cairosvg / `make_preview.py` 整张炸（与 make_preview 里那个问题同理）。
   所以：删掉所有 `前缀:名字` 的**属性**与**元素标签**（内容保留），再用 ET 自检一遍。
 （与 `tools/byhand_export.py`（面包板）同一路子；那个管面包板，这个管 icon。）
 """

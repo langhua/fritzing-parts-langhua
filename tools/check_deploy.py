@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """check_deploy.py —— 核对「仓库里的元件」与「Fritzing MINE 里装的那份」是否一致（只读 ✓，可选 --fix）。
 
-为什么需要它（2026-09-27 踩坑 ✗）：
+为什么需要它（2026-09-27 遇到的问题 ✗）：
   往 Fritzing 的「我的元件」目录（MINE = `%USERPROFILE%/Documents/Fritzing/parts`）手工部署时，
   我照**仓库里的文件名**拷贝（`part.<id>.fzp`、`svg.breadboard.<id>_breadboard.svg`）✗ ——
   而那套名字**恰好就是 `.fzpz` 的内部名** ✗，于是 MINE 里：

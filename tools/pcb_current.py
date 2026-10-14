@@ -146,7 +146,7 @@ def read_decls(text, vias):
     · `adj[节点]` = **无向**邻接表 ✓；节点 = `("w", 走线 mi)` / `("v", 过孔 mi)` /
       `("p", 件 mi, 脚号)` ✓（脚号已去掉 `connector` 前缀 ✓）
 
-    ★★ 三条**实测**踩出来的坑 ✓（2026-10-05，`pixel-pcb-v76.fzz` ✓）：
+    ★★ 三条**实测**踩出来的问题 ✓（2026-10-05，`pixel-pcb-v76.fzz` ✓）：
 
     ① **逐个 connector 分** ✗ —— 按整个实例收 `<connect>` ✗ ⇒ 从 `J1.0` 会跳到 J1 **三根针**
        上的所有东西 ✗（GND / DATA 全跳过去 ✗）⇒ 实测报出"铜还差 0.448 mm"的**假**跳转 ✗、
@@ -187,10 +187,10 @@ def read_decls(text, vias):
     for (mi, own, lst) in raw:
         a = node(mi, own)
         for (cid, peer, lay) in lst:
-            if not COPPER_RE.match(lay):           # ★ 坑 ③：面包板 / 原理图的残留 ✗
+            if not COPPER_RE.match(lay):           # ★ 问题 ③：面包板 / 原理图的残留 ✗
                 continue
             b = node(peer, cid)
-            adj.setdefault(a, set()).add(b)        # ★ 坑 ③：双向 ✓（XML 常只声明一头 ✓）
+            adj.setdefault(a, set()).add(b)        # ★ 问题 ③：双向 ✓（XML 常只声明一头 ✓）
             adj.setdefault(b, set()).add(a)
     return wires, {k: sorted(v) for k, v in adj.items()}
 

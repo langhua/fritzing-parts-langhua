@@ -55,7 +55,7 @@ def fmt(v):
 def blocks(s):
     """按**同缩进配对**切出每个 `<instance …>…</instance>` ✓（不吃到下一个实例 ✓）
 
-    ★ 不用"非贪婪到第一个 `</instance>`" ✗ —— 那是别处踩过的坑（嵌套就截错 ✓）。
+    ★ 不用"非贪婪到第一个 `</instance>`" ✗ —— 那是别处踩过的问题（嵌套就截错 ✓）。
     """
     out = []
     for m in re.finditer(r"(?ms)^([ \t]*)<instance\b.*?\n\1</instance>", s):

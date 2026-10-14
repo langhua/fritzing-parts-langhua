@@ -574,7 +574,7 @@ def pcb_svg():
                  f'x="{pad_x(i) - PAD_W / 2:.3f}" y="{pad_y0:.3f}" '
                  f'width="{PAD_W:.2f}" height="{PAD_H:.2f}" fill="{GOLD}" stroke="none"/>\n')
     L.append(' </g>\n')
-    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测踩坑 ✓）：
+    # ★★ 丝印必须是 `copper1` 的**兄弟**（2026-10-10 定 ✓；用户 Gerber 实测遇到的问题 ✓）：
     #    嵌在 `<g id="copper1">` 里时，Fritzing 按"在铜组里"把这 7 条线**当铜导出** ✗
     #    ⇒ 底铜多出 14 段 0.12 mm 细线 ⇒ 与 J2 的 24 mil 线只隔 0.0906 mm = 3.57 mil < 5 mil ✗
     #    （对照：`WS2812B-1010` 那件丝印与铜是**平级**的 ✓ ⇒ 没这问题 ✓）

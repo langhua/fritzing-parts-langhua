@@ -149,7 +149,7 @@
   `AuroraTessellation-NFC/hardware/pixel/router-review.md`（§0 / §5 ✓）。
 - 项目层的特例与操作约定 ⇒ 同项目的 `hardware/pixel/breadboard-wiring.md` ✓。
 - 工具说明 ⇒ 本仓 `tools/README.md` ✓；元件层规则 ⇒ `AGENTS.md §5` + `docs/part-dev-guide.md` ✓。
-- 本文由本仓维护（2026-09-27 起 ✓）：新踩到的布线坑，**先加进 A 节并尽量写成检查** ✓。
+- 本文由本仓维护（2026-09-27 起 ✓）：新踩到的布线问题，**先加进 A 节并尽量写成检查** ✓。
 
 ---
 

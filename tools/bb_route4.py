@@ -2443,7 +2443,7 @@ def main(argv):
                 base = _score(pts)
                 best = None
                 SKIP[0] = i            # ★ 先把自己**摘出场** ✓（否则"直连"会被**自己**的旧线段判成 ③ 重叠 ✗
-                #                         —— 正是 `pass_clear_way` 里记的那个坑 ✓）
+                #                         —— 正是 `pass_clear_way` 里记的那个问题 ✓）
                 for which in (0, 1):
                     cur = g1 if which == 0 else g2
                     other = g2 if which == 0 else g1

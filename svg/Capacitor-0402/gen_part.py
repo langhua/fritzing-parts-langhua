@@ -206,7 +206,7 @@ def make_body(files, kind, s):
         #   ⇒ 电容件**不能顶着电阻的阻值** ✗（§1 工业风：不加装饰、不误导 ✓）
         #   ⇒ ① 把本体也染成米黄 ✓ ② 整段删掉那个文字组 ✓。
         #   ★ 删组**必须按标签配平扫描** ✗ —— 里面套着 `<g id="text351">` ✓，
-        #     非贪婪正则会截到第一个 `</g>` ✗（AGENTS §4 记过这个坑 ✓）。
+        #     非贪婪正则会截到第一个 `</g>` ✗（AGENTS §4 记过这个问题 ✓）。
         new = new.replace(
             'style="opacity:0.75;fill:#000000;fill-rule:evenodd;stroke:none;'
             'stroke-width:0.379989"',

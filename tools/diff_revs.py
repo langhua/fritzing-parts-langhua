@@ -509,7 +509,7 @@ def _board_box(txt, r):
     import render_pcb as R
     chunk = _extract_group(txt, "board")                     # Fritzing 导出 ✓
     if not chunk:                                           # 我们渲染的：认板框 rect ✓
-        # ★★ 2026-10-07 实测踩到两个坑 ✗（都靠证据定位 ✓，不是猜 ✗）：
+        # ★★ 2026-10-07 实测踩到两个问题 ✗（都靠证据定位 ✓，不是猜 ✗）：
         #   ① **`C_BRD_FILL` 就是 `#ffffff`** ✗ ⇒ 只按 fill 找会抓到渲染器开头的
         #      **整幅白底**矩形 ✗（`<rect width="100%" height="100%" fill="#ffffff"/>` ✓）；
         #   ② 改认 `stroke=C_BRD_EDGE` 之后**又抓错了一个** ✗ —— 量出来 3802.9×**3782.7**
