@@ -320,25 +320,49 @@ def main(argv):
                          % no_name[:8])
 
     # ④ 逆时针连续：左(上→下) → 下(左→右) → 右(下→上) → 上(右→左)
+    # ★★ 2026-10-15 改（用户定 ✓）：**优先用“画在框外的编号文字”**当脚号 ✗
+    #   不再直接拿**连接器编号**当脚号 ✗ —— 对“开发板类”件（AGENTS §3：面包板画整块板、
+    #   原理图画**芯片 / 板级符号**、连接器按**信号名**映射）两者**本来就不一样** ✗：
+    #   实测 `CD74HC4067` 的 `connector16`=COM=引脚 **1**、`connector7`=I7=引脚 **2**
+    #   ⇒ 拿连接器编号走一圈必然“断 22 处” ✗（假报警 ✓）；`ESP32-S3-DevKitC-1` 同理 ✓。
+    #   ★ 只有**全部脚都能对上编号文字**（且编号互不重复）时才用它 ✓，否则退回连接器编号
+    #     （= 老行为 ✓，一个字都不改）⇒ 对“连接器编号 == 脚号”的主流件结果**完全不变** ✓。
     walk = ([n for _, n in sorted(sides["left"])]
             + [n for _, n in sorted(sides["bottom"])]
             + [n for _, n in sorted(sides["right"], reverse=True)]
             + [n for _, n in sorted(sides["top"], reverse=True)])
-    print("逆时针展开: %s" % " ".join(str(n) for n in walk))
+    numval = {}
+    for n in walk:
+        side = side_of.get(n)
+        if side is None or n not in pins:
+            continue
+        ax, ay = pins[n]["attach"]
+        on_axis = ax if side in ("bottom", "top") else ay
+        got = [t for c, _f, t in numbers.get(side, []) if abs(c - on_axis) <= 1.2 * ref_fs]
+        if len(got) == 1:
+            m = re.fullmatch(r"\s*(\d+)\s*", got[0])
+            if m:
+                numval[n] = int(m.group(1))
+    if len(numval) == len(walk) and len(set(numval.values())) == len(walk):
+        key, src = numval, "框外编号文字"
+    else:
+        key, src = {n: n for n in walk}, "连接器编号"
+    order = [key[n] for n in walk]
+    print("逆时针展开: %s（按%s ✓）" % (" ".join(str(x) for x in order), src))
     if "--no-ccw" in argv:
         print("→ 跳过“逆时针”检查（--no-ccw：功能分区符号不适用）")
-    elif rot_shift(walk, ids):
+    elif rot_shift(order, sorted(order)):
         print("→ 脚号逆时针连续 ✓")
-    elif rot_shift(list(reversed(walk)), ids):
+    elif rot_shift(list(reversed(order)), sorted(order)):
         fails.append("FAIL 脚号整圈排反了（现在是**顺时针**连续）：把每条边的方向都倒过来")
     else:
-        brk = [i for i in range(len(walk) - 1) if walk[i + 1] != walk[i] + 1]
-        real = [i for i in brk if not (walk[i] == ids[-1] and walk[i + 1] == ids[0])]
+        brk = [i for i in range(len(order) - 1) if order[i + 1] != order[i] + 1]
+        real = [i for i in brk if not (order[i] == max(order) and order[i + 1] == min(order))]
         if not real:
-            fails.append("FAIL 沿边走一圈看不出规律（脚号本身也不连续）：%s" % walk)
+            fails.append("FAIL 沿边走一圈看不出规律（脚号本身也不连续）：%s" % order)
         else:
             det = "；".join("第 %d 个脚后 %d→%d（本该 %d→%d）"
-                            % (i + 1, walk[i], walk[i + 1], walk[i], walk[i] + 1)
+                            % (i + 1, order[i], order[i + 1], order[i], order[i] + 1)
                             for i in real[:3]) + ("　…等 %d 处" % len(real)
                                                   if len(real) > 3 else "")
             fails.append("FAIL 脚号不是逆时针连续的：不该断的地方断了 %d 处 —— %s"
