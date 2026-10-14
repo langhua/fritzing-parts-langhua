@@ -59,14 +59,15 @@ def pcb_svg():
         'width="3.0mm" height="2.9mm" viewBox="0 0 300 290" id="svg2">\n'
         '  <g id="copper1">\n'
         # bottom-left pad (pin1)
+        # ★ 这里**不再**画 `connectorNterminal`（2026-10-15 删 ✓）：PCB 视图的连接点由**焊盘本身**
+        #   （`connectorNpin` ✓）承担 —— `.fzp` 的 `pcbView` 写的正是 `svgId="connectorNpin"` ✓。
+        #   那三个 0×0 的 `connectorNterminal` 从来没被任何 `.fzp` 引用 ⇒ `fzp_check` 第 ② 条
+        #   判 FAIL（“没主的图形”✗，实测 3 项 ✓）。
         '    <rect width="80" height="90" x="15" y="200" id="connector0pin" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>\n'
-        '    <rect width="0" height="0" x="55" y="245" id="connector0terminal" style="fill:none;stroke-width:0"/>\n'
         # bottom-right pad (pin2)
         '    <rect width="80" height="90" x="205" y="200" id="connector1pin" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>\n'
-        '    <rect width="0" height="0" x="245" y="245" id="connector1terminal" style="fill:none;stroke-width:0"/>\n'
         # top-center pad (pin3)
         '    <rect width="80" height="90" x="110" y="0" id="connector2pin" style="fill:#f7bf13;fill-opacity:1;stroke:none"/>\n'
-        '    <rect width="0" height="0" x="150" y="45" id="connector2terminal" style="fill:none;stroke-width:0"/>\n'
         '  </g>\n'
         '  <g id="silkscreen">\n'
         '    <rect width="290" height="90" x="5" y="100" style="fill:none;stroke:#ffffff;stroke-width:10;stroke-opacity:1"/>\n'

@@ -55,16 +55,22 @@
          height="6.4251966"
          x="5.1903267"
          y="12.62193" />
+      <!-- ★ 机械固定焊盘 ✗ 不是电气连接器（2026-10-15 改名 ✓）：
+           件是 3.7V 300mAh 电池 + **MX1.25 卧贴座** ⇒ 面包板/原理图都只有 2 只信号脚
+           （`connector1` = negative / `connector2` = positive ✓），而 PCB 上那两个 6.8×9.45 的
+           大焊盘只是把座子固定到板上 ✗ ⇒ `.fzp` 从来就没给它们建连接器 ✗ ⇒
+           叫 `connectorNpad` 会被 `fzp_check` 判“没主的图形”（实测 2 项 ✓）。改名后
+           只是普通图形 ✓（本来也不可接线 ✓，无人用过 ✓）。 -->
       <rect
          style="fill:#ffcc00;fill-rule:evenodd;stroke:none;stroke-width:0.965981;stroke-miterlimit:3.9"
-         id="connector3pad"
+         id="mountpad3"
          width="6.8031497"
          height="9.4488192"
          x="17.094803"
          y="1.6615022" />
       <rect
          style="opacity:1;fill:#ffcc00;fill-rule:evenodd;stroke:none;stroke-width:0.965982;stroke-miterlimit:3.9"
-         id="connector4pad"
+         id="mountpad4"
          width="6.8031497"
          height="9.4488192"
          x="-6.1492915"
