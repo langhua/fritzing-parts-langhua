@@ -78,13 +78,18 @@ def schematic_svg():
          'x="0in" y="0in" width="0.3in" height="0.25in" viewBox="0 0 7.62 6.35">',
          '<g id="schematic">']
     # ① 两条引脚线（左 = A/1 ✓、右 = C/2 ✓）＋ **端子在各自己的外端** ✓
-    for cid, conn, x0, x1 in (("connector0", "A", 2.54, 0.0), ("connector1", "C", 5.08, 7.62)):
+    #   ★ 外端 = 元组里的 `xout`（**不能写 `min(x0, x1)`** ✗ —— 2026-10-15 的 bug：
+    #     左脚 `min` 恰好等于外端（0.0 ✓）所以看着是对的，右脚 `min` 取到**里端**
+    #     （5.08 = 阴极杠 ✗）⇒ Fritzing 里从 2 脚接出去的导线端会吸在阴极杠上 ✗
+    #     （用户截图 ✓）。判据：端子必须落在引脚线的**外端** = 远离本体那一头 ✓。
+    for cid, conn, xbody, xout in (("connector0", "A", 2.54, 0.0),
+                                   ("connector1", "C", 5.08, 7.62)):
         L.append('<line class="pin" id="%spin" connectorname="%s" x1="%.4f" y1="%.4f" x2="%.4f" '
                  'y2="%.4f" stroke="#787878" stroke-width="0.246944" stroke-linecap="round"/>'
-                 % (cid, conn, x0, AXIS, x1, AXIS))
+                 % (cid, conn, xbody, AXIS, xout, AXIS))
         L.append('<rect class="terminal" id="%sterminal" x="%.4f" y="%.4f" width="0.0001" '
                  'height="0.0001" stroke="none" stroke-width="0" fill="none"/>'
-                 % (cid, min(x0, x1), AXIS))
+                 % (cid, xout, AXIS))
     # ② LED 本体：三角形（指向阴极 ✓）＋ 阴极横杠 ✓＋两条发光箭头 ✓
     L.append('<polygon class="other" points="%.4f,%.4f %.4f,%.4f %.4f,%.4f" fill="#000000" '
              'stroke="none"/>' % (TRI[0], AXIS - HALF, TRI[0], AXIS + HALF, TRI[1], AXIS))
