@@ -237,7 +237,15 @@ def load(path):
 
     plugged = {}
     for e in root.iter("instance"):
-        if (e.get("moduleIdRef") or "").startswith("Wire"):
+        mid = e.get("moduleIdRef") or ""
+        if mid.startswith("Wire"):
+            continue
+        # ★★ **面包板自己不算"零件"** ✗（2026-10-15 修 ✓）：板子的每个孔都有一张
+        #   "谁插在这儿"的回指表 ✓，里面 `connectorId` 记的是**零件的脚名** ✓
+        #   （v87 = Fritzing 自己写的 ✓ `layer="breadboard"` ✓）⇒ 不过滤就会读到
+        #   `plugged["connector0"] = "Breadboard1.pin21F"` 这种**假孔名** ✗
+        #   ⇒ 下游（如 `bb_probe` ⑧）拿它去查孔表 ⇒ `KeyError: 'connector0'` ✗。
+        if "breadboard" in mid.lower():
             continue
         vw = child(e, "views")
         sub = child(vw, "breadboardView") if vw is not None else None

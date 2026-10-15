@@ -291,7 +291,14 @@ def main(argv):
     def sorted_holes(s):
         return sorted(s, key=lambda c: hole[c][0])
 
-    nets = load_nets()
+    # ★★ `--nets=` **必须真的用上** ✗（2026-10-15 抓到的一处真错 ✓，代价极大 ✓）：
+    #   原来这里写 `load_nets()` ✗ —— `_nets` 虽然被 `PD.strip_argv` 摘出来了 ✓、
+    #   却**从来没传下去** ✗ ⇒ 工具一直读**项目缺省那份** `pixel_nets.py` ✗。
+    #   后果（实测 ✗）：`_work/v88_nets.py`（v0.1.2 增量 ✓）被**整个忽略** ✗ ⇒
+    #   ① 新件（`D4/R2/R3/R4`）根本不在它手里的网表里 ⇒ 它们一根线都不给接 ✗；
+    #   ② 它按**旧网表**布了车 ✓（与 v87 逐根相同 ✓ —— 这就是"看着全通"的来源 ✗）；
+    #   ③ 连**摆位器的判据**（它也是走这条命令 ✓）一起被骗 ✗ ⇒ 报 `没通的网 0 张` ✗。
+    nets = load_nets(_nets)
     net_holes = {}
     for net, pins in nets.items():
         hs = set()
@@ -2484,32 +2491,62 @@ def main(argv):
             p_pin = pts[0] if e0[0] == "pin" else pts[-1]
             base = _score(pts)
             best = None
+            # ★★ **先把自己摘出场** ✗✓（2026-10-15 修 ✓，与跳线那边 `SKIP[0] = i` 同一招 ✓）：
+            #   额外线的旧走法也在 `fixed_segs` 里 ✓ ⇒ 不摘就是"**自己的旧线挡住自己的新孔**" ✗
+            #   ⇒ 实测（`U1` 的 EPAD ✓）：更近的 `pin17G`/`pin17H` 全被报
+            #     `⑤ 要占的孔 … 已被现有引线盖住` ✗ ⇒ 就近选孔形同虚设 ✗
+            #     （只能从 `pin18X` 挪到 `pin24G`：22.9 → 20.1 mm ✗，而最近只要 ~7.6 mm ✓）。
+            saved = extra[ix]
+            del extra[ix]
+            fixed_segs[:] = [s for _n, p, _a, _b, _k in extra for s in _segs(p)]
+            _refix()
+            # ★ 诊断（2026-10-15 ✓）：**比现在这颗更近的孔为什么没被选** ✓ ——
+            #   探针 ⑧ 报"不是最近孔"时，这一串就是答案 ✓（✗ 不许只报最后那个 ✗）。
+            _rej = []
             for h2, xy in sorted(hole.items(), key=lambda kv: (abs(kv[1][0] - p_pin[0])
                                                               + abs(kv[1][1] - p_pin[1]), kv[0])):
                 if h2 == hen[1] or not _free_hole(h2) or not _bus_net_ok(h2, net):
                     continue
+                _why = "（route_cost 全 None）"
                 for pts0 in routes_pt(p_pin, xy):
                     q = simplify(list(pts0))
                     if len(q) < 2 or route_cost(list(q), own=own) is None:
+                        # ★ 记**第一条**候选（＝最直的那条 ✓）的理由 ✗ —— 记最后一条会
+                        #   把"绕远的那条"的失败原因当成结论 ✗（2026-10-15 实测踩过 ✓：
+                        #   它报 `穿过 J2 的本体框` ✗，而 J2 离这儿 100+ mm ✗）。
+                        if _why == "（route_cost 全 None）":
+                            _why = LAST[0] or "?"
                         continue              # ★ None = **非法** ✗（同上 ✓）
                     k2 = _score(q)
                     if k2 >= base:
+                        _why = "不比现在短（%.1f ≥ %.1f mm）" % (_plen(q) * MMU, _plen(pts) * MMU)
                         continue
                     trial = list(extra)
-                    trial[ix] = (net, list(q), pen, ("hole", h2), kind)
+                    # ★ 自己已被 `del` 掉 ⇒ 用 **insert(ix, …)** 放回去 ✗（✗ 不是 `trial[ix] = …`
+                    #   ✗ —— 那样在最后一条上直接 `IndexError` ✓，实测踩过 ✓）。
+                    trial.insert(ix, (net, list(q), pen, ("hole", h2), kind))
                     if not _graph_ok(jumpers, trial):
+                        _why = "换过去网会断/并网"
                         continue
                     tie = (-round(_attic(h2), 3), h2)
                     if best is None or (k2, tie) < best[0]:
                         best = ((k2, tie), list(q), h2)
                 if best:
                     break                         # ★ 就近：**第一个**能被接受的孔就是最近的 ✓
+                _rej.append((h2, round(_attic(h2), 1), _why))
+            if best and _rej:
+                print("   [更近的孔没选 ✗] %s（%s 的 %s）：现在 = %s；更近的 %d 颗被拒 ⇒ %s"
+                      % (net, own, pen[2], hen[1], len(_rej),
+                         "；".join("%s(%.1fmm)=%s" % r for r in _rej[:12])))
             if best:
                 print("   就近选孔: 额外线 %s（%s 的 %s）锚孔 %s → %s ⇒ %.1f → %.1f mm"
                       % (net, own, pen[2], hen[1], best[2], _plen(pts) * MMU, _plen(best[1]) * MMU))
-                extra[ix] = (net, best[1], pen, ("hole", best[2]), kind)
-                _refix()
+                extra.insert(ix, (net, best[1], pen, ("hole", best[2]), kind))
                 ex_moved += 1
+            else:
+                extra.insert(ix, saved)       # ★ 没动 ⇒ **原样放回** ✓（✗ 不许丢 ✗）
+            fixed_segs[:] = [s for _n, p, _a, _b, _k in extra for s in _segs(p)]
+            _refix()
         if ex_moved:
             print("就近选孔（额外线 ✓）: 动了 %d 处 ✓" % ex_moved)
         return moved + ex_moved
@@ -2553,12 +2590,21 @@ def main(argv):
                   % (rec[0], rec[1], rec[2], rec[3]))
         return moved
 
-    if NEAR_HOLE:
-        _n = pass_near_hole()
-        print("★ 规则① 就近选孔（`--near-hole` ✓）: 动了 %d 处 ✓" % _n)
     if STRAIGHT:
         _n = pass_straight()
         print("★ 规则② 能直就直（`--straight` ✓）: 动了 %d 处 ✓" % _n)
+    # ★★ **就近选孔放到最后** ✓（2026-10-15 改序 ✓，实测钉死 ✓）：
+    #   原来先 ① 后 ②✗ ⇒ ① 是拿**扫描那一刻**的线集判的 ✓，而后面还有一堆重排/换接
+    #   会把线挪走 ✗ ⇒ 有的孔"当时被压住 ✗、定稿时其实干净 ✓" ⇒ ① 白拒了 ✓。
+    #   证据（交付件本体量的 ✓，`_work/_holechk.py`）：`pin17H` 最终遮挡只有 **0.1%** ✓、
+    #   不在任何本体下 ✓、属于 GND bus ✓ ⇒ 完全可用 ✓ —— 而布线器当时按 ⑤ 拒了它 ✗，
+    #   于是 EPAD 线只能退到 20.1 mm 外的 `pin24G` ✗（最近只要 10.2 mm ✓）
+    #   ⇒ 探针 ⑧ 一直报这一条 ✓（两把尺子"看着不一致"的真因是 **时序** ✗，不是规则 ✗）。
+    #   ★ 放到最后不会牺牲"能直就直" ✓：① 的取舍用 `_score` = (拐点数, 长度) ✓ ⇒
+    #     只在**更直或更短**时才换 ✓（不会把刚捋直的线再掰弯 ✗）。
+    if NEAR_HOLE:
+        _n = pass_near_hole()
+        print("★ 规则① 就近选孔（`--near-hole` ✓）: 动了 %d 处 ✓" % _n)
     _refix()
 
     # checks
