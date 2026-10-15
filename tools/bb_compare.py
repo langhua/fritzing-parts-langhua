@@ -33,6 +33,11 @@ OBSCURE_LIMIT = 0.05             # ★ 2026-09-27 收紧 ✓（原 **0.30** ✗�
 #   压到 5V 的接线孔 `pin32E`，**只盖 17.7%** ✗（中心距 1.80 单位 = 0.51mm ⇒ 已经**切进孔口** ✗）
 #   ⇒ 旧阈值 30% 判"不算遮挡" ✗ 就漏网了 ✓。实物上盖住一点点也插不进跳线 ✓ ⇒ 收到 **5%** ✓。
 NEAR_DIST = 6.0                  # 拥挤度：离得比这个近（单位 ✓）算"挤" ✓
+JOINT_TOL = 0.1                  # ★ 2026-10-15 加 ✓：**同一条跳线各段的接头**归并容差（单位 ✓）
+#   = 0.028 mm ✓。为什么不能精确比 ✗：Fritzing 自己写出来的接头坐标带 1e-3 级噪声 ✗
+#   （实测 `Wire90015703`/`Wire90015704` 的接头写成 `116.949` 与 `116.95` ✗）⇒ 精确比较会把
+#   一条链**裂成两截** ✗。孔距 = 9 单位 ⇒ 0.1 单位绝不会把**两个不同的孔**并到一起 ✓。
+#   唯一用处 = `Link.pts` 认"哪两点是同一颗接头" ✓（见那里的说明 ✓）。
 
 COLOR_NAME = {"#404040": "GND(黑)", "#cc1414": "5V(红)", "#418dd9": "DATA_IN(蓝)",
               "#33ffc5": "DATA_OUT(青)", "#25cc35": "LED_DIN(绿)",
@@ -216,12 +221,59 @@ class Link(object):
 
     @property
     def pts(self):
-        """按顺序拼出折线点列 ✓"""
+        r"""按顺序拼出折线点列 ✓ —— 按**端点度数**串接 ✓，✗ 不假设 `segs` 的存放次序 ✗
+
+        ★★ 2026-10-15 修 bug ✓（用户手改版 `v88_routed_byHand.fzz` 抓出来的 ✗）：
+          旧实现是「**拿第一段的 `q` 顺着往后接**」✗ —— 只要**中段那条 Wire 恰好排在两段
+          端线之后** ✗，最后一步就接不上 ⇒ `pts[-1]` 落成一个**中间的接头/拐点** ✗
+          ⇒ 下游（项目 `bb_probe` ④「悬空端」/ ①「逐脚连通」）就把**一条连着两个孔的完整跳线**
+          报成「一头悬空 ＋ 一张网裂成两块」✗✗。实测：`Wire90015721 + Wire90016005 +
+          Wire90015722` = `pin11A → pin35F`（`16005` 排在后 ✗）⇒ `pts[-1]` 变成接头
+          `(314.834, 180.071)` ✗；而**独立尺子**（按度数串 `_work/_bh_chain.py` ✓）与
+          `_netdump.py` 都判**连通** ✓ ⇒ 是尺子的错，不是文件的错 ✓。
+          新实现：点按 `JOINT_TOL` 归并（Fritzing 自己写的接头坐标带 1e-3 级噪声 ✗，
+          实测 `116.949` / `116.95` ✓）⇒ 数**每点度数** ⇒ 从**度为 1 的头**走 ✓。
+          起点取**坐标最小**的那个头 ✓ ⇒ 同一对孔的两版 `pts` 方向稳定 ✓
+          （`link_moved()` 逐点比位移要用得上 ✓）。
+        """
         if not self.segs:
             return []
-        out = [self.segs[0][0], self.segs[0][1]]
-        for p, q in self.segs[1:]:
-            out.append(q if on_seg(out[-1], p, q) or p == out[-1] else q)
+        reps, idx = [], []
+        for p, q in self.segs:
+            ids = []
+            for e in (p, q):
+                i = next((k for k, r in enumerate(reps)
+                          if abs(r[0] - e[0]) < JOINT_TOL and abs(r[1] - e[1]) < JOINT_TOL),
+                         None)
+                if i is None:
+                    reps.append(e)
+                    i = len(reps) - 1
+                ids.append(i)
+            idx.append(tuple(ids))
+        deg = {}
+        for a, b in idx:
+            deg[a] = deg.get(a, 0) + 1
+            deg[b] = deg.get(b, 0) + 1
+        free = sorted((i for i, d in deg.items() if d == 1), key=lambda i: reps[i])
+        # ✗ 没有度为 1 的点 = 闭环 ✗（不该出现）⇒ 退回最小点当起点 ✓，能画多少算多少 ✓
+        cur = free[0] if free else min(deg, key=lambda i: reps[i])
+        out, used = [reps[cur]], [False] * len(idx)
+        for _ in range(len(idx)):
+            for i, (a, b) in enumerate(idx):
+                if used[i]:
+                    continue
+                if a == cur:
+                    nxt = b
+                elif b == cur:
+                    nxt = a
+                else:
+                    continue
+                used[i] = True
+                out.append(reps[nxt])
+                cur = nxt
+                break
+            else:
+                break
         return out
 
     @property
