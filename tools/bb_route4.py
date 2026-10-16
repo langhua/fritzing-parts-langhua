@@ -300,6 +300,8 @@ def main(argv):
     #   ③ 连**摆位器的判据**（它也是走这条命令 ✓）一起被骗 ✗ ⇒ 报 `没通的网 0 张` ✗。
     nets = load_nets(_nets)
     net_holes = {}
+    no_hole = []                      # ★ 在网表里、却**没有孔**的脚 ✓（2026-10-16 加 ✓，见下）
+    plugged = set(plug_of.values())   # = {(元件名, 脚 id)} 已插进孔的脚 ✓
     for net, pins in nets.items():
         hs = set()
         for ref, pname in pins:
@@ -308,7 +310,23 @@ def main(argv):
             for h, owner in plug_of.items():
                 if cid and owner == (ref, cid):
                     hs.add(h)
+            # ★★ **静默跳过 = 最坏的一种"绿"** ✗✓（2026-10-16 用户项目上撞出来 ✓）：
+            #   网表里有这只脚、它却**没有孔** ⇒ 它**永远分不到一根导线** ✗
+            #   ⇒ 那张网**永远少这一段** ✓，而 `nets bad 0` **照样报绿** ✗✗
+            #   （实测：载板 `U1` 的裸露焊盘 `VSS`/`EPAD` 就是这样被漏掉的 ✓ ——
+            #     它不插孔 ✗、也没人给它一根腿 ✗ ⇒ 布线器一言不发 ✓）。
+            #   ⇒ 现在**点名报出来** ✓（只报"**件在本视图里、脚也在、就是没孔**"这一种 ✗；
+            #     "件根本不在本视图"（如插不进孔的 `BT1` ✓）是**正常** ✓，不报 ✓）。
+            if cid and ref in name2cid and (ref, cid) not in plugged:
+                no_hole.append("%s.%s（网 %s）" % (ref, pname, net))
         net_holes[net] = hs
+    if no_hole:
+        print("⚠ 网表里有 %d 只脚**没有孔** ⇒ 它们不会得到任何导线 ✗（该网会少这一段 ✗）："
+              % len(no_hole))
+        for s in no_hole:
+            print("     %s" % s)
+        print("   常见成因 = 裸露焊盘（`EPAD`/`VSS` ✓）没给它腿 ✓ —— 见 `bb_precheck.py` ① ✓；"
+              "✗ 别把它当成\"该网已连通\" ✗")
 
     # ★★ 地网要把**对侧那条电源轨**也算成自己的资源 ✓（2026-09-26 实测 ✓）
     #   证据（实测 ✗）：地网的锚点只有一条轨（EPAD 接上去的那条 ✓，本工程是 **Z** 上轨 ✓），
