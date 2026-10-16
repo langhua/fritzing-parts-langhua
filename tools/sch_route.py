@@ -236,35 +236,52 @@ NET_COLOR = {
 }
 for _i, _n in enumerate(sorted(N for N in NETS if N not in NET_COLOR)):   # 兜底：新增网按序分色 ✓
     NET_COLOR[_n] = SCHEM_PALETTE[_i % len(SCHEM_PALETTE)]
-# ★★★ 2026-10-13 ✓ **黄色重分配**（用户定 ✓：「有其它颜色可选时，不使用黄色 ——
-#   Fritzing 界面上黄色不明显」✗）—— 项目文件点名用了黄色也照样换 ✓，
-#   只要**还有没被占的非黄颜色** ✓；真没得选（颜色用光了）才留黄 ✓并**打印** ✓。
-#   ★ 为什么放在这里 ✗：这是**全局口径** ✓ ⇒ 项目文件怎么写都跑不掉 ✓
-#     （改项目文件只能管一个项目 ✗ —— 库里这条才管所有项目 ✓）。
-_YELLOWS = ("#fff800", "#ffff00", "#ffe600", "#fff700")
+# ★★★ 2026-10-13 ✓ **避开黄色**（用户定 ✓）⇒ ★★ 2026-10-16 ✓ **白也一起避开** ✓
+#   （用户定：「**原理图不用白/黄**」✓ —— 白底上白线**根本看不见** ✗、黄在界面上不明显 ✗）。
+#   ★ 这一条是**全局口径** ✓：项目文件里点名写了白/黄的，**照样换** ✓
+#     （✗ 改项目文件只能管一个项目 ✗，库里这条才管所有项目 ✓）。
+#   ★ 真没得选时（非白/黄的颜色都用光了）⇒ **保留原色 ＋ 大声打印** ⚠，
+#     ✗ **不偷偷与别的网共用一个颜色** ✗（两张网同色 = 看着像同一张网 ✗✗ 那更坏 ✓）；
+#     —— 这时 `file_sanity.py` 的 **①c 会判不合格** ✓（闸门会红 ✓，怎么办由人定 ✓）。
+BAD_SCHEM = ("#ffffff",         # white ✓ —— 原理图底色就是白的 ✗ ⇒ 画上去等于没有 ✗
+             "#fff800", "#ffe600", "#fff700", "#ffff00")   # 黄系（官方 yellow = #fff800 ✓）
 
 
-def _free_non_yellow():
-    _used = {str(v).lower() for v in NET_COLOR.values()}
-    for _c in SCHEM_PALETTE:
-        if _c.lower() in _YELLOWS:
+def avoid_invisible(colors, why=""):
+    """把 `colors` 里"原理图上看不见/看不清"的值换成**没被占的**可见色 ✓（**就地**改 ✓）。
+
+    ★★ **只有一处实现** ✓ —— 两个时机各调一次 ✓：
+      ① **import 时**：兜底分色可能落到表尾的白/黄 ✓；
+      ② **项目表合并进来之后**：项目文件点名写白/黄的 ✓（★ 实测踩过 ✗：只在 ① 跑
+         ⇒ **合并之后又回来了** ✗ —— 旧代码就是只对黄做了重分配、而且只在 ① 跑 ✗）。
+    ⇒ 返回被换掉的清单 ✓（打印在调用方 ✓，免得两处口径不一致 ✗）。
+    """
+    _used = {str(v).lower() for v in colors.values()}
+    out = []
+    for _n in sorted(colors):
+        _c = str(colors[_n]).lower()
+        if _c not in {b.lower() for b in BAD_SCHEM}:
             continue
-        if _c.lower() not in _used:
-            return _c
-    return None
+        _alt = None
+        for _pc in SCHEM_PALETTE:                 # 官方表里不属于 bad 的、且**没被占**的 ✓
+            if _pc.lower() in {b.lower() for b in BAD_SCHEM} or _pc.lower() in _used:
+                continue
+            _alt = _pc
+            break
+        if _alt:
+            colors[_n] = _alt
+            _used.add(_alt.lower())
+            print("★ 网色 **避开看不见的色** ✓：`%s` %s → %s ✓%s"
+                  % (_n, _c, _alt, ("（%s）" % why) if why else ""))
+            out.append((_n, _c, _alt))
+        else:
+            print("⚠ 网色：`%s` 只能用 %s ✗（**非白/黄的颜色都用光了** ✓：%d 张网 / %d 个可用色 ✓）"
+                  " ⇒ 保留原色 ⚠（✗ 不偷偷与别的网共用 ✗）；`file_sanity.py` ①c 会判不合格 ✓"
+                  % (_n, _c, len(colors), len(SCHEM_PALETTE) - len(BAD_SCHEM)))
+    return out
 
 
-for _n in sorted(NET_COLOR):
-    if str(NET_COLOR[_n]).lower() not in _YELLOWS:
-        continue
-    _alt = _free_non_yellow()
-    if _alt:
-        print("★ 网色 **避开黄色** ✓：`%s` %s → %s ✓（用户 2026-10-13 定：有其它颜色可选时"
-              "不用黄色 —— Fritzing 界面上黄色不明显 ✓）" % (_n, NET_COLOR[_n], _alt))
-        NET_COLOR[_n] = _alt
-    else:
-        print("⚠ 网色：`%s` 只能用黄色 %s ✗（**颜色不够用了** ✓：%d 张网 / %d 色 ✓）"
-              % (_n, NET_COLOR[_n], len(NET_COLOR), len(SCHEM_PALETTE)))
+avoid_invisible(NET_COLOR, "import 时的兜底分色 ✓")
 # ★★ `CLEAR_PIN`：**导线与“不相连的引脚”之间要留的安全距离** ✓（2026-09-27 用户定 ✓）
 #   用户原话："导线离芯片引脚太近了 ⇒ 应该有安全距离，让导线和引脚的连接关系**肉眼看得清**" ✓。
 #   实测（把导出放大看 ✓）：U1 右侧 `14/15/12/11` 的**引脚线末端正好落在导线上** ✗、
@@ -2565,6 +2582,9 @@ def main(argv):
             NET_COLOR.update({k: v for k, v in _colsch.items() if v})
             print("★ 网色：再按项目文件 `COLOR_SCH` 覆盖 %d 条 ✓（原理图专用 ✓：%s ✓）"
                   % (len(_colsch), ", ".join("%s=%s" % kv for kv in sorted(_colsch.items()))))
+        # ★★ 2026-10-16 ✓ 合并完**再跑一遍**避开白/黄 ✓（用户定「原理图不用白/黄」✓）——
+        #   只在上面的 import 那次跑 ⇒ 项目文件点名的白/黄**又回来了** ✗（实测 ✓）。
+        avoid_invisible(NET_COLOR, "项目文件点名的颜色 ✓")
         _new = sorted(n for n in NETS if n not in NET_COLOR)
         for _n2 in _new:                       # 剩下的照旧按序兜底 ✓（同一条规则 ✓）
             NET_COLOR[_n2] = SCHEM_PALETTE[len(NET_COLOR) % len(SCHEM_PALETTE)]

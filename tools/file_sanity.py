@@ -4,7 +4,8 @@
 ①b 每根**原理图**导线的颜色 ∈ **原理图**那一节配色 ✓（★ 2026-10-16 补 ✓，用户定
     「原理图线色闸门必须补」✓）—— 两节**同名不同值** ✓（orange：面包板 `#ef6100` ✓／
     原理图 `#ff7300` ✓）⇒ ✗ 写错节 = 画岀来对 ✓ 但**颜色下拉回退“蓝”**✗（用户原话「看不到」✗）
-①c 原理图里的**白色**（白底看不见 ✗）/ **黄色**（用户 2026-10-13 定「不用黄」✓）⇒ **只提醒** ✗
+①c 原理图里**不许用白/黄** ✗（★ 2026-10-16 用户定「**改成原理图不用白/黄**」✓ ——
+   原来是"只提醒"✗ ⇒ 现在是**判错** ✗；白底上白线**根本看不见** ✗、黄在界面上不明显 ✗）
 ② 有没有零长段 ✗ / 同向共线的冗余中点 ✗
 ③ 有没有实例级 `color` 属性（有 ⇒ 可能覆盖颜色 ✗）
 ④ 图例：文字标签 ↔ 色条 是否按同一顺序配对 ✓（从零件 svg 的 text 里读标签 ✓）
@@ -111,17 +112,18 @@ for e in r.iter("instance"):
         if col not in FC.SCH:
             sch_bad.append((ttl, col, FC.name_of("schematicView", col)))
         elif col in FC.INVISIBLE["schematicView"]:
-            sch_inv.append((ttl, col))
+            sch_inv.append((ttl, col))            # 白 ⇒ **判错** ✓（2026-10-16 用户定 ✓）
         elif col in FC.LESS_VISIBLE["schematicView"]:
-            sch_less.append((ttl, col))
+            sch_less.append((ttl, col))           # 黄 ⇒ **判错** ✓（同上 ✓）
 if sch_seg:
     print("   ①b 原理图导线 %d 段｜颜色 ⊆ 原理图那一节（%d 色 ✓）: %s"
           % (sch_seg, len(FC.SCH),
              ("✗ %d 根不对 ✗ —— %s" % (len(sch_bad),
               "； ".join("%s=%s（%s）" % (t, c, n) for t, c, n in sch_bad[:6]))) if sch_bad else "0 根 ✓"))
-    print("   ①c 原理图的看不见色（只提醒 ✗）: %s"
-          % ("； ".join("%s=%s（%s）" % (t, c, "白底看不见 ✗" if c in FC.INVISIBLE["schematicView"]
-                                        else "用户定不用黄 ✓") for t, c in sch_inv + sch_less)
+    print("   ①c 原理图**不许用白/黄** ✗: %s"
+          % ("✗ %d 根 ✗ —— %s" % (len(sch_inv) + len(sch_less),
+              "； ".join("%s=%s（%s）" % (t, c, "白底看不见 ✗" if c in FC.INVISIBLE["schematicView"]
+                                            else "你定的不用黄 ✓") for t, c in sch_inv + sch_less))
              if (sch_inv or sch_less) else "0 根 ✓"))
 else:
     print("   ①b 本图没有原理图导线 ⇒ **判不了** ✓ 不判 ✓")
@@ -158,7 +160,7 @@ for y, ttl, txt in sorted(labels):
 
 # ★★ 退出码（2026-10-16 补 ✗）：以前本文件**根本没调 `sys.exit`** ✗ ⇒ 报什么都不影响退出码 ✗
 #   ⇒ 接进闸门也**永远不会红** ✗（同 AGENTS §14 那条"自证/空转"的教训 ✓）。
-_rc = 1 if (bad_col or sch_bad or zero) else 0
+_rc = 1 if (bad_col or sch_bad or sch_inv or sch_less or zero) else 0
 print()
 print("⇒ %s" % ("✗ 不合格 ✗（上面点名的先处理 ✓）" if _rc else "✓ 全部合格"))
 print("   （退出码 %d ✓；口径 = `fz_colors` 两张表 ✓ —— 它自己已拿 Fritzing 的 XML 自校过 ✓）" % _rc)
