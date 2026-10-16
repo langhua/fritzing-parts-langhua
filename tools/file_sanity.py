@@ -45,7 +45,7 @@ z = zipfile.ZipFile(fzz)
 name = [x for x in z.namelist() if x.endswith(".fz")][0]
 r = ET.fromstring(z.read(name))
 
-bad_col, zero, zero_ph, props, bb = [], [], [], [], []
+bad_col, zero, zero_ph, zero_dot, props, bb = [], [], [], [], [], []
 for e in r.iter("instance"):
     ttl = (e.findtext("title") or "").strip()
     ttl_el = e.findtext("title")
@@ -59,14 +59,21 @@ for e in r.iter("instance"):
                 if q.get("name") == "color":
                     props.append("%s(text)=%s" % (ttl, (q.text or "")[:10]))
     # ★ 该实例在**任意视图**里有没有**真实长度**（非零长）✓ —— 用来区分「占位」与「真退化」✓
-    e_real = False
+    # ★★ 2026-10-16 ✗：**判据要按「实例」算、不能按「视图」算** ✗ —— 我第一版按视图判 ⇒
+    #   点接头（`Wire90000149`）的**原理图那格带 `<connect>`** ✓ 但它的**面包板/PCB 两格没有** ✗
+    #   ⇒ 仍然被算成「真退化」✗（实测复现 ✓）。
+    e_real = False        # 任一视图有长度 ✓
+    e_conn = 0            # 任一视图里 `<connect>` 的**最多**条数 ✓
+    e_zero = []           # 哪些视图是零长的 ✓
     for _v in (child(e, "views") if child(e, "views") is not None else []):
         _g = child(_v, "geometry")
         if _g is None:
             continue
+        e_conn = max(e_conn, len(list(_v.iter("connect"))))
         if abs(float(_g.get("x2") or 0)) > 1e-9 or abs(float(_g.get("y2") or 0)) > 1e-9:
             e_real = True
-            break
+        else:
+            e_zero.append(tag(_v))
     for sub in child(e, "views"):
         if tag(sub) != "breadboardView":
             continue
@@ -78,16 +85,27 @@ for e in r.iter("instance"):
         dx, dy = float(g.get("x2")), float(g.get("y2"))
         if col and col not in STANDARD:
             bad_col.append((ttl, col))
-        if abs(dx) < 1e-9 and abs(dy) < 1e-9:
-            # ★★ 2026-10-03 修 ✗：零长**未必**是毛病 ✓ —— 走线在别的视图、这里只是**占位** ✓
-            #   （Fritzing 硬要求三视图 ✓；非目标视图用零长占位 ✓、坐标不编造 ✓ ——
-            #    见 `AuroraTessellation-NFC/hardware/pixel/gen_routes.py` 的 `wire_block` 出处证据 ✓）
-            #   ⇒ 只有「**哪个视图都没有长度**」才是真退化 ✗（否则是判据的假阳性 ✗）
-            (zero if not e_real else zero_ph).append(ttl)
         peers = [c.get("modelIndex") for c in sub.iter()
                  if tag(c) == "connect" and (c.get("layer") or "") == "breadboardWire"]
         if "WireModuleID" in (e.get("moduleIdRef") or ""):
             bb.append((ttl, col, float(g.get("x")), float(g.get("y")), dx, dy, len(peers)))
+
+    # ★★ 零长怎么归类 ✓（**按实例**判 ✓，见上面那段的证据 ✓）：
+    #   ★ 只管**导线** ✓ —— ✗ 零件与板框件（`PCB1`）本来就没有"长度"这回事 ✗
+    #     （实测：不加这一条 ⇒ `PCB1` 被报成"真退化" ✗、`U1/R1` 被报成"接头" ✗，两条都是假警报 ✗）。
+    #   ① **任一视图带 `<connect>`** ⇒ Fritzing 的「**点接头**」✓（零长导线当连接点用 ✓）
+    #      —— 删了**网表就断** ✗（实测 ✓：`Wire90000149/150` 删掉 ⇒ `check_netlist` 2 个网对不上 ✗）
+    #      ⇒ **不算退化** ✓（另一个实现 `render_sch` 的口径本来就是「点接头 ✓ 不算 ✓」
+    #      ⇒ 两边**同一口径** ✓ —— 同 AGENTS §13「只允许一个声音」✓）；
+    #   ② 没声明、但**别处有长度** ⇒ **占位** ✓（Fritzing 硬要求三视图 ✓，非本视图用零长占位 ✓）；
+    #   ③ 没声明、**哪个视图都没长度** ⇒ **真退化** ✗（这才是要报的 ✓）。
+    if e_zero and "WireModuleID" in (e.get("moduleIdRef") or ""):
+        if e_conn:
+            zero_dot.append((ttl, e_zero, e_conn))
+        elif e_real:
+            zero_ph.append(ttl)
+        else:
+            zero.append(ttl)
 
 print("== 文件自检: %s" % fzz)
 print("   ① 非标准色的导线（面包板 ✓ %d 色表）: %s" % (len(FC.BB), bad_col if bad_col else "0 个 ✓"))
@@ -130,6 +148,10 @@ else:
 print("   ② 零长**真退化**线: %s" % (zero if zero else "0 个 ✓"))
 print("   ②' 零长**占位**线 : %d 个 ✓（非本视图的真实走线 ✓ 三视图占位 ✓ 见 gen_routes.wire_block）"
       % len(zero_ph))
+print("   ②'' 零长**接头**线（任一视图带 `<connect>` ⇒ 有意画的连接点 ✓ 不算退化 ✓）: %s"
+      % ("%d 根：%s" % (len(zero_dot),
+                       ", ".join("%s(%d conn)" % (t, c) for t, _v, c in zero_dot[:5]))
+         if zero_dot else "0 个 ✓"))
 print("   ③ 实例 color 属性: %s" % (props if props else "0 个 ✓（Fritzing 自己也不写 ✓）"))
 print("   ④ 面包板导线 %d 段（%d 根）| 颜色: %s"
       % (len(bb), len([b for b in bb if b[6]]), sorted({b[1] for b in bb if b[1]})))
