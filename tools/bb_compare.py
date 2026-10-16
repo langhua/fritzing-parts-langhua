@@ -64,12 +64,83 @@ def num(s):
         return 0.0
 
 
-def hole_xy(hid):
-    """孔 id → sketch 坐标（None = 不是孔 id ✓）"""
+def hole_xy(hid, off=(0.0, 0.0)):
+    """孔 id → sketch 坐标（None = 不是孔 id ✓）
+
+    ★★ `off` = **板子实际摆放 − 基准摆放** ✓（2026-10-16 根治 ✓）：
+      `ROW_Y`/`9.0` 这一套隐含了"**板子落在 `CANON_BOARD`**"这个前提 ✓ ——
+      板子一平移（用户为了把某件靠最左 ✓），孔位就**整体错位** ✗
+      ⇒ 拿它去判"脚有没有落到孔上"会得到**假报警** ✓
+      （实测 2026-10-16：55 条"腿端差 3.59mm" ✗，而 3.59mm 恰好 = √(8.98²+9.00²) 单位
+        = 板子挪的那一格 ✓ —— 一分不差 ✓ ⇒ **是尺子的问题，不是图的问题** ✓）。
+      ⇒ 缺省 `(0,0)` = **老行为一字不改** ✓；要读挪过的图就传 `board_off(...)` ✓。
+    """
     m = re.fullmatch(r"pin(\d+)([A-Z])", hid or "")
     if not m or m.group(2) not in ROW_Y:
         return None
-    return (9.0 * int(m.group(1)), ROW_Y[m.group(2)])
+    return (9.0 * int(m.group(1)) + off[0], ROW_Y[m.group(2)] + off[1])
+
+
+# ★★ 基准板位 ✓（= `ROW_Y` 与上面的 `9.0 * 列` 隐含的那个位置 ✓）
+#   —— 与像素板交付稿、以及本项目 `carrier_bb.py` 的 `BB_LOC` **同一个数** ✓。
+CANON_BOARD = (-4.6484, 0.0)
+
+
+def board_off_root(root, quiet=False):
+    """从已解析的 `.fz` 根元素算 **板位偏移** ✓ ⇒ `(dx, dy)`（缺省 (0,0) ✓）
+
+    找板子 = 第一个 `breadboardView` 在、且 `moduleIdRef` 含 `breadboard` 的实例 ✓
+    （✗ 排除导线与 `BreadboardLogoText` ✗ —— 后者名字里**也含** `breadboard` ✗，
+     这正是 `bb_route4.py` 踩过的那个坑 ✓）。
+    ★ 只处理**纯平移** ✗：若板子的 `<transform>` 与基准那双不一样（旋转/缩放 ✗），
+      平移量表达不了它 ⇒ **报一声、退回 (0,0)** ✓（不静默 ✓）。
+    """
+    board = None
+    for e in root.iter("instance"):
+        mid = e.get("moduleIdRef") or ""
+        if mid.startswith("Wire") or mid.endswith("BreadboardLogoTextModuleID"):
+            continue
+        if "breadboard" not in mid.lower():
+            continue
+        vw = child(e, "views")
+        sub = child(vw, "breadboardView") if vw is not None else None
+        if sub is None:
+            continue
+        board = (sub, e)
+        break
+    if board is None:
+        return (0.0, 0.0)
+    sub, e = board
+    g = child(sub, "geometry")
+    if g is None or g.get("x") is None:
+        return (0.0, 0.0)
+    tf = child(sub, "transform")
+    if tf is not None:
+        m = _parse_tf(tf)
+        if m is not None and (abs(m[0] - 1) > 1e-9 or abs(m[1]) > 1e-9
+                              or abs(m[2]) > 1e-9 or abs(m[3] - 1) > 1e-9):
+            if not quiet:
+                print("   [板位] ⚠ 板子带**非平移**的 `<transform>`（旋转/缩放 ✗）⇒ "
+                      "单靠位置差表达不了它 ✗ ⇒ 下面按位置差算的偏移**仅供参考** ✗")
+    loc = (num(g.get("x")), num(g.get("y")))
+    off = (loc[0] - CANON_BOARD[0], loc[1] - CANON_BOARD[1])
+    if abs(off[0]) > 1e-9 or abs(off[1]) > 1e-9:
+        if not quiet:
+            print("   [板位] 板子实际在 (%s, %s) ✓ ⇒ 孔位整体偏移 (%+.3f, %+.3f) 单位 = (%+.3f, %+.3f) mm"
+                  % (num(g.get("x")), num(g.get("y")), off[0], off[1],
+                     off[0] * UNIT_MM, off[1] * UNIT_MM))
+    return off
+
+
+def board_off(path, quiet=False):
+    """同上，直接给 `.fzz` 路径 ✓（读不开/没有板子 ⇒ (0,0) ✓ = 老行为 ✓）"""
+    try:
+        z = zipfile.ZipFile(path)
+        name = [n for n in z.namelist() if n.endswith(".fz")][0]
+        root = ET.fromstring(z.read(name))
+    except Exception:                                        # noqa: BLE001
+        return (0.0, 0.0)
+    return board_off_root(root, quiet=quiet)
 
 
 # ---------------------------------------------------------------- 几何（与路由器同一定义 ✓）
@@ -572,6 +643,9 @@ def link_moved(x, y):
 
 def metrics(links, plugged, fzz=None, verbose=False):
     links = [lk for lk in links if not lk.legend]      # 图例色条不参与指标 ✓
+    # ★★ 孔位要按**这张图自己的板位**算 ✓（2026-10-16 根治 ✓）—— 缺省 (0,0) 时
+    #   与改前**逐位相同** ✓（即"板子在基准上"的老行为 ✓）。
+    off = board_off(fzz) if fzz else (0.0, 0.0)
     segs, ends = [], {}
     for lk in links:
         segs.extend(lk.segs)
@@ -597,13 +671,13 @@ def metrics(links, plugged, fzz=None, verbose=False):
             for h in watch:
                 if h in ends_here:
                     continue
-                f = obscures(a, b, hole_xy(h))
+                f = obscures(a, b, hole_xy(h, off))
                 if f >= OBSCURE_LIMIT:
                     hidden[h] = max(hidden.get(h, 0.0), f)
     # 端点落在"已插孔的脚"上 ✗（一个脚只能插孔或接一根引线 ✓）
     bad_end = sorted({h for lk in links for a, b in lk.segs for h in ends
                       if h in plugged and not any(h == x[0] for x in lk.holes)
-                      and on_seg(hole_xy(h), a, b)})
+                      and on_seg(hole_xy(h, off), a, b)})
     # 拥挤度
     crowd = 0
     for i, (a, b) in enumerate(segs):

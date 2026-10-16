@@ -67,11 +67,19 @@ def child(e, n):
     return None
 
 
-def hole_xy(hid):
-    m = re.fullmatch(r"pin(\d+)([A-Z])", hid or "")
-    if not m or m.group(2) not in ROW_Y:
-        return None
-    return (int(m.group(1)) * COL_PITCH, ROW_Y[m.group(2)])
+def hole_xy(hid, off=(0.0, 0.0)):
+    """★ 委托给**唯一实现** `bb_compare.hole_xy` ✓（2026-10-16 合一 ✓）
+
+    ✗ 本文件原来自己又抄了一份 `ROW_Y`/`COL_PITCH` ＋ 同一道算式 ✗ ——
+      同库仓 §15「**一个量只许一处定义**」✗：两份一旦漂移，就是"孔位两套、
+      数字对不上、还找不到原因" ✗。
+    ★ `off` = **板子实际摆放 − 基准** ✓（2026-10-16 根治 ✓）：
+      板子一平移（用户为了把某件靠最左 ✓），写死的孔位就整片错位 ✗
+      ⇒ 布线器会把线画到"错位的孔"上 ✗。缺省 (0,0) = 老行为一字不改 ✓。
+    ★ 本文件里 `ROW_Y`/`COL_PITCH` 保留只为**兼容老引用** ✓（rail 那边还在用 ✓），
+      但**算式只走 `BC.hole_xy`** ✓。
+    """
+    return BC.hole_xy(hid, off)
 
 
 def load_nets(_path=None):
@@ -113,9 +121,10 @@ def main(argv):
     hole_ids = {c.get("id") for c in broot.iter("connector") if re.fullmatch(r"pin\w+", c.get("id") or "")}
     if len(hole_ids) < 800:
         raise SystemExit("hole ids from board fzp: %d (need 800+)" % len(hole_ids))
+    _OFF = BC.board_off_root(sroot)        # ★ 这张图自己的板位 ✓（缺省 (0,0) = 老行为 ✓）
     hole = {}
     for h in sorted(hole_ids):
-        xy = hole_xy(h)
+        xy = hole_xy(h, _OFF)
         if xy:
             hole[h] = xy
     print("holes: %d (board fzp declares %d)" % (len(hole), len(hole_ids)))

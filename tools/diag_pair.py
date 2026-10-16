@@ -156,6 +156,8 @@ def main(argv):
     if "--top" in argv:
         top = int(argv[argv.index("--top") + 1])
 
+    global _BOFF
+    _BOFF = BC.board_off(fzz)                 # ★ 这张图自己的板位 ✓（缺省 (0,0) = 老行为 ✓）
     links, plugged = BC.load(fzz)
     links = [lk for lk in links if not lk.legend]
     boxes = body_boxes(fzz)
@@ -171,7 +173,7 @@ def main(argv):
           % (len(boxes), len(segs_other), len(watch), ",".join(sorted(drop)) or "无"))
     for ttl, b in sorted(boxes):             # ★ 与生成器打印的 box 行**逐项对账** ✓
         print("   box %-5s x %7.1f..%7.1f  y %7.1f..%7.1f" % (ttl, b[0], b[2], b[1], b[3]))
-    p, q = BC.hole_xy(ha), BC.hole_xy(hb)
+    p, q = BC.hole_xy(ha, _BOFF), BC.hole_xy(hb, _BOFF)
     print("孔对 %s(%.0f,%.0f) → %s(%.0f,%.0f)" % (ha, p[0], p[1], hb, q[0], q[1]))
     # ★ 这两个孔现在**是谁在用** ✓（"插了元件脚" ✗ 的孔不能当引线端点 ✓）
     print("   孔占用：%s = %s | %s = %s"
@@ -222,9 +224,9 @@ def evaluate(pts, segs_other, watch, boxes):
             if BC.pair_kind(a, b, c2, d2):
                 cr += 1
         for h in watch:
-            if BC.same_pt(BC.hole_xy(h), pts[0]) or BC.same_pt(BC.hole_xy(h), pts[-1]):
+            if BC.same_pt(BC.hole_xy(h, _BOFF), pts[0]) or BC.same_pt(BC.hole_xy(h, _BOFF), pts[-1]):
                 continue
-            if BC.obscures(a, b, BC.hole_xy(h)) >= OBSCURE_LIMIT:
+            if BC.obscures(a, b, BC.hole_xy(h, _BOFF)) >= OBSCURE_LIMIT:
                 return (None, ln, wln, cr, 0.0, "④ 盖住了已接线的孔 %s" % h)
     crowd = 0
     for a, b in segs:

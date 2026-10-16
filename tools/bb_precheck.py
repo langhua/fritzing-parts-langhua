@@ -133,9 +133,13 @@ def holes_of(sketch_text):
     broot = ET.parse((board.get("path") or "").replace("/", os.sep)).getroot()
     ids = {c.get("id") for c in broot.iter("connector")
            if re.fullmatch(r"pin\w+", c.get("id") or "")}
+    # ★★ 孔位要带**这张图自己的板位偏移** ✓（2026-10-16 根治 ✓）：
+    #   板子一平移（用户为了把某件靠最左 ✓），写死的孔位就整体错位 ✗
+    #   ⇒ 会报一堆"腿端差 3.59mm"的**假报警** ✗（实测 ✓）。缺省 (0,0) = 老行为 ✓。
+    off = BC.board_off_root(sroot)
     hole = {}
     for h in sorted(ids):
-        xy = BC.hole_xy(h)
+        xy = BC.hole_xy(h, off)
         if xy:
             hole[h] = xy
     par = {}

@@ -182,6 +182,10 @@ def vb_origin(svg_text):
 z = zipfile.ZipFile(path)
 fzname = [n for n in z.namelist() if n.endswith(".fz")][0]
 root = ET.fromstring(z.read(fzname))
+# ★★ 板位偏移 ✓（2026-10-16 根治 ✓）：孔位写死在"板子落在基准"上 ✗ ⇒
+#   板子一平移（用户为了把某件靠最左 ✓），下面的"腿末端 vs 声称的孔"对账
+#   就会整片错位 ⇒ **假报警** ✗。缺省 (0,0) = 老行为 ✓。
+_BOFF = BC.board_off_root(root)
 
 packed = {}
 for n in z.namelist():
@@ -378,7 +382,7 @@ for el in root.iter("instance"):
     _maxd = 0.0                    # ★ 最大 Δ 也要报 ✓（"✓"必须带数字 ✓，不是口号 ✓）
     for _cid2, _hid2 in sorted(_ph.items()):
         _p2 = _pts.get("%spin" % _cid2)
-        _xy2 = BC.hole_xy(_hid2) if _hid2 else None
+        _xy2 = BC.hole_xy(_hid2, _BOFF) if _hid2 else None
         if _p2 is None or _xy2 is None:
             _unv += 1
             continue               # ★ 认不出 ⇒ **记入"未验证"** ✓（不许静默跳过 ✗）
@@ -450,7 +454,7 @@ for el in root.iter("instance"):
                    % (" ".join("%.4f,%.4f" % _q for _q in _poly), _col, _sw))
         _nleg += 1
         _hid3 = _ph.get(_cid3)
-        _xy3 = BC.hole_xy(_hid3) if _hid3 else None
+        _xy3 = BC.hole_xy(_hid3, _BOFF) if _hid3 else None
         if _xy3 is not None:
             _ex3, _ey3 = _poly[-1]
             _d3 = ((num(g.get("x")) + m[0] * _ex3 + m[2] * _ey3 + m[4] - _subx - _xy3[0]) ** 2
