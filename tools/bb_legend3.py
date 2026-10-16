@@ -11,18 +11,28 @@ r"""面包板**图例** v3（按用户截图三条意见 ✓，2026-09-26）
 标题「图例：」全角 2.54mm/字符 = 7.62mm ✓ 高 3.302mm ✓。
 文字件**无连接器** ✓、色条**无 connectors** ✓ ⇒ 都不影响网表 ✓。
 
-用法：py -3.13 bb_legend3.py <输入.fzz> <输出.fzz> [x0 y0 DY TITLE_GAP TEXT_DY]
+★★ 2026-10-16 改 ✓：图例的**行**（名字 ＋ 颜色 ＋ 顺序 ✓）不再写死在本文件里 ✗
+—— 改成读**项目数据**的 `COLOR` ✓（与其它库仓工具同一个约定 ✓）：
+   `--nets=<项目数据.py>`（缺省 = 当前目录的 `pixel_nets.py` ✓）；
+   **字典里键的先后 = 图例行序** ✓；✗ 没有颜色的网（如只在 PCB 上的 `SWIO` ✓）
+   自然不出现在图例里 ✓。
+   ★ 起因（实测 ✗）：本文件原来写死 9 行 ⇒ v0.1.2 多了 `DATA_IN_C`/`DATA_OUT_C` 两色后
+   图例就**少两行** ✗（“两处定义”的老毛病 ✓ —— 同一个量必须只有一处 ✓）。
+
+用法：py -3.13 bb_legend3.py <输入.fzz> <输出.fzz> [x0 y0 DY TITLE_GAP TEXT_DY] [带图例的稿.fzz]
+      [--nets=<项目数据.py>]
 """
 import copy
 import sys
 import zipfile
 import xml.etree.ElementTree as ET
 
+import projdata as PD                     # ★ 唯一实现 ✓（读项目数据模块 ✓）
+
 # ★ 颜色：**只能用 Fritzing 官方配色表的值** ✓（`resources/ratsnestcolors.xml` 的
-#   `breadboardView` 下 `<color wire="…">` ✓）；与 `bb_route4.py` 的 COLOR 逐项一致 ✓
-NET_COLORS = [("GND", "#404040"), ("5V", "#cc1414"), ("DATA_IN", "#418dd9"),
-              ("DATA_OUT", "#33ffc5"), ("LED_DIN", "#25cc35"), ("RC", "#ef6100"),
-              ("BR+", "#ab58a2"), ("COIL_A", "#8c3b00"), ("COIL_B", "#fa50e6")]
+#   `breadboardView` 下 `<color wire="…">` ✓）；**取值只有一个出处** ✓ = 项目数据的
+#   `COLOR` ✓（2026-10-16 改 ✗：以前写死在本文件里 ⇒ v0.1.2 一改图例就落后 ✗）
+NET_COLORS = []                           # ★ 下面 `load_legend()` 里按项目数据填 ✓
 W_CHAR, H_ROW, W_CJK, H_TITLE = 1.7586, 2.28615, 2.54, 3.302
 STUB, GAP = 9.0, 3.0      # 色条长度：18 → **9**（用户 2026-09-26：减到原来一半 ✓）
 MM = 3.5433          # 1mm = 3.5433 sketch 单位 ✓（`width` 属性是 mm ✓，图形坐标是单位 ✓）
@@ -112,7 +122,18 @@ def is_deco_stub(e):
     return sub is not None and child(sub, "connectors") is None
 
 
+def load_legend(path=None):
+    r"""图例行 = 项目数据的 `COLOR` ✓（名字 / 颜色 / **行序** 都只此一处 ✓）"""
+    global NET_COLORS
+    mod = PD.load(path, need=("COLOR",))
+    NET_COLORS = list(mod.COLOR.items())
+    print("图例 %d 行 ✓（取自项目数据的 `COLOR` ✓，行序 = 字典里的先后 ✓）：%s"
+          % (len(NET_COLORS), " ".join("%s=%s" % kv for kv in NET_COLORS)))
+
+
 def main(argv):
+    nets_file, argv = PD.strip_argv(argv)
+    load_legend(nets_file)
     fzz, out = argv[0], argv[1]
     x0 = float(argv[2]) if len(argv) > 2 else 590.0
     y0 = float(argv[3]) if len(argv) > 3 else 12.0
