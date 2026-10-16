@@ -1,11 +1,11 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-15 02:58:49 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-16 22:01:36 ｜ python 3.13.14 ｜ 平台 win32
 结果：**5 过 / 1 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
-| G1 文本卫生（全仓） | PASS | 0.5s |
+| G1 文本卫生（全仓） | PASS | 0.6s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
 | G3 生成器可重生成（全仓） | PASS | 5.6s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
@@ -15,7 +15,7 @@
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 1063 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 1067 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> PASS
 - check_readme_table.py rc=0；=== 全部通过 ===

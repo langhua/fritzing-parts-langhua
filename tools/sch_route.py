@@ -2550,16 +2550,21 @@ def main(argv):
             if _miss:
                 print("   ⚠ `POWER` 里的 %s **不在本项目网表里** ✗ ⇒ 这两条轨不会有脚 ✓"
                       "（请核对项目数据 ✓）" % ",".join(_miss))
-        # ★★ 2026-10-13 补 ✗：`NET_COLOR` 的**兜底分色**是在**模块载入时**跑的 ✓ —— 那时
-        #   `NETS` 还是本文件里写死的那份（像素板的网名 ✗）⇒ 用 `--nets=` 换成**项目**网表
-        #   之后**没人再补颜色** ✗ ⇒ 项目里的网全落 `NET_COLOR.get(net, "#404040")` ✗
-        #   （实测：载板 97 根导线**全黑** ✗，打印出来是 `3V3=?`…✓）。
-        #   ⇒ 载入项目网表之后**补跑一次** ✓，且**优先用项目文件里的 `COLOR`** ✓（那本来就
-        #     是“项目数据” ✓，应该由项目文件说了算 ✓ —— 颜色值仍只能是官方表里的值 ✓）。
+        # ★★ 2026-10-16 ✓ **按视图取表** ✗（同 §5b 第 11 条：同一个颜色名两个视图值不同 ✓）——
+        #   项目文件若给了 `COLOR_SCH`（**原理图专用覆盖** ✓）就**以它为准** ✓：
+        #   先上 `COLOR`（= 面包板口径 ✓，当底 ✓）再盖 `COLOR_SCH` ✓。
+        #   起因（实测 ✓）：`LED_R`/`LED_HB` 的橙在面包板是 `#ef6100` ✓、原理图是 `#ff7300` ✓
+        #   而这是**同一个** `COLOR` 表 ✗ ⇒ 谁用谁错一格 ✗（10-15 把表改成原理图值 ✓
+        #   结果**面包板全错** ✗：`file_sanity` ① 报 3~5 根 ✗）。
         _col = getattr(_mod, "COLOR", None)
+        _colsch = getattr(_mod, "COLOR_SCH", None)          # ★ 原理图覆盖（可缺 ✓）
         if isinstance(_col, dict) and _col:
             NET_COLOR.update({k: v for k, v in _col.items() if v})
             print("★ 网色：采用项目文件 `COLOR` 的 %d 条 ✓（%s ✓）" % (len(_col), _nv))
+        if isinstance(_colsch, dict) and _colsch:
+            NET_COLOR.update({k: v for k, v in _colsch.items() if v})
+            print("★ 网色：再按项目文件 `COLOR_SCH` 覆盖 %d 条 ✓（原理图专用 ✓：%s ✓）"
+                  % (len(_colsch), ", ".join("%s=%s" % kv for kv in sorted(_colsch.items()))))
         _new = sorted(n for n in NETS if n not in NET_COLOR)
         for _n2 in _new:                       # 剩下的照旧按序兜底 ✓（同一条规则 ✓）
             NET_COLOR[_n2] = SCHEM_PALETTE[len(NET_COLOR) % len(SCHEM_PALETTE)]

@@ -5,7 +5,7 @@ r"""★ 前置闸门：**摆位先于入网**（规则正文：库仓 `docs/brea
 「**物理上管脚没有插入孔……能把物理模型放在第一位吗？**」✓
 ⇒ 布线**之前**跑本脚本 ✓：不过 ⇒ **不许布线** ✗（`bb_route_guarded.py` 挂在 `bb_route4` 前 ✓）。
 
-五条判据（★ **判据 = 几何** ✓，✗ 不是"有没有 `<connect>`"✗ —— §A.5 第 4 条 ✓）：
+六条判据（★ **判据 = 几何** ✓，✗ 不是"有没有 `<connect>`"✗ —— §A.5 第 4 条 ✓）：
 
   ① 每个脚**恰好**声明了**一颗真实的孔** ✓（没声明 / 孔名不在板上 ⇒ 没到位 ✗）
   ② **接点**落孔 ✓ —— 有 `<leg>` 的脚用**腿端**（＝ 那只脚真正伸进孔里的点 ✓，
@@ -20,6 +20,13 @@ r"""★ 前置闸门：**摆位先于入网**（规则正文：库仓 `docs/brea
   ④ 一个孔**只能被一只脚**占用 ✓（= `bb_probe` ⑦ 同口径 ✓）
   ⑤ **一 bus 一网** ✓（= `bb_probe` ①b 同口径 ✓）：同一列 5 孔是同一块铜片 ⇒
      两个网 = **实物短接** ✗
+  ⑥ **脚不能"缩进本体"** ✓（2026-10-16 加 ✓，用户定"加"✓）：同件内**脚与脚的间距**
+     必须等于**元件自称的间距** ✓（容差见 `SHAPE_TOL_MM` ✓）——
+     起因 = 用户报「`R3.2 位置错误`」✓：实测那只电阻的两只脚在 `.fz` 里被压扁成 **14.266 单位** ✗
+     （元件自称 **36.887** ✗）⇒ 画出来的引线**缩进本体** ＋ 拖出一条 **5.9 mm 橡皮筋** ✗
+     ＋ ★ **Fritzing 里那只脚的可点位置不对** ✗。✗ ①–⑤ **全都看不见它** ✗（只认"腿端落孔"✓）。
+     ⚠ 范围如实 ✓：它抓的是**形状**（脚距）✗，**不抓**整体小平移 ✓（那是"盘心 vs 引脚原点"的固有差 ✓）
+     ⇒ 若整体挪了而形状没变 ⇒ **本闸门不报** ✗（那是别的判据的事 ✓）。
 
 几何一律**调库里的同一份实现** ✓：孔坐标 `bb_compare.hole_xy` ✓（与 `bb_probe`／`bb_compare`
 同源 ✓）、元件盘心与 svg 尺寸 `part_box` ✓（与 `bb_route4`／`render_pcb` 同源 ✓）——
@@ -47,6 +54,15 @@ SK_MM = 25.4 / 90.0        # 1 sketch 单位 = 1/90 in ✓（唯一口径见 AGE
 MM = 1.0 / SK_MM
 DEFAULT_TOL_MM = 0.6       # ★ 0.6 mm = 孔距 2.54 mm 的 24% ✓ ⇒ 不会与邻孔混淆 ✓；
                            #   而 R0603 那种"图形跨度 4.098 孔"的件第二脚天然偏 0.25 mm ✓ ⇒ 放得过 ✓
+SHAPE_TOL_MM = 2.0         # ★ ⑥ 的容差 = "**同件内**脚距 vs 元件自称脚距"的**残差** ✓
+                           #   （先把每只脚 `geometry − 自称脚位` 的**平均值**减掉 ⇒ 整体平移不算错 ✓
+                           #    —— 那正是"盘心 vs 引脚原点"的固有差 ✓）。实测定值 ✓（2026-10-16 ✓）：
+                           #   · **用户亲手在 Fritzing 里画的 9 张台架图**：最大 **0.22 mm** ✓（零误报 ✓）
+                           #   · 用户认可、明确说"不用改"的 `R1/R2`：**0.50 mm** ✓
+                           #   · 用户报"位置错误"的 `R3`（修前）：**3.19 mm** ✗ ⇒ 取 2.0 落在空档里 ✓
+                           #   ★ 灵敏度如实 ✓：两脚件"脚距被压扁 P mm" ⇒ 残差 = P/2 ⇒
+                           #     本阈值抓的是 **脚距错 ≥ 4 mm** ✗（1 mm 级的小压扁**有意放过**✓ ——
+                           #     用户对 `R1` 就判"没问题"✓，机器不该比人更严 ✗）。
 SKIP = ("Breadboard", "Logo", "Ground", "NetLabel", "TXT", "PCB", "Wire")
 
 
@@ -199,6 +215,7 @@ def main(argv):
 
     nopad, miss, notreal, far, farpin, exempt = [], [], [], [], [], []
     dup, plug_net, n_inst = {}, {}, 0
+    sh, sh_ck, sh_zero = [], [0], [0]   # ⑥：脚距残差／参与比对的脚数／`(0,0)` 跳过数 ✓
     for e in sroot.iter("instance"):
         mid = e.get("moduleIdRef") or ""
         if mid.startswith("Wire") or e is board:
@@ -212,6 +229,7 @@ def main(argv):
         if bv is None:
             continue
         n_inst += 1
+        g6 = []                        # ⑥ 用：本件每只脚的 `(geometry − 自称脚位)` ✓
         g = _child(bv, "geometry")
         if g is None:
             continue
@@ -227,6 +245,15 @@ def main(argv):
         for cm in bv.iter("connector"):
             cid = cm.get("connectorId")
             key = "%s.%s" % (ttl, cid)
+            # ★ ⑥ 收数**必须在最前面** ✓ —— 下面的 `continue`（没声明孔／孔名不对…）会让它收不到 ✗，
+            #   而 ⑥ 是**独立**的一条判据 ✓（实测踩过 ✗：台架那张报"全是 (0,0)"✗ 其实是先被 continue 了 ✗）。
+            cg6 = _child(cm, "geometry")
+            if cg6 is not None and cid in anc:
+                gx6, gy6 = _num(cg6.get("x")), _num(cg6.get("y"))
+                if abs(gx6) < 1e-9 and abs(gy6) < 1e-9:
+                    sh_zero[0] += 1          # `(0,0)` = Fritzing **没改写** ✓ ⇒ 这只脚没可比对的 ✗
+                else:
+                    g6.append((cid, gx6 - anc[cid][0], gy6 - anc[cid][1]))
             allc = list(cm.iter("connect"))
             tg = [c.get("connectorId") for c in allc
                   if (c.get("layer") or "") == "breadboardbreadboard"]
@@ -277,6 +304,15 @@ def main(argv):
             if nm:
                 plug_net.setdefault(tg[0], set()).add(nm)
 
+        # ⑥ 本件收尾：≥2 只脚才比得出"形状" ✓（一只脚／全是 `(0,0)` ⇒ 判不了 ⇒ 如实不判 ✓）
+        if len(g6) >= 2:
+            mx6 = sum(d[1] for d in g6) / len(g6)
+            my6 = sum(d[2] for d in g6) / len(g6)
+            for d in g6:
+                sh.append(("%s.%s" % (ttl, d[0]),
+                           (((d[1] - mx6) ** 2 + (d[2] - my6) ** 2) ** 0.5) * SK_MM))
+            sh_ck[0] += len(g6)
+
     dups = {h: v for h, v in dup.items() if len(v) > 1}
     busnets = {}
     for h, ns in plug_net.items():
@@ -300,6 +336,15 @@ def main(argv):
     ok &= rep("④", "一个孔只被一只脚占用", list(dups.items()),
               "；".join("%s←%s" % (h, "+".join(v)) for h, v in list(dups.items())[:4]))
     ok &= rep("⑤", "一 bus 一网（没把两张网并到一起）", conn, str(conn[:3]))
+    sh_bad = [d for d in sh if d[1] > SHAPE_TOL_MM]
+    ok &= rep("⑥", "同件内脚与脚的间距 = 元件自称的间距（容差 %.1f mm ✓）" % SHAPE_TOL_MM,
+              sh_bad, "；".join("%s 形状偏 %.2f mm" % (d[0], d[1]) for d in sh_bad[:6]))
+    if sh_ck[0]:
+        print("      —— ⑥ 量到 **%d 只脚**参与比对 ✓（另有 %d 只 `geometry=(0,0)`＝没改写 ⇒ 跳过 ✓）"
+              % (sh_ck[0], sh_zero[0]))
+    else:
+        print("      —— ⑥ **本次没量到可比对的脚**（每件里可比脚的 < 2 只：要么全是 `(0,0)`＝没改写 ✓、"
+              "要么那件没在这张图的面包板视图里 ✓）⇒ 不判 ✓")
     # ★★ 「盘心」只作**报告**✗ 不作判据 ✓（2026-10-15 实测定 ✓）：
     #   **橡皮筋引线件**（C0603 / core 电阻类 ✓，`.fzp` 写了 `legId` ✓）的接点 = **腿端** ✓；
     #   盘心是图形上那个「盘」的位置 ✓、离孔天然差 7~10 mm ✓ ——
