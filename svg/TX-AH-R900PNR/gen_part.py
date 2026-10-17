@@ -734,8 +734,8 @@ def buses_xml(gnd_extra=(), vcc_conns=(), tie_buses=()):
     - tie_buses：其余“一个排针脚 ↔ 一个模组边脚”的成对网（J5/J4 的 Axx，见 J45_PADS）。"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
     L = [" <buses>\n", '  <bus id="GND">\n']
-    # ★ 2026-10-17 用户定：GND 与散热盘同网 ⇒ 两个 EPAD + 各自的 4 个热过孔并进 GND 总线
-    gnd += ["connector36", "connector37"] + ["connector%d" % (VIA_CID0 + k) for k in range(8)]
+    #   ★ 两个 EPAD 在模组**底面**、GND 是**边脚**（相距 3~6 mm，**没有铜连过去**）
+    #     ⇒ **各自独立成网** ✓（用户 2026-10-17 定；只与自己的热过孔一条总线）
     for cid in gnd:
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
@@ -754,7 +754,13 @@ def buses_xml(gnd_extra=(), vcc_conns=(), tie_buses=()):
         for cid in pair:
             L.append(f'   <nodeMember connectorId="connector{cid}"/>\n')
         L.append("  </bus>\n")
-    # （两个 EPAD 已在上面并入 GND 总线）
+    # 散热盘总线：每个 EPAD 与它自己的 4 个热过孔一条（**独立于 GND** ✓）
+    for k, name in enumerate(EPADS):
+        L.append(f'  <bus id="{name}">\n')
+        L.append(f'   <nodeMember connectorId="connector{36 + k}"/>\n')
+        for j in range(4):
+            L.append(f'   <nodeMember connectorId="connector{VIA_CID0 + k * 4 + j}"/>\n')
+        L.append("  </bus>\n")
     L.append(" </buses>\n")
     return "".join(L)
 

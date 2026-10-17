@@ -487,9 +487,7 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网。
     （J4/J5 的 A10/A11/A12/A13 与 CH340E_RX/TX **故意不进总线** —— 实测与模组脚不通。）"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
-    # ★ 2026-10-17 用户定：GND 与散热盘同网 ⇒ 两个 EPAD + 各自的 4 个热过孔并进 GND 总线
-    #   （与 `../TX-AH-R900PNR` 一致；PCB 图是逐字节复用的那份）
-    gnd += ["connector36", "connector37"] + ["connector%d" % (VIA_CID0 + k) for k in range(8)]
+    #   ★ 两个 EPAD 在模组底面、GND 是边脚（相距 3~6 mm，没有铜连过去）⇒ 各自独立成网 ✓
     L = [" <buses>\n", '  <bus id="GND">\n']
     for cid in gnd:
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
@@ -504,7 +502,13 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     for cid in ("connector21", "connector38"):
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
-    # （两个 EPAD 已在上面并入 GND 总线）
+    # 散热盘总线：每个 EPAD 与它自己的 4 个热过孔一条（独立于 GND ✓；与 `../TX-AH-R900PNR` 一致）
+    for k, name in enumerate(EPADS):
+        L.append(f'  <bus id="{name}">\n')
+        L.append(f'   <nodeMember connectorId="connector{36 + k}"/>\n')
+        for j in range(4):
+            L.append(f'   <nodeMember connectorId="connector{VIA_CID0 + k * 4 + j}"/>\n')
+        L.append("  </bus>\n")
     L.append(" </buses>\n")
     return "".join(L)
 

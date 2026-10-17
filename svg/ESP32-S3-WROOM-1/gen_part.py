@@ -595,10 +595,12 @@ def buses_xml():
     net so the user routes it to GND on purpose (same as RT6150's `EP`,
     TX-AH's `EPAD1/2`, TXW8301's `EPAD`)."""
     buses = [
-        # ★ 2026-10-17 用户定：GND 与散热盘（EPAD）同网 ⇒ EPAD + 9 个热过孔并进 GND 总线
-        ("GND", ["connector0", "connector39", "connector43", "connector40"]
-                + ["connector%d" % (VIA_CID0 + k) for k in range(9)]),
+        ("GND", ["connector0", "connector39", "connector43"]),
         ("3V3", ["connector1", "connector41"]),
+        # ★ EPAD 在模组**中央**、GND 焊盘在两侧边缘（相距 9 mm，**没有铜连过去**）
+        #   ⇒ **独立成网** ✓（用户 2026-10-17 定；只与它自己的热过孔同一条总线）。
+        #   ✗ 不并进 GND 总线：看着像一个网、实际铜没接上 ✗
+        ("EPAD", ["connector40"] + ["connector%d" % (VIA_CID0 + k) for k in range(9)]),
     ]
     L = [" <buses>\n"]
     for bid, members in buses:
