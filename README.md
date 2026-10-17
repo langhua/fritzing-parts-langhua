@@ -13,7 +13,7 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 130 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 131 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -61,7 +61,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（134 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（135 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -70,6 +70,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | 8205S | 双 N 沟道 MOSFET（SOT23-6） | `fzpz/8205S.fzpz` || AT24C02 | I2C 串行 EEPROM（2Kbit，SOP-8，A0~A2/WP） | `fzpz/AT24C02.fzpz` |
 | BAS70BRW | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K75） | `fzpz/BAS70BRW.fzpz` |
 | BAS70DW-04 | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K74） | `fzpz/BAS70DW-04.fzpz` || BAT54S | SOT-23 双肖特基二极管（3 脚） | `fzpz/BAT54S.fzpz` |
+| BQ25570 | TI **bq25570** 能量采集 PMIC（VQFN-20 RGR 3.5×3.5mm、0.5mm 脚距：纳功耗 boost 充电器 + MPPT + 纳功耗 buck；裸露 **PowerPAD** 与两只 VSS、NC 9/17 同网并带 3×3 ⌀0.20 热过孔；**面包板 = CJMCU-2557 模块** 30×28.5mm，左缘 GND/V_EN/EN/V_OK、右缘三对端子 **TB1(INPUT±) / J1(BAT±) / TB2(OUTPUT±)**） | `fzpz/BQ25570.fzpz` |
 | CH213K | 低压差理想二极管芯片，带限流（SOT23-3） | `fzpz/CH213K.fzpz` |
 | CH32V002D4U6 | CH32V002 主控（QingKe RISC-V MCU，QFN12，12 脚 + EPAD 散热焊盘） | `fzpz/CH32V002D4U6.fzpz` |
 | CH32V002F4U6 | CH32V002 主控（QFN20，20 脚 + EPAD） | `fzpz/CH32V002F4U6.fzpz` |

@@ -50,6 +50,16 @@
         <instance moduleIdRef="LD1117" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/LD1117.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="能量采集">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="BQ25570" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/BQ25570.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="锂电充电">
         <views>
             <iconView layer="icon">
