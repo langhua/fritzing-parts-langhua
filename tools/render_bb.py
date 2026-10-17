@@ -26,6 +26,11 @@ import xml.etree.ElementTree as ET
 #   ⇒ 本文件**已在库仓内** ✓ ⇒ 直接 import 同目录的模块即可 ✓（不需要 `toolpaths` 定位器 ✓）。
 import part_box as PB                                             # noqa: E402
 import bb_compare as BC                                           # ★ 孔位/遮挡同一份实现 ✓
+# ★★ 2026-10-17 加 ✓：零件**本体**的包围盒累加器 ✓
+#   起因（用户报 ✓）：板外元件（BT1 在面包板下方）被 `viewBox` **裁掉一截** ✗ ——
+#   画布原来只并了「板 + 导线端点 + 图例文字」✗，**零件本体从没算过** ✓。
+#   做法：在每个零件的 `lay_body.append(...)` 处，把它 svg 的 viewBox 四角经矩阵变换后收进来 ✓。
+_PARTBB = {"x": [], "y": []}
 
 path, out = sys.argv[1], sys.argv[2]
 PXW = float(sys.argv[3]) if len(sys.argv) > 3 else 1800.0
@@ -419,6 +424,14 @@ for el in root.iter("instance"):
         print("      ⚠ 参考点没能算出来的：%s" % "；".join(_badref[:6]))
     a, b, c, d = k * m[0], k * m[1], k * m[2], k * m[3]
     e, f = num(g.get("x")) + m[4] - _subx, num(g.get("y")) + m[5] - _suby
+    # ★ 2026-10-17 ✓：把**本体**的包围盒收进画布 ✓（走它 svg 的 viewBox 四角 × k × 矩阵 ✓）
+    _mvb = re.search(r'viewBox="\s*([-\d.]+)[\s,]+([-\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)', txt)
+    if _mvb:
+        _vx0, _vy0 = float(_mvb.group(1)), float(_mvb.group(2))
+        _vx1, _vy1 = _vx0 + float(_mvb.group(3)), _vy0 + float(_mvb.group(4))
+        for _px, _py in ((_vx0, _vy0), (_vx1, _vy0), (_vx0, _vy1), (_vx1, _vy1)):
+            _PARTBB["x"].append(num(g.get("x")) + k * (m[0] * _px + m[2] * _py) + m[4] - _subx)
+            _PARTBB["y"].append(num(g.get("y")) + k * (m[1] * _px + m[3] * _py) + m[5] - _suby)
     # ★★★ 2026-09-27 **证据推翻了我昨天的"撤掉"** ✗✓：**viewBox 的原点必须减** ✓ ——
     #   早先我把 `translate(-minX,-minY)` 撤了 ✗，理由是"这只是坐标重映射、不是摆视口" ✗ ——**错** ✓。
     #   硬证据 ✓（机验 ✓，不是推理 ✗）：`LED2` 的 `viewBox="1.03 0 …"` ⇒ 四个脚**一律**偏
@@ -484,7 +497,7 @@ for el in root.iter("instance"):
                  else "✗ **%d 条末端对不上孔** ✗（最大 Δ=%.2f 单位）" % (_legbad, _legmax),
                  _unv, "✓" if not _unv else "✗（这些件只能靠人眼 ✓）"))
 
-xs, ys = [0.0, 576.0], [0.0, 189.0]
+xs, ys = [0.0, 576.0] + _PARTBB["x"], [0.0, 189.0] + _PARTBB["y"]      # ★ 含零件本体 ✓（2026-10-17 ✓）
 for x1, y1, x2, y2, _c in wires:
     xs += [x1, x2]
     ys += [y1, y2]
