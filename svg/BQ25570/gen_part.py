@@ -19,11 +19,13 @@ r"""BQ25570（VQFN-20 / RGR，3.5×3.5 mm）—— 生成脚本
 用法： py -3.13 -u -X utf8 gen_part.py     # 在**本目录**生成 icon / 面包板 / 原理图 / PCB
 """
 import os
+import re
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ID = "BQ25570"
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)          # `import byHand_tables`（同目录，python 直接跑时也在）
 
 # ── icon 几何（px，viewBox 32×32；1 px = 3.5mm/17 = 0.2059 mm ⇒ 0.5mm 脚距 = 2.4286px?? ✗）
 #   ★ 照库里的画法：本体 17px、脚距 **3.40px**（= 0.5mm ✓，与 CH32V002D4U6 同一套比例 ✓）
@@ -36,64 +38,129 @@ GAP = 0.96             # 本体边到脚内端的空隙（兄弟件：7.50 − (
 PIN1_CX, PIN1_CY = 9.60, 22.40   # 1 脚圆点（**左下** ✓ —— 手册顶视图 pin1 在左下 ✓）
 TXT_H = 2.30           # 中间型号字：**用户 2026-10-17 定 → 写 `BQ25570`** ✓（7 字符，字号看着缩到 2.3 ✓）
 
-# ══════════════ 面包板视图 = CJMCU-2557 模块（**尺寸按用户 2026-10-17 实测：30×28** ✓）
-#   排针 2.54 ✓、超级电容 Ø≈19.5（推定 ✗，照片估的）；安装孔 Ø2.0（推定 ✗）。
-BB_W, BB_H = 30.00, 28.00          # 板 **30 × 28 mm**（用户 2026-10-17 给定 ✓）
-BB_COLOR = "#5B2A86"               # 紫色阻焊（照片 ✓）
-PAD_R, HOLE_R = 1.00, 0.485        # 2mm 焊盘 + Ø0.97 针孔 ✓（§3b ✓）
-HOLE_D = 2.00                      # 安装孔 Ø2.0（推定 ✗）
-CAP_D = 19.50                      # 5.5V 0.22F 超级电容外径（推定 ✗）
-CAP_C = (17.80, 10.16)             # 电容中心（推定 ✗：板改 28 高后位置未变，等照片定）
-# 引脚： (名字, x, y) —— 左缘 4 针 ✓ / 右缘 3 对 ✓（全部 2.54 网格 ✓）
-BB_PINS = [("GND", 1.27, 3.81), ("V_EN", 1.27, 6.35), ("EN", 1.27, 8.89), ("V_OK", 1.27, 11.43),
-           ("OUTPUT+", 28.73, 3.81), ("OUTPUT-", 26.19, 3.81),
-           ("BAT+", 28.73, 6.35), ("BAT-", 26.19, 6.35),
-           ("INPUT+", 28.73, 8.89), ("INPUT-", 26.19, 8.89)]
-# ★ 模块针 → **芯片连接器号**（AGENTS §3：面包板画整块板、原理图/PCB 画芯片，按信号名映射 ✓）
-#   21/22/23 = **只在面包板视图存在**的接地针（模块的 OUTPUT- / BAT- / INPUT-）
-BB_CONN = [0, 5, 4, 12, 13, 21, 17, 22, 1, 23]
-#   GND→VSS(0) ｜ V_EN→VOUT_EN(5) ｜ EN→EN(4) ｜ V_OK→VBAT_OK(12)
-#   OUTPUT+→VOUT(13) ｜ OUTPUT-→21 ｜ BAT+→VBAT(17) ｜ BAT-→22 ｜ INPUT+→VIN_DC(1) ｜ INPUT-→23
+# ══════════════ 面包板视图 = CJMCU-2557 模块（30 × 28.5 mm，用户手工对齐 → byHand_tables.py）
+#
+# ★ 几何**全部来自 `byHand_tables.py`**（`tools/byhand_export.py` 从用户手工版
+#   `svg.breadboard.BQ25570_breadboard_byHand.svg` 导出）。换位置请改手工版后重跑导出，
+#   **不要在这里改坐标**（AGENTS §5）。
+# ★ 坐标口径两条、**不许混**（byhand_export 的注释同此）：
+#   · `rect` / `circle` / `pad` 的坐标是**内部单位**（100 单位 = 2.54 mm）⇒ 直接输出，
+#     viewBox 也用内部单位；
+#   · `path` 的 `d` 与 `stroke-width` 是手工版的**用户单位（= mm）**，且自带 matrix
+#     ⇒ 外面包一层 `scale(UF)`。
+# ★ 端子命名（用户 2026-10-17 定）：`<丝印位号>-<端子丝印><极性>`；依据是**实物照片**——
+#   模块从上到下三个端子的丝印是 OUTPUT / BAT / INPUT，每个端子上针 `+`、下针 `-`：
+#     y 5.08 = OUTPUT+ = VOUT(13) ｜ 7.62 = OUTPUT- ｜ 12.70 = BAT+ = VBAT(17)
+#     y 15.24 = BAT- ｜ 20.32 = INPUT+ = VIN_DC(1) ｜ 22.86 = INPUT-
+#   （手工版 2026-10-17 已把 `connectorNpin` 的编号按这个位置重排、位号 TB1↔TB2 换到实物顺序。）
+from byHand_tables import (DOC_MM_W, DOC_MM_H, DOC_VIEWBOX, UF, PAD_R, PAD_SW,   # noqa: E402
+                           PAD_FILL, PAD_EDGE, SHAPES, ICONS, TEXTS, DEFS)
+
+BB_W, BB_H = DOC_MM_W, DOC_MM_H          # 30 × 28.5 mm（用户给定 ✓）
+_BB_VB = tuple(v * UF for v in DOC_VIEWBOX)      # viewBox（内部单位）
+
+# 板框：**在这里画** —— 手工版那块（`rect2`）在 `layer1`，而 Inkscape 把它存成了
+# `display:none`，`byhand_export` 整棵跳过 ⇒ 不进表。几何照手工版 rect2：
+# 30×28.5 mm、圆角 0.40、fill #5b2a86（紫阻焊）、描边 #2b1a3d 0.2018 mm。
+BB_COLOR, BB_EDGE = "#5b2a86", "#2b1a3d"
+BB_RX, BB_SW = 0.40, 0.2018
+
+# 面包板针的连接器号 → **丝印名**（左缘 4 针照板上丝印；右缘 6 针 = 位号-端子-极性）
+BB_NAME = {0: "GND", 5: "V_EN", 4: "EN", 12: "V_OK",
+           13: "TB2-OUTPUT+", 21: "TB2-OUTPUT-",
+           17: "J1-BAT+", 22: "J1-BAT-",
+           1: "TB1-INPUT+", 23: "TB1-INPUT-"}
+BB_CONN = [0, 5, 4, 12, 13, 21, 17, 22, 1, 23]       # 板上 10 个针（顺序：左 4 + 右 6）
+
+
+def _esc(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;").replace('"', "&quot;"))
 
 
 def breadboard_svg():
-    L = ['<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
-         'viewBox="0 0 %.2f %.2f">' % (BB_W, BB_H, BB_W, BB_H),
-         ' <g id="breadboard">']
-    L.append('  <rect x="0" y="0" width="%.2f" height="%.2f" rx="0.4" fill="%s" '
-             'stroke="#2b1a3a" stroke-width="0.20"/>' % (BB_W, BB_H, BB_COLOR))
-    # 电容位置用**丝印圈**（它在板背面 ✓，面包板视图是俯视 ✓）
-    L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="#e8e8e8" '
-             'stroke-width="0.25"/>' % (CAP_C[0], CAP_C[1], CAP_D / 2.0))
-    # 2 个安装孔
-    for hx, hy in ((1.27, 1.27), (1.27, BB_H - 1.27)):
-        L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="none" stroke="#c8a227" '
-                 'stroke-width="0.55"/>' % (hx, hy, HOLE_D / 2.0 - 0.275))
-        L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="#1a1a1a"/>'
-                 % (hx, hy, HOLE_D / 2.0 - 0.55))
-    # 10 个针：焊盘环 + 针孔 + 丝印名（竖排 ✓ 同照片 ✓）+ connectorNpin / connectorNleg
-    for i, (name, x, y) in enumerate(BB_PINS):
-        cn = BB_CONN[i]
-        L.append('  <circle cx="%.2f" cy="%.2f" r="%.2f" fill="#c8a227"/>' % (x, y, PAD_R))
-        L.append('  <circle id="connector%dpin" cx="%.2f" cy="%.2f" r="%.2f" fill="#1a1a1a"/>'
-                 % (cn, x, y, HOLE_R))
-        L.append('  <line id="connector%dleg" x1="%.2f" y1="%.2f" x2="%.2f" y2="%.2f" '
-                 'stroke="#8c8c8c" stroke-width="0.45" stroke-linecap="round"/>'
-                 % (cn, x, y, x, y + 2.54))
-        if x > BB_W / 2:                 # ★ 右缘的针**不逐个标名** ✗（成对 ⇒ 由下面每对一个名字 ✓）
-            continue
-        tx = x + 2.10
-        L.append('  <text x="%.2f" y="%.2f" font-size="1.55" font-family="DroidSans" '
-                 'fill="#ffffff" transform="rotate(-90 %.2f %.2f)" text-anchor="middle">%s</text>'
-                 % (tx, y, tx, y, name))
-    # ★ 右缘是**成对的**（两针同 y ✓）⇒ 每对只标**一个名字**（同照片 ✓），放两列左边 ✓
-    #   （逐针标会两个竖排标签叠在一起 ✗）
-    for y, nm in ((3.81, "OUTPUT"), (6.35, "BAT"), (8.89, "INPUT")):
-        L.append('  <text x="24.10" y="%.2f" font-size="1.55" font-family="DroidSans" '
-                 'fill="#ffffff" transform="rotate(-90 24.10 %.2f)" text-anchor="middle">%s</text>'
-                 % (y, y, nm))
-    L += [' </g>', '</svg>', '']
-    return "\n".join(L)
+    """面包板视图（照 `byHand_tables.py` 逐图元输出，叠放次序 = 手工版里的先后次序）。"""
+    L = ['<?xml version="1.0" encoding="utf-8"?>\n',
+         '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
+         'viewBox="%g %g %g %g">\n'
+         % (BB_W, BB_H, _BB_VB[0], _BB_VB[1], _BB_VB[2], _BB_VB[3]),
+         ' <g id="breadboard">\n']
+    # 板框（见上面 BB_COLOR 那段注释：手工版那块在隐藏图层，导出器会跳过）
+    L.append('  <rect id="board" x="0" y="0" width="%g" height="%g" rx="%g" ry="%g" '
+             'fill="%s" stroke="%s" stroke-width="%g"/>\n'
+             % (BB_W * UF, BB_H * UF, BB_RX * UF, BB_RX * UF, BB_COLOR, BB_EDGE, BB_SW * UF))
+    if DEFS:
+        L.append('  <defs>\n')
+        for d in DEFS:
+            L.append('   %s\n' % d)
+        L.append('  </defs>\n')
+    for s in SHAPES:
+        k = s[0]
+        if k == "rect":
+            x, y, w, h, fill, _rot, stroke, sw = s[1:9]      # _rot：bbox 已烘焙，不用
+            rx = s[9] if len(s) > 9 and s[9] not in (None, "None") else None
+            op = s[10] if len(s) > 10 and s[10] not in (None, "None") else None
+            a = ' fill="%s"' % (fill if fill not in (None, "None") else "none")
+            if stroke not in (None, "None"):
+                a += ' stroke="%s"' % stroke
+                if sw not in (None, "None") and float(sw) > 0:
+                    a += ' stroke-width="%g"' % float(sw)
+            if rx:
+                a += ' rx="%g" ry="%g"' % (float(rx), float(rx))
+            if op:
+                a += ' opacity="%g"' % float(op)
+            L.append('  <rect x="%g" y="%g" width="%g" height="%g"%s/>\n'
+                     % (x, y, w, h, a))
+        elif k == "circle":
+            x, y, r, fill, stroke, sw = s[1:7]
+            a = ' fill="%s"' % (fill if fill not in (None, "None") else "none")
+            if stroke not in (None, "None"):
+                a += ' stroke="%s"' % stroke
+                if sw not in (None, "None") and float(sw) > 0:
+                    a += ' stroke-width="%g"' % float(sw)
+            L.append('  <circle cx="%g" cy="%g" r="%g"%s/>\n' % (x, y, r, a))
+        elif k == "pad":
+            pid = s[1]
+            x, y = s[3], s[4]
+            m = re.search(r"connector(\d+)pin", pid)
+            cn = int(m.group(1)) if m else None
+            nm = BB_NAME.get(cn)
+            a = ' connectorname="%s"' % _esc(nm) if nm else ""
+            st = ""
+            if PAD_SW and float(PAD_SW) > 0:
+                st = ' stroke="%s" stroke-width="%g"' % (PAD_EDGE or "#000000", PAD_SW)
+            L.append('  <circle id="%s"%s cx="%g" cy="%g" r="%g" fill="%s"%s/>\n'
+                     % (pid, a, x, y, PAD_R, PAD_FILL, st))
+        elif k == "line":
+            x1, y1, x2, y2, stroke, sw = s[1:7]
+            L.append('  <line x1="%g" y1="%g" x2="%g" y2="%g" stroke="%s" '
+                     'stroke-width="%g"/>\n'
+                     % (x1, y1, x2, y2, stroke or "#000000", float(sw or 1.0)))
+        elif k == "path":
+            d, mtx, fill, stroke, sw = s[1:6]
+            tr = ('transform="scale(%g) %s"' % (UF, mtx)) if mtx else ('transform="scale(%g)"' % UF)
+            a = ' fill="%s"' % (fill if fill not in (None, "None") else "none")
+            if stroke not in (None, "None"):
+                a += ' stroke="%s"' % stroke
+                if sw not in (None, "None") and float(sw) > 0:
+                    a += ' stroke-width="%g"' % float(sw)
+            L.append('  <path d="%s" %s%s/>\n' % (d, tr, a))
+    # 板上器件（本件手工版里没有做成「带缩放的组」⇒ ICONS 为空；保留分支以免换件时漏）
+    for part, x, y, rot in ICONS:
+        L.append('  <!-- icon %s @ (%g,%g) %.1f° -->\n' % (part, x, y, rot))
+    # 丝印（字号是内部单位）
+    for txt, x, y, fs, anchor, rot, fill, fw in TEXTS:
+        a = ' fill="%s"' % (fill if fill not in (None, "None") else "#ffffff")
+        if anchor not in (None, "None"):
+            a += ' text-anchor="%s"' % anchor
+        if fw:
+            a += ' font-weight="%s"' % fw
+        if rot:
+            a += ' transform="rotate(%g %g %g)"' % (float(rot), x, y)
+        L.append('  <text x="%g" y="%g" font-size="%g" font-family="DroidSans"%s>%s'
+                 '</text>\n' % (x, y, fs, a, _esc(txt)))
+    L += [' </g>\n', '</svg>\n']
+    return "".join(L)
 
 half = BODY / 2.0
 body_lo, body_hi = CB - half, CB + half          # 7.50 .. 24.50 ✓
@@ -431,7 +498,7 @@ FZP_DESC = {
 
 def fzp_xml():
     n = len(S_NAMES)                                    # 20
-    bb_ids = {BB_CONN[i]: BB_PINS[i][0] for i in range(len(BB_PINS))}
+    bb_ids = set(BB_CONN)
     conns = []
     for pno in range(1, n + 1):
         cid = pno - 1
@@ -442,10 +509,15 @@ def fzp_xml():
         v.append('    <schematicView><p layer="schematic" svgId="connector%dpin" '
                  'terminalId="connector%dterminal"/></schematicView>' % (cid, cid))
         v.append('    <pcbView><p layer="copper1" svgId="connector%dpad"/></pcbView>' % cid)
+        # ★ 名字：插到模块排针上的那 6 只按**板上丝印**（用户 2026-10-17 定），
+        #   其余脚照 datasheet 原厂名（AGENTS §5「命名一律尊重原厂」）。
+        nm = BB_NAME.get(cid, S_NAMES[cid])
+        desc = 'pin %d - %s' % (pno, FZP_DESC.get(pno, S_NAMES[cid]))
+        if cid in BB_NAME:
+            desc += ' / module terminal %s' % BB_NAME[cid]
         conns.append('  <connector id="connector%d" name="%s" type="male">\n'
-                     '   <description>pin %d - %s</description>\n   <views>\n%s\n   </views>\n'
-                     '  </connector>\n'
-                     % (cid, S_NAMES[cid], pno, FZP_DESC.get(pno, S_NAMES[cid]), "\n".join(v)))
+                     '   <description>%s</description>\n   <views>\n%s\n   </views>\n'
+                     '  </connector>\n' % (cid, nm, desc, "\n".join(v)))
     # PowerPAD：独立成网（不进 bus ✓ AGENTS §5），三个视图都有
     conns.append('  <connector id="connector%d" name="%s" type="male">\n'
                  '   <description>exposed thermal pad (datasheet: Thermal Pad / TI PowerPAD, '
@@ -457,14 +529,14 @@ def fzp_xml():
                  '    <pcbView><p layer="copper1" svgId="connector%dpad"/></pcbView>\n'
                  '   </views>\n  </connector>\n'
                  % (n, S_PAD, n, n, n))
-    # 面包板专用地针（只在面包板视图）
+    # 面包板专用地针（只在面包板视图）—— 名字就是端子丝印 + 极性
     for cid in (21, 22, 23):
-        conns.append('  <connector id="connector%d" name="GND" type="male">\n'
-                     '   <description>module header ground pin (%s) - same net as VSS</description>\n'
+        conns.append('  <connector id="connector%d" name="%s" type="male">\n'
+                     '   <description>module terminal %s (bottom pin, same net as VSS)</description>\n'
                      '   <views>\n'
                      '    <breadboardView><p layer="breadboard" svgId="connector%dpin"/>'
                      '</breadboardView>\n'
-                     '   </views>\n  </connector>\n' % (cid, bb_ids[cid], cid))
+                     '   </views>\n  </connector>\n' % (cid, BB_NAME[cid], BB_NAME[cid], cid))
     # ★ 9 个热过孔各成一个连接器（用户 2026-10-17 定）：它们与 PowerPAD 是**同一块铜**，
     #   物理上等价 ⇒ 进同一条总线；且每个都在 copper0/copper1 **两面**声明，
     #   面上都能拉线过去（对应 AGENTS §5「多焊盘同网络 = 每 pad 独立 connector + buses」✓）

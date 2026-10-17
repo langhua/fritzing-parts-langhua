@@ -1,21 +1,21 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-17 15:53:42 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-17 22:51:14 ｜ python 3.13.14 ｜ 平台 win32
 结果：**5 过 / 0 跳过 / 1 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
 | G1 文本卫生（全仓） | PASS | 0.6s |
 | G2 README 一致性（全仓） | FAIL | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 6.1s |
+| G3 生成器可重生成（全仓） | PASS | 6.0s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
-| G5 元件闸门（改动件） | PASS | 9.6s |
+| G5 元件闸门（改动件） | PASS | 0.8s |
 | G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 1075 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 1077 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> FAIL
 - check_readme_table.py rc=1
@@ -37,29 +37,15 @@
 - 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 9 个件
-- 已过：CH32V002F4U6 / fzp_check rc=0
-- 已过：CH32V002F4U6 / schem_check rc=0
-- 已过：CH347F / fzp_check rc=0
-- 已过：CH347F / schem_check rc=0
-- 已过：CN3165 / fzp_check rc=0
-- 已过：ESP32-S3-WROOM-1 / fzp_check rc=0
-- 已过：ESP32-S3-WROOM-1 / schem_check rc=0
-- 已过：IP101GR / fzp_check rc=0
-- 已过：IP101GR / schem_check rc=0
-- 已过：RT6150AGQW_rev_1 / fzp_check rc=0
-- 已过：RT6150AGQW_rev_1 / schem_check rc=0
-- 已过：TX-AH-R900PNR / fzp_check rc=0
-- 已过：TX-AH-R900PNR / schem_check rc=0
-- 已过：TX-AH-R900PNR_rev_1 / fzp_check rc=0
-- 已过：TX-AH-R900PNR_rev_1 / schem_check rc=0
-- 已过：TXW8301 / fzp_check rc=0
-- 已过：TXW8301 / schem_check rc=0
-- 已知例外（允许清单，理由在代码里）：CN3165：schem_check：=== 1 项 FAIL ===（schem_check 1 项既存 FAIL（同上口径：改前 1 == 改后 1））
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 2 个件
+- 已过：BQ25570 / fzp_check rc=0
+- 已过：BQ25570 / schem_check rc=0
+- 已过：CH340K / fzp_check rc=0
+- 已知例外（允许清单，理由在代码里）：CH340K：schem_check：=== 5 项 FAIL ===（schem_check 6 项既存 FAIL（pin 缺 class="pin"/connectorname 等；2026-10-15 核过：改前 6 == 改后 6；2026-10-17 加热过孔后剩 5 ✓ 更少））
 
 ### G6 单位口径（全仓） -> PASS
 -    ⚠ ③ part_box.py:357 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★★ 2026-09-27 修 ✓：`px` 由 **25.4/96 ✗ 改成 25.4/72** ✓（= 1/72 英寸 ✓）。
--    ⚠ ③ run_checks.py:188 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★ 守什么 ✗：`px` 多长，这个量在库仓曾同时有 **25.4/96 ✗ / 25.4/72 ✓ / 25.4/90 ✗**
+-    ⚠ ③ run_checks.py:195 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★ 守什么 ✗：`px` 多长，这个量在库仓曾同时有 **25.4/96 ✗ / 25.4/72 ✓ / 25.4/90 ✗**
 -    ⚠ ③ sch_box.py:38 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：#     ⇒ 同一个量（px 多长）在库里曾同时存在 **25.4/96 / 25.4/72 / 25.4/90** 三个值 ✗✗。
 
 ## 口径与边界
