@@ -21,8 +21,9 @@ gen_part.py — 生成 Fritzing 自定义元件 IP101GR (IC+ 10/100M 以太网 P
    · 第 64 页 Figure 25 **32-PIN QFN Dimension**（本体 4×4、节距 0.4）。
      ★ 封装名以手册为准 = **QFN-32**（不是 VQFN-32，用户 2026-09-17 指正）；
        下面那份立创封装的**文件名**里带 "VQFN-32" 字样，但那只是它的命名习惯。
-   · 底板裸露焊盘 = `GND`（手册原文）—— 但按 AGENTS §5「裸露焊盘必须独立成网」，
-     本元件里名字用 **EPAD**、**不进任何 `<bus>`**：布线时要特意接到 GND。
+   · 底板裸露焊盘 = `GND`（手册原文）—— 按 AGENTS §5（2026-10-17 口径），本元件
+     脚名里**没有** GND/VSS ⇒ 名字用 **EPAD**、总线里只有「盘 + 它自己的热过孔」，
+     布线时要特意接到 GND。
 2) **嘉立创/立创EDA 封装**（用户 2026-09-17 提供
    `D:\\Downloads\\VQFN-32-L4.0-W4.0-P0.40-BL-EP_2026-09-17.svg`）：
    16 进制实测（单位 0.254mm）：每边 8 个 OVAL 焊盘、节距 **0.400**、
@@ -56,7 +57,7 @@ FZPZ = "IP101GR.fzpz"
 
 # 引脚名（**按 Figure 3 排列图上的写法**；0 = 底板裸露焊盘）
 PIN_NAMES = {
-    0:  "EPAD",              # 手册写 "GND on bottom of chip"，按 AGENTS §5 用 EPAD、独立成网
+    0:  "EPAD",              # 手册写 "GND on bottom of chip"，按 AGENTS §5 用 EPAD（本件无 GND/VSS 脚 ⇒ 独立成网）
     1:  "TXER/FXSD",   2:  "X1",            3:  "X2",          4:  "COL/RMII",
     5:  "TXEN",        6:  "TXD3",          7:  "TXD2",        8:  "TXD1",
     9:  "TXD0",        10: "TXCLK/50M_CLKI", 11: "LED0/PHY_AD0", 12: "LED3/PHY_AD3",
@@ -97,6 +98,61 @@ EPAD = 2.8                 # 中心裸露焊盘 2.8×2.8
 SILK_CORNER = 2.076        # L 形角标的角点位置
 SILK_ARM = 0.3736          # 角标臂长
 SILK_W = 0.1524            # 角标线宽
+
+# ---- 散热盘热过孔（2026-10-17 用户定，全库统一）--------------------------------
+#  ① 正面焊盘里**挖出**热过孔（even-odd）；② 背面 copper0 画同尺寸散热铜；
+#  ③ 每个过孔自己是一个连接器（copper0/copper1 两面）⇒ 两面都能拉线；
+#  ④ 过孔与焊盘是同一块铜 ⇒ 同一条总线（点任一孔，整块盘一起高亮）。
+THERMAL_VIA_DRILL = 0.20
+THERMAL_VIA_RING = 0.10
+THERMAL_VIA_PITCH = 0.50
+THERMAL_VIA_CLEAR = 0.05
+THERMAL_VIA_CID0 = 33       # 过孔连接器从 33 开始（1..32 是芯片脚，0 是 EPAD）
+EPAD_CID = 0
+
+
+def thermal_via_grid(w, h):
+    def fits(k):
+        need = ((k - 1) / 2.0 * THERMAL_VIA_PITCH
+                + (THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING) / 2.0)
+        return need <= min(w, h) / 2.0 - THERMAL_VIA_CLEAR
+    return 3 if fits(3) else (2 if fits(2) else 1)
+
+
+def thermal_via_pts(w, h):
+    n = thermal_via_grid(w, h)
+    offs = [0.0] if n == 1 else ([-0.25, 0.25] if n == 2 else [-0.5, 0.0, 0.5])
+    return [(dx, dy) for dy in offs for dx in offs]
+
+
+def thermal_pad_d(cx, cy, w, h):
+    """焊盘矩形 + 把每个过孔从铜里挖掉（even-odd）。"""
+    r = THERMAL_VIA_DRILL / 2.0
+    d = ["M%.3f %.3f L%.3f %.3f L%.3f %.3f L%.3f %.3f Z"
+         % (cx - w / 2, cy - h / 2, cx + w / 2, cy - h / 2,
+            cx + w / 2, cy + h / 2, cx - w / 2, cy + h / 2)]
+    for dx, dy in thermal_via_pts(w, h):
+        d.append("M%.3f %.3f a%.3f %.3f 0 1 0 %.3f 0 a%.3f %.3f 0 1 0 %.3f 0 Z"
+                 % (cx + dx - r, cy + dy, r, r, 2 * r, r, r, -2 * r))
+    return " ".join(d)
+
+
+def thermal_pad_svg(cid, cx, cy, w, h, name="EPAD"):
+    """返回 (正面焊盘路径, copper0 整块，含背面散热铜 + 过孔圈)。"""
+    top = ('<path id="connector%dpad" d="%s" fill="#F7BD13" fill-rule="evenodd" '
+           'stroke="none" connectorname="%s"/>' % (cid, thermal_pad_d(cx, cy, w, h), name))
+    vo = THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING
+    vr = (vo + THERMAL_VIA_DRILL) / 4.0
+    vw = (vo - THERMAL_VIA_DRILL) / 2.0
+    L = ['<g id="copper0">',
+         '<path d="%s" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>'
+         % thermal_pad_d(cx, cy, w, h)]
+    for k, (dx, dy) in enumerate(thermal_via_pts(w, h)):
+        L.append('<circle id="connector%dpad" connectorname="%s_VIA%d" cx="%.3f" cy="%.3f" '
+                 'r="%.3f" stroke="#F7BD13" stroke-width="%.3f" fill="none"/>'
+                 % (THERMAL_VIA_CID0 + k, name, k + 1, cx + dx, cy + dy, vr, vw))
+    L.append('</g>')
+    return top, "\n".join(L)
 PIN1_MARK = (-1.4, 2.51)   # pin1 标记（相对本体中心；立创把圆放在底边首盘的外侧 = SVG 的 +y 方向）
 
 SVG_HDR = ('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
@@ -340,7 +396,8 @@ def gen_pcb_svg():
         pad(n, C - slot(i) - PAD_W / 2, C - PAD_C - PAD_L / 2, PAD_W, PAD_L)
     for i, n in enumerate(LEFT):             # 左边 25..32（上→下）：x = -PAD_C
         pad(n, C - PAD_C - PAD_L / 2, C + slot(i) - PAD_W / 2, PAD_L, PAD_W)
-    pad(0, C - EPAD / 2, C - EPAD / 2, EPAD, EPAD)                # 中心裸露焊盘
+    epad_top, epad_copper0 = thermal_pad_svg(EPAD_CID, C, C, EPAD, EPAD)
+    pads.append(epad_top)                                          # 中心裸露焊盘
     for sx in (-1, 1):                                            # 四个 L 形角标（照立创）
         for sy in (-1, 1):
             cx0, cy0 = C + sx * SILK_CORNER, C + sy * SILK_CORNER
@@ -351,7 +408,7 @@ def gen_pcb_svg():
     # pin1 标记：**实心**圆点，位置取立创（底边首盘外侧偏左），半径照 CH347F 的 0.20
     silk.append(f'<circle cx="{C + PIN1_MARK[0]:.3f}" cy="{C + PIN1_MARK[1]:.3f}" r="0.20" '
                 f'fill="#f0f0f0" stroke="none" class="other"/>')
-    inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
+    inner = ("\n".join(pads) + "\n" + epad_copper0 + "\n  </g>\n  <g id=\"silkscreen\">\n"
              + "\n".join(silk))
     return (SVG_HDR +
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.1f}mm" height="{H:.1f}mm" '
@@ -372,6 +429,24 @@ def gen_fzp():
             f'    <pcbView>\n     <p layer="copper1" svgId="connector{cn}pad"/>\n    </pcbView>\n'
             f'   </views>\n'
             f'  </connector>')
+    # 热过孔：每个孔 = 一个连接器（copper0/copper1 两面）
+    vias = thermal_via_pts(EPAD, EPAD)
+    for k in range(len(vias)):
+        cid = THERMAL_VIA_CID0 + k
+        conns.append(
+            f'  <connector id="connector{cid}" name="EPAD_VIA{k + 1}" type="male">\n'
+            f'   <description>thermal via {k + 1} of the exposed pad - plated through, '
+            f'same net as the exposed pad, routable on both copper layers</description>\n'
+            f'   <views><pcbView>\n'
+            f'    <p layer="copper0" svgId="connector{cid}pad"/>\n'
+            f'    <p layer="copper1" svgId="connector{cid}pad"/>\n'
+            f'   </pcbView></views>\n'
+            f'  </connector>')
+    bus = (' <buses>\n  <bus id="EPAD">\n'
+           + f'   <nodeMember connectorId="connector{EPAD_CID}"/>\n'
+           + "".join(f'   <nodeMember connectorId="connector{THERMAL_VIA_CID0 + k}"/>\n'
+                     for k in range(len(vias)))
+           + '  </bus>\n </buses>\n')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
             f' <version>1</version>\n <date>2026-09-17</date>\n'
@@ -387,10 +462,10 @@ def gen_fzp():
             f'  <schematicView>\n   <layers image="schematic/{PART_ID}_schematic.svg">\n'
             f'    <layer layerId="schematic"/>\n   </layers>\n  </schematicView>\n'
             f'  <pcbView>\n   <layers image="pcb/{PART_ID}_pcb.svg">\n'
-            f'    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
+            f'    <layer layerId="copper0"/>\n    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
-            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n</module>\n')
+            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n' + bus + '</module>\n')
 
 
 # ---------------------------------------------------------------- 打包

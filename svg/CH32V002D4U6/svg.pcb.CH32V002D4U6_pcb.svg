@@ -14,8 +14,14 @@
 <rect id="connector9pad" x="0.300" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD1"/>
 <rect id="connector10pad" x="-0.100" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD4"/>
 <rect id="connector11pad" x="-0.500" y="-1.550" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PD7"/>
-<rect id="connector12pad" x="-0.525" y="-0.525" width="1.050" height="1.050" fill="#F7BD13" stroke="none" connectorname="EPAD"/>
-<g id="copper0"/>
+<path id="connector12pad" d="M-0.525 -0.525 L0.525 -0.525 L0.525 0.525 L-0.525 0.525 Z M-0.350 -0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.150 -0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.350 0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.150 0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none" connectorname="EPAD"/>
+<g id="copper0">
+<path d="M-0.525 -0.525 L0.525 -0.525 L0.525 0.525 L-0.525 0.525 Z M-0.350 -0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.150 -0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.350 0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.150 0.250 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>
+<circle id="connector13pad" connectorname="EPAD_VIA1" cx="-0.250" cy="-0.250" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector14pad" connectorname="EPAD_VIA2" cx="0.250" cy="-0.250" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector15pad" connectorname="EPAD_VIA3" cx="-0.250" cy="0.250" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector16pad" connectorname="EPAD_VIA4" cx="0.250" cy="0.250" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+</g>
   </g>
   <g id="silkscreen">
 <line x1="-1.000" y1="-1.000" x2="-1.000" y2="-0.780" stroke="#f0f0f0" stroke-width="0.12"/>

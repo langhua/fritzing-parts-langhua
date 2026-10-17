@@ -49,8 +49,19 @@
 <rect id="connector45pad" x="0.900" y="5.800" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="45"/>
 <rect id="connector46pad" x="0.900" y="6.200" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="46"/>
 <rect id="connector47pad" x="0.900" y="6.600" width="1.000" height="0.200" fill="#F7BD13" stroke="none" connectorname="47"/>
-<rect id="connector48pad" x="2.400" y="2.400" width="4.200" height="4.200" fill="#F7BD13" stroke="none" connectorname="48"/>
-<g id="copper0"/>
+<path id="connector48pad" d="M2.400 2.400 L6.600 2.400 L6.600 6.600 L2.400 6.600 Z M3.900 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.900 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.900 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none" connectorname="EPAD"/>
+<g id="copper0">
+<path d="M2.400 2.400 L6.600 2.400 L6.600 6.600 L2.400 6.600 Z M3.900 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 4.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.900 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 4.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.900 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.400 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M4.900 5.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>
+<circle id="connector49pad" connectorname="EPAD_VIA1" cx="4.000" cy="4.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector50pad" connectorname="EPAD_VIA2" cx="4.500" cy="4.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector51pad" connectorname="EPAD_VIA3" cx="5.000" cy="4.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector52pad" connectorname="EPAD_VIA4" cx="4.000" cy="4.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector53pad" connectorname="EPAD_VIA5" cx="4.500" cy="4.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector54pad" connectorname="EPAD_VIA6" cx="5.000" cy="4.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector55pad" connectorname="EPAD_VIA7" cx="4.000" cy="5.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector56pad" connectorname="EPAD_VIA8" cx="4.500" cy="5.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector57pad" connectorname="EPAD_VIA9" cx="5.000" cy="5.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+</g>
   </g>
   <g id="silkscreen">
 <line x1="1.500" y1="1.500" x2="2.050" y2="1.500" stroke="#f0f0f0" stroke-width="0.12"/>

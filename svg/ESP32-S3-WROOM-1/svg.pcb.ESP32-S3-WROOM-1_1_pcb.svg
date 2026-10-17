@@ -46,14 +46,34 @@
   <rect x="17.00" y="9.580" width="1.50" height="0.90" id="connector37pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
   <rect x="17.00" y="8.310" width="1.50" height="0.90" id="connector38pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
   <rect x="17.00" y="7.040" width="1.50" height="0.90" id="connector39pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="5.65" y="13.36" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="7.05" y="13.36" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="8.45" y="13.36" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="5.65" y="14.76" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="7.05" y="14.76" width="0.90" height="0.90" id="connector40pin" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="8.45" y="14.76" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="5.65" y="16.16" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="7.05" y="16.16" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
-  <rect x="8.45" y="16.16" width="0.90" height="0.90" fill="#f7bf13" fill-opacity="1" stroke="none"/>
+  <path d="M5.650 13.360 L6.550 13.360 L6.550 14.260 L5.650 14.260 Z M6.000 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M7.050 13.360 L7.950 13.360 L7.950 14.260 L7.050 14.260 Z M7.400 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M8.450 13.360 L9.350 13.360 L9.350 14.260 L8.450 14.260 Z M8.800 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M5.650 14.760 L6.550 14.760 L6.550 15.660 L5.650 15.660 Z M6.000 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M7.050 14.760 L7.950 14.760 L7.950 15.660 L7.050 15.660 Z M7.400 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" id="connector40pin" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M8.450 14.760 L9.350 14.760 L9.350 15.660 L8.450 15.660 Z M8.800 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M5.650 16.160 L6.550 16.160 L6.550 17.060 L5.650 17.060 Z M6.000 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M7.050 16.160 L7.950 16.160 L7.950 17.060 L7.050 17.060 Z M7.400 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <path d="M8.450 16.160 L9.350 16.160 L9.350 17.060 L8.450 17.060 Z M8.800 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+  <g id="copper0">
+   <path d="M5.650 13.360 L6.550 13.360 L6.550 14.260 L5.650 14.260 Z M6.000 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M7.050 13.360 L7.950 13.360 L7.950 14.260 L7.050 14.260 Z M7.400 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M8.450 13.360 L9.350 13.360 L9.350 14.260 L8.450 14.260 Z M8.800 13.810 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M5.650 14.760 L6.550 14.760 L6.550 15.660 L5.650 15.660 Z M6.000 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M7.050 14.760 L7.950 14.760 L7.950 15.660 L7.050 15.660 Z M7.400 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M8.450 14.760 L9.350 14.760 L9.350 15.660 L8.450 15.660 Z M8.800 15.210 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M5.650 16.160 L6.550 16.160 L6.550 17.060 L5.650 17.060 Z M6.000 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M7.050 16.160 L7.950 16.160 L7.950 17.060 L7.050 17.060 Z M7.400 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <path d="M8.450 16.160 L9.350 16.160 L9.350 17.060 L8.450 17.060 Z M8.800 16.610 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" stroke="none"/>
+   <circle id="connector44pin" connectorname="EPAD_VIA1" cx="6.100" cy="13.810" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector45pin" connectorname="EPAD_VIA2" cx="7.500" cy="13.810" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector46pin" connectorname="EPAD_VIA3" cx="8.900" cy="13.810" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector47pin" connectorname="EPAD_VIA4" cx="6.100" cy="15.210" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector48pin" connectorname="EPAD_VIA5" cx="7.500" cy="15.210" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector49pin" connectorname="EPAD_VIA6" cx="8.900" cy="15.210" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector50pin" connectorname="EPAD_VIA7" cx="6.100" cy="16.610" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector51pin" connectorname="EPAD_VIA8" cx="7.500" cy="16.610" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+   <circle id="connector52pin" connectorname="EPAD_VIA9" cx="8.900" cy="16.610" r="0.150" stroke="#f7bf13" stroke-width="0.100" fill="none"/>
+  </g>
  </g>
 </svg>

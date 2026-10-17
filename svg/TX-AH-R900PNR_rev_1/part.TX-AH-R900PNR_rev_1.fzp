@@ -28,6 +28,7 @@
   </schematicView>
   <pcbView>
    <layers image="pcb/TX-AH-R900PNR_rev_1_pcb.svg">
+    <layer layerId="copper0"/>
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
@@ -762,6 +763,62 @@
     </breadboardView>
    </views>
   </connector>
+  <connector id="connector69" name="EPAD1_VIA1" type="male">
+   <description>thermal via 1 of EPAD1 - plated through, same net as EPAD1, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector69pad"/>
+    <p layer="copper1" svgId="connector69pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector70" name="EPAD1_VIA2" type="male">
+   <description>thermal via 2 of EPAD1 - plated through, same net as EPAD1, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector70pad"/>
+    <p layer="copper1" svgId="connector70pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector71" name="EPAD1_VIA3" type="male">
+   <description>thermal via 3 of EPAD1 - plated through, same net as EPAD1, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector71pad"/>
+    <p layer="copper1" svgId="connector71pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector72" name="EPAD1_VIA4" type="male">
+   <description>thermal via 4 of EPAD1 - plated through, same net as EPAD1, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector72pad"/>
+    <p layer="copper1" svgId="connector72pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector73" name="EPAD2_VIA1" type="male">
+   <description>thermal via 1 of EPAD2 - plated through, same net as EPAD2, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector73pad"/>
+    <p layer="copper1" svgId="connector73pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector74" name="EPAD2_VIA2" type="male">
+   <description>thermal via 2 of EPAD2 - plated through, same net as EPAD2, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector74pad"/>
+    <p layer="copper1" svgId="connector74pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector75" name="EPAD2_VIA3" type="male">
+   <description>thermal via 3 of EPAD2 - plated through, same net as EPAD2, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector75pad"/>
+    <p layer="copper1" svgId="connector75pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector76" name="EPAD2_VIA4" type="male">
+   <description>thermal via 4 of EPAD2 - plated through, same net as EPAD2, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector76pad"/>
+    <p layer="copper1" svgId="connector76pad"/>
+   </pcbView></views>
+  </connector>
  </connectors>
  <buses>
   <bus id="GND">
@@ -773,6 +830,16 @@
    <nodeMember connectorId="connector57"/>
    <nodeMember connectorId="connector61"/>
    <nodeMember connectorId="connector65"/>
+   <nodeMember connectorId="connector36"/>
+   <nodeMember connectorId="connector37"/>
+   <nodeMember connectorId="connector69"/>
+   <nodeMember connectorId="connector70"/>
+   <nodeMember connectorId="connector71"/>
+   <nodeMember connectorId="connector72"/>
+   <nodeMember connectorId="connector73"/>
+   <nodeMember connectorId="connector74"/>
+   <nodeMember connectorId="connector75"/>
+   <nodeMember connectorId="connector76"/>
   </bus>
   <bus id="VCC">
    <nodeMember connectorId="connector41"/>

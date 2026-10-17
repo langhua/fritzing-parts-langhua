@@ -30,6 +30,7 @@
   </schematicView>
   <pcbView>
    <layers image="pcb/CN3165_pcb.svg">
+    <layer layerId="copper0"/>
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
@@ -167,5 +168,83 @@
     </pcbView>
    </views>
   </connector>
+  <connector id="connector9" name="EPAD_VIA1" type="male">
+   <description>thermal via 1 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector9pad"/>
+    <p layer="copper1" svgId="connector9pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector10" name="EPAD_VIA2" type="male">
+   <description>thermal via 2 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector10pad"/>
+    <p layer="copper1" svgId="connector10pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector11" name="EPAD_VIA3" type="male">
+   <description>thermal via 3 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector11pad"/>
+    <p layer="copper1" svgId="connector11pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector12" name="EPAD_VIA4" type="male">
+   <description>thermal via 4 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector12pad"/>
+    <p layer="copper1" svgId="connector12pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector13" name="EPAD_VIA5" type="male">
+   <description>thermal via 5 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector13pad"/>
+    <p layer="copper1" svgId="connector13pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector14" name="EPAD_VIA6" type="male">
+   <description>thermal via 6 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector14pad"/>
+    <p layer="copper1" svgId="connector14pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector15" name="EPAD_VIA7" type="male">
+   <description>thermal via 7 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector15pad"/>
+    <p layer="copper1" svgId="connector15pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector16" name="EPAD_VIA8" type="male">
+   <description>thermal via 8 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector16pad"/>
+    <p layer="copper1" svgId="connector16pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector17" name="EPAD_VIA9" type="male">
+   <description>thermal via 9 of the EPAD - plated through, same net as the EPAD, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector17pad"/>
+    <p layer="copper1" svgId="connector17pad"/>
+   </pcbView></views>
+  </connector>
  </connectors>
+ <buses>
+  <bus id="GND">
+   <nodeMember connectorId="connector2"/>
+   <nodeMember connectorId="connector8"/>
+   <nodeMember connectorId="connector9"/>
+   <nodeMember connectorId="connector10"/>
+   <nodeMember connectorId="connector11"/>
+   <nodeMember connectorId="connector12"/>
+   <nodeMember connectorId="connector13"/>
+   <nodeMember connectorId="connector14"/>
+   <nodeMember connectorId="connector15"/>
+   <nodeMember connectorId="connector16"/>
+   <nodeMember connectorId="connector17"/>
+  </bus>
+ </buses>
 </module>

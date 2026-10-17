@@ -96,6 +96,7 @@ PINS_EDGE = [
     "NC", "NC", "IOA12", "IOA13", "VDD1V3A", "VDD1V3D", "GND",
 ]
 EPADS = ["EPAD1", "EPAD2"]
+VIA_CID0 = 69              # 与 `../TX-AH-R900PNR` 一致：现有连接器 0..68 ⇒ 热过孔 69..76
 
 def esc(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -486,6 +487,9 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     - IOB0：CON1 col6 用模组 connector21，CON2 IOB0 用面包板专用 connector38 → 同网。
     （J4/J5 的 A10/A11/A12/A13 与 CH340E_RX/TX **故意不进总线** —— 实测与模组脚不通。）"""
     gnd = [f"connector{i}" for i, n in enumerate(PINS_EDGE) if n == "GND"] + list(gnd_extra)
+    # ★ 2026-10-17 用户定：GND 与散热盘同网 ⇒ 两个 EPAD + 各自的 4 个热过孔并进 GND 总线
+    #   （与 `../TX-AH-R900PNR` 一致；PCB 图是逐字节复用的那份）
+    gnd += ["connector36", "connector37"] + ["connector%d" % (VIA_CID0 + k) for k in range(8)]
     L = [" <buses>\n", '  <bus id="GND">\n']
     for cid in gnd:
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
@@ -500,6 +504,7 @@ def buses_xml(gnd_extra=(), vcc_conns=()):
     for cid in ("connector21", "connector38"):
         L.append(f'   <nodeMember connectorId="{cid}"/>\n')
     L.append("  </bus>\n")
+    # （两个 EPAD 已在上面并入 GND 总线）
     L.append(" </buses>\n")
     return "".join(L)
 
@@ -662,6 +667,19 @@ def gen_fzp():
             f'    <breadboardView>\n     <p layer="breadboard" svgId="connector{cn}pin"/>\n    </breadboardView>\n'
             f'   </views>\n'
             f'  </connector>')
+    # 热过孔：每个 EPAD 的 4 块铜各一个孔，各成一个连接器（copper0/copper1 两面）
+    for k, name in enumerate(EPADS):
+        for j in range(4):
+            cid = VIA_CID0 + k * 4 + j
+            conns.append(
+                f'  <connector id="connector{cid}" name="{esc(name)}_VIA{j + 1}" type="male">\n'
+                f'   <description>thermal via {j + 1} of {esc(name)} - plated through, same net as '
+                f'{esc(name)}, routable on both copper layers</description>\n'
+                f'   <views><pcbView>\n'
+                f'    <p layer="copper0" svgId="connector{cid}pad"/>\n'
+                f'    <p layer="copper1" svgId="connector{cid}pad"/>\n'
+                f'   </pcbView></views>\n'
+                f'  </connector>')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
             f' <version>4</version>\n <date>{DATE}</date>\n'
@@ -676,7 +694,7 @@ def gen_fzp():
             f'  <schematicView>\n   <layers image="schematic/{PART_ID}_schematic.svg">\n'
             f'    <layer layerId="schematic"/>\n   </layers>\n  </schematicView>\n'
             f'  <pcbView>\n   <layers image="pcb/{PART_ID}_pcb.svg">\n'
-            f'    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
+            f'    <layer layerId="copper0"/>\n    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
             f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n'

@@ -83,7 +83,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | CH340K | USB 转串口芯片（essop-10） | `fzpz/CH340K.fzpz` |
 | CH340N | WCH USB 转串口（SOP-8，外围最简） | `fzpz/CH340N.fzpz` |
 | CH340X | USB 转串口芯片（msop-10） | `fzpz/CH340X.fzpz` |
-| CH347F | WCH USB 桥接（QFN28：USB ↔ JTAG/SPI/I2C/UART 等；EPAD 独立成网） | `fzpz/CH347F.fzpz` |
+| CH347F | WCH USB 桥接（QFN28：USB ↔ JTAG/SPI/I2C/UART 等；EPAD 与 GND 同网 + 3×3 热过孔） | `fzpz/CH347F.fzpz` |
 | CH347T | WCH USB 桥接（TSSOP20；板上有 IO 跳线配置区） | `fzpz/CH347T.fzpz` |
 | CN3165 | 锂电充电管理 IC（DFN-8） | `fzpz/CN3165.fzpz` |
 | DW01A / DW03 / DW06D | 单节锂电保护 IC（SOT23-5/6） | `fzpz/DW01A.fzpz`、`DW03.fzpz`、`DW06D.fzpz` |

@@ -14,7 +14,7 @@
 
 | 类别 | 例子 | 归属 |
 |---|---|---|
-| **元件规则** | 矩形符号引脚排布、丝印不压焊盘、EPAD 独立成网 | `AGENTS.md §5` + `docs/part-dev-guide.md` ✓ |
+| **元件规则** | 矩形符号引脚排布、丝印不压焊盘、散热盘与 GND/VSS 同网 | `AGENTS.md §5` + `docs/part-dev-guide.md` ✓ |
 | **作图规则**（本文）| 网格对齐、位号排号、标签命名、字体 | 本文 A/B 两节 ✓ |
 
 ---
@@ -33,7 +33,7 @@
 | A5 | **只差大小写的两个名字 = 疑似拼错** | ERC `Labels are similar (lower/upper case difference only)` | `sch_style_check.py` ③ ✓（`DATA_in` vs `DATA_IN` ✓）|
 | A6 | **位号唯一 + 按位置排号 + 前缀按类型** | Annotate 按 X（左→右）/ Y（上→下）排序 ✓；`Duplicate reference designators` = **Error**；Symbol Checker：前缀**不许以数字或 `?` 结尾** | `sch_style_check.py` ② ✓（＋本仓既有的"**先左后右、先上后下**"✓）|
 | A7 | **没用到的引脚要有交代** | 留空 ⇒ `Pin not connected`（Error）；故意不接要打 no-connect 标记 ✓ | 网表里写明"留测试点 / 悬空"✓（人守，本库已这么做 ✓）|
-| A8 | **电源网必须有"驱动源"** | `PWR_FLAG`：不驱动 ⇒ ERC 报 "not driven by any Output Power pins" | 同精神：**EPAD 独立成网、必须特意接线** ✓（`fzp_check.py` ⑥ ✓）|
+| A8 | **电源网必须有"驱动源"** | `PWR_FLAG`：不驱动 ⇒ ERC 报 "not driven by any Output Power pins" | 同精神：**散热盘不接总线时必须看得见“没接”**；接总线只许「盘+自己的热过孔」/「盘+热过孔+GND/VSS 脚」✓（`fzp_check.py` ⑥ ✓） |
 | A9 | **只用核心字体** | "自定义字体**不随工程走**，换机器会被替换" ⇒ 建议用 KiCad 自带字体 ✓ | 本仓：**只用 DroidSans** ✓（`AGENTS §5` ✓）|
 | A10 | **值写法统一**（RKM）| 模拟器值记法：`4k7` / `100n` / `10R` ✓ | 文档规则：**不许** `4.7k` 与 `4700` 混写 ✗ |
 | A11 | **元件符号自检** | Symbol Checker：引脚离网 / 重复引脚 / **零尺寸图形** / 位号前缀非法 ✓ | 本仓 `fzp_check.py` + `schem_check.py` ✓ |

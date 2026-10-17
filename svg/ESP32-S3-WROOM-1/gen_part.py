@@ -78,6 +78,13 @@ B_X0 = (MW - (N_B - 1) * PITCH) / 2          # 2.015
 # pad half sizes
 PAD_W, PAD_H = 1.5, 0.9    # land pad 1.5 radial x 0.9 along side
 
+# ---- 中央散热盘热过孔（2026-10-17 用户定，全库统一）---------------------------
+#  中央 3×3 waffle 的每个 0.90 小方块里挖一个 ⌀0.20 过孔，copper0 再画一份同样的铜：
+#  两面都能接线，且过孔与 EPAD 同一条总线（同一块铜）。
+VIA_DRILL = 0.20
+VIA_RING = 0.10
+VIA_CID0 = 44              # 0..40 是模块焊盘、41/42/43 是面包板专用电源针 ⇒ 过孔从 44 起
+
 
 def pcb_svg():
     """PCB land pattern per datasheet Figure 11-1 (Recommended PCB Land Pattern).
@@ -134,13 +141,35 @@ def pcb_svg():
                  % (yc - PAD_H / 2, PAD_W, PAD_H, cn))
     # centre GND (connector40): 3x3 grid of 0.9x0.9, pitch 1.4 (connector id on the
     # centre pad so the id stays unique)
-    for gy in (13.81, 15.21, 16.61):
-        for gx in (6.1, 7.5, 8.9):
-            cid = ' id="connector40pin"' if (gx == 7.5 and gy == 15.21) else ''
-            L.append('  <rect x="%.2f" y="%.2f" width="0.90" height="0.90"%s fill="#f7bf13" fill-opacity="1" stroke="none"/>\n'
-                     % (gx - 0.45, gy - 0.45, cid))
-    # NOTE: no pre-drawn thermal-via holes and no bottom copper in the part - the
-    # user adds vias + bottom heatsink copper during PCB routing.
+    #   ★ 2026-10-17 用户定（全库统一）：每个小方块里**挖一个 ⌀0.20 热过孔**，
+    #   copper0 再画一份同样的 3×3 铜 + 9 个过孔圆 ⇒ 两面都能接线、孔也看得见。
+    GRID = [(gx, gy) for gy in (13.81, 15.21, 16.61) for gx in (6.1, 7.5, 8.9)]
+
+    def sq_d(cx, cy, s=0.90):
+        r = VIA_DRILL / 2.0
+        return ("M%.3f %.3f L%.3f %.3f L%.3f %.3f L%.3f %.3f Z "
+                "M%.3f %.3f a%.3f %.3f 0 1 0 %.3f 0 a%.3f %.3f 0 1 0 %.3f 0 Z"
+                % (cx - s / 2, cy - s / 2, cx + s / 2, cy - s / 2,
+                   cx + s / 2, cy + s / 2, cx - s / 2, cy + s / 2,
+                   cx - r, cy, r, r, 2 * r, r, r, -2 * r))
+
+    for gx, gy in GRID:
+        cid = ' id="connector40pin"' if (gx == 7.5 and gy == 15.21) else ''
+        L.append('  <path d="%s"%s fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" '
+                 'stroke="none"/>\n' % (sq_d(gx, gy), cid))
+    # 背面散热铜 + 热过孔（copper0 嵌在 copper1 里 ⇒ 两面都有铜）
+    L.append('  <g id="copper0">\n')
+    for gx, gy in GRID:
+        L.append('   <path d="%s" fill="#f7bf13" fill-rule="evenodd" fill-opacity="1" '
+                 'stroke="none"/>\n' % sq_d(gx, gy))
+    vo = VIA_DRILL + 2 * VIA_RING
+    vr = (vo + VIA_DRILL) / 4.0
+    vw = (vo - VIA_DRILL) / 2.0
+    for k, (gx, gy) in enumerate(GRID):
+        L.append('   <circle id="connector%dpin" connectorname="EPAD_VIA%d" cx="%.3f" '
+                 'cy="%.3f" r="%.3f" stroke="#f7bf13" stroke-width="%.3f" fill="none"/>\n'
+                 % (VIA_CID0 + k, k + 1, gx, gy, vr, vw))
+    L.append('  </g>\n')
     L.append(' </g>\n')    # end copper1
     L.append('</svg>\n')
     return "".join(L)
@@ -566,7 +595,9 @@ def buses_xml():
     net so the user routes it to GND on purpose (same as RT6150's `EP`,
     TX-AH's `EPAD1/2`, TXW8301's `EPAD`)."""
     buses = [
-        ("GND", ["connector0", "connector39", "connector43"]),
+        # ★ 2026-10-17 用户定：GND 与散热盘（EPAD）同网 ⇒ EPAD + 9 个热过孔并进 GND 总线
+        ("GND", ["connector0", "connector39", "connector43", "connector40"]
+                + ["connector%d" % (VIA_CID0 + k) for k in range(9)]),
         ("3V3", ["connector1", "connector41"]),
     ]
     L = [" <buses>\n"]
@@ -628,6 +659,17 @@ def fzp_xml():
         conns.append('    <breadboardView><p layer="breadboard" svgId="connector%dpin"/></breadboardView>\n' % cn)
         conns.append('   </views>\n')
         conns.append('  </connector>\n')
+    # 热过孔：每个方块一个，各成一个连接器（copper0/copper1 两面）
+    for k in range(9):
+        cid = VIA_CID0 + k
+        conns.append('  <connector id="connector%d" name="EPAD_VIA%d" type="male">\n' % (cid, k + 1))
+        conns.append('   <description>thermal via %d of the EPAD - plated through, same net as '
+                     'the EPAD, routable on both copper layers</description>\n' % (k + 1))
+        conns.append('   <views><pcbView>\n')
+        conns.append('    <p layer="copper0" svgId="connector%dpin"/>\n' % cid)
+        conns.append('    <p layer="copper1" svgId="connector%dpin"/>\n' % cid)
+        conns.append('   </pcbView></views>\n')
+        conns.append('  </connector>\n')
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<module fritzingVersion="0.9.9b" moduleId="%s">\n'
@@ -648,7 +690,7 @@ def fzp_xml():
         '  <iconView><layers image="%s"><layer layerId="icon"/></layers></iconView>\n'
         '  <breadboardView fliphorizontal="true" flipvertical="true"><layers image="%s"><layer layerId="breadboard"/></layers></breadboardView>\n'
         '  <schematicView fliphorizontal="true" flipvertical="true"><layers image="%s"><layer layerId="schematic"/></layers></schematicView>\n'
-        '  <pcbView><layers image="%s"><layer layerId="silkscreen"/><layer layerId="copper1"/></layers></pcbView>\n'
+        '  <pcbView><layers image="%s"><layer layerId="silkscreen"/><layer layerId="copper0"/><layer layerId="copper1"/></layers></pcbView>\n'
         ' </views>\n'
         ' <connectors>\n%s</connectors>\n'
         '%s'

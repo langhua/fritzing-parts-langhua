@@ -78,8 +78,62 @@ SVG_HDR = ('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
            '<!-- CN3165 DFN-8 -->\n')
 
 
-def esc(s):
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+# ---- 散热盘热过孔（2026-10-17 用户定，全库统一）--------------------------------
+#  ① 正面焊盘里**挖出**热过孔（even-odd）；② 背面 copper0 画同尺寸散热铜；
+#  ③ 每个过孔自己是一个连接器（copper0/copper1 两面）⇒ 两面都能拉线；
+#  ④ 过孔与焊盘是同一块铜 ⇒ 同一条总线（点任一孔，整块盘一起高亮）。
+THERMAL_VIA_DRILL = 0.20
+THERMAL_VIA_RING = 0.10
+THERMAL_VIA_PITCH = 0.50
+THERMAL_VIA_CLEAR = 0.05
+
+
+def thermal_via_grid(w, h):
+    def fits(k):
+        need = ((k - 1) / 2.0 * THERMAL_VIA_PITCH
+                + (THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING) / 2.0)
+        return need <= min(w, h) / 2.0 - THERMAL_VIA_CLEAR
+    return 3 if fits(3) else (2 if fits(2) else 1)
+
+
+def thermal_via_pts(w, h):
+    n = thermal_via_grid(w, h)
+    offs = [0.0] if n == 1 else ([-0.25, 0.25] if n == 2 else [-0.5, 0.0, 0.5])
+    return [(dx, dy) for dy in offs for dx in offs]
+
+
+def thermal_pad_d(cx, cy, w, h):
+    """焊盘矩形 + 把每个过孔从铜里挖掉（even-odd）。"""
+    r = THERMAL_VIA_DRILL / 2.0
+    d = ["M%.3f %.3f L%.3f %.3f L%.3f %.3f L%.3f %.3f Z"
+         % (cx - w / 2, cy - h / 2, cx + w / 2, cy - h / 2,
+            cx + w / 2, cy + h / 2, cx - w / 2, cy + h / 2)]
+    for dx, dy in thermal_via_pts(w, h):
+        d.append("M%.3f %.3f a%.3f %.3f 0 1 0 %.3f 0 a%.3f %.3f 0 1 0 %.3f 0 Z"
+                 % (cx + dx - r, cy + dy, r, r, 2 * r, r, r, -2 * r))
+    return " ".join(d)
+
+
+def thermal_pad_svg(cid, cx, cy, w, h, name="EPAD", via0=None):
+    """返回 (正面焊盘路径, copper0 整块：背面散热铜 + 过孔圈)。"""
+    via0 = (cid + 1) if via0 is None else via0
+    top = ('<path id="connector%dpad" d="%s" fill="#F7BD13" fill-rule="evenodd" '
+           'stroke="none" connectorname="%s"/>' % (cid, thermal_pad_d(cx, cy, w, h), name))
+    vo = THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING
+    vr = (vo + THERMAL_VIA_DRILL) / 4.0
+    vw = (vo - THERMAL_VIA_DRILL) / 2.0
+    L = ['<g id="copper0">',
+         '<path d="%s" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>'
+         % thermal_pad_d(cx, cy, w, h)]
+    for k, (dx, dy) in enumerate(thermal_via_pts(w, h)):
+        L.append('<circle id="connector%dpad" connectorname="%s_VIA%d" cx="%.3f" cy="%.3f" '
+                 'r="%.3f" stroke="#F7BD13" stroke-width="%.3f" fill="none"/>'
+                 % (via0 + k, name, k + 1, cx + dx, cy + dy, vr, vw))
+    L.append('</g>')
+    return top, "\n".join(L)
+
+
+def esc(s):    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
 def pin_x(i):
@@ -277,10 +331,14 @@ def gen_pcb_svg():
         pads.append(f'<rect id="connector{cn}pad" x="{x - pw / 2:.3f}" y="{-row - pl / 2:.3f}" '
                     f'width="{pw:.3f}" height="{pl:.3f}" fill="#F7BD13" stroke="none" '
                     f'connectorname="{esc(PINS[cn])}"/>')
-    # 9 脚：底部散热盘焊盘（单独成网）
-    pads.append(f'<rect id="connector{EPAD_CN}pad" x="{-ep_w / 2:.3f}" y="{-ep_h / 2:.3f}" '
-                f'width="{ep_w:.3f}" height="{ep_h:.3f}" fill="#F7BD13" stroke="none" '
-                f'connectorname="EPAD"/>')
+    # 9 脚：底部散热盘焊盘（单独成网）：热过孔已挖穿 + 背面同尺寸散热铜
+    epad_top, epad_copper0 = thermal_pad_svg(EPAD_CN, 0.0, 0.0, 2.45, 1.65, "EPAD", 9)
+    pads.append(epad_top)
+    # GND（pin3 = connector2）→ 散热盘直通铜：与引脚同宽、radial（不碰邻脚）
+    gx = pin_x(2)
+    gy0 = -ep_h / 2 - 0.02
+    pads.append(f'<rect x="{gx - pw / 2:.3f}" y="{gy0:.3f}" width="{pw:.3f}" '
+                f'height="{(row - pl / 2 + 0.02) - gy0:.3f}" fill="#F7BD13" stroke="none"/>')
     silk = []
     # 本体四角 L 形角标（本体边 ±1.5，段长 0.45；不压任何焊盘）
     K, SEG = 1.5, 0.45
@@ -292,7 +350,8 @@ def gen_pcb_svg():
                         f'stroke="#f0f0f0" stroke-width="0.12"/>')
     # pin1 实心圆点（本体左下角内）
     silk.append('<circle cx="-1.15" cy="1.15" r="0.16" fill="#f0f0f0" stroke="none"/>')
-    inner = ("\n".join(pads) + "\n  </g>\n  <g id=\"silkscreen\">\n" + "\n".join(silk))
+    inner = ("\n".join(pads) + "\n" + epad_copper0 + "\n  </g>\n  <g id=\"silkscreen\">\n"
+             + "\n".join(silk))
     M = 0.15
     vb_x0, vb_x1 = -(row + pl / 2) - M, (row + pl / 2) + M
     vb_y0, vb_y1 = vb_x0, vb_x1
@@ -343,6 +402,25 @@ def gen_fzp():
             f'    <pcbView>\n     <p layer="copper1" svgId="connector{i}pad"/>\n    </pcbView>\n'
             f'   </views>\n'
             f'  </connector>')
+    # 热过孔：每个孔 = 一个连接器（copper0/copper1 两面）；与 EPAD 同一块铜 ⇒ 同一条总线
+    vias = thermal_via_pts(2.45, 1.65)
+    for k in range(len(vias)):
+        cid = 9 + k
+        conns.append(
+            f'  <connector id="connector{cid}" name="EPAD_VIA{k + 1}" type="male">\n'
+            f'   <description>thermal via {k + 1} of the EPAD - plated through, same net as '
+            f'the EPAD, routable on both copper layers</description>\n'
+            f'   <views><pcbView>\n'
+            f'    <p layer="copper0" svgId="connector{cid}pad"/>\n'
+            f'    <p layer="copper1" svgId="connector{cid}pad"/>\n'
+            f'   </pcbView></views>\n'
+            f'  </connector>')
+    bus = (' <buses>\n  <bus id="GND">\n'
+           f'   <nodeMember connectorId="connector2"/>\n'
+           f'   <nodeMember connectorId="connector{EPAD_CN}"/>\n'
+           + "".join(f'   <nodeMember connectorId="connector{9 + k}"/>\n'
+                     for k in range(len(vias)))
+           + '  </bus>\n </buses>\n')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<module fritzingVersion="1.0.3" moduleId="{PART_ID}">\n'
             f' <version>1</version>\n <date>2026-09-17</date>\n'
@@ -357,10 +435,10 @@ def gen_fzp():
             f'  <schematicView>\n   <layers image="schematic/{PART_ID}_schematic.svg">\n'
             f'    <layer layerId="schematic"/>\n   </layers>\n  </schematicView>\n'
             f'  <pcbView>\n   <layers image="pcb/{PART_ID}_pcb.svg">\n'
-            f'    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
+            f'    <layer layerId="copper0"/>\n    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
-            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n</module>\n')
+            f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n' + bus + '</module>\n')
 
 
 # ---------------------------------------------------------------- 打包

@@ -29,7 +29,20 @@
     <rect id="connector26pad" connectorname="TMS/SWDIO/GPIO7" x="0.550" y="3.300" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
     <rect id="connector27pad" connectorname="UD-" x="0.550" y="3.700" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
     <rect id="connector28pad" connectorname="UD+" x="0.550" y="4.100" width="0.600" height="0.200" fill="#F7BD13" stroke="none"/>
-    <rect id="connector0pad" connectorname="EPAD" x="1.650" y="1.650" width="2.700" height="2.700" fill="#F7BD13" stroke="none"/>
+    <path id="connector0pad" d="M1.650 1.650 L4.350 1.650 L4.350 4.350 L1.650 4.350 Z M2.400 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.400 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.400 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none" connectorname="EPAD"/>
+    <rect x="2.100" y="1.130" width="0.200" height="0.540" fill="#F7BD13" stroke="none"/>
+    <g id="copper0">
+<path d="M1.650 1.650 L4.350 1.650 L4.350 4.350 L1.650 4.350 Z M2.400 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 2.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.400 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 3.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.400 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.900 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.400 3.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>
+<circle id="connector54pad" connectorname="EPAD_VIA1" cx="2.500" cy="2.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector55pad" connectorname="EPAD_VIA2" cx="3.000" cy="2.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector56pad" connectorname="EPAD_VIA3" cx="3.500" cy="2.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector57pad" connectorname="EPAD_VIA4" cx="2.500" cy="3.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector58pad" connectorname="EPAD_VIA5" cx="3.000" cy="3.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector59pad" connectorname="EPAD_VIA6" cx="3.500" cy="3.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector60pad" connectorname="EPAD_VIA7" cx="2.500" cy="3.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector61pad" connectorname="EPAD_VIA8" cx="3.000" cy="3.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector62pad" connectorname="EPAD_VIA9" cx="3.500" cy="3.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+</g>
   </g>
   <g id="silkscreen">
     <line x1="1.000" y1="1.000" x2="1.650" y2="1.000" stroke="#f0f0f0" stroke-width="0.12"/>

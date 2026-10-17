@@ -285,24 +285,49 @@ def main(argv):
     print("总线: %s" % ", ".join("%s(%d)" % (b.get("id"), len(list(b.iter("nodeMember"))))
                                 for b in root.iter("bus")))
 
-    # ⑥ 裸露焊盘 **不许进任何总线**（判 FAIL）；名字不叫 EPAD/EP 只**提示**
-    #    （用户 2026-09-15 定、2026-09-25 补充，AGENTS §5：
-    #     ①硬规则 = 它要布线时特意接到 GND，自动并进 GND 总线会让人以为已经接好了 ✗；
-    #     ②名字**尊重原厂命名** —— 原厂叫 VSS 就保留 VSS（CH32V002D4U6 就是）✓，
-    #       不强求改成 EPAD/EP（那会变成替原厂改名 ✗）。）
-    #    判据：裸焊盘 = connector 名匹配 EPAD / EP（允许 EPAD1/EP2 后缀），
-    #    或者**描述文字**里写了 exposed pad / 散热盘 / datasheet pin 0。
+    # ⑥ 裸露焊盘的**总线归属**（用户 2026-09-15 定“独立成网”；2026-10-17 **改为**
+    #    “引脚里的 GND/VSS 都要与散热盘连上，做法与 BQ25570 相同” ⇒ 现在**允许**同在一条总线）：
+    #     ① 名字**尊重原厂命名** —— 原厂叫 VSS 就保留 VSS（CH32V002D4U6 就是）✓；
+    #     ② 允许的总线只有两种正当情形（否则仍判 FAIL，防“莫名其妙并网”）：
+    #        a) 总线里全是它**自己的 PCB 专用铜件**（热过孔/焊盘）= 同一块铜；
+    #        b) 总线里包含**它自己的热过孔**（说明是刻意声明的散热盘网）。
+    #        ⇒ pad 与“别人的脚”混在一条总线、又没有任何自己的过孔 ⇒ FAIL ✓
     EPAD_NAME = re.compile(r"^(EPAD\d*|EP\d*)$", re.I)
     EPAD_HINT = re.compile(r"exposed\s*pad|thermal\s*pad|裸露焊盘|散热盘|datasheet\s*pin\s*0", re.I)
+    VIA_NAME = re.compile(r"_VIA\d*$", re.I)      # 散热盘自己的热过孔：**不是**裸焊盘 ✓
+    bus_members = {}
+    for b in root.iter("bus"):
+        bus_members[b.get("id")] = [m.get("connectorId") for m in b.iter("nodeMember")]
+    conn_views, conn_name = {}, {}
+    for c in root.iter("connector"):
+        vs = set()
+        for views in c.iter("views"):
+            vs |= {ch.tag for ch in list(views)}
+        conn_views[c.get("id")] = vs
+        conn_name[c.get("id")] = c.get("name") or ""
     for c in root.iter("connector"):
         cid, nm = c.get("id"), (c.get("name") or "")
         desc = " ".join((d.text or "") for d in c.iter("description"))
+        if VIA_NAME.search(nm):
+            continue            # 热过孔：是裸焊盘那块铜的一部分，不适用 ⑥ ✓
         if EPAD_HINT.search(desc) and not EPAD_NAME.match(nm):
-            print("注: 裸露焊盘 %s 叫「%s」（不是 EPAD/EP）—— 原厂命名就保留 ✓，"
-                  "只要它独立成网、description 写清要接 GND 即可（AGENTS §5）" % (cid, nm))
+            print("注: 裸露焊盘 %s 叫「%s」（不是 EPAD/EP）—— 原厂命名就保留 ✓"
+                  "（AGENTS §5）" % (cid, nm))
         if cid in in_bus and (EPAD_NAME.match(nm) or EPAD_HINT.search(desc)):
-            fails.append("FAIL 裸露焊盘 %s（name=%s）不该进总线 %s —— 它要独立成网、"
-                         "布线时特意接 GND（AGENTS §5）" % (cid, nm, in_bus[cid]))
+            others = [m for m in bus_members.get(in_bus[cid], []) if m and m != cid]
+            pcb_only = [m for m in others if conn_views.get(m) == {"pcbView"}]
+            has_via = [m for m in others if VIA_NAME.search(conn_name.get(m, ""))]
+            if others and len(pcb_only) == len(others):
+                print("注: 裸露焊盘 %s 与它自己的 %d 个 PCB 专用铜件同一总线（%s）——"
+                      "那是**同一块铜**（过孔/焊盘）✓" % (cid, len(others), in_bus[cid]))
+            elif has_via:
+                print("注: 裸露焊盘 %s 与 %d 个脚 + %d 个热过孔同一条总线（%s）——"
+                      "GND/VSS 与散热盘同网（用户 2026-10-17 定）✓"
+                      % (cid, len(others) - len(has_via), len(has_via), in_bus[cid]))
+            else:
+                fails.append("FAIL 裸露焊盘 %s（name=%s）进了总线 %s，却既没有自己的热过孔、"
+                             "也不是全由 PCB 专用铜件组成 —— 来历不明的并网（AGENTS §5）"
+                             % (cid, nm, in_bus[cid]))
 
     # ⑦ 面包板里**同名焊盘必须在同一条总线里**
     #    （踩过：SCS0 有两个焊盘 —— P4 那列一个、P8 的 pin3 一个 —— 只把第一个接上芯片脚、

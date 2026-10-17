@@ -22,8 +22,19 @@
 <rect id="connector17pad" x="-0.100" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA10/USART1_RX"/>
 <rect id="connector18pad" x="-0.500" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="VDD"/>
 <rect id="connector19pad" x="-0.900" y="-2.050" width="0.200" height="0.600" fill="#F7BD13" stroke="none" connectorname="PA6/ADC6"/>
-<rect id="connector20pad" x="-0.825" y="-0.825" width="1.650" height="1.650" fill="#F7BD13" stroke="none" connectorname="VSS"/>
-<g id="copper0"/>
+<path id="connector20pad" d="M-0.825 -0.825 L0.825 -0.825 L0.825 0.825 L-0.825 0.825 Z M-0.600 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none" connectorname="VSS"/>
+<g id="copper0">
+<path d="M-0.825 -0.825 L0.825 -0.825 L0.825 0.825 L-0.825 0.825 Z M-0.600 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>
+<circle id="connector21pad" connectorname="VSS_VIA1" cx="-0.500" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector22pad" connectorname="VSS_VIA2" cx="0.000" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector23pad" connectorname="VSS_VIA3" cx="0.500" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector24pad" connectorname="VSS_VIA4" cx="-0.500" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector25pad" connectorname="VSS_VIA5" cx="0.000" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector26pad" connectorname="VSS_VIA6" cx="0.500" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector27pad" connectorname="VSS_VIA7" cx="-0.500" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector28pad" connectorname="VSS_VIA8" cx="0.000" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+<circle id="connector29pad" connectorname="VSS_VIA9" cx="0.500" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+</g>
   </g>
   <g id="silkscreen">
 <line x1="-1.500" y1="-1.500" x2="-1.500" y2="-1.280" stroke="#f0f0f0" stroke-width="0.12"/>

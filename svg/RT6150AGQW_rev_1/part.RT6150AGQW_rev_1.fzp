@@ -27,6 +27,7 @@
   </schematicView>
   <pcbView>
    <layers image="pcb/RT6150AGQW_rev_1_pcb.svg">
+    <layer layerId="copper0"/>
     <layer layerId="copper1"/>
     <layer layerId="silkscreen"/>
    </layers>
@@ -192,11 +193,84 @@
     </pcbView>
    </views>
   </connector>
+  <connector id="connector11" name="EP_VIA1" type="male">
+   <description>thermal via 1 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector11pad"/>
+    <p layer="copper1" svgId="connector11pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector12" name="EP_VIA2" type="male">
+   <description>thermal via 2 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector12pad"/>
+    <p layer="copper1" svgId="connector12pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector13" name="EP_VIA3" type="male">
+   <description>thermal via 3 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector13pad"/>
+    <p layer="copper1" svgId="connector13pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector14" name="EP_VIA4" type="male">
+   <description>thermal via 4 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector14pad"/>
+    <p layer="copper1" svgId="connector14pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector15" name="EP_VIA5" type="male">
+   <description>thermal via 5 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector15pad"/>
+    <p layer="copper1" svgId="connector15pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector16" name="EP_VIA6" type="male">
+   <description>thermal via 6 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector16pad"/>
+    <p layer="copper1" svgId="connector16pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector17" name="EP_VIA7" type="male">
+   <description>thermal via 7 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector17pad"/>
+    <p layer="copper1" svgId="connector17pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector18" name="EP_VIA8" type="male">
+   <description>thermal via 8 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector18pad"/>
+    <p layer="copper1" svgId="connector18pad"/>
+   </pcbView></views>
+  </connector>
+  <connector id="connector19" name="EP_VIA9" type="male">
+   <description>thermal via 9 of the exposed pad - plated through, same net as the exposed pad, routable on both copper layers</description>
+   <views><pcbView>
+    <p layer="copper0" svgId="connector19pad"/>
+    <p layer="copper1" svgId="connector19pad"/>
+   </pcbView></views>
+  </connector>
  </connectors>
  <buses>
   <bus id="GND">
    <nodeMember connectorId="connector2"/>
    <nodeMember connectorId="connector8"/>
+   <nodeMember connectorId="connector10"/>
+   <nodeMember connectorId="connector11"/>
+   <nodeMember connectorId="connector12"/>
+   <nodeMember connectorId="connector13"/>
+   <nodeMember connectorId="connector14"/>
+   <nodeMember connectorId="connector15"/>
+   <nodeMember connectorId="connector16"/>
+   <nodeMember connectorId="connector17"/>
+   <nodeMember connectorId="connector18"/>
+   <nodeMember connectorId="connector19"/>
   </bus>
  </buses>
 </module>

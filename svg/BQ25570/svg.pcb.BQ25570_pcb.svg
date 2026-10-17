@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BQ25570 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="5.40mm" height="5.40mm" viewBox="-2.70 -2.70 5.40 5.40">
+  <g id="copper1">
+   <path id="connector0pad" d="M-2.150 -1.140 L-2.150 -0.860 L-1.440 -0.860 A0.140 0.140 0 0 0 -1.440 -1.140 Z" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+   <path id="connector1pad" d="M-2.150 -0.640 L-2.150 -0.360 L-1.440 -0.360 A0.140 0.140 0 0 0 -1.440 -0.640 Z" fill="#F7BD13" stroke="none" connectorname="VIN_DC"/>
+   <path id="connector2pad" d="M-2.150 -0.140 L-2.150 0.140 L-1.440 0.140 A0.140 0.140 0 0 0 -1.440 -0.140 Z" fill="#F7BD13" stroke="none" connectorname="VOC_SAMP"/>
+   <path id="connector3pad" d="M-2.150 0.360 L-2.150 0.640 L-1.440 0.640 A0.140 0.140 0 0 0 -1.440 0.360 Z" fill="#F7BD13" stroke="none" connectorname="VREF_SAMP"/>
+   <path id="connector4pad" d="M-2.150 0.860 L-2.150 1.140 L-1.440 1.140 A0.140 0.140 0 0 0 -1.440 0.860 Z" fill="#F7BD13" stroke="none" connectorname="EN"/>
+   <path id="connector5pad" d="M-1.140 2.150 L-0.860 2.150 L-0.860 1.440 A0.140 0.140 0 0 0 -1.140 1.440 Z" fill="#F7BD13" stroke="none" connectorname="VOUT_EN"/>
+   <path id="connector6pad" d="M-0.640 2.150 L-0.360 2.150 L-0.360 1.440 A0.140 0.140 0 0 0 -0.640 1.440 Z" fill="#F7BD13" stroke="none" connectorname="VBAT_OV"/>
+   <path id="connector7pad" d="M-0.140 2.150 L0.140 2.150 L0.140 1.440 A0.140 0.140 0 0 0 -0.140 1.440 Z" fill="#F7BD13" stroke="none" connectorname="VRDIV"/>
+   <path id="connector8pad" d="M0.360 2.150 L0.640 2.150 L0.640 1.440 A0.140 0.140 0 0 0 0.360 1.440 Z" fill="#F7BD13" stroke="none" connectorname="NC"/>
+   <path id="connector9pad" d="M0.860 2.150 L1.140 2.150 L1.140 1.440 A0.140 0.140 0 0 0 0.860 1.440 Z" fill="#F7BD13" stroke="none" connectorname="OK_HYST"/>
+   <path id="connector10pad" d="M2.150 0.860 L2.150 1.140 L1.440 1.140 A0.140 0.140 0 0 1 1.440 0.860 Z" fill="#F7BD13" stroke="none" connectorname="OK_PROG"/>
+   <path id="connector11pad" d="M2.150 0.360 L2.150 0.640 L1.440 0.640 A0.140 0.140 0 0 1 1.440 0.360 Z" fill="#F7BD13" stroke="none" connectorname="VOUT_SET"/>
+   <path id="connector12pad" d="M2.150 -0.140 L2.150 0.140 L1.440 0.140 A0.140 0.140 0 0 1 1.440 -0.140 Z" fill="#F7BD13" stroke="none" connectorname="VBAT_OK"/>
+   <path id="connector13pad" d="M2.150 -0.640 L2.150 -0.360 L1.440 -0.360 A0.140 0.140 0 0 1 1.440 -0.640 Z" fill="#F7BD13" stroke="none" connectorname="VOUT"/>
+   <path id="connector14pad" d="M2.150 -1.140 L2.150 -0.860 L1.440 -0.860 A0.140 0.140 0 0 1 1.440 -1.140 Z" fill="#F7BD13" stroke="none" connectorname="VSS"/>
+   <path id="connector15pad" d="M0.860 -2.150 L1.140 -2.150 L1.140 -1.440 A0.140 0.140 0 0 1 0.860 -1.440 Z" fill="#F7BD13" stroke="none" connectorname="LBUCK"/>
+   <path id="connector16pad" d="M0.360 -2.150 L0.640 -2.150 L0.640 -1.440 A0.140 0.140 0 0 1 0.360 -1.440 Z" fill="#F7BD13" stroke="none" connectorname="NC"/>
+   <path id="connector17pad" d="M-0.140 -2.150 L0.140 -2.150 L0.140 -1.440 A0.140 0.140 0 0 1 -0.140 -1.440 Z" fill="#F7BD13" stroke="none" connectorname="VBAT"/>
+   <path id="connector18pad" d="M-0.640 -2.150 L-0.360 -2.150 L-0.360 -1.440 A0.140 0.140 0 0 1 -0.640 -1.440 Z" fill="#F7BD13" stroke="none" connectorname="VSTOR"/>
+   <path id="connector19pad" d="M-1.140 -2.150 L-0.860 -2.150 L-0.860 -1.440 A0.140 0.140 0 0 1 -1.140 -1.440 Z" fill="#F7BD13" stroke="none" connectorname="LBOOST"/>
+   <path id="connector20pad" d="M-1.025 -1.025 L1.025 -1.025 L1.025 1.025 L-1.025 1.025 Z M-0.600 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none" connectorname="PowerPAD"/>
+   <g id="copper0">
+    <path d="M-1.025 -1.025 L1.025 -1.025 L1.025 1.025 L-1.025 1.025 Z M-0.600 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 -0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.000 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.600 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M-0.100 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M0.400 0.500 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#F7BD13" fill-rule="evenodd" stroke="none"/>
+    <circle id="connector24pad" connectorname="PowerPAD_VIA1" cx="-0.500" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector25pad" connectorname="PowerPAD_VIA2" cx="0.000" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector26pad" connectorname="PowerPAD_VIA3" cx="0.500" cy="-0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector27pad" connectorname="PowerPAD_VIA4" cx="-0.500" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector28pad" connectorname="PowerPAD_VIA5" cx="0.000" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector29pad" connectorname="PowerPAD_VIA6" cx="0.500" cy="0.000" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector30pad" connectorname="PowerPAD_VIA7" cx="-0.500" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector31pad" connectorname="PowerPAD_VIA8" cx="0.000" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+    <circle id="connector32pad" connectorname="PowerPAD_VIA9" cx="0.500" cy="0.500" r="0.150" stroke="#F7BD13" stroke-width="0.100" fill="none"/>
+   </g>
+   <path d="M-1.460 -1.000 L-1.420 -1.000 A0.343 0.343 0 0 1 -1.230 -0.942 A0.343 0.343 0 0 0 -1.040 -0.885 L-0.950 -0.885" fill="none" stroke="#F7BD13" stroke-width="0.280" stroke-linecap="butt" stroke-linejoin="round"/>
+   <path d="M1.460 -1.000 L1.420 -1.000 A0.343 0.343 0 0 0 1.230 -0.942 A0.343 0.343 0 0 1 1.040 -0.885 L0.950 -0.885" fill="none" stroke="#F7BD13" stroke-width="0.280" stroke-linecap="butt" stroke-linejoin="round"/>
+   <line x1="0.500" y1="1.460" x2="0.500" y2="0.975" stroke="#F7BD13" stroke-width="0.280" stroke-linecap="butt"/>
+   <line x1="0.500" y1="-1.460" x2="0.500" y2="-0.975" stroke="#F7BD13" stroke-width="0.280" stroke-linecap="butt"/>
+  </g>
+  <g id="silkscreen">
+   <line x1="-1.750" y1="-1.750" x2="-1.750" y2="-1.530" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="-1.750" y1="-1.750" x2="-1.530" y2="-1.750" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="-1.750" y1="1.750" x2="-1.750" y2="1.530" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="-1.750" y1="1.750" x2="-1.530" y2="1.750" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="1.750" y1="-1.750" x2="1.750" y2="-1.530" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="1.750" y1="-1.750" x2="1.530" y2="-1.750" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="1.750" y1="1.750" x2="1.750" y2="1.530" stroke="#f0f0f0" stroke-width="0.12"/>
+   <line x1="1.750" y1="1.750" x2="1.530" y2="1.750" stroke="#f0f0f0" stroke-width="0.12"/>
+   <circle cx="-2.450" cy="-1.000" r="0.22" fill="#f0f0f0" stroke="none"/>
+  </g>
+</svg>

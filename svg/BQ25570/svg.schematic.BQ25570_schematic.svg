@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1.2800in" height="1.2800in" viewBox="-190 -190 1280 1280">
+ <g id="schematic">
+  <rect x="0" y="0" width="900" height="900" fill="#FFFFFF" stroke="#000000" stroke-width="5"/>
+  <line class="pin" id="connector0pin" connectorname="VSS" x1="0" y1="250" x2="-130" y2="250" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector0terminal" x="-130" y="250" width="0.0001" height="0.0001" fill="none"/>
+  <text x="-65" y="226" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">1</text>
+  <text x="35" y="262" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">VSS</text>
+  <line class="pin" id="connector1pin" connectorname="VIN_DC" x1="0" y1="350" x2="-130" y2="350" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector1terminal" x="-130" y="350" width="0.0001" height="0.0001" fill="none"/>
+  <text x="-65" y="326" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">2</text>
+  <text x="35" y="362" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">VIN_DC</text>
+  <line class="pin" id="connector2pin" connectorname="VOC_SAMP" x1="0" y1="450" x2="-130" y2="450" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector2terminal" x="-130" y="450" width="0.0001" height="0.0001" fill="none"/>
+  <text x="-65" y="426" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">3</text>
+  <text x="35" y="462" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">VOC_SAMP</text>
+  <line class="pin" id="connector3pin" connectorname="VREF_SAMP" x1="0" y1="550" x2="-130" y2="550" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector3terminal" x="-130" y="550" width="0.0001" height="0.0001" fill="none"/>
+  <text x="-65" y="526" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">4</text>
+  <text x="35" y="562" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">VREF_SAMP</text>
+  <line class="pin" id="connector4pin" connectorname="EN" x1="0" y1="650" x2="-130" y2="650" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector4terminal" x="-130" y="650" width="0.0001" height="0.0001" fill="none"/>
+  <text x="-65" y="626" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">5</text>
+  <text x="35" y="662" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans">EN</text>
+  <line class="pin" id="connector5pin" connectorname="VOUT_EN" x1="250" y1="900" x2="250" y2="1030" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector5terminal" x="250" y="1030" width="0.0001" height="0.0001" fill="none"/>
+  <text x="226" y="955" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 226 955)">6</text>
+  <text x="262" y="865" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans" transform="rotate(270 262 865)">VOUT_EN</text>
+  <line class="pin" id="connector6pin" connectorname="VBAT_OV" x1="350" y1="900" x2="350" y2="1030" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector6terminal" x="350" y="1030" width="0.0001" height="0.0001" fill="none"/>
+  <text x="326" y="955" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 326 955)">7</text>
+  <text x="362" y="865" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans" transform="rotate(270 362 865)">VBAT_OV</text>
+  <line class="pin" id="connector7pin" connectorname="VRDIV" x1="450" y1="900" x2="450" y2="1030" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector7terminal" x="450" y="1030" width="0.0001" height="0.0001" fill="none"/>
+  <text x="426" y="955" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 426 955)">8</text>
+  <text x="462" y="865" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans" transform="rotate(270 462 865)">VRDIV</text>
+  <line class="pin" id="connector8pin" connectorname="NC" x1="550" y1="900" x2="550" y2="1030" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector8terminal" x="550" y="1030" width="0.0001" height="0.0001" fill="none"/>
+  <text x="526" y="955" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 526 955)">9</text>
+  <text x="562" y="865" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans" transform="rotate(270 562 865)">NC</text>
+  <line class="pin" id="connector9pin" connectorname="OK_HYST" x1="650" y1="900" x2="650" y2="1030" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector9terminal" x="650" y="1030" width="0.0001" height="0.0001" fill="none"/>
+  <text x="626" y="955" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 626 955)">10</text>
+  <text x="662" y="865" font-size="35" fill="#000000" text-anchor="start" font-family="DroidSans" transform="rotate(270 662 865)">OK_HYST</text>
+  <line class="pin" id="connector10pin" connectorname="OK_PROG" x1="900" y1="650" x2="1030" y2="650" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector10terminal" x="1030" y="650" width="0.0001" height="0.0001" fill="none"/>
+  <text x="965" y="626" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">11</text>
+  <text x="865" y="662" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">OK_PROG</text>
+  <line class="pin" id="connector11pin" connectorname="VOUT_SET" x1="900" y1="550" x2="1030" y2="550" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector11terminal" x="1030" y="550" width="0.0001" height="0.0001" fill="none"/>
+  <text x="965" y="526" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">12</text>
+  <text x="865" y="562" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">VOUT_SET</text>
+  <line class="pin" id="connector12pin" connectorname="VBAT_OK" x1="900" y1="450" x2="1030" y2="450" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector12terminal" x="1030" y="450" width="0.0001" height="0.0001" fill="none"/>
+  <text x="965" y="426" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">13</text>
+  <text x="865" y="462" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">VBAT_OK</text>
+  <line class="pin" id="connector13pin" connectorname="VOUT" x1="900" y1="350" x2="1030" y2="350" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector13terminal" x="1030" y="350" width="0.0001" height="0.0001" fill="none"/>
+  <text x="965" y="326" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">14</text>
+  <text x="865" y="362" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">VOUT</text>
+  <line class="pin" id="connector14pin" connectorname="VSS" x1="900" y1="250" x2="1030" y2="250" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector14terminal" x="1030" y="250" width="0.0001" height="0.0001" fill="none"/>
+  <text x="965" y="226" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">15</text>
+  <text x="865" y="262" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans">VSS</text>
+  <line class="pin" id="connector15pin" connectorname="LBUCK" x1="650" y1="0" x2="650" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector15terminal" x="650" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="626" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 626 -50)">16</text>
+  <text x="662" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 662 35)">LBUCK</text>
+  <line class="pin" id="connector16pin" connectorname="NC" x1="550" y1="0" x2="550" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector16terminal" x="550" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="526" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 526 -50)">17</text>
+  <text x="562" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 562 35)">NC</text>
+  <line class="pin" id="connector17pin" connectorname="VBAT" x1="450" y1="0" x2="450" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector17terminal" x="450" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="426" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 426 -50)">18</text>
+  <text x="462" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 462 35)">VBAT</text>
+  <line class="pin" id="connector18pin" connectorname="VSTOR" x1="350" y1="0" x2="350" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector18terminal" x="350" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="326" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 326 -50)">19</text>
+  <text x="362" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 362 35)">VSTOR</text>
+  <line class="pin" id="connector19pin" connectorname="LBOOST" x1="250" y1="0" x2="250" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector19terminal" x="250" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="226" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 226 -50)">20</text>
+  <text x="262" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 262 35)">LBOOST</text>
+  <line class="pin" id="connector20pin" connectorname="PowerPAD" x1="150" y1="0" x2="150" y2="-130" stroke="#000000" stroke-width="5"/>
+  <rect class="terminal" id="connector20terminal" x="150" y="-130" width="0.0001" height="0.0001" fill="none"/>
+  <text x="126" y="-50" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans" transform="rotate(270 126 -50)">0</text>
+  <text x="162" y="35" font-size="35" fill="#000000" text-anchor="end" font-family="DroidSans" transform="rotate(270 162 35)">PowerPAD</text>
+  <text x="450" y="462" font-size="35" fill="#000000" text-anchor="middle" font-family="DroidSans">BQ25570</text>
+ </g>
+</svg>
