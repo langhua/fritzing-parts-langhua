@@ -21,9 +21,9 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 
 [![芯片与接口 IC：CH340C/E/K/N/X、CH32V203C8T6、CH347F/T、CH213K、MAX40200、W25Q16JV、TM1637/1638 等](docs/preview/chips.svg)](docs/preview/chips.svg)
 
-**电源 / 充电 / 保护 / 电池** —— DC-DC、LDO、充电 IC、锂电保护、电池
+**电源 / 充电 / 保护 / 电池** —— 能量采集、DC-DC、LDO、充电 IC、锂电保护、电池
 
-[![电源类：ETA3425S2F、RT6150AGQW、RT9013/9193、TPS63051RMWR、TP4056/4057、ME4054、DW01A/03/06D、Li300mAh 等](docs/preview/power.svg)](docs/preview/power.svg)
+[![电源类：BQ25570（CJMCU-2557 模块）、ETA3425S2F、RT6150AGQW、RT9013/9193、TPS63051RMWR、TP4056/4057、ME4054、DW01A/03/06D、Li300mAh 等](docs/preview/power.svg)](docs/preview/power.svg)
 
 **模块 / 开发板 / 显示 / 指示** —— WiFi、HaLow、NFC、WS2812B、TFT、霍尔
 
