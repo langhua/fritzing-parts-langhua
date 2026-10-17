@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+ <g id="icon">
+  <rect x="2.82" y="8.35" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.50" y="8.35" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="8.35" y="2.82" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="8.35" y="24.50" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="2.82" y="11.75" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.50" y="11.75" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="11.75" y="2.82" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="11.75" y="24.50" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="2.82" y="15.15" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.50" y="15.15" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="15.15" y="2.82" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="15.15" y="24.50" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="2.82" y="18.55" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.50" y="18.55" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="18.55" y="2.82" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="18.55" y="24.50" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="2.82" y="21.95" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="24.50" y="21.95" width="4.68" height="1.70" fill="#f7bf13" stroke="none"/>
+  <rect x="21.95" y="2.82" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="21.95" y="24.50" width="1.70" height="4.68" fill="#f7bf13" stroke="none"/>
+  <rect x="7.50" y="7.50" width="17.00" height="17.00" rx="0.3" ry="0.3" fill="#303030" stroke="none"/>
+  <circle cx="9.60" cy="22.40" r="1.0" fill="#c0c0c0" stroke="none"/>
+  <text x="16.0" y="16.0" font-size="2.3" font-family="DroidSans" fill="#c0c0c0" text-anchor="middle" dominant-baseline="central">BQ25570</text>
+ </g>
+</svg>
