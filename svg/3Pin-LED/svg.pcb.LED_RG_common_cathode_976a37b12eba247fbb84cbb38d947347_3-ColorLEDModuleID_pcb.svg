@@ -13,10 +13,9 @@
    height="0.29236093in"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs14" /><g
+     id="defs14" /><g transform="translate(0.28224501,-0.19805599)"><g
      id="copper1"
-     gorn="0.0"
-     transform="translate(0.28224501,-0.19805599)"><g
+     gorn="0.0"><g
        id="copper0"
        gorn="0.0.0"
        transform="translate(-0.19720363)"><circle
@@ -43,7 +42,7 @@
          id="connector4pad"
          gorn="0.0.0.2"
          fill="none"
-         r="1.6162926" /></g></g><g
+         r="1.6162926" /></g></g></g><g
      id="silkscreen"
      gorn="0.1"
      transform="translate(-1.325,0.30000001)"><path

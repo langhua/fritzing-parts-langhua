@@ -52,10 +52,9 @@
        id="path787" /><path
        style="fill:none;stroke:#e6e6e6;stroke-width:0.72;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1"
        d="m 1.1282679,7.189838 v 5.3748"
-       id="path789" /></g><g
+       id="path789" /></g><g transform="translate(-7.965164,-1.0550899)"><g
      gorn="0.3"
-     id="copper1"
-     transform="translate(-7.965164,-1.0550899)"><path
+     id="copper1"><path
        style="fill:#ffbf00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.10962"
        d="m 21.915332,5.6109324 h 0.851563 V 1.0754993 h -0.851563 z m 0,0"
        id="connector6pin" /><path
@@ -495,4 +494,4 @@
        id="path1939" /><path
        style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffbf00;stroke-width:0.5426;stroke-opacity:1"
        d="m 10.52851,4.2986511 c 0,-2.235015 -2.2920459,-2.235015 -2.2920459,0 v 2.0576328 c 0,2.235016 2.2920459,2.235016 2.2920459,0 V 4.2986511"
-       id="path1937" /></g></svg>
+       id="path1937" /></g></g></svg>

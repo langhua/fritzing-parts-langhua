@@ -38,10 +38,9 @@
      inkscape:current-layer="svg26" />
   <defs
      id="defs30" />
-  <g
+  <g transform="translate(2312.086,151.2921)"><g
      gorn="0.1.0"
-     id="copper1"
-     transform="translate(2312.086,151.2921)">
+     id="copper1">
     <g
        gorn="0.1.0.0"
        id="copper0">
@@ -128,7 +127,7 @@
          stroke="#ffbf00"
          stroke-width="20" />
     </g>
-  </g>
+  </g></g>
   <g
      gorn="0.2.0"
      id="silkscreen"

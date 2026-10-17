@@ -37,10 +37,9 @@
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
      inkscape:current-layer="silkscreen" />
-  <g
+  <g transform="translate(-15,-15)"><g
      gorn="0.1"
-     id="copper1"
-     transform="translate(-15,-15)">
+     id="copper1">
     <g
        gorn="0.1.0"
        id="copper0">
@@ -91,7 +90,7 @@
          stroke="#ffbf00"
          stroke-width="20" />
     </g>
-  </g>
+  </g></g>
   <g
      gorn="0.2"
      id="silkscreen"

@@ -305,12 +305,19 @@
     与 `BQ25570` / `CH347F` / `CN3165` / `ESP32-S3-WROOM-1` 这些生成器件**一致** ✓。
     （另一种做法：把 transform 挪到 `copper0`/`copper1` 的**共同祖先**上 —— 那样两侧都能继承 ✓，
     但会留一层多余的 `<g>`，所以**优先烘焙** ✓。）
-  - **机器守**：`tools/audit_pcb_flip.py [<部件>…]` ✓ —— 查「`copper1` 自带 `transform` 且 `copper0` 在它里面」✓；
-    ★ **2026-10-17 现状：全仓还余 10 个**（`3Pin-LED` / `CH340K` / `ESP-12F` / `RT6150AGQW` /
-    `TFTSPI1.9in` / `TPS63051RMWR` / `TPS631000DRLR` / `TS-D014` / `TypeC16Pin` / `UART1.9inIPS`）✗ ——
-    它们**放到 PCB 底面同样会错位**，其中 `CH340K`（`matrix(1.8785757,0,0,1.2550316,…)`，双向拉伸）
-    与 `UART1.9inIPS`（`translate(-15,-15)`）、`TFTSPI1.9in`（`translate(2312,151)`）偏差最大 ✓；
-    **还没改**（用户 2026-10-17 只点了 `TP4056`，按 §0 不扩大范围 ✓）。
+  - **机器守**：`tools/audit_pcb_flip.py [<部件>…]` ✓ —— 查「`copper1` 自带 `transform`、
+    `copper0` 在它里面、**且 `copper0` 里有内容**」✓（copper0 是**空组**的件不会出现"第二份铜"，
+    底面不会错位 ⇒ 单独报、不算违规 ✓）。
+    ★ **2026-10-17 已清零** ✓：用户点 `TP4056` 后同批修了 7 件 ——
+    `TP4056`（烘焙）、`3Pin-LED` / `ESP-12F` / `RT6150AGQW` / `TFTSPI1.9in` / `TS-D014` /
+    `TypeC16Pin` / `UART1.9inIPS`（**外包组**：把 transform 提到 `copper0`/`copper1` 的共同祖先上）；
+    `CH340K` / `TPS63051RMWR` / `TPS631000DRLR` 的 `copper0` 是**空组** ⇒ 无需改 ✓。
+    验证口径：**改前/改后各渲一张、逐像素比**（`_scratch/render_cmp.py`）必须**完全一致** ✓
+    —— 只挪了 transform、图形一个像素没动；再跑 `audit_pcb_flip.py` 归零 ✓。
+  - ★ 两种修法的取舍 ✓：铜层里**只有 rect/circle** 时**烘焙**最干净（`TP4056` ✓）；
+    里面还有 `path`/`ellipse` 时**烘焙要重写 `d` 里每个数字**（弧线尤其容易错）⇒ 用**外包组**更稳 ✓
+    （多一层 `<g>`，但 Fritzing 的反面克隆会把它一起继承 ✓）。
+
   - ★ 同时确认**结构本身没问题** ✓：`copper0` 嵌在 `copper1` 里（官方 `nest10`）是**主流写法**
     （本机 1312 个官方 pcb svg 里 1101 个这么写 ✓）；面包板/原理图不受影响 ✓。
 

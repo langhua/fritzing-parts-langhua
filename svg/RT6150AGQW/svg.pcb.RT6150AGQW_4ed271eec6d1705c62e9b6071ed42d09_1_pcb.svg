@@ -37,10 +37,9 @@
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
      inkscape:current-layer="copper1" />
-  <g
+  <g transform="translate(-9.1748716e-6,-0.08377646)"><g
      gorn="0.0"
-     id="copper1"
-     transform="translate(-9.1748716e-6,-0.08377646)">
+     id="copper1">
     <rect
        connectorname="8"
        fill="#f7bd13"
@@ -180,7 +179,7 @@
      <circle id="connector21bad" cx="1.7000" cy="2.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
      <circle id="connector22bad" cx="2.2000" cy="2.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
     </g>
-  </g>
+  </g></g>
   <g
      gorn="0.1"
      id="silkscreen"

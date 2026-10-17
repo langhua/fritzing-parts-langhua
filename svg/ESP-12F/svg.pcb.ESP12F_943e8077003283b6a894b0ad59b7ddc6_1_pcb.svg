@@ -36,10 +36,9 @@
      inkscape:current-layer="copper0" />
   <defs
      id="defs7530" />
-  <g
+  <g transform="translate(3.543307,-967.32318)"><g
      id="copper1"
-     gorn="0.3.0.0.0"
-     transform="translate(3.543307,-967.32318)">
+     gorn="0.3.0.0.0">
     <g
        id="copper0"
        gorn="0.3.0.0.0.0">
@@ -476,7 +475,7 @@
            r="1.270962" />
       </g>
     </g>
-  </g>
+  </g></g>
   <g
      id="silkscreen"
      transform="translate(3.543307)">

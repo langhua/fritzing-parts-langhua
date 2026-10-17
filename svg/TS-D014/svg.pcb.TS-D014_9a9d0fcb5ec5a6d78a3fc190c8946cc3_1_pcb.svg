@@ -37,10 +37,9 @@
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
      inkscape:current-layer="silkscreen" />
-  <g
+  <g transform="translate(1.4509999,2.4903284)"><g
      gorn="0.0"
-     id="copper1"
-     transform="translate(1.4509999,2.4903284)">
+     id="copper1">
     <g
        id="copper0">
       <circle
@@ -92,7 +91,7 @@
          transform="scale(-1)"
          style="stroke-width:0.518;stroke-dasharray:none" />
     </g>
-  </g>
+  </g></g>
   <g
      gorn="0.1"
      id="silkscreen"

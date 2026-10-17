@@ -28,9 +28,9 @@ BASE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 
 
 def groups(text):
-    """[(start, end, id, transform)]，按标签配平。"""
+    """[(start, end, id, transform)]，按标签配平（自闭合的单独收）。"""
     res, stack = [], []
-    for m in re.finditer(r"<(/?)g\b([^>]*?)(/?)>", text):
+    for m in re.finditer(r"<(/?)g\b([^>]*?)>", text):
         if m.group(1):
             if stack:
                 st, gid, tr = stack.pop()
@@ -39,15 +39,23 @@ def groups(text):
         gid = re.search(r'\bid="([^"]*)"', m.group(2))
         tr = re.search(r'\btransform="([^"]*)"', m.group(2))
         item = (m.start(), gid.group(1) if gid else None, tr.group(1) if tr else None)
-        if m.group(3):
+        if m.group(0).rstrip().endswith("/>"):
             res.append((m.start(), m.end(), item[1], item[2]))
         else:
             stack.append(item)
     return res
 
 
+def has_content(text, span):
+    """copper0 里有没有图形（只剔开闭标签后还有东西就是有）。"""
+    body = text[span[0]:span[1]]
+    body = re.sub(r"<g\b[^>]*>", "", body, count=1)
+    body = re.sub(r"</g>\s*$", "", body)
+    return bool(re.sub(r"\s+", "", body))
+
+
 def scan(part_dirs=None):
-    risky = []
+    risky, empty = [], []
     for part in sorted(os.listdir(BASE)):
         d = os.path.join(BASE, part)
         if not os.path.isdir(d):
@@ -63,19 +71,27 @@ def scan(part_dirs=None):
         c0 = next((g for g in gs if g[2] == "copper0"), None)
         if not c1 or not c1[3]:
             continue
-        if c0 and c1[0] < c0[0] < c1[1]:
-            risky.append((part, c1[3]))
-    return risky
+        if not (c0 and c1[0] < c0[0] < c1[1]):
+            continue
+        if not has_content(t, c0):
+            empty.append(part)      # copper0 是空组 ⇒ 底面没有"第二份铜"可错位 ✓
+            continue
+        risky.append((part, c1[3]))
+    return risky, empty
 
 
 def main(argv):
     parts = [a for a in argv[1:] if not a.startswith("-")]
-    risky = scan(parts)
-    print("copper1 自带 transform 且 copper0 在它里面（放到 PCB 底面会错位）：%d 个" % len(risky))
+    risky, empty = scan(parts)
+    print("copper1 自带 transform 且 copper0（**有内容**）在它里面 ⇒ 放到 PCB 底面会错位：%d 个"
+          % len(risky))
     for part, tr in risky:
         print("   %-24s %s" % (part, tr))
     if not risky:
         print("   无 ✓")
+    if empty:
+        print("另：copper0 是空组（底面不会出现第二份铜，无影响）：%d 个 —— %s"
+              % (len(empty), " ".join(empty)))
     return 1 if (not parts and risky) else 0
 
 
