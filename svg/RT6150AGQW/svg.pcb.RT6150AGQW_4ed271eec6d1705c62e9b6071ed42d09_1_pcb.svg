@@ -113,18 +113,10 @@
        width="0.60000187"
        x="0"
        y="0.44377756" />
-    <rect
-       connectorname="1"
-       fill="#f7bd13"
-       gorn="0.0.5"
-       height="2.4750075"
-       id="connector10pad"
-       stroke="none"
-       stroke-linecap="round"
-       stroke-width="0"
-       width="1.625005"
-       x="0.88749558"
-       y="0.3462773" />
+    <path id="connector10pad" d="M0.887 0.346 L2.513 0.346 L2.513 2.821 L0.887 2.821 Z M1.100 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bd13" fill-rule="evenodd" stroke="none" connectorname="1"/>
+    <rect x="0.5800" y="1.4438" width="0.3275" height="0.2800" fill="#f7bd13" stroke="none"/>
+    <rect x="2.4925" y="0.9438" width="0.3275" height="0.2800" fill="#f7bd13" stroke="none"/>
+    
     <rect
        connectorname="10"
        fill="#f7bd13"
@@ -173,9 +165,21 @@
        width="0.60000187"
        x="2.7999995"
        y="2.4437838" />
-    <g
-       gorn="0.0.10"
-       id="copper0" />
+    <g gorn="0.0.10" id="copper0">
+     <path d="M0.887 0.346 L2.513 0.346 L2.513 2.821 L0.887 2.821 Z M1.100 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 0.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 1.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 1.834 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.100 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.600 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.100 2.334 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bd13" fill-rule="evenodd" stroke="none"/>
+     <circle id="connector11bad" cx="1.2000" cy="0.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector12bad" cx="1.7000" cy="0.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector13bad" cx="2.2000" cy="0.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector14bad" cx="1.2000" cy="1.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector15bad" cx="1.7000" cy="1.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector16bad" cx="2.2000" cy="1.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector17bad" cx="1.2000" cy="1.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector18bad" cx="1.7000" cy="1.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector19bad" cx="2.2000" cy="1.8338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector20bad" cx="1.2000" cy="2.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector21bad" cx="1.7000" cy="2.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+     <circle id="connector22bad" cx="2.2000" cy="2.3338" r="0.150" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+    </g>
   </g>
   <g
      gorn="0.1"
