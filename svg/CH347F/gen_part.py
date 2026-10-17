@@ -284,9 +284,8 @@ THERMAL_VIA_DRILL = 0.20
 THERMAL_VIA_RING = 0.10
 THERMAL_VIA_PITCH = 0.50
 THERMAL_VIA_CLEAR = 0.05
-# ★ 2026-10-17 用户定：**本件用 4×4**（EPAD 2.7 放得下：最外圈中心 ±0.75、铜外缘 0.95，
-#   盘半宽 1.35 ⇒ 余量 0.40 ✓）。其它件仍按「3×3 → 2×2 → 1」自动取。
-THERMAL_VIA_N = 4
+#   ★ 阵列优先级（用户 2026-10-17 定）：4×4 → 4×3 → 3×3 → 3×2 → 2×2；
+#     竖长焊盘再插转置档（3×4 / 2×3），最后兜底 1 个。本件 EPAD 2.7 ⇒ 落在 4×4（16 个）。
 EPAD_MM = 2.7       # 底板焊盘 2.7×2.7（手册 2.7±0.2）—— pcb 与 fzp 共用同一份
 
 
@@ -296,22 +295,26 @@ def via_cid0():
     return max(ids) + 1
 
 
+VIA_LADDER = ((4, 4), (4, 3), (3, 4), (3, 3), (3, 2), (2, 3), (2, 2), (1, 1))
+
+
 def thermal_via_grid(w, h):
-    """能塞进 w×h 焊盘的最大行列数；有 THERMAL_VIA_N 就优先用它（放不下才降级）。"""
-    def fits(k):
-        need = ((k - 1) / 2.0 * THERMAL_VIA_PITCH
+    """能塞进 w×h 焊盘的最大阵列 → (nx, ny)。"""
+    def need(k):
+        return ((k - 1) / 2.0 * THERMAL_VIA_PITCH
                 + (THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING) / 2.0)
-        return need <= min(w, h) / 2.0 - THERMAL_VIA_CLEAR
-    if THERMAL_VIA_N and fits(THERMAL_VIA_N):
-        return THERMAL_VIA_N
-    return 3 if fits(3) else (2 if fits(2) else 1)
+    for nx, ny in VIA_LADDER:
+        if (need(nx) <= w / 2.0 - THERMAL_VIA_CLEAR
+                and need(ny) <= h / 2.0 - THERMAL_VIA_CLEAR):
+            return nx, ny
+    return 1, 1
 
 
 def thermal_via_pts(w, h):
-    n = thermal_via_grid(w, h)
-    half = (n - 1) / 2.0                    # n=1→0 / 2→±0.25 / 3→±0.5 / 4→±0.75 ✓
-    offs = [(i - half) * THERMAL_VIA_PITCH for i in range(n)]
-    return [(dx, dy) for dy in offs for dx in offs]
+    nx, ny = thermal_via_grid(w, h)
+    xs = [(i - (nx - 1) / 2.0) * THERMAL_VIA_PITCH for i in range(nx)]
+    ys = [(j - (ny - 1) / 2.0) * THERMAL_VIA_PITCH for j in range(ny)]
+    return [(dx, dy) for dy in ys for dx in xs]
 
 
 def thermal_pad_d(cx, cy, w, h):

@@ -1,21 +1,21 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-17 15:30:23 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-17 15:42:57 ｜ python 3.13.14 ｜ 平台 win32
 结果：**5 过 / 0 跳过 / 1 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
-| G1 文本卫生（全仓） | PASS | 0.6s |
+| G1 文本卫生（全仓） | PASS | 0.5s |
 | G2 README 一致性（全仓） | FAIL | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 5.6s |
+| G3 生成器可重生成（全仓） | PASS | 5.8s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
-| G5 元件闸门（改动件） | PASS | 3.3s |
+| G5 元件闸门（改动件） | PASS | 1.3s |
 | G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
 
 ### G1 文本卫生（全仓） -> PASS
-- tracked 文件 1070 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
+- tracked 文件 1075 个；BOM 0、非 UTF-8 0、索引非 LF 0、垃圾路径 0
 
 ### G2 README 一致性（全仓） -> FAIL
 - check_readme_table.py rc=1
@@ -37,30 +37,16 @@
 - 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 13 个件
-- 已过：BQ25570 / fzp_check rc=0
-- 已过：BQ25570 / schem_check rc=0
-- 已过：CH32V002D4U6 / fzp_check rc=0
-- 已过：CH32V002D4U6 / schem_check rc=0
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 6 个件
 - 已过：CH32V002F4U6 / fzp_check rc=0
 - 已过：CH32V002F4U6 / schem_check rc=0
-- 已过：CH32V003F4U6 / fzp_check rc=0
-- 已过：CH32V003F4U6 / schem_check rc=0
-- 已过：CH32V203F8U6 / fzp_check rc=0
-- 已过：CH32V203F8U6 / schem_check rc=0
 - 已过：CH347F / fzp_check rc=0
 - 已过：CH347F / schem_check rc=0
 - 已过：CN3165 / fzp_check rc=0
-- 已过：ESP32-S3-WROOM-1 / fzp_check rc=0
-- 已过：ESP32-S3-WROOM-1 / schem_check rc=0
 - 已过：IP101GR / fzp_check rc=0
 - 已过：IP101GR / schem_check rc=0
 - 已过：RT6150AGQW_rev_1 / fzp_check rc=0
 - 已过：RT6150AGQW_rev_1 / schem_check rc=0
-- 已过：TX-AH-R900PNR / fzp_check rc=0
-- 已过：TX-AH-R900PNR / schem_check rc=0
-- 已过：TX-AH-R900PNR_rev_1 / fzp_check rc=0
-- 已过：TX-AH-R900PNR_rev_1 / schem_check rc=0
 - 已过：TXW8301 / fzp_check rc=0
 - 已过：TXW8301 / schem_check rc=0
 - 已知例外（允许清单，理由在代码里）：CN3165：schem_check：=== 1 项 FAIL ===（schem_check 1 项既存 FAIL（同上口径：改前 1 == 改后 1））

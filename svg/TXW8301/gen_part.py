@@ -75,18 +75,29 @@ THERMAL_VIA_PITCH = 0.50
 THERMAL_VIA_CLEAR = 0.05
 
 
+VIA_LADDER = ((4, 4), (4, 3), (3, 4), (3, 3), (3, 2), (2, 3), (2, 2), (1, 1))
+#   ★ 阵列优先级（用户 2026-10-17 定）：4×4 → 4×3 → 3×3 → 3×2 → 2×2；
+#     竖长焊盘再插转置档（3×4 / 2×3），最后兜底 1 个居中。
+
+
 def thermal_via_grid(w, h):
-    def fits(k):
-        need = ((k - 1) / 2.0 * THERMAL_VIA_PITCH
+    """能塞进 w×h 焊盘的最大阵列 → (nx, ny)。"""
+    def need(k):
+        return ((k - 1) / 2.0 * THERMAL_VIA_PITCH
                 + (THERMAL_VIA_DRILL + 2 * THERMAL_VIA_RING) / 2.0)
-        return need <= min(w, h) / 2.0 - THERMAL_VIA_CLEAR
-    return 3 if fits(3) else (2 if fits(2) else 1)
+    for nx, ny in VIA_LADDER:
+        if (need(nx) <= w / 2.0 - THERMAL_VIA_CLEAR
+                and need(ny) <= h / 2.0 - THERMAL_VIA_CLEAR):
+            return nx, ny
+    return 1, 1
 
 
 def thermal_via_pts(w, h):
-    n = thermal_via_grid(w, h)
-    offs = [0.0] if n == 1 else ([-0.25, 0.25] if n == 2 else [-0.5, 0.0, 0.5])
-    return [(dx, dy) for dy in offs for dx in offs]
+    """[(dx, dy), ...]：相对焊盘中心的过孔位置（逐行、从上到下）。"""
+    nx, ny = thermal_via_grid(w, h)
+    xs = [(i - (nx - 1) / 2.0) * THERMAL_VIA_PITCH for i in range(nx)]
+    ys = [(j - (ny - 1) / 2.0) * THERMAL_VIA_PITCH for j in range(ny)]
+    return [(dx, dy) for dy in ys for dx in xs]
 
 
 def thermal_pad_d(cx, cy, w, h):
