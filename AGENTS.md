@@ -288,6 +288,32 @@
   ⚠️ 例外：**面包板自身**（如 `SYB-118`，690 个孔）保持 `female` ✓ —— 它不该被插进别的面包板 ✗；
   万一在 Fritzing 编辑器里改过件，**记得同步改 `gen_part.py`** ✗（否则下次重生成会把它冲回去 ✓）。
 - **别加非标准 `gorn` 属性**。
+- ★★ **PCB 视图：`copper1` 自己不许带 `transform`（否则放到「底面」会错位）** ✗
+  （2026-10-17 用户报「在 PCB 底面拖入 `TP4056` 出现错位」✓，查实是**我们文件的问题** ✗，不是 Fritzing 的 bug ✓）：
+  - **机制（源码可复查 ✓，本机 `F:\build-fritzing\fritzing-app\src`）**：
+    放下到 `NewBottom` 时走 `items/itembase.cpp` 的 `ItemBase::getFlipDoc()` →
+    `svg/svgflattener.cpp` 的 `SvgFlattener::flipSMDElement()`：
+    它 **克隆 `copper1`**（克隆件**保留** copper1 自己的 `transform`），再把**原 `copper0`**
+    摘出来当克隆件的**兄弟**追加 ✓ —— 而"祖先变换链"**只从 `copper1` 的父节点往上收集** ✗
+    ⇒ **`copper1` 自己的 `transform` 对 `copper0` 的内容丢失** ✗
+    ⇒ 同一块铜的两份拷贝在底面落到**两个位置** ✓（用户的截图就是这样：一块大一块小、错开）。
+    实测本件：`matrix(1,0,0,1.2053614,-0.05119883,0)` ⇒ 散热盘两份铜**最大偏差 0.805 mm** ✗；
+    把该矩阵烘焙进坐标后 **0.000 mm** ✓。
+  - **修法（优先烘焙 ✓）**：把 transform **算进每个坐标**（`x += e`、`y *= a`、`height *= a`），
+    删掉 `copper1` 的 `transform`，同时拆掉只为抵消它而加的"补偿组"
+    `matrix(1,0,0,0.8296267,0.05119883,0)`（补偿组拆完内容原样留下）⇒ 整件**没有任何 transform**，
+    与 `BQ25570` / `CH347F` / `CN3165` / `ESP32-S3-WROOM-1` 这些生成器件**一致** ✓。
+    （另一种做法：把 transform 挪到 `copper0`/`copper1` 的**共同祖先**上 —— 那样两侧都能继承 ✓，
+    但会留一层多余的 `<g>`，所以**优先烘焙** ✓。）
+  - **机器守**：`tools/audit_pcb_flip.py [<部件>…]` ✓ —— 查「`copper1` 自带 `transform` 且 `copper0` 在它里面」✓；
+    ★ **2026-10-17 现状：全仓还余 10 个**（`3Pin-LED` / `CH340K` / `ESP-12F` / `RT6150AGQW` /
+    `TFTSPI1.9in` / `TPS63051RMWR` / `TPS631000DRLR` / `TS-D014` / `TypeC16Pin` / `UART1.9inIPS`）✗ ——
+    它们**放到 PCB 底面同样会错位**，其中 `CH340K`（`matrix(1.8785757,0,0,1.2550316,…)`，双向拉伸）
+    与 `UART1.9inIPS`（`translate(-15,-15)`）、`TFTSPI1.9in`（`translate(2312,151)`）偏差最大 ✓；
+    **还没改**（用户 2026-10-17 只点了 `TP4056`，按 §0 不扩大范围 ✓）。
+  - ★ 同时确认**结构本身没问题** ✓：`copper0` 嵌在 `copper1` 里（官方 `nest10`）是**主流写法**
+    （本机 1312 个官方 pcb svg 里 1101 个这么写 ✓）；面包板/原理图不受影响 ✓。
+
 - **丝印文字：Inkscape 读数 ≠ SVG 文字属性（2026-09-06 用户定，SMA 面包板 +/GND 遇到的问题）**：
   - Inkscape 状态栏对 `<text>` 的 X/Y 读数不是元素 x/y 属性：X≈文字**左缘**、Y≈文字**顶边**（基线−字高 cap）。
   - `text-anchor="middle"` 会让 X 读数≠x 属性（x 变成中心）→ 需要读数精确对齐时**去掉 `text-anchor`**
