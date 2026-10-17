@@ -16,138 +16,150 @@
      id="defs27" />
   <g
      gorn="0.1"
-     id="copper1"
-     transform="matrix(1.8785757,0,0,1.2550316,-0.75568128,0)">
+     id="copper1">
     <rect
        connectorname="8"
        fill="#f7bd13"
        gorn="0.1.0"
-       height="1.0000019"
+       height="1.255034"
        id="connector7pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="1.5618"
+       width="0.542856"
+       x="2.178278"
        y="0" />
     <rect
        connectorname="7"
        fill="#f7bd13"
        gorn="0.1.1"
-       height="1.0000019"
+       height="1.255034"
        id="connector6pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="2.0618"
+       width="0.542856"
+       x="3.117566"
        y="0" />
     <rect
        connectorname="6"
        fill="#f7bd13"
        gorn="0.1.2"
-       height="1.0000019"
+       height="1.255034"
        id="connector5pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="2.5618"
+       width="0.542856"
+       x="4.056854"
        y="0" />
     <rect
        connectorname="9"
        fill="#f7bd13"
        gorn="0.1.3"
-       height="1.0000019"
+       height="1.255034"
        id="connector8pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="1.0618"
+       width="0.542856"
+       x="1.23899"
        y="0" />
     <rect
        connectorname="10"
        fill="#f7bd13"
        gorn="0.1.4"
-       height="1.0000019"
+       height="1.255034"
        id="connector9pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="0.5618"
+       width="0.542856"
+       x="0.299703"
        y="0" />
     <rect
        connectorname="3"
        fill="#f7bd13"
        gorn="0.1.5"
-       height="1.0000019"
+       height="1.255034"
        id="connector2pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="1.5618"
-       y="4.2189999" />
+       width="0.542856"
+       x="2.178278"
+       y="5.294978" />
     <rect
        connectorname="4"
        fill="#f7bd13"
        gorn="0.1.6"
-       height="1.0000019"
+       height="1.255034"
        id="connector3pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="2.0618"
-       y="4.2189999" />
+       width="0.542856"
+       x="3.117566"
+       y="5.294978" />
     <rect
        connectorname="5"
        fill="#f7bd13"
        gorn="0.1.7"
-       height="1.0000019"
+       height="1.255034"
        id="connector4pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="2.5618"
-       y="4.2189999" />
+       width="0.542856"
+       x="4.056854"
+       y="5.294978" />
     <rect
        connectorname="2"
        fill="#f7bd13"
        gorn="0.1.8"
-       height="1.0000019"
+       height="1.255034"
        id="connector1pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="1.0618"
-       y="4.2189999" />
+       width="0.542856"
+       x="1.23899"
+       y="5.294978" />
     <rect
        connectorname="1"
        fill="#f7bd13"
        gorn="0.1.9"
-       height="1.0000019"
+       height="1.255034"
        id="connector0pad"
        stroke="none"
        stroke-linecap="round"
        stroke-width="0"
-       width="0.28897229"
-       x="0.5618"
-       y="4.2189999" />
+       width="0.542856"
+       x="0.299703"
+       y="5.294978" />
     <g
        gorn="0.1.10"
-       id="copper0" />
-    <rect
-       style="opacity:1;fill:#f7bd13;fill-opacity:1;fill-rule:evenodd;stroke-width:0.123132;stroke-linejoin:round;stroke-miterlimit:3.9"
-       id="connector10pad"
-       width="1.7566532"
-       height="1.6732676"
-       x="0.83343095"
-       y="1.7583003" />
+       id="copper0">
+          <path d="M0.810 2.207 L4.110 2.207 L4.110 4.307 L0.810 4.307 Z M1.610 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bd13" fill-rule="evenodd" stroke="none"/>
+          <circle id="connector11bad" cx="1.7100" cy="2.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector12bad" cx="2.2100" cy="2.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector13bad" cx="2.7100" cy="2.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector14bad" cx="3.2100" cy="2.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector15bad" cx="1.7100" cy="3.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector16bad" cx="2.2100" cy="3.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector17bad" cx="2.7100" cy="3.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector18bad" cx="3.2100" cy="3.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector19bad" cx="1.7100" cy="3.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector20bad" cx="2.2100" cy="3.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector21bad" cx="2.7100" cy="3.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector22bad" cx="3.2100" cy="3.5067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector23bad" cx="1.7100" cy="4.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector24bad" cx="2.2100" cy="4.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector25bad" cx="2.7100" cy="4.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+          <circle id="connector26bad" cx="3.2100" cy="4.0067" r="0.200" stroke="#f7bd13" stroke-width="0.100" fill="none"/>
+        </g>
+    <path id="connector10pad" d="M0.810 2.207 L4.110 2.207 L4.110 4.307 L0.810 4.307 Z M1.610 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 2.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 3.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 3.507 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M1.610 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.110 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M2.610 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z M3.110 4.007 a0.100 0.100 0 1 0 0.200 0 a0.100 0.100 0 1 0 -0.200 0 Z" fill="#f7bd13" fill-rule="evenodd" stroke="none"/>
+    <rect x="2.1783" y="4.2867" width="0.5429" height="1.0283" fill="#f7bd13" stroke="none"/>
   </g>
   <g
      gorn="0.2"

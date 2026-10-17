@@ -77,7 +77,7 @@ GEN_DRIFT_ALLOW = {
 #   ⇒ 这些件要正式整理时，一条条消掉并把这里删空 ✓。
 PART_CHECK_ALLOW = {
     "CH340K": "schem_check 6 项既存 FAIL（pin 缺 class=\"pin\"/connectorname 等；"
-              "2026-10-15 核过：改前 6 == 改后 6）",
+              "2026-10-15 核过：改前 6 == 改后 6；2026-10-17 加热过孔后剩 5 ✓ 更少）",
     "CN3165": "schem_check 1 项既存 FAIL（同上口径：改前 1 == 改后 1）",
     "ESP-12F": "schem_check 33 项既存 FAIL（大部分是 pin 缺 class/connectorname；"
                "2026-10-15 核过：改前 34 ⇒ 改后 33，本次还少 1 条 ✓）",
