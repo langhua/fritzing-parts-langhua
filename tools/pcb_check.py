@@ -304,6 +304,66 @@ def is_epad(nm):
     return ("epad" in s) or ("exposed" in s) or (s.strip() in ("ep", "ep0"))
 
 
+def _hull(pts):
+    """凸包（单调链 ✓）—— 只用于"这只大盘是不是**被别的盘围在中间**"✓"""
+    ps = sorted(set(pts))
+    if len(ps) < 3:
+        return ps
+
+    def half(seq):
+        out = []
+        for p in seq:
+            while len(out) >= 2:
+                (ax, ay), (bx, by) = out[-2], out[-1]
+                if (bx - ax) * (p[1] - ay) - (by - ay) * (p[0] - ax) <= 0:
+                    out.pop()
+                else:
+                    break
+            out.append(p)
+        return out
+    return half(ps)[:-1] + half(ps[::-1])[:-1]
+
+
+def epad_by_geometry(pads):
+    """**几何**找散热盘 ✓ ⇒ 把命中的 pad 打上 `epad=True` ✓（原地 ✓）
+
+    ★ 为什么必须几何 ✗（2026-10-18 ✓，本仓 AGENTS §5 同日定的口径 ✓）：
+      `CH32V203F8U6` 的中央散热盘在**原厂口径里就叫 `VSS`** ✓（不是 `EPAD` ✗）——
+      按名字筛**必然漏** ✗（AGENTS §5 原文：「名字不是 `EPAD`/`EP` 时只提示、不判错」✓）。
+    ★ 判据（照 AGENTS §5 的记录 ✓，加一条"围在中间"✓）：
+      ① 面积 ≥ **2.2 ×** 同件**其余**焊盘的中位面积 ✓；
+      ② 盘心落在**其余焊盘盘心的凸包之内** ✓ —— 这条是关键 ✗：
+         `TypeC16Pin` 的 5.55×21.10 **屏蔽焊盘**也满足① ✓（它是全件最大），
+         但它在**两端**（凸包外 ✓）⇒ 不判散热盘 ✓（AGENTS §5 记的那条例外 ✓）。
+    ★ 只影响"**允许在它上面打同网过孔**"与 ⑥ 的例外 ✓ —— 不改任何尺寸/位置 ✗。
+    """
+    by_ttl = {}
+    for q in pads:
+        if q.get("box"):
+            by_ttl.setdefault(q["title"], []).append(q)
+    for lst in by_ttl.values():
+        if len(lst) < 3:
+            continue                     # 两脚件（电阻/电容/超容）没有散热盘 ✓
+        for q in lst:
+            others = [z for z in lst if z is not q]
+            ar = sorted((z["box"][2] - z["box"][0]) * (z["box"][3] - z["box"][1])
+                        for z in others)
+            med = ar[len(ar) // 2]
+            if med <= 0:
+                continue
+            mine = (q["box"][2] - q["box"][0]) * (q["box"][3] - q["box"][1])
+            if mine < 2.2 * med:
+                continue
+            hl = _hull([z["c"] for z in others])
+            if len(hl) < 3:
+                continue
+            cx, cy = q["c"]
+            signs = [(b[0] - a[0]) * (cy - a[1]) - (b[1] - a[1]) * (cx - a[0])
+                     for a, b in ((hl[i], hl[(i + 1) % len(hl)]) for i in range(len(hl)))]
+            if all(v > 0 for v in signs) or all(v < 0 for v in signs):
+                q["epad"] = True
+
+
 def collect(path):
     """把一份 sketch 的 PCB 读成几何模型 ✓"""
     parts, board = PP.read_fzz(path)
@@ -341,7 +401,14 @@ def collect(path):
                              #   胀大 ✗ ⇒ 「线端落没落在盘上」必须用 `poly`/`circle` ✓
                              #   （真几何由 `pcb_pads.py` 算一次 ✓，这里只取用 ✓）
                              poly=q.get("poly"), circle=q.get("circle"),
-                             layer=q["layer"], thr=bool(q["hole_mm"]),
+                             # ★★ `thr`（通孔 ⇒ 两层都算铜）= **带孔** ✓ **或 `.fzp` 声明 `both`** ✓
+                             #   （2026-10-18 修 ✗）：`PinHeader-1xN` 的**方形 1 脚**在 pcb svg 里
+                             #   是 `<rect fill="none" stroke=…>` 的**环** ⇒ 量不出"孔" ✗ ⇒
+                             #   `thr=False` 而 `layer="both"` ✗ ⇒ `pad_layers()` 返回 `("both",)`
+                             #   ⇒ 这只脚在**布线器里被整只丢掉** ✗（实测：J1/J2/J3 的 `connector0`
+                             #   不在 `pad_index` 里、报"网表里的 J1.connector0…在板上找不到" ✗）。
+                             #   口径依据 = **`.fzp` 声明**（`copper0`+`copper1` = 镀通孔）✓。
+                             layer=q["layer"], thr=bool(q["hole_mm"]) or q["layer"] == "both",
                              # ★ 是不是**裸露焊盘（EPAD）** ✓ —— ⑦/⑥ 的例外要靠它 ✓
                              epad=is_epad(q["nm"]),
                              mi=p.get("mi") or ""))
@@ -369,6 +436,8 @@ def collect(path):
             #   `tight` 管“线到这里要不要变细” ✓）
             q["gap_mm"] = gap
             q["tight"] = bool(gap is not None and gap < NECK_TRIGGER_MM)
+    # ★★ 散热盘按**几何**认 ✓（名字不可靠 ✗：`CH32V203F8U6` 就叫 `VSS` ✓，见该函数头注 ✓）
+    epad_by_geometry(pads)
     text, name = PW.read(path)
     traces, vias = [], []
     for _ind, b in PW.blocks(text):

@@ -254,12 +254,17 @@ def gen_pcb_svg():
     # pin1 标记：在 pin1 焊盘**正上方**（用户 2026-09-17 定）
     silk.append(f'<circle cx="{C + PAD_Y[1]:.3f}" cy="{C - hh + 0.75:.3f}" r="0.30" '
                 f'fill="#f0f0f0" stroke="none"/>')
-    inner = ("\n".join(pads) + "\n<g id=\"copper0\"/>\n  </g>\n  <g id=\"silkscreen\">\n"
-             + "\n".join(silk))
+    # ★★ 2026-10-18 修 ✗：它是 **THT 开关** ⇒ 5 个焊盘**两层都要有铜** ✓
+    #   Fritzing 的写法（与库仓 `PinHeader-1xN` **同构** ✓）：`copper0` **嵌在** `copper1` 里 ✓
+    #   ✗ 原来写的是 `<g id="copper0"/>`（**空组** ✗）⇒ 实际是**单面焊盘** ✗
+    #   （实测：载板布线时 `part_pads` 报 `layer=copper1, thr=False` ✓）
+    pcb = ('  <g id="copper1">\n    <g id="copper0">\n'
+           + "\n".join(pads) + '\n    </g>\n  </g>\n  <g id="silkscreen">\n'
+           + "\n".join(silk) + "\n  </g>\n")
     return (SVG_HDR +
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.1f}mm" height="{H:.1f}mm" '
             f'viewBox="0 0 {W:.1f} {H:.1f}">\n'
-            f'  <g id="copper1">\n{inner}\n  </g>\n</svg>\n')
+            + pcb + '</svg>\n')
 
 
 # ----------------------------------------------------------------------- .fzp
@@ -272,7 +277,8 @@ def gen_fzp():
             f'   <views>\n'
             f'    <breadboardView>\n     <p layer="breadboard" svgId="connector{cn}pin"/>\n    </breadboardView>\n'
             f'    <schematicView>\n     <p layer="schematic" svgId="connector{cn}pin" terminalId="connector{cn}terminal"/>\n    </schematicView>\n'
-            f'    <pcbView>\n     <p layer="copper1" svgId="connector{cn}pin"/>\n    </pcbView>\n'
+            f'    <pcbView>\n     <p layer="copper0" svgId="connector{cn}pin"/>\n'
+            f'     <p layer="copper1" svgId="connector{cn}pin"/>\n    </pcbView>\n'
             f'   </views>\n'
             f'  </connector>')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -290,7 +296,8 @@ def gen_fzp():
             f'  <schematicView>\n   <layers image="schematic/{PART_ID}_schematic.svg">\n'
             f'    <layer layerId="schematic"/>\n   </layers>\n  </schematicView>\n'
             f'  <pcbView>\n   <layers image="pcb/{PART_ID}_pcb.svg">\n'
-            f'    <layer layerId="copper1"/>\n    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
+            f'    <layer layerId="copper0"/>\n    <layer layerId="copper1"/>\n'
+            f'    <layer layerId="silkscreen"/>\n   </layers>\n  </pcbView>\n'
             f'  <iconView>\n   <layers image="icon/{PART_ID}_icon.svg">\n'
             f'    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n </views>\n'
             f' <connectors>\n' + "\n".join(conns) + '\n </connectors>\n</module>\n')

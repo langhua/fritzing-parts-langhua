@@ -99,6 +99,7 @@ SECTIONS = {
     "modules": [
         ("无线 SoC / 模组", ["TXW8301", "ESP32-S3-WROOM-1", "ESP-12F"]),
         ("开发板", ["ESP32-S3-DevKitC-1", "ESP8266+CH340+SSD1306", "TX-AH-R900PNR"]),
+        ("调试器 / 烧录器", ["WCH-LinkE"]),
         ("显示", ["TFTSPI1.9in", "UART1.9inIPS"]),
         ("LED / 指示", ["WS2812B-5050", "WS2812B-2020", "WS2812B-1010",
                        "WS2812B-5050-4x4", "3Pin-LED"]),

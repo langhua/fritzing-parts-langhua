@@ -532,6 +532,17 @@ _ORD_SHOWN = []          # 实排次序**只打一次** ✓（验证开关真的
 #   病（**量出来的** ✓）：0.4 mm 脚距的 `U1` 外圈脚在铜0 **没有出口** ✗（39 格死胡同 ✗，
 #   四墙全是邻脚净空 ✗）⇒ 只有“盘上打孔、立刻下到另一层”才出得去 ✗（嘉立创 QFN 均如此 ✓）。
 VIA_AT_PAD = False
+# ★★ 2026-10-18 加 ✓（**默认 0 = 原行为** ✗）：挖完自己的盘之后，把**别人的盘**按多大的
+#   净空重重挡回去 ✓（mm ✓）。
+#   病（载板实测 ✓，`_scratch/carrier_wire_geom.py` ✓）：`carve_pads` 会把本网盘外扩
+#   `neck_grow`（≈ 0.29 mm ✓）**整片放开** ✗ ⇒ 它**盖住了隔壁盘的禁落区** ✗ ⇒ 而下面那段
+#   只按 `grow=0` 重挡**盘框本身** ✗ ⇒ 走线能从 **0.20 mm 的 QFN 脚缝**里**横穿出去** ✗
+#   （实测 `CON_RX` 从 pad17 侧向钻出，离 pad18 的铜只有 **0.118 mm** ✗ < 规则 0.15 ✗）。
+#   ⇒ 设成 `走线半宽 + 净空`（本项目 = 0.1016 + 0.16 = 0.2616 ✓）就再也不可能穿缝 ✓
+#     （0.20 的缝两边各要 0.26 ⇒ 无解 ✓）。
+#   ★ 为什么保留默认 0 ✗：库仓 2026-10-01 在像素板上试过"按净空挡" ⇒ **3/9 → 0/9** ✗
+#     （那条是 **24 mil**、净空要 0.45 ✓ ⇒ 把细间距件的出口整个堵死 ✓）⇒ 不能直接改默认值 ✗。
+REBLOCK_OTHERS_MM = 0.0
 
 
 # ★★ 2026-10-03 补 ✓：布不通时**逐格报到"谁堵的"** ✓（`--why` 用 ✓）
@@ -1563,6 +1574,26 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         for ix in range(i0, i1 + 1):
             for jy in range(j0, j1 + 1):
                 novia.add((ix, jy))
+    # ★★ 2026-10-18 修 ✗：**EPAD / 细间距盘自己的禁落区要挖掉** ✓
+    #   病（**本板量出来的** ✓，`_scratch/carrier_astar_probe2.py` ✓）：上面这段是按
+    #   `items` 建的 ⇒ **盘自己的框也在 `novia` 里** ✗ ⇒ 明写着的「EPAD / 细间距盘
+    #   允许盘上打孔」（见下面 `halo_own` 那段 ✓，用户 2026-10-01 定）**被它整段抵消** ✗：
+    #   实测 `U1`（QFN20）的中央散热盘 `VSS` 中心那一格 `在 no_via=True` ✗ ⇒ 单网 GND
+    #   **0/1** ✗（起/终点格都空 ✓、目标也空 ✓，就是不许在盘上落孔 ⇒ 无路可走 ✗）。
+    #   ★ 只挖**这两类盘自己的框内** ✓（不外扩 ✗）：别的网还有 `halo`（0.55 ✓）挡着 ✓，
+    #     所以"别人的孔打进我的盘"照样被拦 ✓；自己那网则由 `halo_own` 决定（这两类是空集 ✓）。
+    #   ★ 真铜安全性仍由**硬闸门**兜底 ✓（`via_pad_conflicts` / `pcb_check` ⑥⑦ ✓，各自实现 ✓）。
+    for _k, _q in pads.items():
+        if not (_q.get("epad") or _q.get("fine")):
+            continue
+        _b = _q.get("box")
+        if not _b:
+            continue
+        i0, j0 = base.rc(_b[0], _b[1])
+        i1, j1 = base.rc(_b[2], _b[3])
+        for ix in range(i0, i1 + 1):
+            for jy in range(j0, j1 + 1):
+                novia.discard((ix, jy))
     # ★★ 焊盘禁落区 ✓ —— **按网**分开算 ✓（2026-10-01 修 ✗，见 `VIA_PAD_KEEPOUT_MM` ✓）：
     #   · **别的网**的盘：禁落区 = 盘框 + 铜盘半径 + 净空 ✓（= 0.45 ✓）—— 这是**硬**的 ✓
     #     （v47 就是这里出的事 ✗：孔心离盘边 0.10 mm 也能落 ✓ ⇒ 铜盘压进别人的盘 ⇒ 短路 ✗✗）。
@@ -1799,7 +1830,8 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 #   ⇒ 维持 `grow=0` ✓（用户 2026-10-01 选定的“零短路”配置 ✓）；
                 #     要再往前走，得从**摆位/拓扑**下手 ✓（≠ 调这个系数 ✗）。
                 for l2 in q2["lays"]:
-                    grid.block_box(l2, bb, 0.0, owner="盘:%s.%s" % (k2[0], k2[1]))
+                    grid.block_box(l2, bb, U(REBLOCK_OTHERS_MM),
+                                   owner="盘:%s.%s" % (k2[0], k2[1]))
             # ★★ 2026-10-03 ✓：细间距/裸露焊盘**允许盘上打孔** ✗（QFN 扇出标准做法 ✓）
             #   默认关 ✗（`VIA_AT_PAD` ✓）；开时只对 `fine`/`epad` 盘放行 ✓（其它盘照旧 ✗）。
             via_s = VIA_AT_PAD and (pads[a].get("fine") or pads[a].get("epad"))

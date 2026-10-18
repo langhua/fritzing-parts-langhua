@@ -7753,6 +7753,61 @@
   </svg>
   <text x="59.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">3Pin-LED</text>
   <text x="59.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">8.38×11.48mm</text>
+  <svg id="p14" x="78.00" y="128.50" width="30.00" height="22.00" viewBox="-78.7400 -31.5000 1670.7901 656.6944" preserveAspectRatio="xMidYMid meet">
+    <g id="p14_icon">
+        <rect x="-65" y="-27.95" width="1653.5" height="649.6" fill="#1d3a72" stroke="#12264c" stroke-width="7.1" rx="47.2" ry="47.2"/>
+        <rect x="490.1" y="172.85" width="275.6" height="275.6" fill="#232323" stroke="none"/>
+        <circle cx="525.6" cy="208.25" r="11" fill="#f0f0f0" stroke="none"/>
+        <rect x="551.47" y="20.96" width="153.5" height="114.2" fill="#e2e2e2" stroke="#9a9a9a" stroke-width="5.5" rx="13.8" ry="13.8"/>
+        <circle cx="628.27" cy="77.96" r="39.4" fill="#9a9a9a" stroke="none"/>
+        <rect x="558.24" y="482.58" width="153.5" height="114.2" fill="#e2e2e2" stroke="#9a9a9a" stroke-width="5.5" rx="13.8" ry="13.8"/>
+        <circle cx="634.94" cy="539.68" r="39.4" fill="#9a9a9a" stroke="none"/>
+        <circle cx="1343.14" cy="96.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector5pin" connectorname="CLK" cx="1343.14" cy="96.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1343.14" cy="196.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector6pin" connectorname="DIO" cx="1343.14" cy="196.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1343.14" cy="296.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector7pin" connectorname="GND" cx="1343.14" cy="296.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1343.14" cy="396.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector8pin" connectorname="3V3" cx="1343.14" cy="396.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1343.14" cy="496.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector9pin" connectorname="5V0" cx="1343.14" cy="496.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1243.14" cy="96.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector0pin" connectorname="RX" cx="1243.14" cy="96.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1243.14" cy="196.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector1pin" connectorname="TX" cx="1243.14" cy="196.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1243.14" cy="296.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector2pin" connectorname="GND" cx="1243.14" cy="296.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1243.14" cy="396.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector3pin" connectorname="3V3" cx="1243.14" cy="396.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <circle cx="1243.14" cy="496.85" r="37.4" fill="#f7bf13" stroke="none"/>
+        <circle id="p14_connector4pin" connectorname="RST" cx="1243.14" cy="496.85" r="17.7" fill="#1a1a1a" stroke="none"/>
+        <rect x="-78.74" y="128.98" width="289.27" height="351.85" fill="#dcdcdc" stroke="None"/>
+        <path d="m 19.32863,21.54826 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 19.871,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 21.596629,21.643222 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 22.139,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 23.556,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="M 24.973,21.572 H 25.54 V 20.671593 H 24.973 Z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 26.391,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 27.808,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 29.225,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="M 30.643,21.572 H 31.21 V 20.671593 H 30.643 Z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 32.06,21.572 h 0.567 V 20.671593 H 32.06 Z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 33.477,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 34.894,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 35.460111,21.619481 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 37.162,21.572 h 0.567 v -0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <path d="m 37.68063,20.742816 h 0.567 v 0.900407 h -0.567 z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#ffcc00" stroke="None" stroke-width="0.830961"/>
+        <rect x="-78.74" y="157.36" width="289.27" height="18.01" fill="#f0f0f0" stroke="None"/>
+        <rect x="-78.74" y="434.43" width="289.27" height="18.01" fill="#bebebe" stroke="None"/>
+        <path d="m 16.129,20.835 v -1.998 h 0.283 c 0.344,0 0.624,0.279 0.624,0.624 v 0.533 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 v -2.022 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 0.047 c 0,0.344 -0.279,0.624 -0.624,0.624 h -1.536 c -0.344,0 -0.624,0.279 -0.624,0.624 v 0.727 c 0,0.344 0.279,0.624 0.624,0.624 h 10.372 c 0.344,0 0.624,-0.279 0.624,-0.624 v -0.727 c 0,-0.344 -0.279,-0.624 -0.624,-0.624 H 32.45 c -0.344,0 -0.624,-0.279 -0.624,-0.624 v -0.047 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 3.413 c 0.344,0 0.624,0.279 0.624,0.624 v 2.022 c 0,0.344 0.279,0.624 0.624,0.624 h 2.831 c 0.344,0 0.624,-0.279 0.624,-0.624 V 19.46 c 0,-0.344 0.279,-0.624 0.624,-0.624 h 0.283 v 1.998 H 16.129 Z" transform="matrix(-0,-13.884,13.884,0,-78.7347,704.765)" fill="#8c8c8c" stroke="None"/>
+        <rect x="110" y="210.76" width="19.77" height="48.08" fill="#8c8c8c" stroke="None"/>
+        <rect x="109.99" y="350.96" width="19.77" height="48.08" fill="#8c8c8c" stroke="None"/>
+      </g>
+  </svg>
+  <text x="93.00" y="155.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">WCH-LinkE</text>
+  <text x="93.00" y="158.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">42.44×16.68mm</text>
   <text x="8" y="164" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">格内按各自比例缩放（不同格不同比例）；下方数字 = icon 文件自己声明的尺寸</text>
   <text x="8" y="168" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b">本库新做的元件按实物 1:1 画；早年从 fritzing-parts 导入的图标可能是视觉比例</text>
 </svg>

@@ -78,6 +78,16 @@ def main(argv):
             fam = (p.text or "").strip()
     is_bb = fam.lower() == "breadboard"
 
+    # ★★ 工具类件例外 ✓（2026-10-18 用户定 ✓，原话：「建议这个元件不带 pcb 和原理图」✓）：
+    #   · 调试器 / 烧录器这类**台面工具**：**不会被焊到板上** ⇒ 有 pcb 视图反而会
+    #     让人把它摆进板里 ✗ ⇒ 允许**只声明 breadboard + icon** ✓；
+    #   · 判据 = `family` 落在下面这个集合里 ✓（名字是我们自己挑的，不靠件名硬点名 ✗）；
+    #   · ✗ **只对“整块都不带”成立** —— 半带半不带（声明了却没图 / 有图却没声明）
+    #     照旧按通用规则判 ✗（那样是写错了，不是有意为之 ✓）。
+    #   先例 = `WCH-LinkE`（载板面包板图里画“怎么烧录”用）。
+    TOOL_FAMILIES = {"programmer", "debugger"}
+    is_tool = fam.lower() in TOOL_FAMILIES
+
     # ① 视图 → 实际 svg 文件
     svg_of, files = {}, {}
     for v in VIEWS:
@@ -94,13 +104,17 @@ def main(argv):
             # icon 视图复用面包板图是既有做法（FPC05 等）→ 只提示，不算 FAIL
             if v == "icon":
                 notes.append("注: " + msg)
+            elif is_tool and v in ("schematic", "pcb"):
+                notes.append("注: 工具类件 ✓ 不声明 %s 视图（不焊到板上 ✓，属有意为之 ✓）" % v)
             elif is_bb and v in ("schematic", "pcb"):
                 notes.append("注: （面包板 ✓）%sView 与面包板视图共用同一张图 ✓ 属既有做法 ✓"
                              % v)
             else:
                 fails.append("FAIL " + msg)
         if files[v] is None:
-            if is_bb and v in ("schematic", "pcb"):
+            if is_tool and v in ("schematic", "pcb"):
+                notes.append("注: 工具类件 ✓ 不需要 %s 视图的 svg ✓" % v)
+            elif is_bb and v in ("schematic", "pcb"):
                 notes.append("注: （面包板 ✓）没有 %s 视图的 svg ✓（那两视图共用面包板图 ✓）"
                              % v)
             else:

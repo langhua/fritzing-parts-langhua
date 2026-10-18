@@ -35,6 +35,16 @@
         <instance moduleIdRef="TX-AH-R900PNR_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TX-AH-R900PNR_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="__spacer__" modelIndex="3" path="调试器 / 烧录器">
+        <views>
+            <iconView layer="icon">
+                <geometry z="-1" x="-1" y="-1"/>
+            </iconView>
+        </views>
+        </instance>
+        <instance moduleIdRef="WCH-LinkE" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/WCH-LinkE.fzp">
+            <views/>
+        </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="显示">
         <views>
             <iconView layer="icon">

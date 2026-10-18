@@ -13,7 +13,7 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 下面几张图就是本库元件的**真实外观**（内容取自各部件 `svg.icon.*_icon.svg`，由
 `tools/make_preview.py` 自动拼版 —— 改了某个 icon，重跑一次脚本这些图就跟着更新）。
 每个格子按各自比例缩放到框内，格下的数字 = 该 icon 文件**自己声明**的尺寸。
-共 131 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
+共 132 个元件（含 `_rev_1` 等变体）；`FPC05-2H10PX`、`LM393-A3144-HALL-3PINS`
 没收录 —— 这两个的 icon 视图直接复用面包板 svg，没有独立 icon 文件（原因写在脚本里）。
 ★ `SYB-118` 自 2026-10-05 起**有自己的 icon** ✓（面包板图**右端切片** ✓：竖排 "SYB-118" 丝印 ＋ 两个安装孔 ✓，**方形 44.92 × 44.92 mm** ✓ —— 用户定"icon 应该是方的，不是长方形的" ✓），生成器 `svg/SYB-118/gen_icon.py` ✓。
 
@@ -27,7 +27,7 @@ Fritzing / Inkscape 里的观感与可插性，仍要你自己拖进去看 ✓�
 
 **模块 / 开发板 / 显示 / 指示** —— WiFi、HaLow、NFC、WS2812B、TFT、霍尔
 
-[![模块与开发板：ESP-12F、ESP32-S3-WROOM-1、ESP32-S3-DevKitC-1、TX-AH-R900PNR、TXW8301、NFC Coil、WS2812B、TFTSPI1.9in 等](docs/preview/modules.svg)](docs/preview/modules.svg)
+[![模块与开发板：ESP-12F、ESP32-S3-WROOM-1、ESP32-S3-DevKitC-1、TX-AH-R900PNR、TXW8301、NFC Coil、WS2812B、TFTSPI1.9in、**WCH-LinkE 调试器** 等](docs/preview/modules.svg)](docs/preview/modules.svg)
 
 **连接器 / 开关 / 按键** —— Type-C、USB、FPC、RJ45、SMA、拨动开关、PB86-A0 六色
 
@@ -61,7 +61,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 
 ## 已有部件
 
-> 下表由 `fzpz/` 目录自动核对生成（135 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
+> 下表由 `fzpz/` 目录自动核对生成（136 个 `.fzpz`），全部部件源文件在 `svg/<部件>/` 下，生成脚本为 `gen_part.py` 等。
 
 | 部件 | 说明 | 交付物 |
 |---|---|---|
@@ -157,6 +157,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | USB-B01 | USB-B 母座（直角直插） | `fzpz/USB-B01.fzpz` |
 | ATECC608B | Microchip CryptoAuthentication 安全元件（I2C，SOIC-8；4 个功能脚 GND/SDA/SCL/VCC + 4 个 NC；面包板=绿色转接板，排针行距 7.62mm，pin1 左下） | `fzpz/ATECC608B.fzpz` |
 | W25Q16JV | 16M-bit SPI NOR Flash（Winbond，SOIC-8 208-mil） | `fzpz/W25Q16JV.fzpz` |
+| WCH-LinkE | WCH 官方 **USB 调试器/烧录器（Type-C 版）**（板 42×16.5×1.6mm，**Type-C 座** + 按键 `IAP`/`MODE` + **2×5 卧式排针、2.54mm 脚距**；**上层** `RX/TX/GND/3V3/RST`、**下层** `CLK/DIO/GND/3V3/5V0`（`CLK`=SWCLK、`DIO`=SWDIO）；引脚 = 2026-10-18 用户实物口述、尺寸 = 用户卡尺实测；面包板图 = **用户手改版**（`byhand_export` 出 `byHand_tables.py` ✓）；**只做面包板 + icon，不带原理图 / PCB**（台面工具、不焊到板上）） | `fzpz/WCH-LinkE.fzpz` |
 | XC6206P332MR | 3.3V 低压差线性稳压器 LDO（Torex XC6206 系列，SOT-23-3，200mA；面包板=淘宝式转接板，排针 2/3/1=VOUT/VIN/GND） | `fzpz/XC6206P332MR.fzpz` |
 | WS2812B-1010 | 1.0×1.0mm 可寻址 RGB LED（内置驱动，4 个底面焊盘、0.40mm 网格） | `fzpz/WS2812B-1010.fzpz` |
 | WS2812B-2020 | 2.0×2.0mm 可寻址 RGB LED（内置驱动） | `fzpz/WS2812B-2020.fzpz` |

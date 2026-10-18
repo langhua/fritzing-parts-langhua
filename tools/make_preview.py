@@ -85,6 +85,8 @@ SHEETS = {
         ("WS2812B/5050_4x4", "WS2812B-5050-4x4"),
         ("TFTSPI1.9in", "TFTSPI1.9in"), ("UART1.9inIPS", "UART1.9inIPS"),
         ("3Pin-LED", "3Pin-LED"),
+        # 2026-10-18 加：**调试器 / 烧录器**（载板只能走 SWD ⇒ 面包板视图里要画出它 ✓）
+        ("WCH-LinkE", "WCH-LinkE"),
         # 两个从 fritzing-parts 导入的旧件没收录（icon 视图复用 breadboard），
         # 与 FPC05-2H10PX 同一原因：`lm393-a3144-hall-3pin/`、`SYB-118/` 里都没有独立 icon 文件。
     ]),
