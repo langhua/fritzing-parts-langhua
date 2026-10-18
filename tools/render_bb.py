@@ -201,6 +201,68 @@ svg_cache = {}
 LAST_PICK = [None]          # ★ 刚才那个零件到底用了哪个 svg ✓（要点名 ✓，不静默 ✓）
 
 
+# ★★ 2026-10-19 加 ✓：**电阻色环按阻值上色** —— 照 Fritzing 的 `src/items/resistor.cpp` 原样复刻 ✓
+#   ✗ 病（用户截图点名 ✓）：以前的预览里**所有电阻长得一模一样** ✗ ——
+#     因为预览是本脚本渲的 ✓，而它只把零件 svg 原样画出来 ✗ ⇒ 不会跑 Fritzing 的 `setBands()` ✗
+#     （`resistor.cpp:224` ⇒ 按 id 改 `band_1_st` / `band_2_nd` / `band_3` / `band_rd_multiplier` /
+#      `gold_band` 的 `fill` ✓）。★ **元件本身没问题** ✓（id 就是那一套 ✓）—— 缺的是渲染器这一环 ✗。
+#   颜色表照抄 `resistor.cpp:71-95` ✓（值一字不改 ✓，✗ 不要自己调色 ✗）。
+CB = {0: "#000000", 1: "#8a3d06", 2: "#c40808", 3: "#ff4d00", 4: "#ffd500",
+      5: "#00a33d", 6: "#0060b6", 7: "#8210d2", 8: "#8c8c8c", 9: "#ffffff",
+      -1: "#ad9f4e", -2: "#c0c0c0"}
+TOL = {"±0.05%": "#8c8c8c", "±0.1%": "#8210d2", "±0.25%": "#0060b6",
+       "±0.5%": "#00a33d", "±1%": "#8a3d06", "±2%": "#c40808",
+       "±5%": "#ad9f4e", "±10%": "#c0c0c0", "±20%": "#dbb477"}
+
+
+def ohms_of(txt):
+    """`4.7k` / `100` / `10k` / `4.7kΩ` → 4700 ✓（单位缩写真按 Fritzing 的\n    `convertFromPowerPrefix` 那套 ✓）"""
+    s = (txt or "").strip().replace("Ω", "").replace("ohms", "").replace("ohm", "")
+    m = re.match(r"^([\d.]+)\s*([pnumkMGT]?)$", s)
+    if not m:
+        return None
+    v = float(m.group(1))
+    mult = {"": 1, "p": 1e-12, "n": 1e-9, "u": 1e-6, "m": 1e-3,
+            "k": 1e3, "M": 1e6, "G": 1e9, "T": 1e12}[m.group(2)]
+    return v * mult
+
+
+def band_colors(props, mid):
+    """照 `Resistor::makeSvg` 算五道环的颜色 ✓；算不出就返回 {}（原样不动 ✓）"""
+    ohms = ohms_of(props.get("resistance"))
+    if not ohms or ohms <= 0:
+        return {}
+    so = "%.3e" % ohms                     # 与 `QString::number(ohms,'e',3)` 同形 ✓（如 4.700e+03）
+    first = int(so[0])
+    second = int(so[2])
+    third = int(so[3])
+    temp = first * 10 + second
+    if "5Band" in (mid or ""):
+        temp = temp * 10 + third
+    mult = 0 if temp == 0 else int(round(math.log10(ohms / temp)))
+    out = {"band_1_st": CB.get(first, "#000000"),
+           "band_2_nd": CB.get(second, "#000000"),
+           "band_rd_multiplier": CB.get(mult, "#000000")}
+    if "5Band" in (mid or ""):
+        out["band_3"] = CB.get(third, "#000000")
+    out["gold_band"] = TOL.get((props.get("tolerance") or "").strip(), "#ad9f4e")
+    return out
+
+
+def recolor_bands(txt, cols):
+    """把 `id=<band>` 那个元素的 `fill` 换掉 ✓（属性顺序不定 ✓ ⇒ 逐标签处理 ✓）"""
+    for eid, col in cols.items():
+        def rep(m):
+            t = m.group(0)
+            if re.search(r'\bfill="[^"]*"', t):
+                return re.sub(r'\bfill="[^"]*"', 'fill="%s"' % col, t, count=1)
+            if t.rstrip().endswith("/>"):
+                return t[:t.rindex("/>" )] + ' fill="%s"/>' % col
+            return t[:-1] + ' fill="%s">' % col
+        txt = re.sub(r'<[a-zA-Z][^>]*\bid="%s"[^>]*>' % re.escape(eid), rep, txt)
+    return txt
+
+
 def svg_for(fzp_path, img, view="breadboard"):
     """取零件的视图 svg 文本 ✓：先看包里 ✓，再按 fzp 路径旁边找 ✓"""
     key = (fzp_path, img)
@@ -287,6 +349,17 @@ for el in root.iter("instance"):
     txt = svg_for(fzp, img)
     if txt is None:
         continue
+    # ★★ 2026-10-19 ✓：电阻按阻值改色环 ✓（fzp 的 `resistance` / `tolerance` ⇒ `band_*` 的 fill ✓）
+    if "ResistorModuleID" in mid:
+        props = {p.get("name"): p.get("value") for p in el.iter("property")}
+        _cols = band_colors(props, mid)
+        if _cols:
+            txt = recolor_bands(txt, _cols)
+            print("   %-6s 色环 ✓ %s（resistance=%s tolerance=%s）"
+                  % (ttl, _cols, props.get("resistance"), props.get("tolerance")))
+        else:
+            print("   %-6s ✗ 色环算不出（resistance=%r ✗）⇒ 保持原样 ✗"
+                  % (ttl, props.get("resistance")))
     # ★★ 2026-09-27 ✓：**点名报出**这个零件到底用了哪个 svg ✓（用户报"preview 全不对" ✗ ⇒
     #   不许再拿"渲染没报错"当证据 ✗ —— 要把"取了哪个文件"打出来，人能核对 ✓）
     print("   %-6s image=%-42s 用了 %s（%d 字节）"
