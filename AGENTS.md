@@ -399,6 +399,9 @@
       ＋ `svg/core/breadboard/resistor_5bands.svg` 里五个环 id 齐全 ✓（`band_3` 在 `:18` ✓）。
     · 本库做法 ✓：moduleId **替换**尾缀成 `-5BandResistorModuleID` ✓（仍 `endsWith("ResistorModuleID")` ✓
       所以属性面板照旧可用 ✓）—— 例 `R0603_36137a0f26fc46e91e48eb74468f61a7_1-5BandResistorModuleID` ✓。
+      ★ 2026-10-19 收尾 ✓：**10 档全部改完** ✓（01005/0201/0402/0603/0805/1206/1210/1812/2010/2512 ✓），
+      本库不再有四色环电阻件 ✓；9 档共用同一份面包板图案 ⇒ 环位一致
+      （`band_3` x=217.43、`band_rd_multiplier` x=261.63、`gold_band` x=305.82，环宽 25.7 ⇒ 四列等间距 18.5 ✓）。
       ⚠ `tools/rename_moduleid.py` 是**追加** ✗ ⇒ 已带 `-ResistorModuleID` 的件要自己**替换**尾缀 ✓
       （重打包/改箱可**复用**它的 `repack()` / `remap_bins()` ✓，别另写一份 ✗）。
     · 实测色码（与本库 `tools/render_bb.py` 算的一致 ✓）：4.7 kΩ±1% = 黄紫黑棕＋棕 ✓；

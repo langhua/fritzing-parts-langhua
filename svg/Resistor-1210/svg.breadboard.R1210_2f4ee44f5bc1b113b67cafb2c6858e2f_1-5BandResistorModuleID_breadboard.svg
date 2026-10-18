@@ -65,7 +65,15 @@
        height="76.9"
        id="band_rd_multiplier"
        width="25.7"
-       x="224.62"
+       x="261.63"
+       y="11.48" />
+    <rect
+       fill="#000000"
+       gorn="0.1.75"
+       height="76.9"
+       id="band_3"
+       width="25.7"
+       x="217.43"
        y="11.48" />
     <rect
        fill="#8c8c8c"
