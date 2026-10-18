@@ -32,6 +32,13 @@ import sys
 import zipfile
 import xml.etree.ElementTree as ET
 
+# ★ 本脚本打印中文/✓✗ ⇒ 必须自己重设编码 ✓（✗ 不靠调用方加 `-X utf8` ✗）
+#   2026-10-18 实测 ✗：被 `run_checks.py`（`sys.executable` 直起、不带 `-X utf8`）调用时，
+#   Windows GBK 控制台上直接 `UnicodeEncodeError` 崩掉 ✗ ⇒ 闸门红得莫名其妙 ✓。
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 import projdata as PD
 
 CORE_FZP = "breadboard2.fzp"

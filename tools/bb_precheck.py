@@ -5,7 +5,7 @@ r"""★ 前置闸门：**摆位先于入网**（规则正文：库仓 `docs/brea
 「**物理上管脚没有插入孔……能把物理模型放在第一位吗？**」✓
 ⇒ 布线**之前**跑本脚本 ✓：不过 ⇒ **不许布线** ✗（`bb_route_guarded.py` 挂在 `bb_route4` 前 ✓）。
 
-六条判据（★ **判据 = 几何** ✓，✗ 不是"有没有 `<connect>`"✗ —— §A.5 第 4 条 ✓）：
+七条判据（★ **判据 = 几何** ✓，✗ 不是"有没有 `<connect>`"✗ —— §A.5 第 4 条 ✓）：
 
   ① 每个脚**恰好**声明了**一颗真实的孔** ✓（没声明 / 孔名不在板上 ⇒ 没到位 ✗）
   ② **接点**落孔 ✓ —— 有 `<leg>` 的脚用**腿端**（＝ 那只脚真正伸进孔里的点 ✓，
@@ -27,6 +27,13 @@ r"""★ 前置闸门：**摆位先于入网**（规则正文：库仓 `docs/brea
      ＋ ★ **Fritzing 里那只脚的可点位置不对** ✗。✗ ①–⑤ **全都看不见它** ✗（只认"腿端落孔"✓）。
      ⚠ 范围如实 ✓：它抓的是**形状**（脚距）✗，**不抓**整体小平移 ✓（那是"盘心 vs 引脚原点"的固有差 ✓）
      ⇒ 若整体挪了而形状没变 ⇒ **本闸门不报** ✗（那是别的判据的事 ✓）。
+  ⑦ **接了导线的脚：导线端点必须真的落在它的接线点上** ✓（2026-10-18 加 ✗，用户点出来的）：
+     原来这一支是**无条件豁免** ✗（`if not tg: exempt`）—— 只看"有没有 `<connect>`" ✓，
+     **从没核过导线端点到底在哪** ✗ ⇒ 截图上线头偏在焊盘**左上 4.80/2.70 mm**（合成 5.51 mm）
+     时，①–⑥ 与 `bb_probe`/`file_sanity` **全部绿** ✗✗ —— 而**物理上就是没接上** ✗。
+     ⇒ 现在对每只"接线不插孔"的脚，把它声明的每根导线的**那一端坐标**取出来，
+     与它的**接线点**（＝ `anchors()` 算出的 `connectorNpin` 中心，即 Fritzing 的
+     `calcTerminalPoint` 口径 ✓）比距离，超 `WIRE_TOL_MM` 就报 ✗。
 
 几何一律**调库里的同一份实现** ✓：孔坐标 `bb_compare.hole_xy` ✓（与 `bb_probe`／`bb_compare`
 同源 ✓）、元件盘心与 svg 尺寸 `part_box` ✓（与 `bb_route4`／`render_pcb` 同源 ✓）——
@@ -44,6 +51,13 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 import zipfile
+
+# ★ 本脚本打印中文/✓✗ ⇒ 必须自己重设编码 ✓（✗ 不靠调用方加 `-X utf8` ✗）
+#   2026-10-18 实测 ✗：被 `run_checks.py`（`sys.executable` 直起、无 `-X utf8`）调用时，
+#   在 Windows GBK 控制台上直接 `UnicodeEncodeError` 崩掉 ✗ ⇒ 闸门红得莫名其妙 ✓。
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -63,6 +77,10 @@ SHAPE_TOL_MM = 2.0         # ★ ⑥ 的容差 = "**同件内**脚距 vs 元件�
                            #   ★ 灵敏度如实 ✓：两脚件"脚距被压扁 P mm" ⇒ 残差 = P/2 ⇒
                            #     本阈值抓的是 **脚距错 ≥ 4 mm** ✗（1 mm 级的小压扁**有意放过**✓ ——
                            #     用户对 `R1` 就判"没问题"✓，机器不该比人更严 ✗）。
+WIRE_TOL_MM = 0.10         # ★ ⑦ 的容差 = "导线自己那一端 vs 该脚的接线点" ✓
+                           #   取 0.10mm（= 半个线宽）：Fritzing 里手拖的线会**吸附**到引脚上 ✓，
+                           #   生成的线是算出来的（误差 ~1e-6）✓ ⇒ 0.10 已经很宽 ✓；
+                           #   真出错时是 mm 级（实测那次 5.51mm ✗）⇒ 不会误报也不会漏 ✓。
 SKIP = ("Breadboard", "Logo", "Ground", "NetLabel", "TXT", "PCB", "Wire")
 
 
@@ -138,6 +156,63 @@ def anchors(fzp_path):
     return out
 
 
+_LEG_CACHE = {}
+
+
+def leg_tips(fzp_path):
+    """⇒ {connectorId: (x, y)} —— svg 里 `connectorNleg` **引线的另一端**（局部 sketch 单位 ✓）
+
+    ★ 为什么 ⑦ 要用它 ✗（2026-10-18 实测 ✓）：**橡皮筋引线件**（`.fzp` 写了 `legId` ✓，
+      如 `SC155` 超容 / 核心电阻）—— 导线是接在**引线末端**的 ✓，**不是**焊盘中心 ✗。
+      证据 ✓：`BT1` 的 svg 里 `connector0leg` 是 `(8.75,11)→(8.75,13.54)`（往下 2.54mm ✓），
+      而实例转了 180° ⇒ 引线末端落在焊盘**上方 2.54mm** ✓；草图里两根线的端点
+      正好在那里（`(278.9820, 211.0000)` vs 焊盘 `(278.9820, 219.9998)` ✓）。
+      ⇒ 拿焊盘中心去比就会**误报 2.54mm** ✗（第一版就误报了 ✓）。
+    ★ 取"离焊盘**远**的那个端点" ✓（line 的首/尾哪个都行 ✓，不赌书写次序 ✓）。
+    """
+    if fzp_path in _LEG_CACHE:
+        return _LEG_CACHE[fzp_path]
+    out = {}
+    if fzp_path and os.path.isfile(fzp_path):
+        root = ET.parse(fzp_path).getroot()
+        has_leg = set()
+        for c in root.iter("connector"):
+            for p in c.iter("p"):
+                if p.get("layer") == "breadboard" and p.get("legId"):
+                    has_leg.add(c.get("id"))
+        lay = root.find(".//breadboardView/layers")
+        img = lay.get("image") if lay is not None else None
+        svg = pbox.resolve_svg(fzp_path, img) if img else None
+        if svg and has_leg:
+            sroot = ET.parse(svg).getroot()
+            wmm, _hmm = pbox.canvas_mm(sroot.attrib)
+            vb = pbox._nums(sroot.get("viewBox"))
+            if wmm and len(vb) == 4 and vb[2]:
+                k = wmm / vb[2] * MM
+                ox, oy = vb[0], vb[1]
+                anc = anchors(fzp_path)
+
+                def walk(el, m):
+                    for c in el:
+                        t = c.get("transform")
+                        mc = pbox.mul(m, pbox.parse_tf(t)) if t else m
+                        mm = re.match(r"^(connector\d+)leg$", c.get("id") or "")
+                        if mm and _tag(c) == "line":
+                            a = pbox.apply(mc, _num(c.get("x1")), _num(c.get("y1")))
+                            b = pbox.apply(mc, _num(c.get("x2")), _num(c.get("y2")))
+                            a = ((a[0] - ox) * k, (a[1] - oy) * k)
+                            b = ((b[0] - ox) * k, (b[1] - oy) * k)
+                            pin = anc.get(mm.group(1))
+                            if pin:
+                                da = (a[0] - pin[0]) ** 2 + (a[1] - pin[1]) ** 2
+                                db = (b[0] - pin[0]) ** 2 + (b[1] - pin[1]) ** 2
+                                out[mm.group(1)] = a if da > db else b
+                        walk(c, mc)
+                walk(sroot, (1.0, 0.0, 0.0, 1.0, 0.0, 0.0))
+    _LEG_CACHE[fzp_path] = out
+    return out
+
+
 def holes_of(sketch_text):
     """⇒ (board_mi, {孔名: (x,y)}, {孔名: bus根}) ✓（板子自己的 .fzp ＝ Fritzing 的口径 ✓）"""
     sroot = ET.fromstring(sketch_text)
@@ -182,6 +257,35 @@ def holes_of(sketch_text):
                 par[ra] = rb
     return board, hole, {h: find(h) for h in hole}
 
+def wire_ends_of(sroot):
+    """⇒ {(件 modelIndex, 脚 connectorId): [(导线标题, 该导线**这一端**的坐标)]} ✓
+
+    ★ 导线的两端：`connector0` = (x + x1, y + y1)、`connector1` = (x + x2, y + y2) ✓
+      （`x1/y1` 多数件是 0 ✓，但不能假定 0 ✗ —— 实测见过非零的 ✓）。
+    ★ 为什么需要它 ✗（2026-10-18 ✓）：`⑦` 要判的是**物理上碰没碰上** ✓，
+      ✗ 不是"`<connect>` 里写没写"✗（`bb_probe` 已经管了那一半 ✓）。
+    """
+    out = {}
+    for e in sroot.iter("instance"):
+        if not (e.get("moduleIdRef") or "").startswith("Wire"):
+            continue
+        ttl = (e.findtext("title") or "").strip()
+        bv = _child(_child(e, "views"), "breadboardView")
+        g = _child(bv, "geometry") if bv is not None else None
+        if g is None:
+            continue
+        bx, by = _num(g.get("x")), _num(g.get("y"))
+        ends = {"connector0": (bx + _num(g.get("x1")), by + _num(g.get("y1"))),
+                "connector1": (bx + _num(g.get("x2")), by + _num(g.get("y2")))}
+        for cm in bv.iter("connector"):
+            p = ends.get(cm.get("connectorId"))
+            if p is None:
+                continue
+            for cc in cm.iter("connect"):
+                out.setdefault((cc.get("modelIndex"), cc.get("connectorId")), []).append((ttl, p))
+    return out
+
+
 def main(argv):
     pos = [a for a in argv if not a.startswith("--")]
     if not pos:
@@ -214,8 +318,11 @@ def main(argv):
                 net_of_pin[(str(ref), str(pname))] = net
 
     nopad, miss, notreal, far, farpin, exempt = [], [], [], [], [], []
+    opened = []                         # 网表里就没有这只脚 ⇒ 悬空是设计如此 ✓（只报告 ✓）
     dup, plug_net, n_inst = {}, {}, 0
     sh, sh_ck, sh_zero = [], [0], [0]   # ⑥：脚距残差／参与比对的脚数／`(0,0)` 跳过数 ✓
+    wired, wire_noref = [], []          # ⑦：接线脚的（导线, 偏差 mm）／拿不到接线点的脚 ✓
+    wends = wire_ends_of(sroot)         # ⑦：导线两端坐标表 ✓（上面那个函数 ✓）
     for e in sroot.iter("instance"):
         mid = e.get("moduleIdRef") or ""
         if mid.startswith("Wire") or e is board:
@@ -237,11 +344,22 @@ def main(argv):
         tf = pbox.tf_of(g)
         fzp = (e.get("path") or "").replace("/", os.sep)
         anc = anchors(fzp)
+        lg_tips = leg_tips(fzp)
         name2cid = {}
         if os.path.isfile(fzp):
             for c in ET.parse(fzp).getroot().iter("connector"):
                 if c.get("name"):
                     name2cid[c.get("name")] = c.get("id")
+
+        def _net_of(ttl, cid):
+            """脚 → 网名 ✓（先按 connectorId ✓；网表里可能写的是**脚名**（如 `1`/`2`）⇒ 再按名字 ✓）"""
+            nm = net_of_pin.get((ttl, cid))
+            if nm is None:
+                for pname, c2 in name2cid.items():
+                    if c2 == cid:
+                        nm = net_of_pin.get((ttl, pname))
+                        break
+            return nm
         for cm in bv.iter("connector"):
             cid = cm.get("connectorId")
             key = "%s.%s" % (ttl, cid)
@@ -260,10 +378,41 @@ def main(argv):
             # ★ 豁免（2026-10-15 ✓）：**裸焊盘**（如 `U1` 的 `EPAD` ✓）本来就不插孔 ✓
             #   ⇒ 判据用「**既没落孔、也没接线**」✗（✗ 不是"没落孔"✗ —— 那会把 EPAD 误报 ✗）
             if not allc:
-                nopad.append(key)                        # 既没落孔、也没接线 ⇒ 没到位 ✗
+                # ★★ 2026-10-18（用户：物理优先 ✓）：**要么插孔要么接线** ✓；两者都没有 = 悬空 ✗。
+                #   但**网表里本来就没有这只脚** ⇒ 悬空是设计如此 ✓（例：`SW1` 的备用极 3/4/5 ✓）
+                #   ⇒ 只**报告**不算错 ✓；有网表却没接 ⇒ 判错 ✗（那是真漏接 ✓）。
+                if nets_path and _net_of(ttl, cid) is None:
+                    opened.append(key)
+                else:
+                    nopad.append(key)                    # 既没落孔、也没接线 ⇒ 没到位 ✗
                 continue
             if not tg:
-                exempt.append(key)                       # 接了导线、但没插孔 ⇒ 豁免 ✓
+                # ★★ 2026-10-18 修 ✗（用户点出来的）：这里原来是**无条件豁免** ✗ ——
+                #   `exempt.append(key); continue` 只看"有没有 `<connect>`" ✓，
+                #   **从没核过导线端点到底落在哪** ✗ ⇒ 端点偏 4.80/2.70 mm（合成 5.51 mm）
+                #   时，①–⑥ ＋ `bb_probe` ＋ `file_sanity` **全绿** ✗✗，
+                #   而**物理上就是没接上** ✗（图上的线头悬在焊盘旁边 ✓）。
+                #   ⇒ ⑦：拿该脚声明的每根导线的**这一端**，与它的接线点比距离 ✓。
+                ws = wends.get((e.get("modelIndex"), cid)) or []
+                # ★ 接线点 = **引线末端**（有 `legId` 时 ✓）／否则焊盘中心 ✓
+                #   （不加这一条就会把"橡皮筋引线件"的 2.54mm 引线当成错 ✗ —— 实测误报过 ✓）
+                pb7 = None
+                if cid in lg_tips:
+                    p = pbox.apply(tf, lg_tips[cid][0], lg_tips[cid][1])
+                    pb7 = (loc[0] + p[0], loc[1] + p[1])
+                elif cid in anc:
+                    p = pbox.apply(tf, anc[cid][0], anc[cid][1])
+                    pb7 = (loc[0] + p[0], loc[1] + p[1])
+                if pb7 is None:
+                    wire_noref.append(key)          # 拿不到接线点（件 svg 里没这个脚）⇒ 如实不判 ✓
+                elif not ws:
+                    wire_noref.append("%s（有小 connect 但不是导线）" % key)
+                for wt, wp in ws:
+                    if pb7 is None:
+                        break
+                    wired.append(("%s←%s" % (key, wt),
+                                  (((wp[0] - pb7[0]) ** 2 + (wp[1] - pb7[1]) ** 2) ** 0.5) * SK_MM))
+                exempt.append(key)
                 continue
             if len(tg) != 1:
                 miss.append("%s（声明 %d 个孔 ✗）" % (key, len(tg)))
@@ -339,6 +488,18 @@ def main(argv):
     sh_bad = [d for d in sh if d[1] > SHAPE_TOL_MM]
     ok &= rep("⑥", "同件内脚与脚的间距 = 元件自称的间距（容差 %.1f mm ✓）" % SHAPE_TOL_MM,
               sh_bad, "；".join("%s 形状偏 %.2f mm" % (d[0], d[1]) for d in sh_bad[:6]))
+    # ★★ ⑦ 接线到位（2026-10-18 加 ✓）：**物理上碰上了没有** ✓ —— 不是"写没写 `<connect>`" ✗
+    w_bad = [d for d in wired if d[1] > WIRE_TOL_MM]
+    ok &= rep("⑦", "接线的脚：导线端点落在它的接线点上 ≤ %.2f mm" % WIRE_TOL_MM, w_bad,
+              "；".join("%s 差 %.2f mm" % (k, d) for k, d in w_bad[:6]))
+    if wired:
+        print("      —— ⑦ 量到 **%d 处**接线 ✓（最大 %.3f mm ✓）"
+              % (len(wired), max(d for _k, d in wired)))
+    else:
+        print("      —— ⑦ 本图没有\"接线不插孔\"的脚 ⇒ 不判 ✓")
+    if wire_noref:
+        print("      ⚠ ⑦ 跳过 %d 只（拿不到接线点／声明的不是导线）：%s"
+              % (len(wire_noref), ", ".join(wire_noref[:6])))
     if sh_ck[0]:
         print("      —— ⑥ 量到 **%d 只脚**参与比对 ✓（另有 %d 只 `geometry=(0,0)`＝没改写 ⇒ 跳过 ✓）"
               % (sh_ck[0], sh_zero[0]))
@@ -358,6 +519,9 @@ def main(argv):
               % ", ".join(sorted({k.split(".")[0] for k, _h, _d in farpin})))
     if exempt:
         print("   ✓ 豁免（接导线、不插孔）%d 只：%s" % (len(exempt), ", ".join(exempt[:6])))
+    if opened:
+        print("   · 悬空 %d 只（**网表里没有它** ⇒ 设计如此 ✓ 不算错）：%s"
+              % (len(opened), ", ".join(opened[:6])))
     print("⇒ %s **%s**" % ("✓" if ok else "✗",
                           "允许布线（摆位到位 ✓）" if ok else
                           "不准布线（先把脚落到孔上／把重叠的挪开 —— §A.4／§A.5 ✗）"))
