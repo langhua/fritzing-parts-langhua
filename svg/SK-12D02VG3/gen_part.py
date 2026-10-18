@@ -31,6 +31,9 @@ gen_part.py — 生成 Fritzing 自定义元件 SK-12D02VG3 (SPDT 卧式拨动�
 #   针脚坐标一个不动 ✓ ⇒ 已有 sketch 不用改 ✓。
 #   （本行由 tools/bb_inset.py 写入 ✓；改完必跑 audit_green_board.py +
 #     check_inside_board.py ✓）
+# ⚠ **2026-10-18 起这条不再适用于本件** ✗：面包板视图已改成**直接画本体**（没有绿色转接板 ✓，
+#   用户定：现实里没有转接板，2.0mm 脚距直接接杜邦线 ✓）⇒ `INSET` 二字**已不再被用到** ✓；
+#   `audit_green_board.py` / `check_inside_board.py` 对本件自然为“不是绿板”✓（不报违规 ✓）。
 INSET = 50
 import os
 import zipfile
@@ -122,38 +125,41 @@ def gen_icon_svg():
 
 # ---------------------------------------------------------------- breadboard
 def gen_breadboard_svg():
-    """面包板 = 绿色转接板（AGENTS §3b 的精神：本体脚距 2.0/8.2mm **都插不进面包板**，
-    所以把 5 个脚各引到一个 2.54mm 排针上）。
+    """面包板视图 = **直接复用 icon 图形**（用户 2026-10-18 定 ✓）。
 
-    坐标 100 单位 = 2.54mm：排针一排 x=100..500（恰居中于板中线 300）、y=100；
-    元件横放在板中部（含拨柄 11.1 × 4.4mm），板 600×700（15.24×17.78mm）。
+    现实里**没有转接板**：这颗开关脚距 2.0mm（最外两脚 8.2mm），插不进面包板孔，
+    是**焊上杜邦线**用的 ⇒ 图上就画本体 1:1，五个脚按真实位置标成金色焊盘，
+    接线时把杜邦线接到对应焊盘即可。
+
+    坐标 1 单位 = 1 mm（与本库 `PinHeader-1xN` 同一写法，**不做** 100:2.54 的排针换算）；
+    `PAD_Y` 与 PCB 视图同一组数（-4.10 / -2.00 / 0 / +2.00 / +4.10 ⇒ 2.0mm 间距、8.2mm 跨度 ✓）。
     """
-    U = 39.37
-    bw, bh = 600, 700
-    cx, cy = 300, 400
-    pad_r, hole_r = 1.0 * U, 0.485 * U
-    xs = [100, 200, 300, 400, 500]
+    W, H = 9.60, 7.90                      # 本体 8.6×4.4 + 拨柄 2.5 + 四周留白
+    x0, y0 = -W / 2.0, -2.70
+    hw, hh = BODY_W / 2.0, BODY_H / 2.0
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
-         f'<svg xmlns="http://www.w3.org/2000/svg" width="{bw / 100 * 2.54:.2f}mm" '
-         f'height="{bh / 100 * 2.54:.2f}mm" viewBox="0 0 {bw} {bh}">\n',
-         ' <g id="breadboard">\n',
-         f'  <rect x="{INSET}" y="{INSET}" width="{bw - 2 * INSET}" height="{bh - 2 * INSET}" fill="#00aa44" stroke="#00772f" '
-         f'stroke-width="5"/>\n']
-    # 元件（1:1）：拨柄朝下、左缘对齐本体中线（按图纸）
-    L.append(f'  <path d="{knob_path(cx, cy, U, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
+         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.2f}mm" height="{H:.2f}mm" '
+         f'viewBox="{x0:.2f} {y0:.2f} {W:.2f} {H:.2f}">\n',
+         ' <g id="breadboard">\n']
+    # 与 icon 同一套形状：拨柄（左缘对齐本体中线）→ 本体 → pin1 标记
+    L.append(f'  <path d="{knob_path(0, 0, 1.0, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
              f'fill="#e8e8e8" stroke="none"/>\n')
-    L.append(f'  <rect x="{cx - BODY_W / 2 * U:.1f}" y="{cy - BODY_H / 2 * U:.1f}" '
-             f'width="{BODY_W * U:.1f}" height="{BODY_H * U:.1f}" fill="#2b2b2b" stroke="none"/>\n')
-    L.append(f'  <circle cx="{cx - BODY_W / 2 * U + 30:.1f}" cy="{cy - BODY_H / 2 * U + 30:.1f}" '
-             f'r="12" fill="#c0c0c0" stroke="none"/>\n')
-    for cn, x in zip(range(5), xs):
-        L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(CONN[cn][1])}" '
-                 f'cx="{x}" cy="100" r="{pad_r:.1f}" fill="#d4af37" stroke="#8a6d00" '
-                 f'stroke-width="4"/>\n')
-        L.append(f'  <circle cx="{x}" cy="100" r="{hole_r:.1f}" fill="#2b2b2b"/>\n')
-        L.append(f'  <text x="{x}" y="176" font-size="60" fill="#ffffff" text-anchor="middle" '
-                 f'dominant-baseline="central" font-family="DroidSans" '
-                 f'transform="rotate(-90 {x} 176)">{cn + 1}</text>\n')
+    L.append(f'  <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
+             f'fill="#2b2b2b" stroke="none"/>\n')
+    L.append(f'  <circle cx="{-hw + 0.75:.3f}" cy="{-hh + 0.75:.3f}" r="0.30" fill="#c0c0c0" '
+             f'stroke="none"/>\n')
+    L.append(f'  <text x="0" y="-1.15" font-size="0.75" fill="#d0d0d0" text-anchor="middle" '
+             f'font-family="DroidSans">{ICON_LABEL}</text>\n')
+    # 五个脚 = 真实焊盘位置（金色环 + 中心孔），编号 1..5 写在焊盘下方（本体里）
+    #   ★ 脚号 → x 的映射与 PCB 视图**同一份口径**：PAD_Y 的次序是 (pin5,1,2,3,4) ✓
+    x_by_pin = {"1": PAD_Y[1], "2": PAD_Y[2], "3": PAD_Y[3], "4": PAD_Y[4], "5": PAD_Y[0]}
+    for cn, num, _desc in CONN:
+        x = x_by_pin[num]
+        L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(num)}" cx="{x:.2f}" cy="0" '
+                 f'r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>\n')
+        L.append(f'  <circle cx="{x:.2f}" cy="0" r="0.28" fill="#2b2b2b"/>\n')
+        L.append(f'  <text x="{x:.2f}" y="1.66" font-size="0.62" fill="#c8c8c8" '
+                 f'text-anchor="middle" font-family="DroidSans">{num}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)
 
