@@ -135,30 +135,34 @@ def gen_breadboard_svg():
     `PAD_Y` 与 PCB 视图同一组数（-4.10 / -2.00 / 0 / +2.00 / +4.10 ⇒ 2.0mm 间距、8.2mm 跨度 ✓）。
     """
     W, H = 9.60, 7.90                      # 本体 8.6×4.4 + 拨柄 2.5 + 四周留白
-    x0, y0 = -W / 2.0, -2.70
+    # ★★ `viewBox` 原点必须是 (0,0) ✓（Fritzing 的摆放口径 = **viewBox 的 min 角** 对齐到
+    #   sketch 的 `loc` ✓；拿负原点写会让件的坐标与 sketch 里算的坐标差一个 (|minx|,|miny|) ✗
+    #   —— 2026-10-18 实测踩过：导线端点比焊盘偏了 (4.80, 2.70) mm ✗，用户截图指出 ✓）。
+    #   ⇒ 图形自己平移到 (OX, OY)：本体中心 = (4.80, 2.70)，焊盘那排仍在中心线上 ✓
+    OX, OY = 4.80, 2.70
     hw, hh = BODY_W / 2.0, BODY_H / 2.0
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.2f}mm" height="{H:.2f}mm" '
-         f'viewBox="{x0:.2f} {y0:.2f} {W:.2f} {H:.2f}">\n',
+         f'viewBox="0 0 {W:.2f} {H:.2f}">\n',
          ' <g id="breadboard">\n']
     # 与 icon 同一套形状：拨柄（左缘对齐本体中线）→ 本体 → pin1 标记
-    L.append(f'  <path d="{knob_path(0, 0, 1.0, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
+    L.append(f'  <path d="{knob_path(OX, OY, 1.0, BODY_H, ACT_W, ACT_L, ACT_W / 2.0)}" '
              f'fill="#e8e8e8" stroke="none"/>\n')
-    L.append(f'  <rect x="{-hw:.3f}" y="{-hh:.3f}" width="{BODY_W:.2f}" height="{BODY_H:.2f}" '
-             f'fill="#2b2b2b" stroke="none"/>\n')
-    L.append(f'  <circle cx="{-hw + 0.75:.3f}" cy="{-hh + 0.75:.3f}" r="0.30" fill="#c0c0c0" '
-             f'stroke="none"/>\n')
-    L.append(f'  <text x="0" y="-1.15" font-size="0.75" fill="#d0d0d0" text-anchor="middle" '
-             f'font-family="DroidSans">{ICON_LABEL}</text>\n')
+    L.append(f'  <rect x="{OX - hw:.3f}" y="{OY - hh:.3f}" width="{BODY_W:.2f}" '
+             f'height="{BODY_H:.2f}" fill="#2b2b2b" stroke="none"/>\n')
+    L.append(f'  <circle cx="{OX - hw + 0.75:.3f}" cy="{OY - hh + 0.75:.3f}" r="0.30" '
+             f'fill="#c0c0c0" stroke="none"/>\n')
+    L.append(f'  <text x="{OX:.2f}" y="{OY - 1.15:.2f}" font-size="0.75" fill="#d0d0d0" '
+             f'text-anchor="middle" font-family="DroidSans">{ICON_LABEL}</text>\n')
     # 五个脚 = 真实焊盘位置（金色环 + 中心孔），编号 1..5 写在焊盘下方（本体里）
     #   ★ 脚号 → x 的映射与 PCB 视图**同一份口径**：PAD_Y 的次序是 (pin5,1,2,3,4) ✓
     x_by_pin = {"1": PAD_Y[1], "2": PAD_Y[2], "3": PAD_Y[3], "4": PAD_Y[4], "5": PAD_Y[0]}
     for cn, num, _desc in CONN:
-        x = x_by_pin[num]
-        L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(num)}" cx="{x:.2f}" cy="0" '
-                 f'r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>\n')
-        L.append(f'  <circle cx="{x:.2f}" cy="0" r="0.28" fill="#2b2b2b"/>\n')
-        L.append(f'  <text x="{x:.2f}" y="1.66" font-size="0.62" fill="#c8c8c8" '
+        x = OX + x_by_pin[num]
+        L.append(f'  <circle id="connector{cn}pin" connectorname="{esc(num)}" cx="{x:.2f}" '
+                 f'cy="{OY:.2f}" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>\n')
+        L.append(f'  <circle cx="{x:.2f}" cy="{OY:.2f}" r="0.28" fill="#2b2b2b"/>\n')
+        L.append(f'  <text x="{x:.2f}" y="{OY + 1.66:.2f}" font-size="0.62" fill="#c8c8c8" '
                  f'text-anchor="middle" font-family="DroidSans">{num}</text>\n')
     L.append(' </g>\n</svg>\n')
     return "".join(L)

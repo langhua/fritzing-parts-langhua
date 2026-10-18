@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="9.60mm" height="7.90mm" viewBox="-4.80 -2.70 9.60 7.90">
+<svg xmlns="http://www.w3.org/2000/svg" width="9.60mm" height="7.90mm" viewBox="0 0 9.60 7.90">
  <g id="breadboard">
-  <path d="M 0.000 2.200 L 2.000 2.200 L 2.000 4.700 L 1.500 4.700 L 1.000 4.100 L 0.500 4.700 L 0.000 4.700 Z" fill="#e8e8e8" stroke="none"/>
-  <rect x="-4.300" y="-2.200" width="8.60" height="4.40" fill="#2b2b2b" stroke="none"/>
-  <circle cx="-3.550" cy="-1.450" r="0.30" fill="#c0c0c0" stroke="none"/>
-  <text x="0" y="-1.15" font-size="0.75" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">SK-12D02</text>
-  <circle id="connector0pin" connectorname="1" cx="-2.00" cy="0" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
-  <circle cx="-2.00" cy="0" r="0.28" fill="#2b2b2b"/>
-  <text x="-2.00" y="1.66" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">1</text>
-  <circle id="connector1pin" connectorname="2" cx="0.00" cy="0" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
-  <circle cx="0.00" cy="0" r="0.28" fill="#2b2b2b"/>
-  <text x="0.00" y="1.66" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">2</text>
-  <circle id="connector2pin" connectorname="3" cx="2.00" cy="0" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
-  <circle cx="2.00" cy="0" r="0.28" fill="#2b2b2b"/>
-  <text x="2.00" y="1.66" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">3</text>
-  <circle id="connector3pin" connectorname="4" cx="4.10" cy="0" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
-  <circle cx="4.10" cy="0" r="0.28" fill="#2b2b2b"/>
-  <text x="4.10" y="1.66" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">4</text>
-  <circle id="connector4pin" connectorname="5" cx="-4.10" cy="0" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
-  <circle cx="-4.10" cy="0" r="0.28" fill="#2b2b2b"/>
-  <text x="-4.10" y="1.66" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">5</text>
+  <path d="M 4.800 4.900 L 6.800 4.900 L 6.800 7.400 L 6.300 7.400 L 5.800 6.800 L 5.300 7.400 L 4.800 7.400 Z" fill="#e8e8e8" stroke="none"/>
+  <rect x="0.500" y="0.500" width="8.60" height="4.40" fill="#2b2b2b" stroke="none"/>
+  <circle cx="1.250" cy="1.250" r="0.30" fill="#c0c0c0" stroke="none"/>
+  <text x="4.80" y="1.55" font-size="0.75" fill="#d0d0d0" text-anchor="middle" font-family="DroidSans">SK-12D02</text>
+  <circle id="connector0pin" connectorname="1" cx="2.80" cy="2.70" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
+  <circle cx="2.80" cy="2.70" r="0.28" fill="#2b2b2b"/>
+  <text x="2.80" y="4.36" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">1</text>
+  <circle id="connector1pin" connectorname="2" cx="4.80" cy="2.70" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
+  <circle cx="4.80" cy="2.70" r="0.28" fill="#2b2b2b"/>
+  <text x="4.80" y="4.36" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">2</text>
+  <circle id="connector2pin" connectorname="3" cx="6.80" cy="2.70" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
+  <circle cx="6.80" cy="2.70" r="0.28" fill="#2b2b2b"/>
+  <text x="6.80" y="4.36" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">3</text>
+  <circle id="connector3pin" connectorname="4" cx="8.90" cy="2.70" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
+  <circle cx="8.90" cy="2.70" r="0.28" fill="#2b2b2b"/>
+  <text x="8.90" y="4.36" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">4</text>
+  <circle id="connector4pin" connectorname="5" cx="0.70" cy="2.70" r="0.55" fill="#d4af37" stroke="#8a6d00" stroke-width="0.12"/>
+  <circle cx="0.70" cy="2.70" r="0.28" fill="#2b2b2b"/>
+  <text x="0.70" y="4.36" font-size="0.62" fill="#c8c8c8" text-anchor="middle" font-family="DroidSans">5</text>
  </g>
 </svg>
