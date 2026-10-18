@@ -120,7 +120,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | RT6150AGQW | 电流模式降压-升压 DC/DC（WDFN-10L 3×3） | `fzpz/RT6150AGQW.fzpz` |
 | RT6150AGQW rev.1 | 电流模式降压-升压 DC/DC（WDFN-10L 3×3，写实工业风修订版；moduleId=`RT6150AGQW_rev_1`，EP 散热焊盘独立编号 11） | `fzpz/RT6150AGQW_rev_1.fzpz` |
 | RT9013 / RT9193 | 低压差 LDO（SOT-23-5） | `fzpz/RT9013.fzpz`、`RT9193.fzpz` |
-| Resistor-01005~2512 | SMD 电阻（11 种尺寸：01005/0201/0402/0603/0805/1206/1210/1812/2010/2512） | `fzpz/Resistor-*.fzpz` |
+| Resistor-01005~2512 | SMD 电阻（01005/0201/0402/0603/0805/1206/1210/1812/2010/2512；**0603 为五色环**，见 AGENTS §5） | `fzpz/Resistor-*.fzpz` |
 | Capacitor-0402 | SMD 陶瓷电容 0402（默认属性 **100nF / 25V / X7R / ±10%**，值可在 Fritzing 里改；焊盘 = 同封装电阻的 land pattern；面包板 = Fritzing 自带电容的面包板） | `fzpz/Capacitor-0402.fzpz` |
 | Capacitor-0603 | SMD 陶瓷电容 0603（同上默认属性；★ **焊盘/丝印 = 本库紧凑 land pattern**（0.65×0.80mm、脚距 1.45mm）✓ —— **不是** Fritzing 自带 0603 电容那颗肥盘（1.20×1.10）✗；像素板 R1/C1 用 ✓） | `fzpz/Capacitor-0603.fzpz` |
 | Supercap-0.47F | 法拉电容（超容）**0.47F 5.5V** —— 凯美 C 型 **Φ13×6.5mm**、引线距离 **5mm**（型号 `SE-5R5-D474VYC3H`；默认属性 `capacitance` = **0.47F**，可在 Fritzing 里改；**有极性** ⇒ 原理图用 Fritzing 自带**极性**电容符号；尺寸出处 = 厂商《产品规格书》p4） | `fzpz/Supercap-0.47F.fzpz` |

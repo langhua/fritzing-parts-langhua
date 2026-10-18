@@ -388,6 +388,23 @@
     ★ 为什么长这样、而不改成 `Langhua-R0603-ResistorModuleID` ✗：**要可机器映射** ✓ ——
       老草图能一键把 `<旧名>` 换成 `<旧名>-后缀` ✓；且 `_1`/`_2`… 是**同一 hex 上的版本号**
       （0805/1206/1812/2010/2512 共用 `0a212ee8…` ✓）⇒ ✗ **绝不能丢** ✗（丢了这五个件就撞名 ✓）。
+  - **★ 五色环电阻 = moduleId 带 `5Band` ＋ 面包板 svg 里有 `band_3`** ✓（2026-10-19 用户定 ✓，
+    起因：用户实际用 ±1% 电阻，**实物就是五色环** ✓，而我们的件渲出来是四环 ✗）：
+    · 判据在 `items/resistor.cpp` ✓：`makeSvg()`（`:195`）`if (moduleID().contains("5Band"))`
+      ⇒ 用**三位**有效数字（`temp = first*10+second`，5Band 时再 `temp*10+third`）、
+      倍率 `multiplier = log10(ohms/temp)` ✓；`setBands()`（`:224-237`）**只按 id 上色** ✓：
+      `band_1_st` / `band_2_nd` / **`band_3`** / `band_rd_multiplier` / `gold_band` ✓
+      ⇒ **svg 里少一个元素就少一环** ✗（且 Fritzing **一句错都不报** ✗）。
+    · 官方先例（可逐字核 ✓）：`fritzing-parts/core/resistor_5band.fzp` ⇒ `moduleId="5BandResistorModuleID"` ✓
+      ＋ `svg/core/breadboard/resistor_5bands.svg` 里五个环 id 齐全 ✓（`band_3` 在 `:18` ✓）。
+    · 本库做法 ✓：moduleId **替换**尾缀成 `-5BandResistorModuleID` ✓（仍 `endsWith("ResistorModuleID")` ✓
+      所以属性面板照旧可用 ✓）—— 例 `R0603_36137a0f26fc46e91e48eb74468f61a7_1-5BandResistorModuleID` ✓。
+      ⚠ `tools/rename_moduleid.py` 是**追加** ✗ ⇒ 已带 `-ResistorModuleID` 的件要自己**替换**尾缀 ✓
+      （重打包/改箱可**复用**它的 `repack()` / `remap_bins()` ✓，别另写一份 ✗）。
+    · 实测色码（与本库 `tools/render_bb.py` 算的一致 ✓）：4.7 kΩ±1% = 黄紫黑棕＋棕 ✓；
+      100 Ω±1% = 棕黑黑黑＋棕 ✓；10 kΩ±5% = 棕黑黑红＋金 ✓。
+    · 预览要跟得上 ✓：`tools/render_bb.py` 已复刻同一套算法 ✓（`5Band` 时才算 `band_3` ✓），
+      ⇒ **改完件不必另改渲染器** ✓，但要**重出预览** ✓。
   - **属性名照旧小写** ✓（`resistance` / `capacitance` ✓）—— `propertydef.cpp:126` 是
     `properties().value(name.**toLower()**)` ✓、`items/resistor.cpp:98/100` 也按小写读 ✓。
   - **改件名 = 改身份证** ✗：引用它的草图会**认不出这些件** ✗ ⇒ 必须**同批重跑**那些草图 ✓
