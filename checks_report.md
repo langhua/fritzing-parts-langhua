@@ -1,15 +1,15 @@
 # checks 报告（fritzing-parts-langhua）
 
-跑的时间：2026-10-19 09:55:40 ｜ python 3.13.14 ｜ 平台 win32
+跑的时间：2026-10-19 10:33:43 ｜ python 3.13.14 ｜ 平台 win32
 结果：**6 过 / 0 跳过 / 0 不合格**
 
 | 闸门 | 结果 | 用时 |
 |---|---|---|
 | G1 文本卫生（全仓） | PASS | 0.5s |
 | G2 README 一致性（全仓） | PASS | 0.1s |
-| G3 生成器可重生成（全仓） | PASS | 6.2s |
+| G3 生成器可重生成（全仓） | PASS | 6.6s |
 | G4 fzpz 装箱一致（全仓） | PASS | 0.2s |
-| G5 元件闸门（改动件） | PASS | 1.9s |
+| G5 元件闸门（改动件） | PASS | 0.5s |
 | G6 单位口径（全仓） | PASS | 0.1s |
 
 ## 明细
@@ -31,29 +31,11 @@
 - 注（外来包，仓库里没有同名源文件 ⇒ 不判它）：LM393-A3144-HALL-3PINS.fzpz（5 条）
 
 ### G5 元件闸门（改动件） -> PASS
-- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 11 个件
+- B 档范围 = 本次改动到的件（基线 HEAD~1）；共 2 个件
 - 已过：CH32V002F4U6 / fzp_check rc=0
 - 已过：CH32V002F4U6 / schem_check rc=0
 - 已过：CH32V003F4U6 / fzp_check rc=0
 - 已过：CH32V003F4U6 / schem_check rc=0
-- 已过：Resistor-01005 / fzp_check rc=0
-- 已过：Resistor-0201 / fzp_check rc=0
-- 已过：Resistor-0402 / fzp_check rc=0
-- 已过：Resistor-0805 / fzp_check rc=0
-- 已过：Resistor-1206 / fzp_check rc=0
-- 已过：Resistor-1210 / fzp_check rc=0
-- 已过：Resistor-1812 / fzp_check rc=0
-- 已过：Resistor-2010 / fzp_check rc=0
-- 已过：Resistor-2512 / fzp_check rc=0
-- 跳过：Resistor-01005 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0201 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0402 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-0805 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1206 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1210 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-1812 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-2010 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
-- 跳过：Resistor-2512 / schem_check rc=2（跳过/提示）：=== 不适用：没找到符号框 —— 这看起来不是“矩形符号”原理图 ===
 
 ### G6 单位口径（全仓） -> PASS
 -    ⚠ ③ part_box.py:357 在说明文字里提到旧值（不算错 ✓，过一眼即可 ✓）：★★ 2026-09-27 修 ✓：`px` 由 **25.4/96 ✗ 改成 25.4/72** ✓（= 1/72 英寸 ✓）。

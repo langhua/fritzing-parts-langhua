@@ -368,7 +368,7 @@ def load(path):
         #   （v87 = Fritzing 自己写的 ✓ `layer="breadboard"` ✓）⇒ 不过滤就会读到
         #   `plugged["connector0"] = "Breadboard1.pin21F"` 这种**假孔名** ✗
         #   ⇒ 下游（如 `bb_probe` ⑧）拿它去查孔表 ⇒ `KeyError: 'connector0'` ✗。
-        if "breadboard" in mid.lower():
+        if "breadboard" in mid.lower() and "logo" not in mid.lower() and "text" not in mid.lower():
             continue
         vw = child(e, "views")
         sub = child(vw, "breadboardView") if vw is not None else None

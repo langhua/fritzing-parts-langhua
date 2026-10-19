@@ -216,8 +216,14 @@ def leg_tips(fzp_path):
 def holes_of(sketch_text):
     """⇒ (board_mi, {孔名: (x,y)}, {孔名: bus根}) ✓（板子自己的 .fzp ＝ Fritzing 的口径 ✓）"""
     sroot = ET.fromstring(sketch_text)
+    # ★ 2026-10-19 修 ✗：原来只判「moduleIdRef 里含 `breadboard`」✗ ——
+    #   `BreadboardLogoTextModuleID`（用户加了 12 个文字标签 ✓）也含 ✓ ⇒ 选错 ✗，
+    #   而它的 `path` 是 Qt 资源路径 `:/resources/parts/core/breadboardlogotext.fzp` ✗
+    #   ⇒ `ET.parse` 直接报 `OSError: ':\resources\…'` ✗，**整个闸门跑不起来** ✗。
     board = next((e for e in sroot.iter("instance")
                   if "breadboard" in (e.get("moduleIdRef") or "").lower()
+                  and "logo" not in (e.get("moduleIdRef") or "").lower()
+                  and "text" not in (e.get("moduleIdRef") or "").lower()
                   and not (e.get("moduleIdRef") or "").startswith("Wire")), None)
     if board is None:
         return None
