@@ -37,6 +37,41 @@ import silk_nest_check as SNC                                       # noqa: E402
 import breadboard_only_views as BOV                                 # noqa: E402
 
 
+def local_tag(el):
+    """⇒ 元素的**本地标签名** ✓（去掉 `{命名空间}` 前缀 ✓）。
+
+    ★★ 真实元件的 pcb svg **都带 `xmlns="http://www.w3.org/2000/svg"`** ✓ ⇒ `ET` 解析出来
+      `el.tag` 是 **`{http://www.w3.org/2000/svg}g`** ✗ —— ✗ 直接比 `== "g"` 永远不成立 ✗
+      （`fix_silk_group` 自测素材原来**不带 xmlns** ⇒ 这种错**测不出来** ✗；自测里已补一条带
+      `xmlns` 的用例 ✓）。
+    """
+    return el.tag.rsplit("}", 1)[-1]
+
+
+def silk_depth(text):
+    """⇒ 树里 `silkscreen` 组的**最深嵌套层数** ✓（0 = 没有 ✓；`None` = 不是合法 XML ✗）。
+
+    ★★ 这是本工具的**第二条尺子** ✓（2026-10-19 用户定 ✓）—— **不许自证** ✗：
+      `process()` 原有的复验收调的是 `SNC.silk_span` ✓，而修具**用的也是它** ✗ ⇒ 尺子错时
+      两边一起错 ✓、复验永远通过 ✗（§0 第 6 条 ⑥ / §13「同一个声音」✗）。
+      这一条改用 **xml.etree 解析树**按**结构**数 ✓，与正则扫描器**毫无共用** ✓。
+    守的是什么 ✗：装组只许**多一层** ✓ —— 病就是 `LED-0603` 那次：单引号文件被误判"丝印在组外"
+      ⇒ 又包一层 ⇒ **5 层同名嵌套** ✗，而复验全过、直接写盘 ✗✗。
+    """
+    try:
+        root = ET.fromstring(text)
+    except ET.ParseError:
+        return None
+
+    def depth(el, d=0):
+        best = d
+        for c in el:
+            hid = local_tag(c) == "g" and (c.get("id") or "") == "silkscreen"
+            best = max(best, depth(c, d + 1 if hid else d))
+        return best
+    return depth(root)
+
+
 def fix_text(text):
     """⇒ (新文本, 改了几个 ✓)。**只挪层级** ✓（几何一字不动 ✗）。"""
     spans = SNC.silk_span(text)
@@ -59,11 +94,16 @@ def process(path, do=False):
     text = raw.decode("utf-8")
     if not SNC.silk_span(text):
         return False, "本来就在组里 ✓"
-    new, n = fix_text(text)
+    new, n = fix_text(text)          # * 注意缩进：在 `if` **之外** ✓（别落进上面的 return 分支 ✗）
     try:
         ET.fromstring(new)
     except ET.ParseError as exc:
         return False, "✗ 改完不是合法 XML（%s）⇒ **不写** ✗" % exc
+    # ★★ 独立尺子 ✓（按 XML 树数层数 ✓，与上面 / 下面的正则扫描器**毫无共用** ✓）——
+    #   装组只许多出**一层** ✓；多了 = 又叠了一层同名嵌套 ✗（LED-0603 那次事故 ✓）⇒ 不写 ✗
+    d0, d1 = silk_depth(text), silk_depth(new)
+    if d0 is not None and d1 is not None and d1 > d0 + 1:
+        return False, ("✗ 丝印组层数 %d ⇒ %d ✗（只许多出**一层** ✓）⇒ **不写** ✗" % (d0, d1))
     if SNC.silk_span(new):
         return False, "✗ 改完还剩丝印图元在外 ✗ ⇒ **不写** ✗"
     if SNC.silk_parent(new) is not None:
