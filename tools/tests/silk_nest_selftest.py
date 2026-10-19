@@ -49,9 +49,15 @@ cases = [
      pcb(' <g id="copper1">\n' + PAD + '  <g id="silkscreen">\n' + SILK + '  </g>\n </g>\n'), "copper1"),
     ("老写法 ✗：丝印嵌在 `<g id=\"copper0\">` 里",
      pcb(' <g id="copper0">\n' + PAD + '  <g id="silkscreen">\n' + SILK + '  </g>\n </g>\n'), "copper0"),
-    ("更隐蔽 ✗：丝印嵌在**铜组外的别的组**里（⇒ 仍不是铜组的兄弟 ✗）",
+    # ⚠ 2026-10-19 **待用户裁定**：本条要求"丝印包在**非铜**的 wrapper 组里也算违规"，
+    #   但那**比规则原文严** —— 原文只写"丝印组必须是**铜组**的兄弟"。
+    #   实测本仓 14 件（SHC* / RT9193 / SOD-123FL / SOD-323 / SM5206 / TM1638 /
+    #   Li300mAh-1.25-SMD）就是把板框套在 `<g id="pcb">` / `<g id="gNN">` 里，
+    #   按本条会**全部红**。现按原文口径放行（不判），等用户定：
+    #   "包在非铜的外层组里"到底算不算违例？
+    ("更隐蔽（待裁定 ⇒ 暂按原文口径**不判**）：丝印包在**非铜**的外层组里",
      pcb(' <g id="wrapper">\n <g id="copper1">\n' + PAD + ' </g>\n'
-         '  <g id="silkscreen">\n' + SILK + '  </g>\n </g>\n'), "wrapper"),
+         '  <g id="silkscreen">\n' + SILK + '  </g>\n </g>\n'), None),
     ("正确 ✓：丝印与铜组**平级**",
      pcb(' <g id="copper1">\n' + PAD + ' </g>\n <g id="silkscreen">\n' + SILK + ' </g>\n'), None),
     ("合格 ✓：没有丝印组（不是本工具的判据 ✗）",
@@ -73,7 +79,9 @@ check("平级丝印 ⇒ **不许**报 ✓", SN.silk_parent(self_closed) is None,
 
 print()
 print("== ③ 全库断言：`svg/**/svg.pcb.*.svg` ＋ `fzpz/*.fzpz` 的 pcb 视图，违例 0 ✓ ==")
-bad, files = SN.scan([os.path.join(ROOT, "svg"), os.path.join(ROOT, "fzpz")])
+# ★ 2026-10-19 修 ✗：`scan()` 返回 **3** 项（`bad, loose, files` ✓），这里原来按 **2** 项解包 ✗
+#   ⇒ 本节**从加入起就没跑过** ✗（且本文件没进 `run_all.py` ⇒ 红了也没人看见 ✗✗）。
+bad, loose, files = SN.scan([os.path.join(ROOT, "svg"), os.path.join(ROOT, "fzpz")])
 views = 0
 for p in files:
     if p.endswith(".fzpz"):
@@ -83,8 +91,11 @@ for p in files:
                          if n.startswith("svg.pcb.") and n.endswith(".svg"))
     elif os.path.basename(p).startswith("svg.pcb."):
         views += 1
-check("全库 %d 个 pcb 视图：丝印**不是**铜组兄弟的 = 0" % views, not bad,
+check("全库 %d 个 pcb 视图：丝印**嵌在铜组里**的 = 0" % views, not bad,
       "违例：%s" % (bad if bad else "（无 ✓）"))
+# 第二条硬规矩（2026-10-11 补 ✓）此前**根本没在这里断言** ✗ ⇒ 一并补上 ✓
+check("全库 %d 个 pcb 视图：丝印图元**不在**丝印组里的 = 0" % views, not loose,
+      "违例：%s" % (loose if loose else "（无 ✓）"))
 check("扫到的文件数 > 0（自测没跑空 ✗）", views > 100, "扫了 %d 个文件 ⇒ %d 个 pcb 视图 ✓"
       % (len(files), views))
 

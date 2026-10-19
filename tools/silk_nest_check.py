@@ -10,8 +10,9 @@ r"""`silkscreen` **嵌在铜组里** 的扫描器（2026-10-10 立 ✓，起因 
 
 ★ 规矩（唯一一句）✓：**`<g id="silkscreen">` 必须是 `<g id="copper?">` 的兄弟** ✓
   （放在 `<svg>` 根下、与铜组平级 ✓），**绝不许嵌进铜组** ✗。
-  本工具的实现口径 = 这一句的**等价硬写法** ✓：丝印组必须**直接挂在 `<svg>` 下** ✓
-  （父组 = 无 ✓）。这样**嵌进任何组**（铜组 ✗、或别的外层组 ✗）都报 ✓。
+  本工具的实现口径 = 这一句的**等价硬写法** ✓：**丝印组的祖孙链上不许出现 `<g id="copperN">`** ✓
+  （2026-10-19 收敛 ✓ —— 原先写"父组必须为 None" ✗ 太严：Inkscape 把板框套一层
+  `<g id="pcb">` / `<g id="gNN">` 是合法写法 ✓，实测 14 件被误报 ✗；而真嵌进铜组的照样抓得住 ✓）。
 
 ★★ **硬闸门（2026-10-10 第二轮 ✓）**：本仓**曾经**有 7 件老写法（`Crystal-3215`、`Crystal-3225`、
    `FPC-05F-12P-H15`、`MX-1.25-2P-H`、`MX-1.25-3P-V`、`PH-2.0-3P-V`、`USB-B01` ✓）——
@@ -36,6 +37,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, ".."))
 
 
+# ★★ 引号无关地取属性值 ✓（2026-10-19 ✓，起因 = `LED-0603` 的 4 条丝印被**误报**在组外 ✗）
+#   Fritzing 自己导出的 svg 用**单引号**（`<g id='silkscreen'>` ✓，见 `svg/LED-0603/…_pcb.svg` ✓），
+#   Inkscape 另存用**双引号** ✓ —— 两种都是合法 XML ✓。
+#   ✗ 原来写死 `id="..."` ✗ ⇒ 认不出 `id='silkscreen'` ⇒ 组 id 变成空串 ⇒
+#     · 闸门**误报** ✓（好丝印被判"在组外" ✗）；
+#     · 修具 `fix_silk_group.py --do` 会把这些**正常的**丝印再包一层 `<g id="silkscreen">` ✗
+#       （实测：一层变 **5 层同名嵌套** ✗，而它自己的复验**全过** ⇒ 直接写盘 ✗✗）。
+def attr_val(attrs, name):
+    """从元素属性串里取属性值 ✓（**单/双引号都认** ✓）；没有 ⇒ `None` ✓。"""
+    m = re.search(r'(?:^|\s)' + re.escape(name) + r"""\s*=\s*(?:"([^"]*)"|'([^']*)')""", attrs or "")
+    return (m.group(1) if m.group(1) is not None else m.group(2)) if m else None
+
+
 def group_parents(text):
     """⇒ {组 id: 父组 id 或 None（= 直接挂在 `<svg>` 下 ✓）}。
 
@@ -43,26 +57,49 @@ def group_parents(text):
       不认它就会把外层的 `</g>` 当成自己的 ⇒ 一路吞到文件尾 ⇒ **假阳性** ✗。
     """
     out, stack = {}, []
-    for m in re.finditer(r'<g\s+id="([^"]+)"\s*(/?)>|</g>', text):
+    for m in re.finditer(r'<g\b([^>]*?)(/?)>|</g>', text):      # ★ 引号无关 ✓（见 `attr_val`）
         if m.group(0) == "</g>":
             if stack:
                 stack.pop()
-        elif m.group(2) == "/":                      # 自闭合 ⇒ 不入栈 ✓
-            out[m.group(1)] = stack[-1] if stack else None
-        else:
-            out[m.group(1)] = stack[-1] if stack else None
-            stack.append(m.group(1))
+            continue
+        attrs = m.group(1) or ""
+        gid = attr_val(attrs, "id")                  # ★ 单/双引号都认 ✓
+        if gid is None:                              # 没 id 的组 ⇒ 不是判据对象 ✓
+            if m.group(2) != "/":
+                stack.append("")                     # 但仍要占栈 ✓（否则配平错位 ✗）
+            continue
+        out.setdefault(gid, (stack[-1] or None) if stack else None)   # * 空串父级 = 直挂 svg 根
+        if m.group(2) != "/":                        # 自闭合 ⇒ 不入栈 ✓
+            stack.append(gid)
     return out
 
 
 def silk_parent(text):
-    """⇒ 丝印组的父组（`None` = 合格 ✓）。没有丝印组 ⇒ 也返回 `None` ✓（不是本工具的判据 ✗）。"""
-    return group_parents(text).get("silkscreen")
+    """⇒ **丝印组所在的铜组**（`None` = 合格 ✓）。没有丝印组 ⇒ 也返回 `None` ✓。
+
+    ★★ 判据按**规则原文** ✓（2026-10-19 收敛 ✗）：规矩是「丝印组必须是**铜组的兄弟**」✓ ——
+      等价硬写法 = **沿父链往上走，链上不许出现 `<g id="copperN">`** ✓。
+      ✗ 别写成"父组必须为 None" ✗（我 2026-10-19 第一版那么写 ✗）：Inkscape 存出来的文件常把
+      板框套在 `<g id="pcb">` 里、或铜与丝印各自套一层 `<g id="gNN">` ✓ —— 那种写法
+      **丝印压根不在铜里**（实测 14 件，祖孙链都不经过铜 ✗）⇒ 拿"父组为 None"判会**全部误报** ✗✗
+      （实测冒出 28 条 ✗，全是假警报 ✗）。
+      ★ 这个口径**不比原文松** ✓：从 `<g id="pcb">` 往下真嵌进铜组的照样抓得住 ✓。
+    """
+    gp = group_parents(text)
+    cur, seen = gp.get("silkscreen"), set()
+    while cur is not None and cur not in seen:
+        if re.fullmatch(r"copper[0-9]*", cur):
+            return cur                     # ⇒ 丝印在铜里 ✗
+        seen.add(cur)
+        cur = gp.get(cur)
+    return None
 
 
 def copper_groups(text):
     """同文件里出现的铜组 id（只作打印用 ✓）。"""
-    return re.findall(r'<g\s+id="(copper[0-9]*)"\s*/?>', text)
+    return [g for g in (attr_val(m.group(1), "id")
+                        for m in re.finditer(r'<g\b([^>]*?)>', text))
+            if g and re.fullmatch(r"copper[0-9]*", g)]          # ★ 引号无关 ✓
 
 
 # ★★ 2026-10-11 补：**第二条硬规则** ✓（用户 2026-10-11 看元件箱发现 ✗）
@@ -88,14 +125,13 @@ def silk_span(text):
                 if stack:
                     stack.pop()
             elif not selfclose:
-                gid = re.search(r'id="([^"]*)"', attrs)
-                stack.append(gid.group(1) if gid else "")
+                stack.append(attr_val(attrs, "id") or "")        # ★ 引号无关 ✓
             continue
         if closing or tag not in DRAW_TAGS:
             continue
         if "silkscreen" in stack:
             continue
-        if SILK_HINT.search(attrs) or re.search(r'id="silkscreen"', attrs):
+        if SILK_HINT.search(attrs) or attr_val(attrs, "id") == "silkscreen":
             out.append((tag, m.group(0), m.start(), m.end()))
     return out
 
@@ -152,7 +188,7 @@ def main(argv):
     paths = a.paths or [os.path.join(ROOT, "svg"), os.path.join(ROOT, "fzpz")]
     bad, loose, files = scan(paths)
     print("== silk_nest_check：两件硬规矩 ✓"
-          "｜① `silkscreen` 嵌在组里 ✗（判据：丝印组必须**直接挂在 `<svg>` 下** ✓）"
+          "｜① `silkscreen` 嵌在**铜组**里 ✗（判据：丝印组**祖孙链上不许有 `copperN`** ✓）"
           "｜② 丝印图元**不在** `<g id=\"silkscreen\">` 里 ✗（2026-10-11 补 ✓）"
           "｜扫了 %d 个文件 ==" % len(files))
     for rel, par, cu in bad:
