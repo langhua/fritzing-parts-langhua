@@ -94,6 +94,15 @@ PIN_DESC = {
 BB_PIN_X = (100.0, 400.0)
 BB_PITCH = 100.0
 BB_PAD_R, BB_HOLE_R = 39.4, 19.1
+# 画布 / 板框（默认：画布 500 = 12.7 mm，板 x=50..450 = 宽 400 = 10.16 mm，
+#   针脚 100/400 各距边 50 = 1.27 mm = 半格 ✓，AGENTS §3b 板边相位 ✓）。
+# ★ 2026-10-19 ✓：CH32V003F4U6 的**实物板宽约 17.5 mm**（用户实拍 ＋ 卡尺图 ✓）
+#   ⇒ 它的 wrapper 改成：画布 800（20.32 mm）、板 x=50..750（宽 700 = 17.78 mm）、
+#   针脚 100/700（针距 600 = **15.24 mm** = 6 格 ✓ —— 照片里针脚就在板边内侧约 1.3 mm ✓）。
+#   默认值全部保持原样 ⇒ 同族其它件（CH32V002F4U6 等）的产物**逐字节不变** ✓。
+BB_CANVAS_W = 500.0
+BB_BOARD_X = 50.0
+BB_BOARD_W = 400.0
 # PCB silkscreen (2026-09-24 user's spec, all CH32V00x packages):
 #   PCB_SILK_CORNERS  - only four corner brackets, so no silk line runs across a pad
 #   PCB_DOT_ABOVE_PAD - pin-1 dot sits just above pin 1's pad, left-aligned with it
@@ -259,12 +268,13 @@ def breadboard_svg():
     y0, y1 = 100.0, 100.0 + (n_col - 1) * BB_PITCH
     bh = y1 + 100.0
     cy = (y0 + y1) / 2.0
+    cx0 = BB_CANVAS_W / 2.0                    # 画布中心（默认 250 ✓）
     S = 100.0 / 2.54                           # units per mm (39.37)
     half = BODY_MM / 2.0 * S
     L = []
     L.append('<?xml version="1.0" encoding="utf-8"?>\n')
     L.append('<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
-             'viewBox="0 0 500 %.0f">\n' % (500 * 0.0254, bh * 0.0254, bh))
+             'viewBox="0 0 %.0f %.0f">\n' % (BB_CANVAS_W * 0.0254, bh * 0.0254, BB_CANVAS_W, bh))
     L.append(' <g id="breadboard">\n')
     # ★★ 板边相位＝**半格**（AGENTS §3b：转接板不许影响板外孔的插拔 ✓，2026-09-27 ✓）：
     #   ★ 本文件是 CH32V00x **一族共用**的生成器 ✓（`CH32V002D4U6` / `CH32V003F4U6` /
@@ -272,15 +282,15 @@ def breadboard_svg():
     #   旧板框：宽固定 500 ✗、顶边在 y=0 ✗ ⇒ 左/右/上三条边都压在孔线上 ✗
     #   （下边本来就是 4.50 ✓，不动 ✓）。针脚一个不动 ✓。
     #   新：x 让 50、宽 400（左右各 50 ✓）、y 让 50（上 50 ✓）、高少 50（下边不变 ✓）。
-    L.append('  <rect x="50" y="50" width="400" height="%.0f" fill="#00aa44" stroke="#00772f" '
-             'stroke-width="5"/>\n' % (bh - 50))
+    L.append('  <rect x="%.0f" y="50" width="%.0f" height="%.0f" fill="#00aa44" stroke="#00772f" '
+             'stroke-width="5"/>\n' % (BB_BOARD_X, BB_BOARD_W, bh - 50))
     # chip body + edge pads (top view, 1:1)
     L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#303030" stroke="none"/>\n'
-             % (250 - half, cy - half, 2 * half, 2 * half))
+             % (cx0 - half, cy - half, 2 * half, 2 * half))
     pw = PAD_W_MM * S
     for i in range(1, n + 1):
         cx, cyy = pad_xy_mm(i)
-        cx, cyy = 250 + cx * S, cy + cyy * S
+        cx, cyy = cx0 + cx * S, cy + cyy * S
         if ((i - 1) // PER_SIDE) % 2 == 0:
             L.append('  <rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#c0c0c0" stroke="none"/>\n'
                      % (cx - 0.55 * S / 2, cyy - pw / 2, 0.55 * S, pw))
@@ -290,9 +300,9 @@ def breadboard_svg():
     # pin-1 dot inside the body, centred on pin 1's pad row; top mark (horizontal, small)
     p1 = pad_xy_mm(1)
     L.append('  <circle cx="%.2f" cy="%.2f" r="%.1f" fill="#c0c0c0" stroke="none"/>\n'
-             % (250 - half + BB_DOT_INSET, cy + p1[1] * S, BB_DOT_R))
-    L.append('  <text x="250" y="%.2f" font-size="14" fill="#c0c0c0" text-anchor="middle" '
-             'dominant-baseline="central" font-family="DroidSans">%s</text>\n' % (cy, TOP_MARK))
+             % (cx0 - half + BB_DOT_INSET, cy + p1[1] * S, BB_DOT_R))
+    L.append('  <text x="%.0f" y="%.2f" font-size="14" fill="#c0c0c0" text-anchor="middle" '
+             'dominant-baseline="central" font-family="DroidSans">%s</text>\n' % (cx0, cy, TOP_MARK))
     # pins: left column = 1..n_col top->bottom, right = n..n_col+1 top->bottom
     left = list(range(1, n_col + 1))
     right = list(range(n, n - n_col, -1))
@@ -319,13 +329,13 @@ def breadboard_svg():
                      'dominant-baseline="central" font-family="DroidSans">%d</text>\n'
                      % (nx, y, "start" if col == 0 else "end", pno))
     # exposed pad (pin 0) broken out at the bottom centre
-    L.append('  <circle id="connector%dpin" connectorname="%s" cx="250.0" cy="%.1f" r="%.1f" '
+    L.append('  <circle id="connector%dpin" connectorname="%s" cx="%.1f" cy="%.1f" r="%.1f" '
              'fill="#d4af37" stroke="#8a6d00" stroke-width="4"/>\n'
-             % (n, PAD_NAME, bh - 50.0, BB_PAD_R))
-    L.append('  <circle cx="250.0" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
-             % (bh - 50.0, BB_HOLE_R))
-    L.append('  <text x="250.0" y="%.1f" font-size="32" fill="#ffffff" text-anchor="middle" '
-             'dominant-baseline="central" font-family="DroidSans">0</text>\n' % (bh - 130.0))
+             % (n, PAD_NAME, cx0, bh - 50.0, BB_PAD_R))
+    L.append('  <circle cx="%.1f" cy="%.1f" r="%.1f" fill="#2b2b2b" stroke="none"/>\n'
+             % (cx0, bh - 50.0, BB_HOLE_R))
+    L.append('  <text x="%.1f" y="%.1f" font-size="32" fill="#ffffff" text-anchor="middle" '
+             'dominant-baseline="central" font-family="DroidSans">0</text>\n' % (cx0, bh - 130.0))
     L.append(' </g>\n')
     L.append('</svg>\n')
     return "".join(L)

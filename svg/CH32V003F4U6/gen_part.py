@@ -46,6 +46,16 @@ def main():
     g.TOP_MARK = TOP_MARK
     g.CHIP = CHIP
     g.SCHEM_NAME = SCHEM_NAME
+    # ★ 2026-10-19 用户实拍 ✓：这颗的**实物板宽约 17.5 mm**（照片＋卡尺 ✓），
+    #   而两列针脚就在板边内侧约 1.3 mm ⇒ 针距 = 15.24 mm（6 格），不是默认的 7.62 ✗。
+    #   本件改为：画布 800（20.32 mm）/ 板 x=50..750（宽 700 = 17.78 mm）/
+    #   针脚 100 与 700（距边 50 = 1.27 mm = 半格 ✓ ⇒ AGENTS §3b 相位仍成立 ✓）。
+    #   ⚠ 针距变了 ⇒ 图里这颗件的针脚相对位置会动，已有草图要重摆/重接 ✓（用户 2026-10-19 知情 ✓）。
+    #   ⚠ 同族其它件（CH32V002F4U6 等）**不改** ✓ —— 用户只点名 CH32V003F4U6 ✓。
+    g.BB_CANVAS_W = 800.0
+    g.BB_BOARD_X = 50.0
+    g.BB_BOARD_W = 700.0
+    g.BB_PIN_X = (100.0, 700.0)
     files = {
         "svg.icon.%s_icon.svg" % PART_ID: g.icon_svg(),
         "svg.breadboard.%s_breadboard.svg" % PART_ID: g.breadboard_svg(),
