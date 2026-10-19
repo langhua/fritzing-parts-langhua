@@ -294,9 +294,16 @@ def svg_for(fzp_path, img, view="breadboard"):
 
 
 lay_body, wires = [], []
+# ★★ 2026-10-19 修 z 序 ✗（用户报：预览里只剩导线、**元件本体看不见** ✗）：
+#   Fritzing「另存」的图里，**板子实例常常写在最后** ✗ ⇒ 按文档顺序画 ⇒ 板子把自己的
+#   白色/绿色底子盖在元件上 ✗。口径：**板子永远先画** ✓（它是背景 ✓），其余件按原顺序 ✓。
+lay_board = []
 _logo_ok, _logo_bad = [], []          # ★ 图例文字（TXT*）画成了几件 / 哪几件画不出来 ✓
 for el in root.iter("instance"):
     mid = el.get("moduleIdRef") or ""
+    # 板子：属于 breadboard 且不是 logo/text（同 `bb_precheck` / `bb_compare` 的口径 ✓）
+    _is_board = ("breadboard" in mid.lower() and "logo" not in mid.lower()
+                 and "text" not in mid.lower() and not mid.startswith("Wire"))
     ttl = (el.findtext("title") or "").strip()
     vw = next((c for c in el if tag(c) == "views"), None)
     if vw is None:
@@ -551,12 +558,13 @@ for el in root.iter("instance"):
                 print("      ✗ %s.%s 的腿末端落在 (%7.2f,%7.2f)，而它声称插的 %s 在 (%7.1f,%7.1f)"
                       " ⇒ Δ=%.2f 单位 (%.2f mm) ✗"
                       % (ttl, _cid3, _ex3, _ey3, _hid3, _xy3[0], _xy3[1], _d3, _d3 * 25.4 / 90.0))
-    lay_body.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
-                    % (a, b, c, d, e, f, _body))
+    _tgt = lay_board if _is_board else lay_body      # ★ 板子先画 ✓（见上面 2026-10-19 的注 ✓）
+    _tgt.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
+                % (a, b, c, d, e, f, _body))
     if _gl:
         # ★ 腿画在零件**之后** ✓（Fritzing 里连接器是零件的子项、画在本体之上 ✓）
-        lay_body.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
-                        % (m[0], m[1], m[2], m[3], e, f, "".join(_gl)))
+        _tgt.append('<g transform="matrix(%.6f %.6f %.6f %.6f %.6f %.6f)">%s</g>'
+                    % (m[0], m[1], m[2], m[3], e, f, "".join(_gl)))
     # ★ 自检**必须在腿画完之后**再打 ✗（腿的条数与末端 Δ 都是那一步算出来的 ✓ ——
     #   第一版把这个 print 放在前面 ⇒ 明明画了 2 条腿却报"0 条" ✓，实测栽过 ✓）。
     if _nchk or _unv or _legn:
@@ -584,7 +592,7 @@ x0, x1 = min(xs) - 12, max(xs) + 12
 y0, y1 = min(ys) - 12, max(ys) + 12
 w, h = x1 - x0, y1 - y0
 body = ['<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="#f7f7f7"/>' % (x0, y0, w, h)]
-body += lay_body
+body += lay_board + lay_body          # ★ 板子先画 ✓（2026-10-19 ✓）
 # ★★ 2026-10-08 图例文字自检 ✓（用户报过「图例文字都没有显示出来」✗ ⇒ 不许静默 ✗）：
 #   ① 画出来几件、都是哪几个字 ✓（对不上就是件本身变了 ✓）；
 #   ② 盒内两边的缩放**必须相等** ✓ —— 不等 = 字被拉伸 ✗（件自己的 viewBox 就该是这个比例 ✓）；
