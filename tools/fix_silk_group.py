@@ -72,6 +72,56 @@ def silk_depth(text):
     return depth(root)
 
 
+def geometry_fingerprint(text):
+    """=> 全部图元的「标签 + 除 `id` 外的**全部属性**」的多重集（排序后的元组）✓。
+
+    ★★ 用途 = 「**几何一字未动**」的**独立**尺子 ✓（2026-10-19 用户定 ✓）。
+      **与 `SNC.silk_span` 毫无共用** ✓ —— 那边是"哪块属于丝印层"的正则扫描 ✓，
+      这边是"图元本身有没有被改"的**逐属性比对** ✓（两把不同的尺子 ✓）。
+    ★ 为什么不用 XML 树比 ✗：**规范定不了** ✓（2026-10-19 用户定 ✓，原话
+      「有时候 svg 文件是用 Inkscape 手改的」✓）—— 文件既可能来自脚本、也可能来自手改，
+      `<g>` 的层数/嵌套方式**两种都合法** ✓ ⇒ 拿树结构机械判必误伤 ✗。
+      ⇒ 改判**图元本身** ✓：只要每个图元的几何/描边全都没变 ✓，中间套几层 `<g>` 都不管 ✓。
+    ★ 判"只许挪层级"够不够 ✗：**够** ✓ —— 装组只可能改两处 ✓（见 `fix_text`）：
+      ① 被装图元的 `id`（`silkscreen` => `silkoutline` ✓）② `stroke:#ffffff` => `#f0f0f0` ✓，
+      两者都在**调用方**用 `EXEMPT` 显式豁免 ✓；**除这两项外一个属性都不许变** ✗。
+    """
+    out = []
+    for m in re.finditer(r"<(rect|circle|ellipse|line|path|polygon|polyline|text)\b([^>]*?)/?>", text, re.S):
+        kv = {}
+        for mm in re.finditer(r"""([\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')""", m.group(2)):
+            kv[mm.group(1)] = mm.group(2) if mm.group(2) is not None else mm.group(3)
+        out.append((m.group(1), tuple(sorted((k, v) for k, v in kv.items() if k != "id"))))
+    return sorted(out)
+
+
+def geometry_unchanged(old, new):
+    """=> (是否一字未动 ✓, 说明 ✓)。旧图元必须**全部原样**出现在新文本里 ✓。
+
+    ★ 只豁免**两项明确的东西** ✓（其余任何差异 ⇒ 判"动了几何" ✗）：
+      ① 被装图元的 `id` 从 `silkscreen` 改成 `silkoutline` ✓ —— 反正 `id` 不进指纹 ✓；
+      ② `stroke:#ffffff` 改成 `stroke:#f0f0f0` ✓ —— 本库写法统一 ✓（**只改颜色值这一处** ✓）
+         ⇒ 比对前把 `#ffffff` **归一成** `#f0f0f0` ✓ 再比 ✓。
+    ★ 判法 = **多重集包含** ✓（新 ⊇ 旧 ✓），✗ 不是逐元素对位 ✗ ——
+      装组会把图元挪进新组 ✓，但**图元自身的属性不变** ✓ ⇒ 用"值集合"比才不受层级影响 ✓。
+    """
+    def norm(fps):
+        # ★ 白色可能在两处 ✓：独立属性 `stroke="#ffffff"` ✓ 或 `style="…;stroke:#ffffff"` ✓
+        #   （Inkscape 存的是后者 ✓）⇒ **两处都要归一** ✓，否则手改过的文件会被误报"动了颜色" ✗
+        def fix(v):
+            return re.sub(r"#ffffff", "#f0f0f0", v, flags=re.I)
+        return sorted((tag, tuple(sorted((k, fix(v)) for k, v in kv)))
+                      for tag, kv in fps)
+    from collections import Counter
+    c_old = Counter(norm(geometry_fingerprint(old)))
+    c_new = Counter(norm(geometry_fingerprint(new)))
+    lost = c_old - c_new
+    if lost:
+        kinds = ["<%s %s>" % (tag, " ".join("%s=%s" % kv for kv in attrs[:2])) for tag, attrs in list(lost)]
+        return False, "有 %d 处旧图元在新文本里找不到了 ✗：%s" % (sum(lost.values()), "；".join(kinds[:3]))
+    return True, "全部图元原样保留 ✓"
+
+
 def fix_text(text):
     """⇒ (新文本, 改了几个 ✓)。**只挪层级** ✓（几何一字不动 ✗）。"""
     spans = SNC.silk_span(text)
@@ -104,6 +154,11 @@ def process(path, do=False):
     d0, d1 = silk_depth(text), silk_depth(new)
     if d0 is not None and d1 is not None and d1 > d0 + 1:
         return False, ("✗ 丝印组层数 %d ⇒ %d ✗（只许多出**一层** ✓）⇒ **不写** ✗" % (d0, d1))
+    # ★★ 第二把独立尺子 ✓：**几何一字未动** ✓（逐图元属性比对 ✓，也不共用上面的扫描器 ✓）——
+    #   只豁免两处 ✓：被装图元改 id ✓、`#ffffff` 归一成 `#f0f0f0` ✓；其余一个属性都不许变 ✗
+    same, why = geometry_unchanged(text, new)
+    if not same:
+        return False, "✗ 动了几何 ✗ ⇒ **不写** ✗：%s" % why
     if SNC.silk_span(new):
         return False, "✗ 改完还剩丝印图元在外 ✗ ⇒ **不写** ✗"
     if SNC.silk_parent(new) is not None:

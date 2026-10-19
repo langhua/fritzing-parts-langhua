@@ -104,6 +104,46 @@ check("process 拒写 ✓", not okp2, why2)
 check("文件原样未动 ✓", get() == before, "改前改后逐字节相同 = %s" % (get() == before))
 
 print()
+# ===== 3b 几何一字未动（第二把独立尺子）========================================
+#   ★★ 为什么不用 XML 树判 ✗：**规范定不了** ✓（2026-10-19 用户定 ✓，原话
+#     「有时候 svg 文件是用 Inkscape 手改的」✓）—— 文件既可能来自脚本、也可能来自手改，
+#     `<g>` 怎么套**两种都合法** ✓ ⇒ 拿树结构机械判必误伤 ✗。
+#     ⇒ 改判**图元本身** ✓：每个图元的几何/描边都没变 ✓，中间套几层 `<g>` 都不管 ✓。
+SILK = (' <g id="copper1">\n' + PAD + ' </g>\n'
+        '  <rect id="silkscreen" fill="none" stroke="#ffffff" x="2.25" y="2.5" width="1.5" height="0.75"/>\n'
+        '  <path id="silkpath" fill="none" stroke="#f0f0f0" d="M 1 1 L 2 2"/>\n')
+
+print()
+print("== 3b 几何一字未动：正常装组通过、偷改几何拦下 ==")
+src = svg(SILK)
+newg, ng = FSG.fix_text(src)
+same, why = FSG.geometry_unchanged(src, newg)
+check("正常装 %d 个图元，几何一字未动 ✓" % ng, ng >= 1 and same, why)
+for nm, bad in [("坐标被改", newg.replace('x="2.25"', 'x="9.99"')),
+                ("加 stroke-width", newg.replace('stroke="#f0f0f0"', 'stroke="#f0f0f0" stroke-width="9"')
+                                     .replace("stroke:#f0f0f0", "stroke:#f0f0f0;stroke-width:9")),
+                ("path d 被改", newg.replace("M 1 1 L 2 2", "M 1 1 L 3 3")),
+                ("图元被加属性", newg.replace('<path id="silkpath"', '<path id="silkpath" opacity="0"'))]:
+    if bad == newg:
+        check(nm + "（替换没生效）", False, "素材写法变了，用例失效 ✗")
+        continue
+    s2, w2 = FSG.geometry_unchanged(src, bad)
+    check(nm, not s2, w2[:70])
+
+print()
+print("== 3c Inkscape 手改的写法也必须合法（嵌套层数/单引号/多行属性）==")
+#   用户 2026-10-19：「有时候 svg 文件是用 Inkscape 手改的」⇒ 这些写法**都要放行** ✓
+inks = (('<?xml version="1.0" encoding="UTF-8"?>\n'
+         '<svg %s\n   width="10mm"\n   height="10mm"\n   viewBox="0 0 10 10">\n' % W
+         + '  <g\n     id="copper1">\n' + PAD + '  </g>\n'
+         + '  <rect\n     id="silkscreen"\n     style="fill:none;stroke:#ffffff"\n'
+           '     x="2.25"\n     y="2.5"\n     width="1.5"\n     height="0.75" />\n'
+         + '</svg>\n'))
+okp3, why3 = FSG.geometry_unchanged(inks, FSG.fix_text(inks)[0])
+check("Inkscape 写法：几何比对通过 ✓", okp3, why3)
+check("Inkscape 写法：装进组后层数 = 1 ✓", FSG.silk_depth(FSG.fix_text(inks)[0]) == 1,
+      "层数 => %r" % FSG.silk_depth(FSG.fix_text(inks)[0]))
+
 print("== 4 全库：dry-run 待改必须 0 ==")
 r = subprocess.run([sys.executable, "-X", "utf8", os.path.join(HERE, "fix_silk_group.py")],
                    capture_output=True, text=True, encoding="utf-8")
