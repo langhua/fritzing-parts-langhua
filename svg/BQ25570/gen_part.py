@@ -57,19 +57,7 @@ from byHand_tables import (DOC_MM_W, DOC_MM_H, DOC_VIEWBOX, UF, PAD_R, PAD_SW,  
                            PAD_FILL, PAD_EDGE, SHAPES, ICONS, TEXTS, DEFS)
 
 BB_W, BB_H = DOC_MM_W, DOC_MM_H          # 30 × 28.5 mm（用户给定 ✓）
-
-# ★★ 画布原点相对板框左上角的偏移（mm）—— 只为把「原点 → 针」对齐到 2.54mm 网格 ✓
-#   起因（用户 2026-10-26 报 ✓）：4 只 2.54mm 针**旋转 90° 后插不进面包板** ✗。
-#   Fritzing 旋转是绕**元件原点**（= `viewBox` 的 min 角 ✓，见 `render_bb.vb_origin` 口径 ✓）
-#   ⇒ 原点→针 的偏移必须是 2.54mm 的整数倍 ✓（AGENTS §5 那条 ✓）。
-#   实测：针在 (1.583, 10.261) mm ⇒ 偏 (1.583, 0.101) ✗
-#         ⇒ 原点挪到 (−0.957, +0.101) ⇒ 针 = (2.540, 10.160) = **100 / 400 内部单位** ✓✓
-#   （✗ 不动图形本身 ✗ —— 图形相对板框的位置是用户量过的 ✓，只挪“窗口” ✓）
-VB_DX, VB_DY = -0.957, 0.101
 GRID_U = 100.0                           # 2.54mm = 100 内部单位（面包板孔距 ✓）
-
-_BB_VB = ((DOC_VIEWBOX[0] + VB_DX) * UF, (DOC_VIEWBOX[1] + VB_DY) * UF,
-          (DOC_MM_W - VB_DX) * UF, (DOC_MM_H - VB_DY) * UF)   # viewBox（内部单位）
 
 # 板框：**在这里画** —— 手工版那块（`rect2`）在 `layer1`，而 Inkscape 把它存成了
 # `display:none`，`byhand_export` 整棵跳过 ⇒ 不进表。几何照手工版 rect2：
@@ -93,17 +81,25 @@ def _esc(s):
 # ══════════════ 用户 2026-10-26 报的两个问题（本文件两处修 ✓）
 #
 # ★ ① 安装孔要**透明** ✗（原来是实心近黑 `#1f241c` ⇒ 看不到面包板）：
-#     做法 = 板框画成 `<path fill-rule="evenodd">`（圆角矩形 **减掉** 两个安装孔），
-#     并把那两只圆自己的 fill 改成 `none`（只剩金/银色的**环**= 孔壁 ✓）⇒
-#     孔里透出面包板 ✓（= 真实 PCB 的通孔 ✓）。打孔半径取**环内半径**（r − stroke/2），
-#     这样环仍然画在板子上、环内侧才是透的 ✓。
-# ★ ② 4 只 2.54mm 针**旋转 90° 后插不进面包板** ✗：Fritzing 旋转是绕**元件原点**
-#     （= `viewBox` 的 min 角 ⇒ 见 render_bb 的 `vb_origin` 口径 ✓），不进网格 ⇒ 转完针就
-#     落在孔与孔之间 ✗。判据 = 「原点 → 针」必须是 **2.54mm 的整数倍**（AGENTS §5 那条 ✓）。
-#     实测（2026-10-26 ✓）：针在 (1.583, 10.261) mm ⇒ 偏 (1.583, 0.101) ✗；
-#     ⇒ 把**画布原点**挪到 (−0.957, +0.101)，针就变成 (2.540, 10.160) = 100 / 400 内部单位 ✓✓
-#     （✗ 不动图形本身 ✗ —— 图形相对板框的位置是用户量过的 ✓，只挪"窗口"）。
-#     ⚠ 常量已提到文件上部（`VB_DX/VB_DY/GRID_U`）✓：`_BB_VB` 要用它 ✓。
+#     做法 = 板框画成 `<path fill-rule="evenodd">`（板 − 安装孔），并把那两只圆自己的
+#     fill 改成 `none`（只剩**环** = 孔壁 ✓）⇒ 孔里透出面包板 ✓（= 真实 PCB 通孔 ✓）。
+#     打孔半径取**环内半径**（r − stroke/2）✓。
+#     ⚠ 第一版还**多画了一块板**（以为手工版的板框没进表 ✗）—— 它正好把打穿的孔又盖住 ✗；
+#       手工版那块板**本来就在表里**（`_board_rect()` 找的它就是）⇒ 就地改成路径 ✓。
+#
+# ★★ ② 4 只 2.54mm 针**旋转 90° / 直接拖进去都对不上孔** ✗
+#     判据 = 「元件原点 → 针」必须是 **2.54mm 的整数倍** ✓（AGENTS §5 ✓），
+#     而元件原点 = **svg 用户坐标 (0,0)**，**不是 `viewBox` 的 min 角** ✗ ——
+#     出处（本机源码 ✓）`F:\build-fritzing\fritzing-app\src\fsvgrenderer.cpp:687-690`：
+#       `svgRect = (r1.x() * defaultSize.width() / viewBox.width(), …)`
+#       ⇒ 只做缩放，**没有减 viewBox.topLeft()** ⇒ 局部坐标 = svg 绝对坐标 × 比例 ✓
+#     旁证（本仓 ✓）：`CH340C`（viewBox y=40.6）、`IP101GR`（viewBox x=50）的针脚都落在
+#       **绝对坐标** 100 的整数倍上（相对 viewBox min 反而全不对）⇒ 它们能插面包板 ✓。
+#     ⇒ 做法：把**整张图**平移 `_bb_shift()` 那么多（内部单位），使针脚落在 100 的整数倍上；
+#       图形之间的相对位置一个数不动 ✓（那是用户量过的），viewBox 只当**裁切窗口** ✓。
+#     实测（2026-10-26 ✓）：针在 (62.32, 403.97) ⇒ 平移 (+37.68, −3.97) ⇒
+#       **100 / 400·500·600·700** ✓；右缘 6 针 x = 1100 ✓（3.00mm 间距的 MX3.0 端子，
+#       y 本来就不该在 2.54 网格上 —— 它们不插面包板 ✓）。
 
 
 def _rrect_path(x, y, w, h, r):
@@ -133,27 +129,73 @@ def mount_holes():
     return out
 
 
+def _board_rect():
+    """⇒ (idx, x, y, w, h, sw, rx) —— 手工版里那块**板**（面积最大的 rect）✓
+
+    ⚠ 手工版的板框**就在表里**（`byhand_export` 当普通 rect 导出的），
+    **不要再另画一块** ✗ —— 多画的那块会把打穿的安装孔又盖住（2026-10-26 踩过 ✓）。
+    """
+    best = None
+    for i, s in enumerate(SHAPES):
+        if s[0] != "rect":
+            continue
+        w, h = float(s[3]), float(s[4])
+        if best is None or w * h > best[3] * best[4]:
+            sw = float(s[8]) if s[8] not in (None, "None") else 0.0
+            rx = float(s[9]) if len(s) > 9 and s[9] not in (None, "None") else 0.0
+            best = (i, float(s[1]), float(s[2]), w, h, sw, rx)
+    return best
+
+
+def _bb_pads():
+    """⇒ [(x, y)] —— 面包板视图里的 10 个针（表里的 `pad` 图元）"""
+    return [(float(s[3]), float(s[4])) for s in SHAPES if s[0] == "pad"]
+
+
+def _bb_shift():
+    """⇒ (dx, dy)：把整张图平移多少（内部单位），让**针脚**落在 2.54mm 网格上
+
+    ★ 锚点 = svg 的 (0,0)（**不是** viewBox 的 min 角 ✗）—— 出处见上面 ② 那段。
+    取**最近**的网格线 ⇒ 画布浪费最小 ✓。
+    """
+    x0, y0 = _bb_pads()[0]
+
+    def _near(v):
+        r = v % GRID_U
+        return -r if r <= GRID_U / 2.0 else GRID_U - r
+
+    return _near(x0), _near(y0)
+
+
 def breadboard_svg():
     """面包板视图（照 `byHand_tables.py` 逐图元输出，叠放次序 = 手工版里的先后次序）。"""
     holes = mount_holes()
+    dx, dy = _bb_shift()
+    dx_mm, dy_mm = dx / UF, dy / UF          # 路径的坐标系是 mm ⇒ 平移量也要 mm ✓
+    bidx, bx, by, bw, bh, bsw, brx = _board_rect()
+    # 画布 = 板的**紧框**（`viewBox` 只当裁切窗口 ✓，不影响定位 ✓）
+    right = bx + bw + bsw / 2.0 + dx
+    bottom = by + bh + bsw / 2.0 + dy
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
-         '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" '
-         'viewBox="%g %g %g %g">\n'
-         % (BB_W - VB_DX, BB_H - VB_DY, _BB_VB[0], _BB_VB[1], _BB_VB[2], _BB_VB[3]),
+         '<svg xmlns="http://www.w3.org/2000/svg" width="%.3fmm" height="%.3fmm" '
+         'viewBox="0 0 %g %g">\n'
+         % (right * 0.0254, bottom * 0.0254, right, bottom),
          ' <g id="breadboard">\n']
-    # 板框：圆角矩形 **减掉安装孔**（evenodd）⇒ 孔是**透**的 ✓（见上面 ① 的注释）
-    d = _rrect_path(BB_RX * UF, BB_RX * UF, (BB_W - BB_RX) * UF, (BB_H - BB_RX) * UF, BB_RX * UF)
+    # ── 板框：就用手工版那块 rect 的几何，改成「板 − 安装孔」的 evenodd 路径 ✓
+    d = _rrect_path(bx + dx, by + dy, bw, bh, brx or BB_RX * UF)
     for cx, cy, rr in holes:
-        d += " " + _circle_path(cx, cy, rr)
+        d += " " + _circle_path(cx + dx, cy + dy, rr)
     L.append('  <path id="board" fill-rule="evenodd" d="%s" fill="%s" stroke="%s" '
-             'stroke-width="%g"/>\n' % (d, BB_COLOR, BB_EDGE, BB_SW * UF))
+             'stroke-width="%g"/>\n' % (d, BB_COLOR, BB_EDGE, bsw))
 
     if DEFS:
         L.append('  <defs>\n')
         for d in DEFS:
             L.append('   %s\n' % d)
         L.append('  </defs>\n')
-    for s in SHAPES:
+    for i, s in enumerate(SHAPES):
+        if i == bidx:                       # 板已经画成（带孔的）路径了 ✓
+            continue
         k = s[0]
         if k == "rect":
             x, y, w, h, fill, _rot, stroke, sw = s[1:9]      # _rot：bbox 已烘焙，不用
@@ -169,7 +211,7 @@ def breadboard_svg():
             if op:
                 a += ' opacity="%g"' % float(op)
             L.append('  <rect x="%g" y="%g" width="%g" height="%g"%s/>\n'
-                     % (x, y, w, h, a))
+                     % (x + dx, y + dy, w, h, a))
         elif k == "circle":
             x, y, r, fill, stroke, sw = s[1:7]
             if r >= 1.5 * UF:                  # ★ 安装孔：**fill 改成 none** ✓（孔里要透出面包板 ✓）
@@ -179,7 +221,7 @@ def breadboard_svg():
                 a += ' stroke="%s"' % stroke
                 if sw not in (None, "None") and float(sw) > 0:
                     a += ' stroke-width="%g"' % float(sw)
-            L.append('  <circle cx="%g" cy="%g" r="%g"%s/>\n' % (x, y, r, a))
+            L.append('  <circle cx="%g" cy="%g" r="%g"%s/>\n' % (x + dx, y + dy, r, a))
         elif k == "pad":
             pid = s[1]
             x, y = s[3], s[4]
@@ -191,15 +233,19 @@ def breadboard_svg():
             if PAD_SW and float(PAD_SW) > 0:
                 st = ' stroke="%s" stroke-width="%g"' % (PAD_EDGE or "#000000", PAD_SW)
             L.append('  <circle id="%s"%s cx="%g" cy="%g" r="%g" fill="%s"%s/>\n'
-                     % (pid, a, x, y, PAD_R, PAD_FILL, st))
+                     % (pid, a, x + dx, y + dy, PAD_R, PAD_FILL, st))
         elif k == "line":
             x1, y1, x2, y2, stroke, sw = s[1:7]
             L.append('  <line x1="%g" y1="%g" x2="%g" y2="%g" stroke="%s" '
                      'stroke-width="%g"/>\n'
-                     % (x1, y1, x2, y2, stroke or "#000000", float(sw or 1.0)))
+                     % (x1 + dx, y1 + dy, x2 + dx, y2 + dy, stroke or "#000000",
+                        float(sw or 1.0)))
         elif k == "path":
             d, mtx, fill, stroke, sw = s[1:6]
-            tr = ('transform="scale(%g) %s"' % (UF, mtx)) if mtx else ('transform="scale(%g)"' % UF)
+            # 路径坐标在 mm 里（矩阵 0.0254 = pxx→mm）⇒ 平移写在**最后**（先作用 ✓）、单位 mm ✓
+            tr = ('transform="scale(%g) %s translate(%.6f,%.6f)"'
+                  % (UF, mtx, dx_mm, dy_mm)) if mtx else (
+                  'transform="scale(%g) translate(%.6f,%.6f)"' % (UF, dx_mm, dy_mm))
             a = ' fill="%s"' % (fill if fill not in (None, "None") else "none")
             if stroke not in (None, "None"):
                 a += ' stroke="%s"' % stroke
@@ -217,9 +263,9 @@ def breadboard_svg():
         if fw:
             a += ' font-weight="%s"' % fw
         if rot:
-            a += ' transform="rotate(%g %g %g)"' % (float(rot), x, y)
+            a += ' transform="rotate(%g %g %g)"' % (float(rot), x + dx, y + dy)
         L.append('  <text x="%g" y="%g" font-size="%g" font-family="DroidSans"%s>%s'
-                 '</text>\n' % (x, y, fs, a, _esc(txt)))
+                 '</text>\n' % (x + dx, y + dy, fs, a, _esc(txt)))
     L += [' </g>\n', '</svg>\n']
     return "".join(L)
 
