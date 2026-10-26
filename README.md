@@ -70,7 +70,7 @@ Fritzing 不读它，整目录拷回 Fritzing 目录即可恢复）。箱里存�
 | 8205S | 双 N 沟道 MOSFET（SOT23-6） | `fzpz/8205S.fzpz` || AT24C02 | I2C 串行 EEPROM（2Kbit，SOP-8，A0~A2/WP） | `fzpz/AT24C02.fzpz` |
 | BAS70BRW | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K75） | `fzpz/BAS70BRW.fzpz` |
 | BAS70DW-04 | 4×70V 梃基二极管阵列（SOT-363 / SC-70-6，两个串联对、6 个节点全出；丝印 K74） | `fzpz/BAS70DW-04.fzpz` || BAT54S | SOT-23 双肖特基二极管（3 脚） | `fzpz/BAT54S.fzpz` |
-| BQ25570 | TI **bq25570** 能量采集 PMIC（VQFN-20 RGR 3.5×3.5mm、0.5mm 脚距：纳功耗 boost 充电器 + MPPT + 纳功耗 buck；裸露 **PowerPAD** 与两只 VSS、NC 9/17 同网并带 3×3 ⌀0.20 热过孔；**面包板 = CJMCU-2557 模块** 30×28.5mm，左缘 GND/V_EN/EN/V_OK、右缘三对端子 **TB1(INPUT±) / J1(BAT±) / TB2(OUTPUT±)**） | `fzpz/BQ25570.fzpz` |
+| BQ25570 | TI **bq25570** 能量采集 PMIC（VQFN-20 RGR 3.5×3.5mm、0.5mm 脚距：纳功耗 boost 充电器 + MPPT + 纳功耗 buck；裸露 **PowerPAD** 与两只 VSS、NC 9/17 同网并带 3×3 ⌀0.20 热过孔；**面包板 = CJMCU-2557 模块** 30×28.5mm，左缘 GND/V_EN/EN/V_OK、右缘三对端子 **TB1(INPUT±) / J1(BAT±) / TB2(OUTPUT±)** —— 端子孔按 **MX3.0 `2*1P` 插座**画，**孔距 3.00mm**、孔 ⌀0.96mm） | `fzpz/BQ25570.fzpz` |
 | CH213K | 低压差理想二极管芯片，带限流（SOT23-3） | `fzpz/CH213K.fzpz` |
 | CH32V002D4U6 | CH32V002 主控（QingKe RISC-V MCU，QFN12，12 脚 + EPAD 散热焊盘） | `fzpz/CH32V002D4U6.fzpz` |
 | CH32V002F4U6 | CH32V002 主控（QFN20，20 脚 + EPAD） | `fzpz/CH32V002F4U6.fzpz` |

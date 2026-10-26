@@ -33,18 +33,18 @@
   <path d="M 5.0577275,18.670232 H 4.2964349 V 18.54549 h 0.7612926 z" transform="scale(39.3701)" fill="#ffffff"/>
   <path d="m 6.4023708,17.723661 q 0,0.203622 -0.067874,0.355881 -0.06604,0.150424 -0.2036228,0.234808 -0.137583,0.08438 -0.3522125,0.08438 -0.2127951,0 -0.3522125,-0.08438 -0.137583,-0.08438 -0.2054573,-0.236642 -0.06604,-0.152259 -0.06604,-0.355882 0,-0.201788 0.06604,-0.352212 0.067874,-0.152259 0.2054573,-0.234809 0.1394174,-0.08438 0.3540469,-0.08438 0.2127951,0 0.3503781,0.08438 0.1394174,0.08255 0.2054572,0.234809 0.06604,0.150424 0.06604,0.354047 z m -0.9520744,0 q 0,0.205457 0.077046,0.322861 0.078881,0.11557 0.2513183,0.11557 0.1761062,0 0.2513183,-0.11557 0.077046,-0.117404 0.077046,-0.322861 0,-0.205458 -0.077046,-0.322862 -0.075212,-0.117404 -0.2494839,-0.117404 -0.1742718,0 -0.2531527,0.117404 -0.077046,0.117404 -0.077046,0.322862 z" transform="scale(39.3701)" fill="#ffffff"/>
   <path d="M 7.7231682,18.38039 H 7.4076445 L 7.0646042,17.828224 6.9472001,17.912608 V 18.38039 H 6.6701996 V 17.0706 h 0.2770005 v 0.599862 q 0.027517,-0.03852 0.055033,-0.07705 0.027517,-0.03852 0.055033,-0.07705 L 7.4113134,17.0706 h 0.3081859 l -0.4567755,0.579683 z" transform="scale(39.3701)" fill="#ffffff"/>
-  <circle cx="1058.35" cy="600" r="39.37" fill="#c8a227"/>
-  <circle id="connector22pin" connectorname="J1-BAT-" cx="1058.35" cy="600" r="18.9" fill="#1a1a1a"/>
-  <circle cx="1058.35" cy="200" r="39.37" fill="#c8a227"/>
-  <circle id="connector1pin" connectorname="TB1-INPUT+" cx="1058.35" cy="200" r="18.9" fill="#1a1a1a"/>
-  <circle cx="1058.35" cy="800" r="39.37" fill="#c8a227"/>
-  <circle id="connector13pin" connectorname="TB2-OUTPUT+" cx="1058.35" cy="800" r="18.9" fill="#1a1a1a"/>
-  <circle cx="1058.35" cy="300" r="39.37" fill="#c8a227"/>
-  <circle id="connector23pin" connectorname="TB1-INPUT-" cx="1058.35" cy="300" r="18.9" fill="#1a1a1a"/>
-  <circle cx="1058.35" cy="900" r="39.37" fill="#c8a227"/>
-  <circle id="connector21pin" connectorname="TB2-OUTPUT-" cx="1058.35" cy="900" r="18.9" fill="#1a1a1a"/>
-  <circle cx="1058.35" cy="500" r="39.37" fill="#c8a227"/>
-  <circle id="connector17pin" connectorname="J1-BAT+" cx="1058.35" cy="500" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="609.06" r="39.37" fill="#c8a227"/>
+  <circle id="connector22pin" connectorname="J1-BAT-" cx="1058.35" cy="609.06" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="190.94" r="39.37" fill="#c8a227"/>
+  <circle id="connector1pin" connectorname="TB1-INPUT+" cx="1058.35" cy="190.94" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="790.94" r="39.37" fill="#c8a227"/>
+  <circle id="connector13pin" connectorname="TB2-OUTPUT+" cx="1058.35" cy="790.94" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="309.06" r="39.37" fill="#c8a227"/>
+  <circle id="connector23pin" connectorname="TB1-INPUT-" cx="1058.35" cy="309.06" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="909.06" r="39.37" fill="#c8a227"/>
+  <circle id="connector21pin" connectorname="TB2-OUTPUT-" cx="1058.35" cy="909.06" r="18.9" fill="#1a1a1a"/>
+  <circle cx="1058.35" cy="490.94" r="39.37" fill="#c8a227"/>
+  <circle id="connector17pin" connectorname="J1-BAT+" cx="1058.35" cy="490.94" r="18.9" fill="#1a1a1a"/>
   <circle cx="104.42" cy="1018.6" r="75.44" fill="#1f241c" stroke="#c8a227" stroke-width="14.464"/>
   <circle cx="104.42" cy="100.24" r="75.44" fill="#1f241c" stroke="#c8a227" stroke-width="14.464"/>
   <rect x="722.55" y="620.54" width="45.41" height="16.5" fill="#f7bf13" stroke="none"/>
