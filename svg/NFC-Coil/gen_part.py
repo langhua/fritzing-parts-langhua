@@ -214,18 +214,21 @@ def breadboard_svg():
         connector0 = inner end  (start of the innermost turn)
         connector1 = outer end  (end of the outermost turn)
 
-    The two through-hole pads are IDENTICAL to the PCB view, so the two
-    views can be checked against each other one-to-one (user 2026-11-06):
+    The spiral itself is the SAME spiral as the PCB view (OUTER_R = 10.0,
+    i.e. the phi20 given by the part properties), not the phi19 array-safe
+    radius, so the two views can be overlaid one-to-one.  The two
+    through-hole pads are identical too (user 2026-11-06):
 
         inner r = 3.30, outer r = 10.70  ->  pitch 7.40 mm
         pad OD 1.6 mm, drill 0.6 mm      (r = 0.55, stroke-width = 0.5)
 
     Board: 24 x 24 mm square (x = 0..24, y = 0..24) inside a 26 x 26 mm
-    canvas.  The outer pad reaches x = 23.50, i.e. 0.50 mm inside the board
-    edge.  No board edge lands on a breadboard hole line relative to the
-    two pin columns/row, so it does not block the holes around it.
+    canvas.  The coil (phi20) spans 2.0..22.0; the outer pad reaches
+    x = 23.50, i.e. 0.50 mm inside the board edge.  No board edge lands on
+    a breadboard hole line relative to the two pin columns/row, so it does
+    not block the holes around it.
     """
-    d, pts = ribbon_path(ARRAY_OUTER_R)
+    d, pts = ribbon_path(OUTER_R)          # phi20, same as the PCB view
 
     INNER_PAD_R = 3.30          # same as the PCB view
     OUTER_PAD_R = 10.70         # same as the PCB view (pitch 7.40)
@@ -243,7 +246,7 @@ def breadboard_svg():
     s += '  <g id="breadboard">\n'
     # square PCB board 24x24 mm
     s += '    <rect x="0" y="0" width="24" height="24" rx="1.5" ry="1.5" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.6"/>\n'
-    # golden spiral phi19, centered, NOT scaled
+    # golden spiral phi20 (OUTER_R), centered, NOT scaled — same as the PCB view
     s += '    <g transform="translate(12 12)">\n'
     s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
     # copper stubs from the coil ends to the two through-hole pads
