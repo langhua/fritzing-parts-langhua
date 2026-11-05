@@ -8,8 +8,10 @@ schematic / PCB views (2 connectors: inner end, outer end).
 Files are written next to this script.
 
 Connector layout:
-    connector0 = coil inner end  (pad at r = INNER_R)
-    connector1 = coil outer end  (pad at r = OUTER_R)
+    connector0 = coil inner end  (start of the innermost turn)
+    connector1 = coil outer end  (end of the outermost turn)
+    Breadboard pads sit on those two ends, pitch 7.62 mm (= 3 x 2.54);
+    PCB pads at r = 3.30 / 10.70 (pitch 7.40, through-hole).
 """
 
 import math
@@ -205,47 +207,59 @@ def schematic_svg():
 def breadboard_svg():
     """Realistic planar PCB spiral coil for the breadboard view.
 
-    - viewBox is 24x24 mm, the SAME size as the PCB view (gray frame
-      matches the PCB footprint, per user request).
-    - Square green FR4 board 20x20 mm (x=2..22, y=2..22).
-    - Golden spiral phi19 (ARRAY_OUTER_R=9.5) centered at (12,12), NOT
-      scaled, fits inside the board with ~0.5 mm margin.
-    - Two small solid grey metal pads (2x2 mm), spaced EXACTLY
-      7 * 2.54 = 17.78 mm so they plug into a standard breadboard.
+    Pin placement follows the REAL board and the PCB view: the two pins
+    sit at the coil's two ends, both on the +x axis (12 o'clock = 3 o'clock
+    direction of the spiral), so
+
+        connector0 = inner end  (start of the innermost turn)
+        connector1 = outer end  (end of the outermost turn)
+
+    On the real board these are through-hole pads big enough to solder a
+    2.54 mm header pin into: OD 1.8 mm / drill 1.0 mm (same ring style as
+    the PCB view, 0.7 +- 0.2).  The PCB view keeps its own pads at
+    r = 3.30 / 10.70 (pitch 7.40); here the pitch is snapped to
+    3 x 2.54 = 7.62 mm so that BOTH pins land on the breadboard hole grid:
+
+        inner r = 3.08, outer r = 10.70  ->  pitch 7.62 mm
+
+    Board: 24 x 24 mm square (x = 0..24, y = 0..24) inside a 26 x 26 mm
+    canvas.  The outer pad reaches x = 23.60, i.e. 0.40 mm inside the board
+    edge.  No board edge lands on a breadboard hole line relative to the
+    two pin columns/row, so it does not block the holes around it.
     """
     d, pts = ribbon_path(ARRAY_OUTER_R)
 
-    def pin_block(cid, cx, cy):
-        # small solid grey metal pad 2x2 mm with simple facets (SHC0420 style)
-        return (
-            '    <g transform="translate(%.2f %.2f)">\n'
-            '      <rect fill="#8d8c8c" height="2" id="%s" width="2" x="0" y="0"/>\n'
-            '      <rect fill="#8c8663" height="1" width="1" x="0.5" y="0.5"/>\n'
-            '      <polygon fill="#b8af82" points="0.5,0.4 0,0 0,2 0.5,1.6"/>\n'
-            '      <polygon fill="#80795b" points="0,0 2,0 1.6,0.5 0.5,0.5"/>\n'
-            '      <polygon fill="#5e5b43" points="2,0 2,2 1.6,1.6 1.6,0.5"/>\n'
-            '      <polygon fill="#9a916c" points="1.6,1.6 2,2 0,2 0.5,1.6"/>\n'
-            '    </g>\n'
-        ) % (cx, cy, cid)
+    INNER_PAD_R = 3.08          # 10.70 - 7.62 (keeps the PCB outer pad spot)
+    OUTER_PAD_R = 10.70
+    PAD_OD = 1.8                # fits a 2.54 mm header pin
+    PAD_HOLE = 1.0
+    ring_r = (PAD_OD + PAD_HOLE) / 4.0     # 0.70 = circle radius ...
+    ring_w = (PAD_OD - PAD_HOLE) / 2.0     # 0.40 = stroke width
+    hole_r = PAD_HOLE / 2.0
 
     s = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" '
-        'width="24mm" height="24mm" viewBox="0 0 24 24">\n'
+        'width="26mm" height="26mm" viewBox="-1 -1 26 26">\n'
     )
     s += '  <g id="breadboard">\n'
-    # square PCB board 20x20 mm (same footprint as the PCB view)
-    s += '    <rect x="2" y="2" width="20" height="20" rx="1.5" ry="1.5" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.6"/>\n'
-    # golden spiral phi19, centered, NOT scaled (fits with ~0.5 mm margin)
+    # square PCB board 24x24 mm
+    s += '    <rect x="0" y="0" width="24" height="24" rx="1.5" ry="1.5" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.6"/>\n'
+    # golden spiral phi19, centered, NOT scaled
     s += '    <g transform="translate(12 12)">\n'
     s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
+    # copper stubs from the coil ends to the two through-hole pads
+    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
+          % (INNER_PAD_R, pts[0][0], TRACE_W))
+    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
+          % (pts[-1][0], OUTER_PAD_R, TRACE_W))
+    # through-hole pads: gold ring + drilled hole (id on the ring only)
+    for cid, cx in (("connector0pin", INNER_PAD_R),
+                    ("connector1pin", OUTER_PAD_R)):
+        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="none" stroke="#f7bf13" '
+              'stroke-width="%.2f" id="%s"/>\n' % (cx, ring_r, ring_w, cid))
+        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="#1d1d1d"/>\n' % (cx, hole_r))
     s += '    </g>\n'
-    # two small metal pads, 2x2 mm, spaced exactly 7*2.54 = 17.78 mm
-    # centers at x = 12 - 8.89 and 12 + 8.89, y = 18.5
-    spacing = 7 * 2.54          # 17.78 mm
-    half = spacing / 2.0        # 8.89
-    s += pin_block("connector0pin", 12 - half - 1.0, 17.5)
-    s += pin_block("connector1pin", 12 + half - 1.0, 17.5)
     s += '  </g>\n'
     s += "</svg>\n"
     return s
