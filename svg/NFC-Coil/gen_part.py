@@ -203,6 +203,50 @@ def schematic_svg():
     )
 
 
+# --------------------------------------------------------- board artwork
+# ONE source for the breadboard view AND the icon view (user 2026-11-06:
+# "icon 改成与面包板一致") -- the icon is literally the breadboard picture
+# scaled onto the 32-unit icon canvas, so the two can never drift apart.
+BB_CANVAS_MM = 26.0      # breadboard canvas: 26 x 26 mm, viewBox "-1 -1 26 26"
+INNER_PAD_R = 3.30       # same as the PCB view
+OUTER_PAD_R = 10.70      # same as the PCB view (pitch 7.40)
+PAD_OD = 1.6             # same as the PCB view
+PAD_HOLE = 0.6           # same as the PCB view
+
+
+def board_artwork(pin_ids=True):
+    """Content of <g id="breadboard">, in breadboard coordinates.
+
+    Square 24 x 24 mm green board (0..24), phi20 spiral centred at (12,12),
+    two through-hole pads on the coil ends (inner r=3.30, outer r=10.70).
+    `pin_ids=False` is for the icon view: same picture, but without the
+    connector ids (the icon view must not carry unreferenced connectors).
+    """
+    d, pts = ribbon_path(OUTER_R)          # phi20, same as the PCB view
+    ring_r = (PAD_OD + PAD_HOLE) / 4.0     # 0.55 = circle radius ...
+    ring_w = (PAD_OD - PAD_HOLE) / 2.0     # 0.50 = stroke width
+    hole_r = PAD_HOLE / 2.0
+
+    s = '    <rect x="0" y="0" width="24" height="24" rx="1.5" ry="1.5" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.6"/>\n'
+    # golden spiral phi20 (OUTER_R), centered, NOT scaled — same as the PCB view
+    s += '    <g transform="translate(12 12)">\n'
+    s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
+    # copper stubs from the coil ends to the two through-hole pads
+    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
+          % (INNER_PAD_R, pts[0][0], TRACE_W))
+    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
+          % (pts[-1][0], OUTER_PAD_R, TRACE_W))
+    # through-hole pads: gold ring + drilled hole (id on the ring only)
+    for cid, cx in (("connector0pin", INNER_PAD_R),
+                    ("connector1pin", OUTER_PAD_R)):
+        pid = (' id="%s"' % cid) if pin_ids else ''
+        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="none" stroke="#f7bf13" '
+              'stroke-width="%.2f"%s/>\n' % (cx, ring_r, ring_w, pid))
+        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="#1d1d1d"/>\n' % (cx, hole_r))
+    s += '    </g>\n'
+    return s
+
+
 # --------------------------------------------------------- breadboard view
 def breadboard_svg():
     """Realistic planar PCB spiral coil for the breadboard view.
@@ -227,40 +271,17 @@ def breadboard_svg():
     x = 23.50, i.e. 0.50 mm inside the board edge.  No board edge lands on
     a breadboard hole line relative to the two pin columns/row, so it does
     not block the holes around it.
+
+    The drawing itself comes from board_artwork(), which the icon view uses
+    too (scaled), so both pictures are always the same picture.
     """
-    d, pts = ribbon_path(OUTER_R)          # phi20, same as the PCB view
-
-    INNER_PAD_R = 3.30          # same as the PCB view
-    OUTER_PAD_R = 10.70         # same as the PCB view (pitch 7.40)
-    PAD_OD = 1.6                # same as the PCB view
-    PAD_HOLE = 0.6              # same as the PCB view
-    ring_r = (PAD_OD + PAD_HOLE) / 4.0     # 0.55 = circle radius ...
-    ring_w = (PAD_OD - PAD_HOLE) / 2.0     # 0.50 = stroke width
-    hole_r = PAD_HOLE / 2.0
-
     s = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" '
         'width="26mm" height="26mm" viewBox="-1 -1 26 26">\n'
     )
     s += '  <g id="breadboard">\n'
-    # square PCB board 24x24 mm
-    s += '    <rect x="0" y="0" width="24" height="24" rx="1.5" ry="1.5" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.6"/>\n'
-    # golden spiral phi20 (OUTER_R), centered, NOT scaled — same as the PCB view
-    s += '    <g transform="translate(12 12)">\n'
-    s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
-    # copper stubs from the coil ends to the two through-hole pads
-    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
-          % (INNER_PAD_R, pts[0][0], TRACE_W))
-    s += ('      <line x1="%.2f" y1="0" x2="%.2f" y2="0" stroke="#f7bf13" stroke-width="%.1f"/>\n'
-          % (pts[-1][0], OUTER_PAD_R, TRACE_W))
-    # through-hole pads: gold ring + drilled hole (id on the ring only)
-    for cid, cx in (("connector0pin", INNER_PAD_R),
-                    ("connector1pin", OUTER_PAD_R)):
-        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="none" stroke="#f7bf13" '
-              'stroke-width="%.2f" id="%s"/>\n' % (cx, ring_r, ring_w, cid))
-        s += ('      <circle cx="%.2f" cy="0" r="%.2f" fill="#1d1d1d"/>\n' % (cx, hole_r))
-    s += '    </g>\n'
+    s += board_artwork()
     s += '  </g>\n'
     s += "</svg>\n"
     return s
@@ -268,19 +289,20 @@ def breadboard_svg():
 
 # ---------------------------------------------------------------- icon view
 def icon_svg():
-    """32x32 icon: same square-board spiral as the breadboard view."""
-    d, pts = ribbon_path(ARRAY_OUTER_R)
+    """32x32 icon: the breadboard picture, scaled 32/26 onto the icon canvas.
+
+    User 2026-11-06: "icon 改成与面包板一致" -- square 24x24 board, phi20
+    spiral and the two through-hole pads, identical to the breadboard view,
+    only smaller.  The 26 mm breadboard canvas (viewBox -1..25) maps onto
+    the 0..32 icon canvas:  x_icon = (x_bb + 1) * 32 / 26.
+    """
+    k = 32.0 / BB_CANVAS_MM
     s = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">\n'
     )
-    s += '  <g id="breadboard">\n'
-    # square board
-    s += '    <rect x="5" y="6" width="22" height="20" rx="1" ry="1" fill="#2f7d32" stroke="#1d4d1f" stroke-width="0.8"/>\n'
-    # golden spiral (scaled: ARRAY_OUTER_R=9.5 -> fit within 22x20)
-    s += '    <g transform="translate(16 16) scale(0.85)">\n'
-    s += '      <path d="%s" fill="#f7bf13" stroke="none"/>\n' % d
-    s += '    </g>\n'
+    s += '  <g id="breadboard" transform="translate(%.6f %.6f) scale(%.6f)">\n' % (k, k, k)
+    s += board_artwork(pin_ids=False)
     s += '  </g>\n'
     s += "</svg>\n"
     return s
