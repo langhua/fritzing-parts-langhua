@@ -10,8 +10,8 @@ Files are written next to this script.
 Connector layout:
     connector0 = coil inner end  (start of the innermost turn)
     connector1 = coil outer end  (end of the outermost turn)
-    Breadboard pads sit on those two ends, pitch 7.62 mm (= 3 x 2.54);
-    PCB pads at r = 3.30 / 10.70 (pitch 7.40, through-hole).
+    Breadboard and PCB pads are identical: r = 3.30 / 10.70 (pitch 7.40),
+    through-hole OD 1.6 mm / drill 0.6 mm.
 """
 
 import math
@@ -214,27 +214,25 @@ def breadboard_svg():
         connector0 = inner end  (start of the innermost turn)
         connector1 = outer end  (end of the outermost turn)
 
-    On the real board these are through-hole pads big enough to solder a
-    2.54 mm header pin into: OD 1.8 mm / drill 1.0 mm (same ring style as
-    the PCB view, 0.7 +- 0.2).  The PCB view keeps its own pads at
-    r = 3.30 / 10.70 (pitch 7.40); here the pitch is snapped to
-    3 x 2.54 = 7.62 mm so that BOTH pins land on the breadboard hole grid:
+    The two through-hole pads are IDENTICAL to the PCB view, so the two
+    views can be checked against each other one-to-one (user 2026-11-06):
 
-        inner r = 3.08, outer r = 10.70  ->  pitch 7.62 mm
+        inner r = 3.30, outer r = 10.70  ->  pitch 7.40 mm
+        pad OD 1.6 mm, drill 0.6 mm      (r = 0.55, stroke-width = 0.5)
 
     Board: 24 x 24 mm square (x = 0..24, y = 0..24) inside a 26 x 26 mm
-    canvas.  The outer pad reaches x = 23.60, i.e. 0.40 mm inside the board
+    canvas.  The outer pad reaches x = 23.50, i.e. 0.50 mm inside the board
     edge.  No board edge lands on a breadboard hole line relative to the
     two pin columns/row, so it does not block the holes around it.
     """
     d, pts = ribbon_path(ARRAY_OUTER_R)
 
-    INNER_PAD_R = 3.08          # 10.70 - 7.62 (keeps the PCB outer pad spot)
-    OUTER_PAD_R = 10.70
-    PAD_OD = 1.8                # fits a 2.54 mm header pin
-    PAD_HOLE = 1.0
-    ring_r = (PAD_OD + PAD_HOLE) / 4.0     # 0.70 = circle radius ...
-    ring_w = (PAD_OD - PAD_HOLE) / 2.0     # 0.40 = stroke width
+    INNER_PAD_R = 3.30          # same as the PCB view
+    OUTER_PAD_R = 10.70         # same as the PCB view (pitch 7.40)
+    PAD_OD = 1.6                # same as the PCB view
+    PAD_HOLE = 0.6              # same as the PCB view
+    ring_r = (PAD_OD + PAD_HOLE) / 4.0     # 0.55 = circle radius ...
+    ring_w = (PAD_OD - PAD_HOLE) / 2.0     # 0.50 = stroke width
     hole_r = PAD_HOLE / 2.0
 
     s = (
