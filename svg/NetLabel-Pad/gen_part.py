@@ -74,7 +74,14 @@ def pcb_svg():
 # ---------------------------------------------------------- schematic view
 def schematic_svg():
     """Compact symbol: wire stub from the left + junction dot. No label text
-    (removed per user), right blank trimmed to fit content."""
+    (removed per user), right blank trimmed to fit content.
+
+    ★★ 2026-11-07 修 ✗（用户看 Fritzing：「很多接线我看是断开的，图上却表示连接上了」✓）：
+      原来**焊盘圆画在右端**（`cx=6`）、而**接线端在左端**（`x=0.35`）✗ ⇒
+      导线接在左端（电气上对 ✓、Fritzing 认 ✓），但**看上去停在半路、没接到圆上** ✗。
+      ⇒ 把圆**挪到接线端那一头**（`cx=0.35`）✓：线头正好落在圆里，一看就知道接上了 ✓；
+      接线端坐标**一个字没动** ✓（`x=0.35`）⇒ 已有草图的连线位置不受影响 ✓。
+    """
     s = (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" '
@@ -82,8 +89,8 @@ def schematic_svg():
         ' <g id="schematic">\n'
         # wire stub (left) — where the net wire connects
         '  <line class="pin" id="connector0pin" connectorname="PAD" fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="0.35" y1="6" x2="5.5" y2="6"/>\n'
-        # junction dot
-        '  <circle cx="6" cy="6" r="0.8" fill="none" stroke="#000000" stroke-width="0.5"/>\n'
+        # junction dot —— ★ 画在**接线端那一头** ✓（`cx=0.35`，与 `connector0terminal` 同点 ✓）
+        '  <circle cx="0.35" cy="6" r="0.8" fill="none" stroke="#000000" stroke-width="0.5"/>\n'
         # terminal (degenerate rect at pin outer end)
         '  <rect class="terminal" id="connector0terminal" x="0.35" y="6" width="0.0001" height="0.0001" fill="none" stroke="none" stroke-width="0"/>\n'
         ' </g>\n'
