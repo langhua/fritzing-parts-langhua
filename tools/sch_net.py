@@ -6,8 +6,11 @@ r"""网标签（net label）规则 —— **全仓唯一实现** ✓
   （面包板 / PCB 要物理连接 ✗ —— 见 `fritzing-parts-langhua/docs/breadboard-routing-rules.md` ✓）。
 
 ★ 怎么认（实测取证 ✓，`hardware/pixel/pixel-schematic-v29_netlabel.fzz` ✓）：
-  · 网标签是**元件实例** ✓，其 `moduleIdRef` 里带 `NetLabel` ✓
-    —— 核心库 = `NetLabelModuleID` ✓；本库 = `NetLabel-Pad` ✓；
+  · 网标签是**元件实例** ✓，其 `moduleIdRef` **就是核心库那个 `NetLabelModuleID`** ✓
+    —— ★★ 2026-11-07 收紧 ✗：原来写的是「名字里带 `NetLabel`」✗，把本库的
+    `NetLabel-Pad` 也吞进来了 ✗ —— 而那个件**是有脚的真件** ✓（原理图有
+    `connector0pin` + `terminalId`、PCB 有真焊盘 ⌀2.0/⌀1.0 ✓，就是当测试点用的）✓
+    ⇒ 被当成旗标画成五边形、布线器报「导出里没有 TPx 的 connector0」✗（实测 ✓）。
   · **实例标题（`<title>`）= 网名** ✓（该草图里 4 个实例标题为 `RC` / `RC` / `GND` / `GND` ✓，
     两个 `RC` 与两个 `GND` 各自互为同一张网 ✓）。
 
@@ -258,9 +261,20 @@ def label_flag(geom, text, m=IDENT):
     return [view(geom, text, m, p) for p in pts]
 
 def is_label_module(module_id):
-    """这个 `moduleIdRef` 是不是**网标签**元件 ✓"""
-    _m = (module_id or "").lower()
-    return "netlabel" in _m or "net label" in _m
+    """这个 `moduleIdRef` 是不是**网标签**元件 ✓
+
+    ★★ 2026-11-07 收紧 ✓（用户定「改」✓）：**只认核心库那个 `NetLabelModuleID`** ✓
+      —— 它的原理图符号**本来就没有脚** ✗ ⇒ 只能靠“同名”连通 ✓。
+    ✗ 不能再按“名字里带 `NetLabel`”判 ✗（旧写法）：本库的 **`NetLabel-Pad` 是
+      **有脚的真件** ✓（原理图 `connector0pin` + `terminalId` ✓、PCB 有真焊盘
+      ⌀2.0/⌀1.0、2.54 排针兼容 ✓ —— 就是拿来当**测试点**的 ✓）
+      ⇒ 被子串判据当成旗标，画成五边形、布线器报「导出里没有 TPx 的 connector0」✗
+      （2026-11-07 实测 ✓）。
+    ★ 比的是“去掉分隔符后的全小写串” ✓（`NetLabelModuleID` / `net_label_module_id`
+      都算 ✓；`NetLabel-Pad` ⇒ `netlabelpad` ⇒ **不算** ✓）。
+    """
+    _m = "".join(ch for ch in (module_id or "").lower() if ch.isalnum())
+    return _m.startswith("netlabelmoduleid")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
