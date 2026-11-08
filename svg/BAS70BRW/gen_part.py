@@ -177,7 +177,11 @@ def schematic_svg():
     tx = 62.5                                    # pin-number text x (right side)
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" '
-         'width="66px" height="38px" viewBox="0 0 66 38" xml:space="preserve">\n',
+        # ★★★ 2026-11-08 ✓ **不许用 `px`** ✗（用户定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）
+        #   实测（`render_sch --verify-export` ✓）：本件脚向量**比值 0.800** ✗
+        #   （我 66.00 / Fritzing 52.80 ✓）⇒ 引脚间距比 Fritzing 大 25% ✗
+        #   ⇒ 线在 Fritzing 里落在符号外面 ✓。换 `in`，长度 = 实测反推（0.8 单位/px ✓）。
+        'width="0.5866667in" height="0.3377778in" viewBox="0 0 66 38" xml:space="preserve">\n'
          ' <g id="schematic">\n',
          # body outline: two polylines with gaps where the AC stubs leave
          # closed black frame (the AC pin stubs cross it: grey outside, black inside)
@@ -332,7 +336,8 @@ def fzp_xml(outdir):
         '    <layer layerId="icon"/>\n   </layers>\n  </iconView>\n'
         '  <breadboardView>\n   <layers image="breadboard/%s_breadboard.svg">\n'
         '    <layer layerId="breadboard"/>\n   </layers>\n  </breadboardView>\n'
-        '  <schematicView fliphorizontal="true" flipvertical="true">\n'
+        # ★★★ 2026-11-08 ✓ **原理图**不许 `fliphorizontal` / `flipvertical` ✗（同 WS2812B/1010 ✓）
+        '  <schematicView>\n'
         '   <layers image="schematic/%s_schematic.svg">\n'
         '    <layer layerId="schematic"/>\n   </layers>\n  </schematicView>\n'
         '  <pcbView>\n   <layers image="pcb/%s_pcb.svg">\n'

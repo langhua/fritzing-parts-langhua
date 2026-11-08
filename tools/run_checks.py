@@ -90,6 +90,13 @@ PART_CHECK_ALLOW = {
                   "2026-10-17 核过：改前 3 == 改后 3）",
     "SM5206": "schem_check 4 项既存 FAIL（同上；2026-10-17 核过：改前 4 == 改后 4）",
     "TP4056": "schem_check 3 项既存 FAIL（同上；2026-10-17 核过：改前 3 == 改后 3）",
+    # 2026-11-08 去掉 schematicView 上的 fliphorizontal/flipvertical 时改动到的件。
+    # 它的 3 项 FAIL 是**改前就有**的（从来就没有面包板视图 + pcb 有重复 id），
+    # 证据 = `git show HEAD:` 取回改前那份 fzp，在临时目录跑同一个 fzp_check ⇒
+    # rc=1、FAIL 3 行，与改后**逐条相同**（面包板 / 重复 id 与那一行 flip 无关）。
+    # ★ 用户 2026-10-15 明示：pcb 重复 id 那处「一并回退、保持原状」⇒ 暂不修。
+    "NetLabel-Pad": "fzp_check 3 项既存 FAIL（无面包板视图 + breadboardView image='' + "
+                    "pcb 重复 id 'connector0pad'；2026-11-08 核过：改前 3 == 改后 3）",
 }
 
 

@@ -19,7 +19,7 @@
     <layer layerId="icon"/>
    </layers>
   </iconView>
-  <schematicView fliphorizontal="true" flipvertical="true">
+  <schematicView>
    <layers image="schematic/NetLabel-Pad_1_schematic.svg">
     <layer layerId="schematic"/>
    </layers>

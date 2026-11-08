@@ -164,7 +164,15 @@ def schematic_svg():
     s = (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" '
-        'x="0px" y="0px" width="48px" height="32px" viewBox="0 0 48 32" xml:space="preserve">\n'
+        # ★★★ 2026-11-08 ✓ **不许用 `px`** ✗（用户定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）
+        #   ✗ 原来是 `width="48px" height="32px"` ✗ ⇒ 各工具对 `px` 的解释不一致 ✗
+        #     实测（`render_sch --verify-export` 拿 Fritzing 自己的导出对账 ✓）：
+        #     本件脚向量 **比值 0.800** ✗（我们 42.00 / Fritzing 33.60 ✓）⇒
+        #     **引脚间距比 Fritzing 大 25%** ✗ ⇒ 线画到我们以为的脚上、
+        #     在 Fritzing 里**落在符号外面** ✓（用户截图圈出的 LED2 就是它 ✓）。
+        #   ✓ 换 `in`：`48px` 在 Fritzing 里的实际长度 = **0.4266667in**（实测反推 0.8 单位/px ✓）；
+        #     viewBox 不动 ✓ ⇒ 图形与脚位关系不变，只把“单位归属”钉死 ✓。
+        'x="0px" y="0px" width="0.4266667in" height="0.2844444in" viewBox="0 0 48 32" xml:space="preserve">\n'
         ' <g id="schematic">\n'
         '  <rect x="14" y="8" width="20" height="16" fill="#FFFFFF" stroke="#000000" stroke-width="0.9"/>\n'
         # DI (connector2, pin 4) - left
@@ -380,7 +388,12 @@ def fzp_xml():
         '    <layer layerId="breadboard"/>\n'
         '   </layers>\n'
         '  </breadboardView>\n'
-        '  <schematicView fliphorizontal="true" flipvertical="true">\n'
+        # ★★★ 2026-11-08 ✓ **原理图**不许 `fliphorizontal` / `flipvertical` ✗
+        #   ✗ 病（AGENTS §5 已记过同族 ✓）：这两个属性会把**原理图符号镜像** ✗
+        #     ⇒ Fritzing 画出来的符号在**另一边** ✗，而我们算脚位时按未镜像算 ✓
+        #     ⇒ 线看着“没接上脚” ✗（正是用户截图圈 LED2 / D3 的原因之一 ✓）。
+        #   ★ 它们属于 **pcbView**（贴片翻面 ✓），不该出现在 schematicView ✓。
+        '  <schematicView>\n'
         '   <layers image="%s">\n'
         '    <layer layerId="schematic"/>\n'
         '   </layers>\n'

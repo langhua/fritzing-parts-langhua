@@ -139,7 +139,7 @@ def fzp_xml():
         '    <layer layerId="icon"/>\n'
         '   </layers>\n'
         '  </iconView>\n'
-        '  <schematicView fliphorizontal="true" flipvertical="true">\n'
+        '  <schematicView>\n'
         '   <layers image="%s">\n'
         '    <layer layerId="schematic"/>\n'
         '   </layers>\n'
