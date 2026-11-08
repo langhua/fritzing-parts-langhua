@@ -85,7 +85,9 @@ def schematic_svg():
     s = (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" '
-        'x="0px" y="0px" width="9px" height="12px" viewBox="0 0 9 12" xml:space="preserve">\n'
+        # ★ 2026-11-08 ✓ 不许用 `px` ✓（用户定 ✓）；Fritzing 把 **1px 当 1 个 sketch 单位**
+        #   （1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓（实测：`render_sch --verify-export` ⑤ 脚向量 ✓）
+        'x="0px" y="0px" width="0.1in" height="0.1333333in" viewBox="0 0 9 12" xml:space="preserve">\n'
         ' <g id="schematic">\n'
         # wire stub (left) — where the net wire connects
         '  <line class="pin" id="connector0pin" connectorname="PAD" fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="0.35" y1="6" x2="5.5" y2="6"/>\n'

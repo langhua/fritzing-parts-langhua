@@ -402,6 +402,22 @@ def fzp_xml():
     ) % (PART_ID, TITLE, PKG, PART_NUMBER, ICON_REF, BB_REF, SCHEM_REF, PCB_REF)
 
 
+def _px2in(text):
+    """★ 2026-11-08 ✓ 写盘前把 `width/height="Npx"` 换成 `in`
+    （用户 2026-11-08 定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）。
+
+    Fritzing 把 **1px 当 1 个 sketch 单位**（1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓
+    （实测：`render_sch --verify-export` ⑤「同一零件内脚向量」，LED2 与 D3 互证 ✓）。
+    面包板那份是 **core 资产原样搬过来**的（含它的 px 头）⇒ 只能在写盘前转 ✓。
+    """
+    import re as _re
+
+    def _rep(m):
+        v = ("%.7f" % (float(m.group(2)) / 90.0)).rstrip("0").rstrip(".")
+        return '%s="%sin"' % (m.group(1), v or "0")
+    return _re.sub(r'\b(width|height)="([0-9]*\.?[0-9]+)px"', _rep, text)
+
+
 def main():
     files = {
         PCB_SVG: pcb_svg(),
@@ -411,6 +427,7 @@ def main():
         FZP: fzp_xml(),
     }
     for name, content in files.items():
+        content = _px2in(content)          # ★ 2026-11-08 ✓ 不许用 px ✓
         with open(os.path.join(OUT_DIR, name), "w", encoding="utf-8") as f:
             f.write(content)
         print("wrote", name)

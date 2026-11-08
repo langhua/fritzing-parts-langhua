@@ -178,10 +178,11 @@ def schematic_svg():
     L = ['<?xml version="1.0" encoding="utf-8"?>\n',
          '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" '
         # ★★★ 2026-11-08 ✓ **不许用 `px`** ✗（用户定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）
-        #   实测（`render_sch --verify-export` ✓）：本件脚向量**比值 0.800** ✗
-        #   （我 66.00 / Fritzing 52.80 ✓）⇒ 引脚间距比 Fritzing 大 25% ✗
-        #   ⇒ 线在 Fritzing 里落在符号外面 ✓。换 `in`，长度 = 实测反推（0.8 单位/px ✓）。
-        'width="0.5866667in" height="0.3377778in" viewBox="0 0 66 38" xml:space="preserve">\n'
+        #   实测（`render_sch --verify-export` ⑤ 脚向量 ✓，与 LED2 互证 ✓）：
+        #   Fritzing 把 **1px 当 1 个 sketch 单位**（1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓
+        #   （`66px` 时我 42.00 ↔ 导出 33.60 ⇒ 导出反推 sketch = 42.00 ⇒ k = 1.0 ✓；
+        #    按 ×0.8 写会变成 26.88、比值 1.250 ✗ 反而小了 25% ✗）。
+        'width="0.7333333in" height="0.4222222in" viewBox="0 0 66 38" xml:space="preserve">\n'
          ' <g id="schematic">\n',
          # body outline: two polylines with gaps where the AC stubs leave
          # closed black frame (the AC pin stubs cross it: grey outside, black inside)

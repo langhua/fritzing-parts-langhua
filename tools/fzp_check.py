@@ -26,6 +26,9 @@ fzp_check.py — **开发辅助**：检查 `.fzp` 与四个视图 svg 是否对�
   ⑩ **`schematic` 视图的 `connectorNterminal` 必须落在它自己引脚线的**外端**（居中 ✓）**
      —— 否则连接点会偏（导线接不到引脚尖 ✗）。Fritzing 取的是端子元素的**包围盒中心**
      （`fsvgrenderer.cpp:757-795 calcTerminalPoint()`）⇒ 22×22 那种 rect 必须写成“外端 − 11” ✓
+  ⑪ **任何视图 svg 的 `width` / `height` 不许用 `px`**（只许 `in` / `mm`）——
+     `px` 没有统一物理定义：我们按 1/72in、Fritzing 按 1 sketch 单位（1/90in）
+     ⇒ 零件两边大小不同 ⇒ 线在 Fritzing 里落在符号外 ✗。换算 `N px` ⇔ `N/90 in` ✓
 
 判定：退出码 0 且输出里没有 `FAIL`。
 """
@@ -214,6 +217,26 @@ def main(argv):
                              % "; ".join(_bad[:4]))
         else:
             notes.append("注: （跳过 ⑩）原理图引脚不是 `<line>` 或没有本体图形 ⇒ 量不了外端 ✓")
+
+    # ⑪ **任何视图 svg 的 `width` / `height` 不许用 `px`** ✓
+    #   （2026-11-08 用户定 ✓，原话：「元件库使用 in 或 mm 作为长度单位，不能用 px」✓）
+    #   为什么 ✗：`px` 没有统一物理定义 ⇒ 我们按 1/72in、Fritzing 按 **1 sketch 单位（1/90in）**
+    #     ⇒ 同一个零件两边大小不同 ✗ ⇒ 线画到"我们以为的脚位"上、在 Fritzing 里落在符号外 ✗。
+    #   ★ 实测口径 ✓：Fritzing 把 **1px 当 1 个 sketch 单位** ⇒ `N px` ⇔ **`N/90 in`** ✓
+    #     （`render_sch --verify-export` ⑤ 脚向量，`LED2` 与 `D3` 互证 ✓；按 ×0.8 写会反过来小 25% ✗）。
+    #   ★ 只查 `width` / `height` ✗ 不管 `x="0px" y="0px"` ✓（那是偏移 0，与长度单位无关 ✓）。
+    for v, p in files.items():
+        if not p:
+            continue
+        _head = re.search(r"<svg\b[^>]*>", open(p, encoding="utf-8", errors="replace").read(),
+                          re.S)
+        if not _head:
+            continue
+        _px = re.findall(r'\b(width|height)="([0-9]*\.?[0-9]+)px"', _head.group(0))
+        if _px:
+            fails.append("FAIL %s 视图 svg 的 %s 用了 `px`（只许 `in` / `mm`；"
+                         "`N px` ⇔ `N/90 in`，AGENTS §5）"
+                         % (v, "、".join("%s=%spx" % (a, b) for a, b in _px)))
 
     # 各 svg 的 id 集合（顺便查重复 id = ④）
     ids_of = {}

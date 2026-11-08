@@ -166,13 +166,14 @@ def schematic_svg():
         '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" '
         # ★★★ 2026-11-08 ✓ **不许用 `px`** ✗（用户定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）
         #   ✗ 原来是 `width="48px" height="32px"` ✗ ⇒ 各工具对 `px` 的解释不一致 ✗
-        #     实测（`render_sch --verify-export` 拿 Fritzing 自己的导出对账 ✓）：
-        #     本件脚向量 **比值 0.800** ✗（我们 42.00 / Fritzing 33.60 ✓）⇒
-        #     **引脚间距比 Fritzing 大 25%** ✗ ⇒ 线画到我们以为的脚上、
-        #     在 Fritzing 里**落在符号外面** ✓（用户截图圈出的 LED2 就是它 ✓）。
-        #   ✓ 换 `in`：`48px` 在 Fritzing 里的实际长度 = **0.4266667in**（实测反推 0.8 单位/px ✓）；
+        #     实测（`render_sch --verify-export` ⑤「同一零件内脚向量」✓，LED2 与 D3 互证 ✓）：
+        #     Fritzing 把 **1px 当 1 个 sketch 单位**（1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓。
+        #     证据：`48px` 时我 42.00 ↔ 导出 33.60（导出 = sketch × 0.8 ✓）⇒ 导出反推 sketch
+        #     = **42.00** ⇒ k = **1.0** sketch/viewBox单位 = 1px ✓；
+        #     若按 ×0.8 写（0.4266667in）我变 26.88 ⇒ 比值 1.250 ✗（反而小了 25% ✗）。
+        #   ✓ 正确写法：`48px` ⇒ **0.5333333in**、`32px` ⇒ **0.3555556in**（÷90 ✓）；
         #     viewBox 不动 ✓ ⇒ 图形与脚位关系不变，只把“单位归属”钉死 ✓。
-        'x="0px" y="0px" width="0.4266667in" height="0.2844444in" viewBox="0 0 48 32" xml:space="preserve">\n'
+        'x="0px" y="0px" width="0.5333333in" height="0.3555556in" viewBox="0 0 48 32" xml:space="preserve">\n'
         ' <g id="schematic">\n'
         '  <rect x="14" y="8" width="20" height="16" fill="#FFFFFF" stroke="#000000" stroke-width="0.9"/>\n'
         # DI (connector2, pin 4) - left
@@ -443,6 +444,22 @@ def fzp_xml():
     ) % (PART_ID, ICON_REF, BB_REF, SCHEM_REF, PCB_REF)
 
 
+def _px2in(text):
+    """★ 2026-11-08 ✓ 写盘前把 `width/height="Npx"` 换成 `in`
+    （用户 2026-11-08 定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）。
+
+    Fritzing 把 **1px 当 1 个 sketch 单位**（1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓
+    （实测：`render_sch --verify-export` ⑤「同一零件内脚向量」，LED2 与 D3 互证 ✓）。
+    面包板那份是 **core 资产原样搬过来**的（含它的 px 头）⇒ 只能在写盘前转 ✓。
+    """
+    import re as _re
+
+    def _rep(m):
+        v = ("%.7f" % (float(m.group(2)) / 90.0)).rstrip("0").rstrip(".")
+        return '%s="%sin"' % (m.group(1), v or "0")
+    return _re.sub(r'\b(width|height)="([0-9]*\.?[0-9]+)px"', _rep, text)
+
+
 def main():
     files = {
         PCB_SVG: pcb_svg(),
@@ -452,6 +469,7 @@ def main():
         FZP: fzp_xml(),
     }
     for name, content in files.items():
+        content = _px2in(content)          # ★ 2026-11-08 ✓ 不许用 px ✓
         with open(os.path.join(OUT_DIR, name), "w", encoding="utf-8") as f:
             f.write(content)
         print("wrote", name)

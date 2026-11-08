@@ -151,14 +151,31 @@ JOBS = [("icon", "led0603_core_icon.svg"), ("breadboard", "led0603_core_breadboa
         ("pcb", "led0603_core_pcb.svg")]
 
 
+def _px2in(text):
+    """★ 2026-11-08 ✓ 写盘前把 `width/height="Npx"` 换成 `in`
+    （用户 2026-11-08 定 ✓：元件库一律 `in` / `mm` 作长度单位 ✓）。
+
+    Fritzing 把 **1px 当 1 个 sketch 单位**（1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓
+    （实测：`render_sch --verify-export` ⑤「同一零件内脚向量」，LED2 与 D3 互证 ✓）。
+    ★ `svg/_assets/led0603_core_*.svg` 那三张**原件不动** ✓（第三方素材、逐字节保留 ✓）；
+      只把**写进本件的**那份换个单位写法 ✓ —— 物理尺寸**完全等价** ✓（1px = 1/90 in ✓）。
+    """
+    import re as _re
+
+    def _rep(m):
+        v = ("%.7f" % (float(m.group(2)) / 90.0)).rstrip("0").rstrip(".")
+        return '%s="%sin"' % (m.group(1), v or "0")
+    return _re.sub(r'\b(width|height)="([0-9]*\.?[0-9]+)px"', _rep, text)
+
+
 def build():
     check = "--check" in sys.argv
     files = {}
-    for v, asset in JOBS:                       # ① 三张沿用素材（逐字节 ✓）
+    for v, asset in JOBS:                       # ① 三张沿用素材（素材逐字节读 ✓、写出时换单位 ✓）
         p = os.path.join(ASSETS, asset)
         if not os.path.exists(p):
             raise SystemExit("✗ 素材缺 %s ✗（见 svg/_assets/LICENSE-led0603_core.txt ✓）" % p)
-        files["svg.%s.%s_%s.svg" % (v, MOD, v)] = open(p, encoding="utf-8").read()
+        files["svg.%s.%s_%s.svg" % (v, MOD, v)] = _px2in(open(p, encoding="utf-8").read())
     files["svg.schematic.%s_schematic.svg" % MOD] = schematic_svg()   # ② 原理图自绘 ✓
     files["part.%s.fzp" % MOD] = fzp_text()
     print("== %s（moduleId %s ✓）==" % (OUT_NAME, MOD))

@@ -90,7 +90,9 @@ def schematic_svg():
     s = (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" '
-        'x="0px" y="0px" width="58.3px" height="29.51px" viewBox="0 0 58.3 29.51" xml:space="preserve">\n'
+        # ★ 2026-11-08 ✓ 不许用 `px` ✓（用户定 ✓）；Fritzing 把 **1px 当 1 个 sketch 单位**
+        #   （1/90 in）✓ ⇒ `N px` ⇔ **`N/90 in`** ✓（实测：`render_sch --verify-export` ⑤ 脚向量 ✓）
+        'x="0px" y="0px" width="0.6477778in" height="0.3278889in" viewBox="0 0 58.3 29.51" xml:space="preserve">\n'
         ' <g id="schematic">\n'
         # package outline (SOT-23 box)
         '  <polygon fill="#FFFFFF" stroke="#000000" stroke-width="0.9" stroke-linecap="round" points="14.75,14.76 29.15,14.76 43.55,14.76 43.55,7.56 43.55,0.36 14.75,0.36 14.75,7.56"/>\n'
