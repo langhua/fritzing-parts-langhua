@@ -1001,6 +1001,86 @@ def check(model, expect=None, allow=None):
                          "铜盘 Ø%.2f mm ✓）"
                          % (i, px, py, k, d, VIA_SAFE_MM, 2 * r_mm))
 
+    # ⑦b ★★ 过孔 ↔ **别的网的线** ✓（2026-11-09 加 ✗，用户点名 ✓）
+    #   ✗ 缺口（实测 v126）：⑥ 只看孔压**焊盘** ✓、⑦ 只看孔与焊盘/**件铜** ✓、
+    #     ⑪ 只看孔↔孔 ✓ —— **「孔挨着别的网的走线」没人管** ✗ ⇒
+    #     v126 里 4 颗 GND 孔离 `RC` 的线只有 **0.098 mm** ✗（4 mil = 0.1016 ✗）
+    #     检查器**一声没吭** ✓，只有自写的独立探针看得出来 ✓。
+    #   判据（与 ⑦ 同口径 ✓）：`净距 = 孔心到线中心 − 孔铜盘半径 − 线半宽` ≥ `CLEAR_MM` ✓。
+    #   ★ 网名怎么认 ✗（并查集此时可能已把两张网并了 ✗ ⇒ 用它判**永远不报** ✗）：
+    #     · 线 ⇒ 看它**端点落在哪只焊盘上**（端点与盘心重合 ✓，取 `net_of` ✓）；
+    #     · 孔 ⇒ 看**端点落在孔心上的那些线**（本仓写回器给过孔写了"它接的线" ✓），
+    #       只认**一致**的那种 ✓（认不出就跳过并记一条 note ✓，不静默 ✗）。
+    if net_of:
+        # ★ 认网 ✓（2026-11-09 ✓，**不许静默失效** ✗）：先按"端点重合"把线连成组 ✓，
+        #   再拿"端点落在焊盘上"当种子 ✓ 传播 ✓ —— 一根线常常两头都接**别的线** ✗，
+        #   只看它自己有没有焊盘端点 ⇒ 一大半线认不出网 ✗（第一版就是这个毛病 ✓，
+        #   于是 ⑦b 一声不吭 ✗）。
+        _pu = list(range(len(traces)))
+
+        def _pf(a):
+            while _pu[a] != a:
+                _pu[a] = _pu[_pu[a]]
+                a = _pu[a]
+            return a
+
+        def _pu_join(a, b):
+            _ra, _rb = _pf(a), _pf(b)
+            if _ra != _rb:
+                _pu[_rb] = _ra
+
+        _tol = 0.02 / PW.SK
+        for _j in range(len(traces)):
+            for _k in range(_j + 1, len(traces)):
+                _tj, _tk = traces[_j], traces[_k]
+                for _a in (endpt(_tj, 0), endpt(_tj, 1)):
+                    for _b in (endpt(_tk, 0), endpt(_tk, 1)):
+                        if math.hypot(_a[0] - _b[0], _a[1] - _b[1]) < _tol:
+                            _pu_join(_j, _k)
+        _seed = {}
+        for _j, _t in enumerate(traces):
+            for _k in (0, 1):
+                _e = endpt(_t, _k)
+                for _q in pads:
+                    if (abs(_q["c"][0] - _e[0]) < 1e-6 and abs(_q["c"][1] - _e[1]) < 1e-6):
+                        _nm = net_of.get("%s.%s" % (_q["title"], _q["cid"]))
+                        if _nm:
+                            _seed.setdefault(_pf(_j), set()).add(_nm)
+        _grpnet = {r: (next(iter(s)) if len(s) == 1 else None) for r, s in _seed.items()}
+        _tnet = {_j: _grpnet.get(_pf(_j)) for _j in range(len(traces))}
+        _known = sum(1 for v2 in _tnet.values() if v2)
+        notes.append("⑦b 认网：%d/%d 根线认出了网 ✓" % (_known, len(traces)))
+        _bad7b, _skip7b = 0, 0
+        for _i, _v in enumerate(vias):
+            _ns = {_tnet[_j] for _j, _t in enumerate(traces)
+                   if _tnet.get(_j) and any(
+                       math.hypot(endpt(_t, _k)[0] - _v["p"][0],
+                                  endpt(_t, _k)[1] - _v["p"][1]) < _tol for _k in (0, 1))}
+            if len(_ns) != 1:
+                _skip7b += 1
+                continue                     # 认不出本孔的网 ⇒ 跳过 ✓（计数 ✓ 不静默 ✗）
+            _nv = _ns.pop()
+            _hd, _rg = _v.get("hole_mm"), _v.get("ring_mm")
+            _rv = ((_hd or 0.3) / 2.0 + (_rg or 0.15))
+            for _j, _t in enumerate(traces):
+                _nt = _tnet.get(_j)
+                if _nt is None or _nt == _nv:
+                    continue
+                _hw = (_t.get("mils") or 8.0) * 0.0254 / 2.0
+                _gap = d_pt_trace(_v["p"], _t) * PW.SK - _rv - _hw
+                if _gap < CLEAR_MM - 1e-9:
+                    _bad7b += 1
+                    if _bad7b <= 6:
+                        probs.append(
+                            "⑦b 过孔 #%d（网 %s）@(%.2f,%.2f) mm 与**别的网**的走线 #%d"
+                            "（网 %s）铜净距只有 **%+.4f mm** ✗（需要 ≥ %.3f mm ✓）"
+                            % (_i, _nv, _v["p"][0] * PW.SK, _v["p"][1] * PW.SK,
+                               _j, _nt, _gap, CLEAR_MM))
+        if _bad7b > 6:
+            probs.append("⑦b …另有 %d 处同类（只列前 6 ✓）" % (_bad7b - 6))
+        if _skip7b:
+            notes.append("⑦b 有 %d 颗过孔认不出所属网 ⇒ 未参与判定 ✓" % _skip7b)
+
     # ⑧ ★★ **同一层**的元件要留**安全间隔** ✓（2026-10-01 用户定 ✓：
     #   「v49 里，C1 是不是在同一面跟 U1 位置重叠了？这也不应该的，也需要一个规则禁止」✓
     #   「规则里还要元件之间保持安全间隔距离」✓）
