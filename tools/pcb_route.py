@@ -654,6 +654,15 @@ def _flood_core(grid, lay0, start, no_via=(), want=None, via_at_start=False, via
             ((ix, iy) != s[1] and cur not in want)
             or (via_at_start and (ix, iy) == s[1])
             or (via_at_end and cur in want))
+        # ★★ 2026-11-09 加 ✓：**兜底路径也要过过孔净空** ✗ ——
+        #   ✗ `bfs_path` 走的是这里 ✗，先前只在 `astar` 里加了 `_via_space` ✗
+        #   ⇒ 实测 v126 的 4 颗 GND 孔离 `RC` 的线只有 0.098 mm ✗（差 0.05 才到 4 mil ✓）。
+        #   口径与 `astar` **同一份**函数 ✓（不许各写一遍 ✗）。
+        if _can_via:
+            _r = _via_r(grid)
+            if not (_via_space(grid, cl, ix, iy, _r)
+                    and _via_space(grid, nl, ix, iy, _r)):
+                _can_via = False
         if _can_via:
             nbrs.append((nl, (ix, iy)))
         for nxt in nbrs:
