@@ -804,6 +804,32 @@ def trapped_pins(grid_for, pend, net, net_pads, pads, novia_for,
     return hits
 
 
+def _via_r(grid):
+    r"""过孔合法所需的**额外**格子半径 ✓（配合 `_via_space` ✓）
+
+    ★★ 为什么需要（2026-11-09 ✓，用户指出 v121 里有 6 处过孔贴别的网的线 ✓）：
+      栅格里的障碍是按「**一根线**的半宽 + 净距」膨胀的 ✓（= `TRACE_MM/2 + CLEAR_MM` ✓）
+      ⇒ “这格可走”只意味着“能放**线**” ✗；而**过孔的铜盘半径是 `VIA_CLEAR_MM` = 0.30**
+      ✗ ⇒ 比线半宽（0.1016）宽出 **0.1984 mm** ✗ ⇒ 按线宽判出来的合法位，放孔就会
+      **贴到隔壁网的线上** ✗（实测：`过孔(35.93,9.77)` 与 5V 的线净距 **−0.002 mm** ✗，
+      另有 5 处 0.090~0.098 mm ✗ —— 都低于 4 mil 工艺下限 ✓）。
+
+    ⇒ 额外要的 = `VIA_CLEAR_MM − TRACE_MM/2` ✓，换算成格数 ✓。
+      于是总净距 ≥ `(TRACE/2 + CLEAR) + 额外` = **`VIA_CLEAR + CLEAR`** ✓（= 0.45 mm ✓）。
+    """
+    need = U(VIA_CLEAR_MM - TRACE_MM / 2.0)
+    return max(0, int(math.ceil(need / grid.cell - 1e-9)))
+
+
+def _via_space(grid, lay, ix, iy, r):
+    r"""过孔位置周围 `r` 格（Chebyshev ✓）**全部可走** ⇒ 放孔不会贴到别的铜 ✓"""
+    for dx in range(-r, r + 1):
+        for dy in range(-r, r + 1):
+            if not grid.free(lay, ix + dx, iy + dy):
+                return False
+    return True
+
+
 def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, avoid_w=0.0,
           avoid2=None, avoid2_w=0.0,
           no_via=(), turn=0.0, pen_layer=None, pen=0.0, via_at_start=False, via_at_end=False):
@@ -881,6 +907,16 @@ def astar(grid, lay0, start, goals, via_cost, blocked_extra=None, avoid=None, av
             ((ix, iy) != s_cell and (ix, iy) not in g_cells)
             or (via_at_start and (ix, iy) == s_cell)
             or (via_at_end and (ix, iy) in g_cells))
+        # ★★ 2026-11-09 加 ✓：过孔要按**铜盘半径**留空 ✗（不能拿“线半宽”的判据顶 ✗）——
+        #   光看 `grid.free()` 只保证“这格能放**线**”✓，孔盘比线宽 0.1984 mm ✗
+        #   ⇒ 实测 v121 有 6 处孔贴到别的网的线（最近 −0.002 mm ✗）。
+        #   这里要求**两层**的 5×5（r 由 `_via_r` 算 ✓）都空 ✓ ⇒ 净距 ≥ VIA_CLEAR+CLEAR ✓。
+        if _can_via:
+            _r = _via_r(grid)
+            _oth = 'copper0' if cl == 'copper1' else 'copper1'
+            if not (_via_space(grid, cl, ix, iy, _r)
+                    and _via_space(grid, _oth, ix, iy, _r)):
+                _can_via = False
         if _can_via:
             nbrs.append((('copper0' if cl == 'copper1' else 'copper1', (ix, iy), cd), via_cost))
         for nxt, w in nbrs:
