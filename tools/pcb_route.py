@@ -2133,6 +2133,18 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
                 _vs_new.append(_p)
             vs = _vs_new
             vias += vs
+            # ★★ 2026-11-09 加 ✓：**孔↔孔**也要留净距 ✗（中心距 ≥ `VIA_CLEAR + VIA_SAFE` = 0.55 ✓）——
+            #   实测 v124：`Via12`(43.03,15.37) 与 `Via15`(42.83,15.37) 中心距 **0.20 mm** ✗
+            #   ⇒ 孔 Ø0.30 的孔壁互相吃掉 0.10 ✗（`pcb_check` ⑪ 报 **−0.100 mm** ✗）。
+            #   病因同「过孔按线宽判空」✓：`no_via` 只在**开布这张网之前**算一次 ✗ ⇒
+            #   **同一张网**后面几段看不见刚放的孔 ✗ ⇒ 必须放一颗记一颗 ✓。
+            for _p in vs:
+                _g = U(VIA_CLEAR_MM + VIA_SAFE_MM)
+                _i0, _j0 = base.rc(_p[0] - _g, _p[1] - _g)
+                _i1, _j1 = base.rc(_p[0] + _g, _p[1] + _g)
+                for _ix in range(_i0, _i1 + 1):
+                    for _jy in range(_j0, _j1 + 1):
+                        no_via.add((_ix, _jy))
             for lay, p, q in sg:
                 traces.setdefault(net, []).append(
                     (lay, (min(p[0], q[0]), min(p[1], q[1]),
