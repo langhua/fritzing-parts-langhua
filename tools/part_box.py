@@ -155,41 +155,72 @@ def _nums(s):
 
 
 def _path_pts(d):
-    """把 path 的**坐标点**取出来（只认**参数个数固定**的绝对命令 ✓）
-       相对命令（小写 m/l/h/v 等）坐标不是绝对坐标 ⇒ 整条跳过 ✓（宁可少算，由调用方兜底 ✓）"""
+    """把 path 的**坐标点**取出来 ✓ —— **绝对/相对命令都认** ✓（2026-11-09 补 ✗）
+
+    ★★ 为什么要补相对命令 ✗（**量出来的** ✓，不是猜 ✓）：
+      旧版只认**绝对**大写命令 ⇒ 遇到小写 `m/l/h/v…` **整条跳过** ✗（返回 `None`）⇒
+      `el_box()` 跟着返回 `(None, None)` ⇒ 那个图元**根本没进焊盘表** ✗。
+      实测（本仓 `_work/pad_aabb.py` ✓）：`CH32V003F4U6` 的 `connector20pad`
+      （= **EPAD**，用相对命令画的 even-odd 路径，带 3×3 钻孔 ✓）认不出中心 ✗
+      ⇒ `pcb_pads` 报「**30 脚 / 29 焊盘** ✗ 数对不上」✗、
+        `pcb_check` 报「网表里的脚 `U1.connector20` 在板上的焊盘里**找不到**」✗
+      —— 而**布线器那边**（`route_wrap.py` 给 `PADLIKE` 补过 `path` ✓）看得见它 ✓
+      ⇒ 两把尺子不一致 ✗（§13 的同一个问题 ✓）⇒ 判据要跟上 ✓。
+
+    ★ 口径 ✓：大写 = **绝对**、小写 = **相对**（累加当前点 ✓）；`Z` 回车到子路径起点 ✓；
+      `M` 之后的多组坐标按 `L` 处理 ✓（SVG 语义 ✓）。
+    ★ 弧 `A` **只取端点** ✓（与旧版一致 ✓ —— 控制点/弧腹不进包围盒 ⇒ 对"矩形拼接"的
+      路径没有影响 ✓；本库的老行为不变 ✓）。
+    """
     if not d:
         return None
-    toks = re.findall(r"[MmLlHhVvCcSsQqTtAaZz]|-?\d*\.?\d+(?:[eE][-+]?\d+)?", d)
-    out, i, cur = [], 0, None
+    toks = re.findall(r"[MmLlHhVvCcSsQqTtAaZz]|-?\d*\.?\d+(?:[eE][-+]?\d+)?", d or "")
+    out, i = [], 0
+    cur, start = (0.0, 0.0), (0.0, 0.0)
     narg = {"M": 2, "L": 2, "H": 1, "V": 1, "C": 6, "S": 4, "Q": 4, "T": 2, "A": 7, "Z": 0}
     while i < len(toks):
         c = toks[i]
-        if not c.isalpha():
-            return None                        # 命令之间夹了裸数字 ⇒ 解析不了 ⇒ 放弃 ✓
-        if c not in narg:
-            return None                        # 出现相对命令 ⇒ 放弃 ✓
+        if not c.isalpha() or c.upper() not in narg:
+            return None                        # 命令之间夹了裸数字 / 不认识的命令 ⇒ 放弃 ✓
         i += 1
-        if c == "Z":
+        u, rel = c.upper(), c.islower()
+        if u == "Z":
+            cur = start
             continue
-        while i + narg[c] <= len(toks) and not toks[i].isalpha():
-            v = [float(x) for x in toks[i:i + narg[c]]]
-            i += narg[c]
-            v = list(v)
-            if c == "H":
-                cur = (v[0], cur[1] if cur else 0.0)
-            elif c == "V":
-                cur = (cur[0] if cur else 0.0, v[0])
-            elif c == "A":
-                cur = (v[5], v[6])
-            else:
-                for k in range(0, len(v) - 1, 2):
-                    out.append((v[k], v[k + 1]))
-                cur = (v[-2], v[-1])
-            if c in ("H", "V", "A"):
+        first = True
+        while i + narg[u] <= len(toks) and not toks[i].isalpha():
+            v = [float(x) for x in toks[i:i + narg[u]]]
+            i += narg[u]
+            if u in ("M", "L", "T"):
+                p = (v[0] + (cur[0] if rel else 0.0), v[1] + (cur[1] if rel else 0.0))
+                cur = p
+                out.append(p)
+                if u == "M" and first:
+                    start = p
+                if u == "M":
+                    u = "L"                    # 后续组按 L ✓（SVG 语义 ✓）
+            elif u == "H":
+                cur = (v[0] + (cur[0] if rel else 0.0), cur[1])
                 out.append(cur)
+            elif u == "V":
+                cur = (cur[0], v[0] + (cur[1] if rel else 0.0))
+                out.append(cur)
+            elif u == "C":
+                cur = (v[4] + (cur[0] if rel else 0.0), v[5] + (cur[1] if rel else 0.0))
+                out.append(cur)
+            elif u == "S":
+                cur = (v[2] + (cur[0] if rel else 0.0), v[3] + (cur[1] if rel else 0.0))
+                out.append(cur)
+            elif u == "Q":
+                cur = (v[2] + (cur[0] if rel else 0.0), v[3] + (cur[1] if rel else 0.0))
+                out.append(cur)
+            elif u == "A":
+                cur = (v[5] + (cur[0] if rel else 0.0), v[6] + (cur[1] if rel else 0.0))
+                out.append(cur)
+            first = False
             if i < len(toks) and toks[i].isalpha():
                 break
-            if i + narg[c] > len(toks):
+            if i + narg[u] > len(toks):
                 break
     return out or None
 

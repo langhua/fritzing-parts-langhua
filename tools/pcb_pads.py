@@ -28,6 +28,7 @@ r"""读**元件 PCB 焊盘**几何（给 PCB 摆位 / 布线 / DRC 用 ✓）202
   py -3.13 tools\pcb_pads.py <sketch.fzz> --part <标题>   # 只看一个件
   py -3.13 tools\pcb_pads.py <sketch.fzz> --spec          # **对账**：与已知 land pattern 比（出处写在表里 ✓）
 """
+import html
 import os
 import re
 import sys
@@ -89,6 +90,80 @@ HOLE_DRAW_OFF_MM = (PB.HOLE_DRAW_OFF_MM, PB.HOLE_DRAW_OFF_MM)
 PAD_SUF = ("pad", "pin", "leg", "terminal", "circle", "ring")
 PADLIKE = ("rect", "circle", "ellipse")          # 焊盘形状 ✓（path = 走线/铜箔 ✓）
 BOARD_MID = "TwoLayerRectanglePCBModuleID"        # 板框自己 ⇒ **不是元件** ✗（不读焊盘 ✓）
+# ★★ 2026-11-09 加 ✓：**自定义板形**的板件是另一个 moduleId ✓（实样量出来的 ✓）
+#   由来 ✓：用户要圆角板 ⇒ 在 Fritzing 里 **File → Import…** 导入一块外形 svg ✓
+#     （依据 `src/help/tipsandtricks.cpp:161`「To create a custom shape for your PCB, import an SVG file」✓）。
+#   实测存法（`_work/_round_out.fzz` **实样** ✓）：
+#     · `<board moduleId="BoardLogoImageModuleID" title="Custom PCB Image" width="3cm" height="2.5cm"/>` ✓
+#     · 板件 `<instance moduleIdRef="BoardLogoImageModuleID" path=":/resources/parts/core/boardlogoimage.fzp">` ✓
+#     · **外形 svg 整份塞在 `<property name="shape">` 里**（XML 转义 ✓）＋ `originalWidth/originalHeight/lastfilename` ✓
+#   ⇒ 所以“是不是板框”必须按**两个** id 判 ✗（只认旧那一个 ⇒ 判据把板子当元件、
+#      `board_rect` 读不出 ⇒ 「跳过②板外检查」✗ + ⑦b 认网 0/108 ✗，实测 ✓）。
+BOARD_MIDS = (BOARD_MID, "BoardLogoImageModuleID")
+
+
+def is_board(mid):
+    """这个 moduleId 是不是**板框自己** ✓（矩形板 / 自定义板形 两种 ✓）"""
+    return (mid or "") in BOARD_MIDS
+
+
+def board_corner_r(text):
+    """板件外形的**圆角半径**（mm ✓；矩形板或读不出 ⇒ `0.0` ✓）2026-11-09 加 ✓
+
+    ★ 为什么要它 ✗（**量出来的** ✓）：圆角板把四个角切掉了 ✓，而
+      `pcb_route.Grid.block_frame()`（板边留白 ✓）与 `pcb_check` 的 ② 板外检查
+      都只认**矩形** ✗ ⇒ 铜会画进被切掉的角里、**两边都看不出来** ✗（§13 最怕的那种 ✗）。
+    ★ 读法 ✓（照 `_round_out.fzz` 的**实样** ✓）：外形 svg 存在板件
+      `<property name="shape">` 里（XML 转义 ✓）⇒
+      ① 用 `width` ＋ `viewBox` 定「毫米 / 用户单位」比例 ✓；
+      ② 取 `<path id="boardoutline">` 的 `d` 里**第一段** `A rx ry` ⇒ 半径 ✓。
+      ✗ 不写死 `3.0` ✗ —— 以后换半径能自动跟 ✓。
+    """
+    # ★★ 2026-11-09 修 ✗：`name="shape"` 在 `.fz` 里**不止一个** ✗（实测 ✓：本板另有一件
+    #   logo 也带 `shape` ✓，它的 svg 是 `0.181708in × 0.0787402in` ✗）⇒
+    #   ✗ 全文找第一个 `name="shape"` 会抓到**别人**的 ✗（实测半径读出 `0.0` ✗）。
+    #   ✓ 先圈定**板件实例**（`moduleIdRef` 是 `BOARD_MIDS` 之一 ✓），再在它里面取 ✓。
+    blk = None
+    for mm2 in re.finditer(r"(?ms)<instance\b(?:(?!</instance>).)*?</instance>", text or ""):
+        b2 = mm2.group(0)
+        mr = re.search(r'moduleIdRef="([^"]*)"', b2)
+        if mr and is_board(mr.group(1)):
+            blk = b2
+            break
+    if blk is None:
+        return 0.0
+    m = re.search(r'name="shape"\s+value="([^"]*)"', blk)
+    if not m:
+        return 0.0
+    try:
+        svg = html.unescape(m.group(1))
+    except Exception:                                          # noqa: BLE001
+        return 0.0
+    vb = re.search(r'viewBox="\s*([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)', svg)
+    wm = re.search(r'width="\s*([\d.]+)\s*(mm|cm|in|px)?', svg)
+    if not (vb and wm):
+        return 0.0
+    vw = float(vb.group(3))
+    val, unit = float(wm.group(1)), (wm.group(2) or "px")
+    per_unit = {"mm": 1.0, "cm": 10.0, "in": 25.4, "px": 25.4 / 90.0}[unit] * val / vw if vw else 0.0
+    d = None
+    for pm in re.finditer(r'<path\b[^>]*>', svg):
+        if 'id="boardoutline"' in pm.group(0):
+            dm = re.search(r'\bd="([^"]*)"', pm.group(0))
+            d = dm.group(1) if dm else None
+            break
+    if not d:
+        # ★ 兜底：取第一个**带 d 的** path ✓（✗ 原来只判 `pm` 存在 ⇒ 那个 path 没有 d 时
+        #   `.group(1)` 直接崩 ✗ —— 实测 `AttributeError` ✓）
+        pm = re.search(r"<path\b[^>]*\bd=\"[^\"]*\"[^>]*>", svg)
+        if pm:
+            d = re.search(r'\bd="([^"]*)"', pm.group(0)).group(1)
+    if not d:
+        return 0.0
+    am = re.search(r"[Aa]\s*([\d.]+)[\s,]+([\d.]+)", d)
+    if not am:
+        return 0.0
+    return round(float(am.group(1)) * per_unit, 6)
 BAD_CAP = 8                                       # 报告封顶 ✓（刷屏的报告等于没报告 ✗）
 
 
@@ -117,7 +192,21 @@ def el_box(el):
             return ((x1 + x2) / 2.0, (y1 + y2) / 2.0), (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
         if t in ("path", "polygon", "polyline"):
             v = PB._path_pts(el.get("d")) if t == "path" else PB._nums(el.get("points"))
-            pts = [(v[i], v[i + 1]) for i in range(0, len(v) - 1, 2)]
+            if not v:
+                return None, None
+            # ★★ 2026-11-09 修 ✗（**量出来的** ✓）：`PB._path_pts()` 返回的是
+            #   **点对列表** `[(x, y), …]` ✓，`PB._nums()` 返回的是**扁平数字表** ✓ ——
+            #   ✗ 旧写法一律按扁平表切 `v[i], v[i+1]` ✗ ⇒ 对 path 会拼出"元组的元组" ✗
+            #     ⇒ 后面的 `min(xs) + max(xs)` 抛 `TypeError` ✗ ⇒ 被 `except` **静默吞掉** ✓
+            #     ⇒ 返回 `(None, None)` ⇒ **任何 `path` 画的焊盘从来没被认过** ✗
+            #     （实测 ✓：`CH32V003F4U6` 的 `connector20pad` = EPAD，用相对命令画的
+            #       even-odd 路径 ⇒ `pcb_pads` 报「30 脚 / **29 焊盘**」✗、
+            #       `pcb_check` 报「网表里的脚 `U1.connector20` 在板上找不到」✗，
+            #       而**布线器**那边给它补过 `PADLIKE` ⇒ 看得见 ⇒ 两把尺子不一致 ✗）。
+            if isinstance(v[0], (tuple, list)):
+                pts = [(float(q[0]), float(q[1])) for q in v]
+            else:
+                pts = [(v[i], v[i + 1]) for i in range(0, len(v) - 1, 2)]
             if not pts:
                 return None, None
             xs = [p[0] for p in pts]
@@ -303,6 +392,18 @@ def read_fzz(zpath):
                     if p.get("layer") in ("copper0", "copper1")]
             if lays:
                 decl[cid] = lays
+        # ★★ `<buses>` ✓（2026-11-09 加 ✓）：件**内部**电气同电位的脚 ✓
+        #   为什么判据要它 ✗（**量出来的** ✓）：Fritzing 的 `utils/graphutils.cpp` `scoreOneNet`
+        #   对**同一个 `bus()`** 的两只脚**直接加一条边** ✓（= 它眼里是连通的 ✓）。
+        #   实测后果（本仓像素板 ✓）：把 `path` 焊盘补进来之后，`U1.connector20`（EPAD）终于
+        #   进表了 ✓ ⇒ 判据开始报「网 `GND` 没连通：**10 个脚散在 2 块铜里**」✗ ——
+        #   而 EPAD / VSS / 9 颗热过孔在 `.fzp` 里**就是一条 bus** ✓ ⇒ Fritzing 眼里是一块铜 ✓。
+        #   ⇒ 判据要么建模 bus ✓、要么每块板都被这条假报拖着 ✗（§13：同一个声音 ✓）。
+        buses = []
+        for _b in fr.findall(".//buses/bus"):
+            _mem = [c.get("connectorId") for c in _b if c.get("connectorId")]
+            if len(_mem) > 1:
+                buses.append(_mem)
         svg_text, src = None, "（**没找到 svg** ✗）"
         want = os.path.basename(image or "")
         for n, t in packed_svg.items():
@@ -321,6 +422,7 @@ def read_fzz(zpath):
         out.append(dict(title=(el.findtext("title") or "").strip(), moduleId=mid, fzp=fr,
                         mi=(el.get("modelIndex") or ""),
                         image=image, connectors=connectors, names=names, decl=decl,
+                        buses=buses,
                         svg_text=svg_text, src=src, loc=(float(g.get("x") or 0), float(g.get("y") or 0)),
                         M=PB.tf_of(g), geo=dict(g.attrib), pv=dict(pv.attrib)))
     return out, board

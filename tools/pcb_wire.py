@@ -217,7 +217,10 @@ def board_rect(text):
     w, h = to_u(a.get("width")), to_u(a.get("height"))
     loc = None
     for _ind, b in blocks(text):
-        if "TwoLayerRectanglePCBModuleID" not in b:
+        # ★★ 2026-11-09 ✓：板件有两种 ✓ —— 矩形板 `TwoLayerRectanglePCBModuleID` ✓
+        #   与**自定义板形** `BoardLogoImageModuleID` ✓（圆角板就是后者 ✓，见 `pcb_pads.BOARD_MIDS` ✓）。
+        #   ✗ 只认前者 ⇒ 圆角板报「板框读不出」✗ ⇒ ②板外检查被跳过 ✗、⑦b 认网 0/108 ✗（实测 ✓）。
+        if not any(k in b for k in ("TwoLayerRectanglePCBModuleID", "BoardLogoImageModuleID")):
             continue
         g = re.search(r'<pcbView[^>]*>\s*<geometry ([^>]*)/>', b)
         if g:

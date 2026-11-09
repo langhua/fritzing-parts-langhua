@@ -273,6 +273,37 @@ class Grid(object):
             self.block_box(lay, (min(x, x2), min(y, y2), max(x, x2), max(y, y2)), grow,
                            owner=owner)
 
+    def block_corners(self, r_units, owner="板外(圆角)"):
+        """把**圆角矩形之外的四个角**挡上 ✓（2026-11-09 加 ✗）
+
+        ✗ 为什么必须有 ✗（**量出来的** ✓）：`block_frame()` 只按**矩形**挡一圈 ✓ ⇒
+          圆角板（`R=3.0 mm` ✓）被切掉的四个角**在栅格眼里还是可走的** ✗ ⇒
+          布线器会把铜画到**板外** ✗ ⇒ 而判据 ② 也只认矩形 ⇒ **两边一起瞎** ✗（§13 最怕的情形 ✓）。
+        ★ 口径 ✓：格子中心落在“切掉的那块”里 ⇒ 挡 ✓ —— 切掉区 =
+          ±`r` 的两个角方格里、距弧心 `> r` 的部分 ✓（与板件外形 svg 的圆弧一致 ✓）。
+        """
+        r = float(r_units)
+        if r <= 1e-9:
+            return 0
+        h, rec = 0, (self.own if Grid.OWN else None)
+        w = (self.nx - 1) * self.cell
+        hh = (self.ny - 1) * self.cell
+        for lay in LAYERS:
+            for j in range(self.ny):
+                y = j * self.cell
+                dy = min(y, hh - y)              # 到上/下边
+                for i in range(self.nx):
+                    x = i * self.cell
+                    dx = min(x, w - x)
+                    if dx >= r or dy >= r:
+                        continue                 # 不在角方格内 ✓
+                    if (r - dx) ** 2 + (r - dy) ** 2 > r * r:
+                        self.g[lay][j * self.nx + i] = 0
+                        h += 1
+                        if rec is not None:
+                            rec[(lay, i, j)] = owner
+        return h
+
 
 def obstacles(model, part_copper=True, owners=None):
     """把障碍整理成**带归属的表** ✓ ⇒ `([(lay, box, grow, tag)], 统计)`
@@ -345,7 +376,7 @@ def obstacles(model, part_copper=True, owners=None):
             if p.get("svg_text") is None or "loc" not in p:
                 continue
             mid = p.get("moduleId") or ""
-            if mid == PP.BOARD_MID or mid.startswith(("Breadboard", "Via", "Wire")):
+            if PP.is_board(mid) or mid.startswith(("Breadboard", "Via", "Wire")):
                 continue
             try:
                 root = ET.fromstring(p["svg_text"])
@@ -445,6 +476,10 @@ def make_grid(rect, cell, items, extra=(), skip_tag=None, labels=None):
     """
     grid = Grid(rect, cell)
     grid.block_frame(U(EDGE_MM) + U(TRACE_MM / 2 + CLEAR_MM), owner="板边")
+    # ★★ 圆角板 ✓（2026-11-09 加 ✗，见 `Grid.block_corners` ✓）：`BOARD_R_MM > 0` 时
+    #   把四个角被切掉的格子也挡上 ✓ —— 否则铜会画到板外 ✗（而判据只认矩形 ⇒ 一起瞎 ✗）。
+    if BOARD_R_MM > 0:
+        grid.block_corners(U(BOARD_R_MM))
     for _i, it in enumerate(items):
         lay, box, grow, _tag = it
         # ★ 容错 ✓：`items` 可能被调用方**追加过** ✓（`gen_routes` 要把“保线”塞进来 ✓）
@@ -1121,6 +1156,18 @@ ESCAPE_WALL_CAP = 30000      # 量"还能不能连上"时的泛洪上限 ✓（�
 #   口袋的中心**刚好落在 3 mm 框外** ✗ ⇒ 一刀都没量到它 ✓（只有极少数命中 ✓）⇒ 放宽到 **8.0** ✓。
 #   ★ 代价可控 ✓：这只是**先筛一遍坐标** ✓，真正的量（泛洪）在"能连上"时**早停** ✓。
 ESCAPE_WALL_WATCH_MM = 8.0
+# ★★ 2026-11-09 加 ✓：板件外形的**圆角半径**（mm ✓；0 = 矩形板 ✓）——
+#   用于 `Grid.block_corners()` ✓。✗ 不写死 3.0 ✗（由 `gen_routes` 从板件外形 svg 读出来传进来 ✓，
+#   读法见 `pcb_pads.board_corner_r` ✓ —— 与判据 ② 用**同一个值** ✓）。
+BOARD_R_MM = 0.0
+# ★★ 2026-11-09 加 ✓：件内**同一条 `<bus>`** 的焊盘（= 件内部已经同电位 ✓）——
+#   做生成树时要把它们**并成一个节点** ✗ 不并的话：
+#     · 布线器会把 `U1.connector3`（VSS）↔ `U1.connector20`（EPAD）当成**需要一条线** ✗
+#       ⇒ 那一条永远布不通（EPAD 在芯片肚子底下、四周被脚围住 ✓）⇒ 自报 **11/12** ✗
+#     · 而**判据**（已按 Fritzing 的 `scoreOneNet` 建模 bus ✓）说 **12/12 全通** ✓
+#       ⇒ 两边口径不一致 ✗（= 仓规 §13 要消灭的“两个声音”✓，2026-11-09 实测 ✓）。
+#   ⇒ 数据由 `resolve_nets()` 从 `model["parts"][i]["buses"]` 填 ✓（唯一来源 ✓）。
+SAME_BUS = ()            # `(frozenset({(位号, connectorN), …}), …)` ✓
 _GATE = {}            # `route_ripup` 设一次 ✓ ⇒ `_score` 里读 ✓（两处打分自动一致 ✓）
 
 
@@ -1736,6 +1783,11 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
         if net in (pre or {}):
             continue
         mem = [(t, c) for t, c in net_pads[net] if (t, c) in pads]
+        # ★★ 同 `<bus>` 的脚并成一个节点 ✓（2026-11-09 加 ✓，见 `SAME_BUS` / `contract_same_bus` ✓）
+        mem, _folded = contract_same_bus(mem)
+        if _folded:
+            print("   [同 bus] 网 %s：%d 只件内同电位脚并成一个节点 ✓（不需要走线 ✓）"
+                  % (net, _folded))
         miss = ["%s.%s" % (t, c) for t, c in net_pads[net] if (t, c) not in pads]
         if len(mem) < 2:
             out[net] = dict(ok=len(mem) == 1, segs=[], vias=[], miss=0,
@@ -2173,16 +2225,60 @@ def _route_once(items, rect, net_pads, pads, cell, via_cost, order, pre=None, wi
     return out
 
 
+def _bus_gid(k):
+    """这个焊盘属于哪一条 `<bus>` ✓（不在任何 bus 里 ⇒ None ✓）"""
+    for gi, b in enumerate(SAME_BUS):
+        if k in b:
+            return gi
+    return None
+
+
+def contract_same_bus(mem):
+    """把一张网里的脚按“**同一条 `<bus>`**”并成一个代表 ✓
+
+    ★ 口径 ✓：同 bus = **件内部已经同电位**（Fritzing 的 `scoreOneNet` 就是这么算的 ✓）
+      ⇒ 不需要画线 ✓；画了反而占地方 ✓。
+    ★ 返回 `(代表表, 被并掉的个数)` ✓ —— 个数要**报出来** ✗（不静默 ✗）。
+    """
+    if not SAME_BUS:
+        return list(mem), 0
+    used, out = set(), []
+    for k in mem:
+        if k in used:
+            continue
+        gi = _bus_gid(k)
+        if gi is None:
+            out.append(k)
+            used.add(k)
+            continue
+        grp = [z for z in mem if _bus_gid(z) == gi]
+        used |= set(grp)
+        out.append(grp[0])
+    return out, len(mem) - len(out)
+
+
 def resolve_nets(model, nets):
     """网表 `{网: [(位号, 脚名)]}` ⇒ `{(位号, connectorN)}` ✓（**唯一实现** ✓）
 
     ★ 为什么要抽出来 ✓：写回器也要把网表变成 `(位号, connectorN)` ✓ ——
       两头各写一份 ⇒ 一处改了另一处不跟 ✗（第 §5 「一份实现」纪律 ✓）。
+    ★★ 2026-11-09 加 ✓：顺手把**件内同 bus 的焊盘**记到 `SAME_BUS` ✓ ——
+      生成树要把它们并成一个节点 ✓（否则 VSS↔EPAD 这种“件内已连”的配对会永远布不通 ✗，
+      实测自报 11/12 而判据 12/12 ✗，见 `SAME_BUS` 的头注 ✓）。
     """
+    global SAME_BUS
     byttl = {}
     for p in model.get("parts", []):
         if p.get("fzp") is not None and "title" in p:
             byttl[p["title"]] = (p.get("names") or {}, set(p.get("connectors") or []))
+    _sb = []
+    for p in model.get("parts", []):
+        _ttl = p.get("title")
+        for _mem in (p.get("buses") or ()):
+            _ks = frozenset((_ttl, _c) for _c in _mem)
+            if len(_ks) > 1:
+                _sb.append(_ks)
+    SAME_BUS = tuple(_sb)
     net_pads, unresolved = {}, []
     for net, lst in nets.items():
         got = []

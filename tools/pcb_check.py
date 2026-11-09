@@ -377,7 +377,7 @@ def collect(path):
         mid = p.get("moduleId") or ""
         # ★ 板框自己 / 面包板件 **不是 PCB 上的元件** ✗（`pcb_pads` 的 main 也是这么分的 ✓）：
         #   面包板件在 pcbView 里挂着 830 个孔脚 ✗ ⇒ 不跳掉就报 830 条假“缺焊盘” ✗
-        if mid == PP.BOARD_MID or mid.startswith("Breadboard") or mid.startswith("Via"):
+        if PP.is_board(mid) or mid.startswith("Breadboard") or mid.startswith("Via"):
             continue
         if p.get("fzp") is None:
             warns.append("%s: %s" % (p.get("title"), p.get("why")))
@@ -516,6 +516,9 @@ def collect(path):
                            inst=mi.group(1) if mi else None,
                            ends=t.get("ends") or {}))
     return dict(pads=pads, traces=traces, vias=vias, board=PW.board_rect(text),
+                # ★★ 2026-11-09 加 ✓：板件外形的**圆角半径**（mm ✓；矩形板 = 0 ✓）
+                #   ⇒ ② 板外检查与布线器的板边留白都要用 ✓（否则铜会画进被切掉的角里 ✗）。
+                board_r_mm=PP.board_corner_r(text),
                 bodies=bodies, holes=PP.holes(text), text=text, name=name,
                 warns=warns, parts=parts)
 
@@ -543,12 +546,53 @@ def check(model, expect=None, allow=None):
     # ★★ `net_of` / `_nets_of` ✓（2026-10-01 提到最前 ✓，**各只留一份** ✗）：
     #   `net_of` = 焊盘 → 网名 ✓（从 `expect` 来 ✓）；`_nets_of(root)` = 该连通块牵了哪几张网 ✓。
     #   ★ 必须在 ①/⑤ 建边（会拿它判「短路桥」✓）与 ④ 之前就位 ✗。
+    # ★★ 同一个 `<bus>` 内的脚 **先并组** ✓（2026-11-09 补 ✗ —— 与 Fritzing 同源 ✓）
+    #   Fritzing 的 `utils/graphutils.cpp` `scoreOneNet` 对同一个 `bus()` 的两只脚
+    #   **直接加一条边** ✓ ⇒ 它眼里那两只脚**本来就连通** ✓（不需要走线 ✓）。
+    #   ✗ 判据不做这条边 ⇒ 任何"EPAD 与 VSS 同 bus"的件都会被报成
+    #     「网 GND 没连通：N 个脚散在 2 块铜里」✗（实测：本板 12/12 的好板也被这样报 ✗）。
+    #   ★ 这条边**不代表铜真的连上了** ✗ —— 它代表"**件自己定义**它们同电位" ✓；
+    #     件内部有没有铜桥是**元件层的责任** ✓（库仓 `fzp_check.py` 管 ✓），不是板子的问题 ✓。
+    _pad_keys = {(q["title"], q["cid"]) for q in pads}
+    _n_bus = 0
+    for _p in (model.get("parts") or ()):
+        for _mem in (_p.get("buses") or ()):
+            _ks = [("pad", _p["title"], _c) for _c in _mem if (_p["title"], _c) in _pad_keys]
+            for _k in _ks[1:]:
+                uf.union(_ks[0], _k)
+                _n_bus += 1
+    if _n_bus:
+        notes.append("⑤ 同 `<bus>` 的脚按 Fritzing 口径并组 **%d** 条边 ✓（件内同电位 ✓）" % _n_bus)
+
     net_of = {}
     if expect:
         for _n2, _lst2 in expect.items():
             for _s2 in _lst2:
                 if isinstance(_s2, str) and "." in _s2:
                     net_of[_s2] = _n2
+
+    # ★★ 同 `<bus>` 的脚**继承网名** ✓（2026-11-09 补 ✗，与上面那条并组**同一份依据** ✓）
+    #   ✗ 只并组不继承 ⇒ 组里混进"网名未知"的脚 ✗ ⇒ ⑤ 报「网 GND **粘上了别的脚**（短接）✗：
+    #     U1.connector21…29」✗ —— 实测（本板 ✓）：那 9 颗是 **EPAD 的热过孔** ✓，
+    #     在 `.fzp` 的 `<bus>` 里与 `GND`/`VSS` 同电位 ✓，只是**网表不列件内脚** ✓（本来就该由件定义 ✓）。
+    #   ★ 只继承**唯一**的那个网名 ✓（同 bus 里出现两个不同网名 ⇒ 说明件自己有问题 ⇒ **不猜** ✗，
+    #     留给元件闸门去管 ✓）。
+    _n_inherit = 0
+    for _p in (model.get("parts") or ()):
+        for _mem in (_p.get("buses") or ()):
+            _known = {net_of.get("%s.%s" % (_p["title"], _c)) for _c in _mem}
+            _known.discard(None)
+            if len(_known) != 1:
+                continue
+            _nm = next(iter(_known))
+            for _c in _mem:
+                _kk = "%s.%s" % (_p["title"], _c)
+                if (_p["title"], _c) in _pad_keys and _kk not in net_of:
+                    net_of[_kk] = _nm
+                    _n_inherit += 1
+    if _n_inherit:
+        notes.append("⑤ 同 `<bus>` 的 %d 只件内脚**继承**了同 bus 的网名 ✓（网表不列件内脚 ✓）"
+                     % _n_inherit)
 
     def _nets_of(root):
         """这个连通块里牵到几张网 ✓（顺着并查集看块里的焊盘 ✓）"""
@@ -1042,7 +1086,14 @@ def check(model, expect=None, allow=None):
             for _k in (0, 1):
                 _e = endpt(_t, _k)
                 for _q in pads:
-                    if (abs(_q["c"][0] - _e[0]) < 1e-6 and abs(_q["c"][1] - _e[1]) < 1e-6):
+                    # ★★ 2026-11-09 修 ✗：**Fritzing 另存会把坐标四舍五入** ⇒ 精确相等会静默失效 ✗
+                    #   实测（`_work/seed_dbg.py` ✓）：`v142a_routed.fzz` 端点↔盘心最近 **0.0** ✓，
+                    #   而同一块板在 Fritzing 里换了圆角板形并另存之后（`_round_out.fzz` ✓）
+                    #   最近 **3.2e-6 单位**（= 0.9 nm ✓）⇒ 用 `1e-6` 时**一条种子都认不到** ✗
+                    #   ⇒ ⑦b 报「认网 **0**/108」✗、17 颗过孔全被跳过 ✗（判据**静默失效** ✗）。
+                    #   口径 ✓：`1e-3` 单位 = **0.28 µm** —— 比观测量大 300 倍 ✓、
+                    #   比任何真实几何（最小焊盘 0.2 mm ✓）小 1000 倍 ✓ ⇒ 两边都安全 ✓。
+                    if (abs(_q["c"][0] - _e[0]) < 1e-3 and abs(_q["c"][1] - _e[1]) < 1e-3):
                         _nm = net_of.get("%s.%s" % (_q["title"], _q["cid"]))
                         if _nm:
                             _seed.setdefault(_pf(_j), set()).add(_nm)
@@ -1154,6 +1205,29 @@ def check(model, expect=None, allow=None):
 
     # ② 板外 ✓
     r = model["board"]
+    # ★★ 2026-11-09 加 ✓：圆角板（Fritzing「自定义板形」✓）把四个角切掉了 ⇒ 板外判据也要认 ✓
+    #   ✗ 只认矩形 ⇒ 线/孔画进被切掉的角里**一声不吭** ✗（而布线器那边也要同一口径 ✓，
+    #   见 `pcb_route.Grid.block_corners` ✓ —— 两处都关掉才是真的"§13 两个声音" ✓）。
+    r_corner = (model.get("board_r_mm") or 0.0) / PW.SK        # mm ⇒ sketch 单位 ✓
+
+    def _in_board(pt):
+        """在板内吗 ✓（矩形 ✓ ＋ 四角圆弧 ✓）
+
+        ★★ 圆角判据的口径 ✗（2026-11-09 第一版写错过 ✓，**当场被实测抓住** ✓）：
+          `dx/dy` 必须是**到板边线的距离** ✓ —— 不是"到角心坐标差" ✗。
+          实测误报 10 条（如 (37.00,10.05) mm，离板边 5.2 / 5.6 mm ✓，本来就在板内 ✓
+          却被报"板外" ✗）。
+        """
+        if r is None or not in_rect(pt, r, 0.0):
+            return False
+        if r_corner <= 1e-9:
+            return True
+        dx = min(pt[0] - r[0], r[2] - pt[0])          # 到最近竖边的距离 ✓
+        dy = min(pt[1] - r[1], r[3] - pt[1])          # 到最近横边的距离 ✓
+        if dx >= r_corner or dy >= r_corner:
+            return True                                # 不在任何一个角方格里 ✓
+        return (r_corner - dx) ** 2 + (r_corner - dy) ** 2 <= r_corner * r_corner
+
     if r is None:
         notes.append("板框读不出 ⇒ **跳过②板外检查** ✗（请给带 `<board>` 与 PCB1 的 sketch ✓）")
     else:
@@ -1166,12 +1240,12 @@ def check(model, expect=None, allow=None):
             if t.get("curve"):
                 pts += [("线身", p) for p in t["pts"][1:-1]]
             for tag, e in pts:
-                if not in_rect(e, r, 0.0):
+                if not _in_board(e):
                     probs.append("② 板外：走线 #%d 的%s (%.2f,%.2f) mm 板框是 (%.2f,%.2f)-(%.2f,%.2f) ✗"
                                  % (i, tag, e[0] * PW.SK, e[1] * PW.SK,
                                     r[0] * PW.SK, r[1] * PW.SK, r[2] * PW.SK, r[3] * PW.SK))
         for i, v in enumerate(vias):
-            if not in_rect(v["p"], r, 0.0):
+            if not _in_board(v["p"]):
                 probs.append("② 板外：过孔 #%d (%.2f,%.2f) mm ✗"
                              % (i, v["p"][0] * PW.SK, v["p"][1] * PW.SK))
 
@@ -1205,7 +1279,19 @@ def check(model, expect=None, allow=None):
                              % (net, len(want), len(roots)))
             else:
                 got = groups.get(roots.pop(), set())
-                extra = got - want
+                # ★★ 2026-11-09 修 ✗：**同 bus 的件内脚不算"粘上"** ✓
+                #   ✗ 旧写法 `extra = got - want` ✗ ⇒ 把 EPAD 的 9 颗热过孔
+                #     （`U1.connector21…29` ✓，在 `.fzp` 的 `<bus>` 里与 `GND` 同电位 ✓，
+                #      但**网表本来就不列件内脚** ✓）报成「GND **粘上了别的脚**（短接）✗」✗
+                #     —— 实测（本板 ✓）：一份 12/12 的好板被这条假报挡住 ✗。
+                #   ✓ 判据改成**按网名**算 ✓：只有"**网名不是这张网**"的脚（含**没网名**的 ✓）
+                #     才算粘上 ✓ —— 同 bus 继承来的网名 = 这张网 ⇒ 放过 ✓。
+                _ext = got - want
+                extra = {k for k in _ext if net_of.get("%s.%s" % k) != net}
+                _same = len(_ext) - len(extra)
+                if _same:
+                    notes.append("⑤ 网 `%s` 的同 bus 件内脚 %d 只**不算粘上** ✓（件内同电位 ✓）"
+                                 % (net, _same))
                 if extra:
                     probs.append("⑤ 网 `%s` **粘上了别的脚**（短接 ✗）：%s"
                                  % (net, ", ".join(sorted("%s.%s" % k for k in extra))[:90]))
