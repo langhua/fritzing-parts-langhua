@@ -32,7 +32,11 @@ FAILS = []
 
 
 def pad(title, cid, box, layer="copper0", thr=False, mi=None, circle=None, nm=None):
+    # ★★ 2026-11-10 修 ✗：`pcb_check` 的 ⑦b（2026-11-09 加）**按盘心 `c` 认网** ✓ ⇒
+    #   这里少给 `c` 就会 `KeyError: 'c'` ✗（实测：本自测在第 ④b 局崩掉 ✓）。
+    #   `collect()` 的 `c` = 焊盘**中心**（sketch 单位 ✓）⇒ 这里照同一口径补齐 ✓。
     return dict(title=title, cid=cid, box=box, layer=layer, thr=thr, mi=mi,
+                c=((box[0] + box[2]) / 2.0, (box[1] + box[3]) / 2.0),
                 circle=circle, nm=nm, box2=None)
 
 

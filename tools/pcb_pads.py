@@ -140,12 +140,19 @@ def board_corner_r(text):
     except Exception:                                          # noqa: BLE001
         return 0.0
     vb = re.search(r'viewBox="\s*([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)', svg)
-    wm = re.search(r'width="\s*([\d.]+)\s*(mm|cm|in|px)?', svg)
+    wm = re.search(r'width="\s*([\d.]+)\s*(mm|cm|in|mil|px|pt)?', svg)
     if not (vb and wm):
         return 0.0
     vw = float(vb.group(3))
-    val, unit = float(wm.group(1)), (wm.group(2) or "px")
-    per_unit = {"mm": 1.0, "cm": 10.0, "in": 25.4, "px": 25.4 / 90.0}[unit] * val / vw if vw else 0.0
+    # ★★ 2026-11-10 修 ✗：这里曾**自己写一份 px 口径**（`25.4 / 90.0` ✗）⇒
+    #   ① CI 的 G6（`check_units.py` ②）判 FAIL ✓；
+    #   ② 违反"**一个物理量只许一处定义**"（AGENTS §15 ✓）⇒ 别处一改就对不上 ✗。
+    #   ⇒ 一律调 `part_box.canvas_mm` ✓（`px`/`pt` = **1/72 in** ✓）。
+    #   ★ 无单位（`width="25"`）时 `canvas_mm` 返回 `None` ✓ ⇒ `per_unit = 0.0`
+    #     （= 板角半径读不出来 ⇒ 上层按 0 处理 ✓）—— 与 `part_box` 同一个
+    #     "宁可少算、不猜"原则 ✓（✗ 旧写法默认当 px 算一个值出来 ✗）。
+    wmm, _hmm = PB.canvas_mm({"width": wm.group(1) + (wm.group(2) or ""), "height": ""})
+    per_unit = (wmm / vw) if (wmm and vw) else 0.0
     d = None
     for pm in re.finditer(r'<path\b[^>]*>', svg):
         if 'id="boardoutline"' in pm.group(0):
