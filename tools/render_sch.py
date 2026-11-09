@@ -721,8 +721,20 @@ for ttl, a, b in widx:
     _unk = sorted(x for x in _tall if x not in KNOWN_PIN)
     for which, pt in (("起", a), ("止", b)):
         best = min(((math.dist(pt, p[2]), p) for p in PIN_SK), default=(1e18, None))
+        # ★★ 2026-11-08 ✓ **端点压在别的导线「中段」上 = 接上了** ✗✗
+        #   （原来这里只认“端点与别的线端点重合”✗ ⇒ 把 **T 形接头误报成悬空** ✗）
+        #   口径依据（§13 与 Fritzing 同源 ✓）：Fritzing 自己另存时就会补写
+        #   “几何上真碰上的 `Wire↔Wire` 接头” ✓；生成器 `emit` 也用同一条判据补连接
+        #   （`gen_schematic_wires.py` 的「**压中段补接头**」✓，那里 0.05 单位是阈值 ✓
+        #   ⇒ 这里**照抄同一个阈值** ✓，不另立第二把尺子 ✗）。
+        #   实测 v48 ✓：3 处被误报 —— `(51.378,-91.800)`（C2 支线收口）、
+        #   `(155.778,-46.800)`（LED2 支线收口）、`(245.178,-154.043)`（轨端 ✓）
+        #   ⇒ 它们都是**端点落在同网竖线中段** ✓，图上/表里都是通的 ✓。
         joint = any(math.dist(pt, q[1]) < 0.01 or math.dist(pt, q[2]) < 0.01
                     for q in widx if q[0] != ttl)
+        if not joint:
+            joint = any(_p2seg(pt, q[1], q[2]) <= 0.05
+                        for q in widx if q[0] != ttl)
         if best[0] > 0.5 and not joint:
             # ★ 它声明接的脚**图形缺失** ⇒ 无法判定 ✓（本例 4 处全是核心库网标签 ✓，用户截图已证**接得好好的** ✓）
             if _unk:
