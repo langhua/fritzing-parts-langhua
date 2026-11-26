@@ -149,7 +149,7 @@ SHEETS = {
     "discrete": ("分立器件（二极管 / LED / MOS / 排阻）", 5, [
         ("SOD-123", "SOD-123"), ("SOD-123FL", "SOD-123FL"),
         ("SOD-323", "SOD-323"), ("SOD-523", "SOD-523"),
-        ("BAT54S", "BAT54S"), ("SS34", "SS34"),
+        ("BAT54", "BAT54"), ("BAT54S", "BAT54S"), ("SS34", "SS34"),
         ("BAS70BRW", "BAS70BRW"), ("BAS70DW-04", "BAS70DW-04"),
         # ★ 2026-10-15 新增本库**第一颗发光二极管** ✓（0603 SMD ✓）——
         #   起因 = `orpah-client-demo` 载板原理图要用一颗 LED 作指示灯 ✓，而 Fritzing 自带

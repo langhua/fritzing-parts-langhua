@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="0.6477778in" height="0.3278889in" viewBox="0 0 58.3 29.51" xml:space="preserve">
+ <g id="schematic">
+  <line class="pin" id="connector0pin" connectorname="1" fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="0.35" y1="7.56" x2="16.2" y2="7.56"/>
+  <rect class="terminal" id="connector0terminal" x="0.35" y="7.56" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <text transform="matrix(1 0 0 1 6.86 6.51)" fill="#8C8C8C" font-family="DroidSans" font-size="2.5">1</text>
+  <polygon fill="#000000" stroke="none" points="16.2,4.68 16.2,10.44 21.96,7.56"/>
+  <line fill="none" stroke="#000000" stroke-width="0.9" stroke-linecap="round" x1="21.96" y1="4.68" x2="21.96" y2="10.44"/>
+  <line fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="21.96" y1="7.56" x2="43.55" y2="7.56"/>
+  <line class="pin" id="connector2pin" connectorname="3" fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="43.55" y1="7.56" x2="57.951" y2="7.56"/>
+  <rect class="terminal" id="connector2terminal" x="57.951" y="7.56" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <text transform="matrix(1 0 0 1 50.06 6.51)" fill="#8C8C8C" font-family="DroidSans" font-size="2.5">3</text>
+  <line class="pin" id="connector1pin" connectorname="2" fill="none" stroke="#787878" stroke-width="0.75" stroke-linecap="round" x1="29.15" y1="17.2" x2="29.15" y2="29.159"/>
+  <rect class="terminal" id="connector1terminal" x="29.15" y="29.159" width="0.0001" height="0.0001" stroke="none" stroke-width="0" fill="none"/>
+  <text transform="matrix(1 0 0 1 26.0 27.8)" fill="#8C8C8C" font-family="DroidSans" font-size="2.5">2</text>
+  <text transform="matrix(1 0 0 1 31.4 26.9)" fill="#8C8C8C" font-family="DroidSans" font-size="2.2">nc</text>
+ </g>
+</svg>

@@ -7362,6 +7362,7 @@
      </g>
   </svg>
   <text x="93.00" y="121.10" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.6" fill="#202020" text-anchor="middle">WS2812B-5050-4x4</text>
+  <text x="93.00" y="124.30" font-family="DroidSans, Arial, Helvetica, sans-serif" font-size="2.2" fill="#6b6b6b" text-anchor="middle">9.03×9.03mm</text>
   <svg id="p11" x="112.00" y="94.50" width="30.00" height="22.00" viewBox="0 0 29 62" preserveAspectRatio="xMidYMid meet">
     <desc
          id="p11_desc2" />

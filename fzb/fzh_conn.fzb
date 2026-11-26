@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 由 fritzing-parts-langhua 的 tools/make_fzb.py 生成（勿手改） -->
-<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="fzh_conn.png">
+<module fritzingVersion="0.4.3b.0.0" icon="fzh_conn.png">
     <title>连接器 / 开关 / 按键</title>
     <instances>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="插座 / 连接器">
@@ -10,61 +10,61 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1.fzp">
+        <instance moduleIdRef="TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/TypeC16Pin_d89a481c23a1ca4ff437422a227ed0bb_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="USB-B01" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/USB-B01.fzp">
+        <instance moduleIdRef="USB-B01" path="C:/Users/huaru/Documents/Fritzing/parts/user/USB-B01.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="FPC-05F-12P-H15" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/FPC-05F-12P-H15.fzp">
+        <instance moduleIdRef="FPC-05F-12P-H15" path="C:/Users/huaru/Documents/Fritzing/parts/user/FPC-05F-12P-H15.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="RJ45-8P8C" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RJ45-8P8C.fzp">
+        <instance moduleIdRef="RJ45-8P8C" path="C:/Users/huaru/Documents/Fritzing/parts/user/RJ45-8P8C.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="RJ45-8P8C_rev_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/RJ45-8P8C_rev_1.fzp">
+        <instance moduleIdRef="RJ45-8P8C_rev_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/RJ45-8P8C_rev_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SMA-PJ1.7-L9.5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMA-PJ1.7-L9.5.fzp">
+        <instance moduleIdRef="SMA-PJ1.7-L9.5" path="C:/Users/huaru/Documents/Fritzing/parts/user/SMA-PJ1.7-L9.5.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="MX-1.25-3P-V" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MX-1.25-3P-V.fzp">
+        <instance moduleIdRef="MX-1.25-3P-V" path="C:/Users/huaru/Documents/Fritzing/parts/user/MX-1.25-3P-V.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PH-2.0-3P-V" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PH-2.0-3P-V.fzp">
+        <instance moduleIdRef="PH-2.0-3P-V" path="C:/Users/huaru/Documents/Fritzing/parts/user/PH-2.0-3P-V.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SH-1.0-3P-V" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SH-1.0-3P-V.fzp">
+        <instance moduleIdRef="SH-1.0-3P-V" path="C:/Users/huaru/Documents/Fritzing/parts/user/SH-1.0-3P-V.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="MX-1.25-2P-H" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/MX-1.25-2P-H.fzp">
+        <instance moduleIdRef="MX-1.25-2P-H" path="C:/Users/huaru/Documents/Fritzing/parts/user/MX-1.25-2P-H.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x2" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x2.fzp">
+        <instance moduleIdRef="PinHeader-1x2" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x2.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x3.fzp">
+        <instance moduleIdRef="PinHeader-1x3" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x3.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x4" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x4.fzp">
+        <instance moduleIdRef="PinHeader-1x4" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x4.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x5" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x5.fzp">
+        <instance moduleIdRef="PinHeader-1x5" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x5.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x6" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x6.fzp">
+        <instance moduleIdRef="PinHeader-1x6" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x6.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x7" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x7.fzp">
+        <instance moduleIdRef="PinHeader-1x7" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x7.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x8" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x8.fzp">
+        <instance moduleIdRef="PinHeader-1x8" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x8.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x9" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x9.fzp">
+        <instance moduleIdRef="PinHeader-1x9" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x9.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PinHeader-1x10" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PinHeader-1x10.fzp">
+        <instance moduleIdRef="PinHeader-1x10" path="C:/Users/huaru/Documents/Fritzing/parts/user/PinHeader-1x10.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="开关（拨动 / 滑动 / 轻触）">
@@ -74,19 +74,19 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="DPDT7x7-6P" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DPDT7x7-6P.fzp">
+        <instance moduleIdRef="DPDT7x7-6P" path="C:/Users/huaru/Documents/Fritzing/parts/user/DPDT7x7-6P.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SK-12D02VG3" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SK-12D02VG3.fzp">
+        <instance moduleIdRef="SK-12D02VG3" path="C:/Users/huaru/Documents/Fritzing/parts/user/SK-12D02VG3.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="DSIC01LS-P" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/DSIC01LS-P.fzp">
+        <instance moduleIdRef="DSIC01LS-P" path="C:/Users/huaru/Documents/Fritzing/parts/user/DSIC01LS-P.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1.fzp">
+        <instance moduleIdRef="TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/TS-D014_9a9d0fcb5ec5a6d78a3fc190c8946cc3_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="SMT-SW-PTS-820" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/SMT-SW-PTS-820.fzp">
+        <instance moduleIdRef="SMT-SW-PTS-820" path="C:/Users/huaru/Documents/Fritzing/parts/user/SMT-SW-PTS-820.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="按键">
@@ -96,22 +96,22 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1.fzp">
+        <instance moduleIdRef="PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0-BLACK_5b48943c2de692a02b4285f6cb17aa46_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1.fzp">
+        <instance moduleIdRef="PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0-BLUE_5af3b10d0449228059a715599a74d6f6_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1.fzp">
+        <instance moduleIdRef="PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0-GRAY_d78a5a75d9eb0a4f214067a0fec444c7_1.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2.fzp">
+        <instance moduleIdRef="PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0-GREEN_9c3ca493dc1d1385db5acb62ace1e56f_2.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PB86-A0" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0_7072363ba1b31d70136d785d0604754f_2.fzp">
+        <instance moduleIdRef="PB86-A0" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0.fzp">
             <views/>
         </instance>
-        <instance moduleIdRef="PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1.fzp">
+        <instance moduleIdRef="PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1" path="C:/Users/huaru/Documents/Fritzing/parts/user/PB86-A0-YELLOW_9820773981a4ff5c2449a96d82d97314_1.fzp">
             <views/>
         </instance>
         <instance moduleIdRef="__spacer__" modelIndex="3" path="网络标签焊盘">
@@ -121,7 +121,7 @@
             </iconView>
         </views>
         </instance>
-        <instance moduleIdRef="NetLabel-Pad" path="C:/Users/shi.jinghai-honor/Documents/Fritzing/parts/user/NetLabel-Pad_1.fzp">
+        <instance moduleIdRef="NetLabel-Pad" path="C:/Users/huaru/Documents/Fritzing/parts/user/NetLabel-Pad.fzp">
             <views/>
         </instance>
     </instances>
