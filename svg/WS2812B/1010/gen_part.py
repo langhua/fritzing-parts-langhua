@@ -227,9 +227,10 @@ BB_LABEL_RENAME = {
 BB_TOP_LABEL_SHIFT = ("matrix(1 0 0 1 62.5355 -244.407)",
                       "matrix(1 0 0 1 61.5355 -244.407)")
 
-# LED artwork scale on the breadboard carrier: the 2020 part uses 0.55 for a
-# 2.0 mm body, so a 1.0 mm body is half of that.
-BB_ART_SCALE = 0.55 / 2.0
+# LED artwork scale on the breadboard carrier: 1.0 mm body at breadboard scale
+# 2.835 units/mm ⇒ sy = 1.0*2.835/14.172 ≈ 0.20 (was 0.55/2.0 = 0.275 ⇒ 3.9
+# units = 1.37 mm body: the pins were fine, the drawn LED was just oversized).
+BB_ART_SCALE = 0.20
 BB_NEW_CY = 14.4     # centre of the shortened carrier board (28.8 high)
 
 
@@ -303,7 +304,12 @@ def core_breadboard():
     content = wrap_icon_horizontal(content, cx=10.8, factor=0.9)
     # shorten the carrier so the two pin rows are 3 breadboard holes apart
     # (Fritzing hole pitch 7.2 units; same geometry as the 2020 part)
-    content = content.replace('width="21.6px" height="43.2px"', 'width="19.54px" height="28.8px"')
+    # ★★ 2026-11-26：viewBox 19.54×28.8 在 **2.835 units/mm** 下 = **6.892×10.159 mm**
+    #   ⇒ x 5.08 mm = 2 孔，y 7.62 mm = 3 孔 ✓。
+    #   px→in 的除数在 dc4fb70 已改成 ÷72（0.2713889in = 同一个尺寸 ✓）⇒ 脚位
+    #   与旧版**完全一致**；这里只是直接写 mm（本库的长度口径 ✓）。
+    content = content.replace('width="21.6px" height="43.2px"',
+                              'width="6.892mm" height="10.159mm"')
     content = content.replace('viewBox="0 0 21.6 43.2"', 'viewBox="1.03 0 19.54 28.8"')
     content = content.replace('translate(34.035,334.05)', 'translate(34.035,319.648)')
     content = content.replace('translate(234.035,334.05)', 'translate(234.035,319.648)')

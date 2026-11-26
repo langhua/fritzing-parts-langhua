@@ -191,6 +191,15 @@ def core_breadboard():
         wrapped = ('<g transform="translate(%.4f,%.4f) rotate(90) translate(%.4f,%.4f)">\n%s\n</g>'
                    % (cx, cy, -cx, -cy, art))
         content = content.replace(art, wrapped, 1)
+    # ★★ 2026-11-26 修（用户截图：5050 面包板视图的针脚插不进孔）：
+    #   面包板的物理尺度是 **2.835 units/mm（1/72 in，孔距 = 7.2 units）**，
+    #   不是原理图那边的 1/90 in。core viewBox 21.6×43.2 ⇒ **7.62×15.24 mm**：
+    #     x 脚距 14.4/2.835 = 5.08 mm = **2 孔**
+    #     y 脚距 36.0/2.835 = 12.70 mm = **5 孔**
+    #   旧头 0.24in/0.48in（= 21.6/90）把整件缩到 80% ⇒ 脚距 4.06 mm = **1.6 孔** ✗
+    #   （2020 同一处也错 ✓，一起修 ✓；1010 的 px→in 已在 dc4fb70 改过 ✓）
+    content = content.replace('width="21.6px" height="43.2px"',
+                              'width="7.62mm" height="15.24mm"')
     return content
 
 

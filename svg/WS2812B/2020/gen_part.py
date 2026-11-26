@@ -226,7 +226,8 @@ def core_breadboard():
     # the art on the shorter board (new board height 28.8 -> centre 14.4).
     art = core_led_artwork()
     if art:
-        cx, cy, sx, sy = 10.8, 5.7867, 0.55 / 0.9, 0.55
+        # 2.0 mm body at breadboard scale 2.835 units/mm ⇒ sy = 2.0*2.835/14.172 ≈ 0.4
+        cx, cy, sx, sy = 10.8, 9.7017, 0.4 / 0.9, 0.4
         wrapped = ('<g transform="translate(%.4f,%.4f) scale(%.4f,%.4f) translate(%.4f,%.4f)">\n%s\n</g>'
                    % (cx, cy, sx, sy, -cx, -cy, art))
         content = content.replace(art, wrapped, 1)
@@ -239,7 +240,12 @@ def core_breadboard():
     # the pins between holes). New pin centre = 3.6 + 3*7.2 = 25.2:
     #   bottom pin translate y   325.05 -> 319.648  (centre 30.603 -> 25.2)
     #   bottom label translate y 326.05 -> 320.647  (text stays beside the pin)
-    content = content.replace('width="21.6px" height="43.2px"', 'width="19.54px" height="28.8px"')
+    # ★★ 2026-11-26 修（用户截图：2020 面包板视图的针脚插不进孔）：
+    #   viewBox 19.54×28.8 在 **2.835 units/mm** 下 = **6.892×10.159 mm**
+    #   ⇒ x 14.4/2.835 = 5.08 mm = 2 孔，y 21.6/2.835 = 7.62 mm = 3 孔 ✓
+    #   旧头 19.54px/28.8px（÷90）⇒ 缩到 80% ⇒ 1.6 孔 / 2.4 孔 ✗
+    content = content.replace('width="21.6px" height="43.2px"',
+                              'width="6.892mm" height="10.159mm"')
     content = content.replace('viewBox="0 0 21.6 43.2"', 'viewBox="1.03 0 19.54 28.8"')
     content = content.replace('translate(34.035,334.05)', 'translate(34.035,319.648)')
     content = content.replace('translate(234.035,334.05)', 'translate(234.035,319.648)')

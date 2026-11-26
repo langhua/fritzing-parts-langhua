@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns:svg="http://www.w3.org/2000/svg"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="0.2171111in" height="0.32in"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="6.892mm" height="10.159mm"
 	 viewBox="1.03 0 19.54 28.8" xml:space="preserve">
 <g id="breadboard">
 <g transform="translate(10.8000,21.6) scale(0.9000,1) translate(-10.8000,-21.6)">
@@ -27,7 +27,7 @@
 				<text transform="matrix(1 0 0 1 60.54 -158.8074)" fill="#FFFFFF" font-family="'OCRA'" font-size="3.5">GND</text>
 			</g>
 		</g>
-<g transform="translate(10.8000,5.7867) scale(0.6111,0.5500) translate(-10.8000,-5.7867)">
+<g transform="translate(10.8000,9.7017) scale(0.4444,0.4000) translate(-10.8000,-9.7017)">
 		<g>
 			<g>
 				<rect x="13.919" y="27.551" fill="#B3B3B3" width="2.834" height="1.542"/>
