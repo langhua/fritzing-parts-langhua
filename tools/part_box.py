@@ -382,6 +382,77 @@ def resolve_svg(fzp_path, image):
     return None
 
 
+def parts_roots():
+    """本机可能放 `<parts>/` 的地方 ✓（`$FRITZING_PARTS` 最优先 ✓，按次序去重 ✓）
+
+    ★ 2026-11-26：Fritzing 不一定装在 `C:` ⇒ 顺带探各盘的
+      `\\Program Files\\Fritzing\\fritzing-parts` 与 `\\Fritzing\\fritzing-parts`
+      （26×2 次 `isdir`，实测几十毫秒 ✓；只当**后备** ✓，不改变"先看 `$FRITZING_PARTS`"✗）。
+    """
+    import os                       # ★ 本模块原本不 import os ✓（沿用函数内导入 ✓，不动文件头 ✓）
+    cands = []
+    env = os.environ.get("FRITZING_PARTS")
+    if env:
+        cands.append(env)
+    cands.append(os.path.join(os.path.expanduser("~"), "Documents", "Fritzing", "parts"))
+    for var in ("ProgramFiles", "ProgramFiles(x86)"):
+        root = os.environ.get(var)
+        if root:
+            cands.append(os.path.join(root, "Fritzing", "fritzing-parts"))
+    local = os.environ.get("LOCALAPPDATA")
+    if local:
+        cands.append(os.path.join(local, "Programs", "Fritzing", "fritzing-parts"))
+    for letter in "CDEFGHIJKLMNOPQRSTUVWXYZ":
+        cands.append("%s:\\Program Files\\Fritzing\\fritzing-parts" % letter)
+        cands.append("%s:\\Fritzing\\fritzing-parts" % letter)
+    seen, out = set(), []
+    for b in cands:
+        b = os.path.normpath(b)
+        if b.lower() in seen or not os.path.isdir(b):
+            continue
+        seen.add(b.lower())
+        out.append(b)
+    return out
+
+
+def localize_fzp(p):
+    """草图 `<instance path="…">` → **本机**能打开的那份 `.fzp`（找不到 ⇒ 原样返回 ✓ 不静默 ✗）
+
+    ★★ 2026-11-26 加（用户换电脑 ✓）：`.fzz` 里存的是**画它那台机器**的绝对路径 ✗
+      （`C:/Users/<旧用户名>/…/Fritzing/parts/user/x.fzp`）⇒ 换机后整条失效 ✗，
+      `bb_precheck` 直接 `FileNotFoundError`、`bb_probe` 报"找不到板子部件" ✗。
+      Fritzing **自己不受影响**（它按 `moduleId` 找件 ✓）⇒ 这个坑只在**工具侧** ✓。
+    办法：路径不存在 ⇒ 按 **`parts/` 之后的尾巴**（`user/x.fzp` / `core/breadboard2.fzp`）
+      在各 root 下重找 ✓；再不行按**文件名**在 `core/ user/ contrib/` 下找 ✓。
+      `:/resources/parts/core/x.fzp` 这种**核心件写法**也走这条路 ✓（原 `bb_probe` 的语义 ✓）。
+    """
+    import os
+    if not p:
+        return p
+    raw = p.replace("/", os.sep)
+    if os.path.isfile(raw):
+        return raw
+    tail = ""
+    if raw.startswith(":"):
+        m = re.match(r":\\?resources\\?parts\\?(?:core|contrib|obsolete)?\\?(.+)$", raw)
+        if m:
+            tail = m.group(1)
+    else:
+        m = re.search(r"(?:^|[\\/])parts[\\/](.+)$", raw, re.I)
+        if m:
+            tail = m.group(1)
+    for base in parts_roots():
+        if tail:
+            cand = os.path.join(base, tail)
+            if os.path.isfile(cand):
+                return cand
+        for sub in ("core", "user", "contrib"):
+            cand = os.path.join(base, sub, os.path.basename(raw))
+            if os.path.isfile(cand):
+                return cand
+    return raw
+
+
 def canvas_mm(attrs):
     """svg 的 width/height → mm ✓（mm/cm/in/mil/px/pt ✓），取不到 ⇒ None ✓
 

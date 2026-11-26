@@ -244,7 +244,7 @@ for el in root.iter("instance"):
             skipped.append((ttl, "**接地符号：图形文件没读到** ✗（`svg/_assets/ground_symbol.svg` ✓）"
                                  "⇒ 只登脚位、不画 ✓（如实报出 ✓）"))
         continue
-    fzp = (el.get("path") or "").replace("/", os.sep)
+    fzp = PB.localize_fzp(el.get("path") or "")
     if not os.path.isfile(fzp):
         skipped.append((ttl, "fzp 不存在 ⇒ %s" % fzp))
         continue
@@ -692,7 +692,7 @@ for el in root.iter("instance"):
         continue
     lines = [ttl]
     fzpmid = el.get("modelIndex") or ""
-    fzp = (el.get("path") or "").replace("/", os.sep)
+    fzp = PB.localize_fzp(el.get("path") or "")
     vals = {c.get("name"): c.get("value") for c in el if tag(c) == "property"}
     # ★★ 2026-10-09 ✓ **口径上收** ✗✓：行内容（第 1 行 = 位号 ✓；后续行 = fzp 里
     #   `showInLabel="yes"` 的字段**逆序** ✓；空值不出行 ✓；`resistance` 补 `Ω` ✓；
@@ -1230,7 +1230,7 @@ if "verify-export" in opts:
         g = next((c for c in sv if tag(c) == "geometry"), None) if sv is not None else None
         if g is None:
             continue
-        fzp = (el.get("path") or "").replace("/", os.sep)
+        fzp = PB.localize_fzp(el.get("path") or "")
         img = None
         if os.path.isfile(fzp):
             lay = ET.parse(fzp).getroot().find(".//%s/layers" % VIEW)

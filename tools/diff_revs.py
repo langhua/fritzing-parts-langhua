@@ -2111,7 +2111,7 @@ def _place(fzz, view):
         if fl is not None and not (int(fl) & VIEW_BIT[view]):
             skipped.append("%s（不在本视图 ✓）" % ttl)
             continue
-        fzp = (e.get("path") or "").replace("/", os.sep)
+        fzp = PB.localize_fzp(e.get("path") or "")
         # ★ 导线（`Wire*`）是**渲染器照 geometry 自己画的** ✓，没有零件 svg ✓
         #   ⇒ ✗ 别拿“取不到 svg”去判它 ✗（否则上百根线全被当成“没画”列进略过清单 ✗）。
         if ttl.startswith("Wire"):
@@ -2165,7 +2165,7 @@ def _centers(fzz, view):
         g = next((c for c in sub if c.tag.split("}")[-1] == "geometry"), None) if sub is not None else None
         if g is None:
             continue
-        fzp = (e.get("path") or "").replace("/", os.sep)
+        fzp = PB.localize_fzp(e.get("path") or "")
         if not os.path.isfile(fzp):
             svgp0 = _core_svg(fzp.replace(os.sep, "/"), view)      # ★ 核心件 ✓
         else:

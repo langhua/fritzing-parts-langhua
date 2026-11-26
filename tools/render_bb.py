@@ -350,7 +350,7 @@ for el in root.iter("instance"):
             _logo_ok.append((ttl, props.get("logo") or "", sx, sy, num(g.get("x")),
                              num(g.get("y")), props.get("color") or "", bw, bh))
         continue
-    fzp = (el.get("path") or "").replace("/", os.sep)
+    fzp = PB.localize_fzp(el.get("path") or "")
     lay = ET.parse(fzp).getroot().find(".//breadboardView/layers") if os.path.isfile(fzp) else None
     img = lay.get("image") if lay is not None else None
     txt = svg_for(fzp, img)

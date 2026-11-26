@@ -227,7 +227,7 @@ def holes_of(sketch_text):
                   and not (e.get("moduleIdRef") or "").startswith("Wire")), None)
     if board is None:
         return None
-    broot = ET.parse((board.get("path") or "").replace("/", os.sep)).getroot()
+    broot = ET.parse(pbox.localize_fzp(board.get("path") or "")).getroot()
     ids = {c.get("id") for c in broot.iter("connector")
            if re.fullmatch(r"pin\w+", c.get("id") or "")}
     # ★★ 孔位要带**这张图自己的板位偏移** ✓（2026-10-16 根治 ✓）：
@@ -348,7 +348,7 @@ def main(argv):
             continue
         loc = (_num(g.get("x")), _num(g.get("y")))
         tf = pbox.tf_of(g)
-        fzp = (e.get("path") or "").replace("/", os.sep)
+        fzp = pbox.localize_fzp(e.get("path") or "")
         anc = anchors(fzp)
         lg_tips = leg_tips(fzp)
         name2cid = {}

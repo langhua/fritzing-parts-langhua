@@ -46,6 +46,7 @@ import re
 import xml.etree.ElementTree as ET
 
 import sch_box as SB
+import part_box as pbox
 import sch_body as SBD
 import sch_net
 import sch_text as ST
@@ -172,7 +173,7 @@ def instances(root):
             title=(e.findtext("title") or "").strip(),
             mid=e.get("moduleIdRef") or "", sv=sv, gel=gel,
             loc=(num(gel.get("x")), num(gel.get("y"))),
-            path=(e.get("path") or "").replace("/", os.sep),
+            path=pbox.localize_fzp(e.get("path") or ""),
             vals={c.get("name"): c.get("value") for c in e if tag(c) == "property"})
     return out
 

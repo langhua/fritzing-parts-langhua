@@ -116,7 +116,7 @@ def main(argv):
                  if "breadboard" in (e.get("moduleIdRef") or "").lower()
                  and not (e.get("moduleIdRef") or "").startswith("Wire"))
     bmi = board.get("modelIndex")
-    bfzp = (board.get("path") or "").replace("/", os.sep)
+    bfzp = pbox.localize_fzp(board.get("path") or "")
     broot = ET.parse(bfzp).getroot()
     hole_ids = {c.get("id") for c in broot.iter("connector") if re.fullmatch(r"pin\w+", c.get("id") or "")}
     if len(hole_ids) < 800:
@@ -238,7 +238,7 @@ def main(argv):
         sub = child(child(e, "views"), "breadboardView")
         if sub is None:
             continue
-        fpz = (e.get("path") or "").replace("/", os.sep)
+        fpz = pbox.localize_fzp(e.get("path") or "")
         if os.path.isfile(fpz):
             root2 = ET.parse(fpz).getroot()
             name2cid[ttl] = {c.get("name"): c.get("id") for c in root2.iter("connector")
@@ -1422,7 +1422,7 @@ def main(argv):
                                         for c3 in (child(con2, "connects") or [])):
                 continue
             # 焊盘位置：part svg 里那个 id="<cid>pin" 的图形 + 实例矩阵 ✓
-            fpz2 = (inst.get("path") or "").replace("/", os.sep)
+            fpz2 = pbox.localize_fzp(inst.get("path") or "")
             lay2 = ET.parse(fpz2).getroot().find(".//breadboardView/layers")
             svg2 = None
             base2 = os.path.dirname(os.path.dirname(fpz2))

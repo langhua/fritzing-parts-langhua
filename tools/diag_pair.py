@@ -95,7 +95,7 @@ def body_boxes(fzz):
         if g is None or g.get("x") is None:
             continue
         # 元件目录：fzz 里记的是相对路径（parts/user/…）⇒ 先试 fzz 旁边，再试本仓同级
-        fpz = (e.get("path") or "").replace("/", os.sep)
+        fpz = pbox.localize_fzp(e.get("path") or "")
         cands = [os.path.join(base_of_fzz, fpz),
                  os.path.normpath(os.path.join(base_of_fzz, "..", "..", fpz))]
         for c0 in cands:

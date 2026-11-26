@@ -938,7 +938,7 @@ def load_geom(fzz, svg):
         box, _note = None, ""
         _body = []                       # ★★★ 本体**实际绘制外形** ✓（core 件由这一段补 ✓）
         _bkind, _blabel, _bsvg = None, None, None
-        _fzp = (e.get("path") or "").replace("/", os.sep)
+        _fzp = PB.localize_fzp(e.get("path") or "")
         _txt, _src = None, None
         if _fzp and os.path.isfile(_fzp):
             try:

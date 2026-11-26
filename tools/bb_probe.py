@@ -40,6 +40,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 import projdata as PD
+import part_box as pbox
 
 CORE_FZP = "breadboard2.fzp"
 
@@ -63,74 +64,16 @@ def read_fz(path):
     return ET.fromstring(z.read(name[0]))
 
 
-def parts_roots():
-    """本机可能放 `parts/` 的地方 ✓（`$FRITZING_PARTS` 在前 ✓）
-
-    ★ 2026-11-26：Fritzing 不一定装在 `C:` ⇒ 顺带把各盘的
-      `\\Program Files\\Fritzing\\fritzing-parts` / `\\Fritzing\\fritzing-parts` 探一遍 ✓
-      （26×2 次 `isdir`，几十毫秒 ✓；只加后备，✗ 不改变"先看 `$FRITZING_PARTS`"的次序 ✗）。
-    """
-    cands = []
-    env = os.environ.get("FRITZING_PARTS")
-    if env:
-        cands.append(env)
-    cands.append(os.path.join(os.path.expanduser("~"), "Documents", "Fritzing", "parts"))
-    for var in ("ProgramFiles", "ProgramFiles(x86)"):
-        root = os.environ.get(var)
-        if root:
-            cands.append(os.path.join(root, "Fritzing", "fritzing-parts"))
-    local = os.environ.get("LOCALAPPDATA")
-    if local:
-        cands.append(os.path.join(local, "Programs", "Fritzing", "fritzing-parts"))
-    for letter in "CDEFGHIJKLMNOPQRSTUVWXYZ":
-        for sub in ("Program Files", ""):
-            cands.append("%s:\\%s\\Fritzing\\fritzing-parts" % (letter, sub) if sub
-                         else "%s:\\Fritzing\\fritzing-parts" % letter)
-    seen, out = set(), []
-    for b in cands:
-        b = os.path.normpath(b)
-        if b.lower() in seen or not os.path.isdir(b):
-            continue
-        seen.add(b.lower())
-        out.append(b)
-    return out
-
-
 def resolve_fzp(p):
-    """部件的 `.fzp` 路径 ✓（`:/resources/parts/…` 这种**核心件写法**要映射到安装目录 ✓）
+    """部件的 `.fzp` 路径 ✓（`:/resources/parts/…` **核心件写法** / 换机后失效的绝对路径 ⇒ 都走 `part_box.localize_fzp`）
 
-    ★★ 2026-11-26 加后备：草图里 `<instance path="…">` 存的是**画它那台机器**的绝对路径 ✗
-      —— 用户换机后 `C:/Users/<旧用户名>/…` 整条失效 ⇒ 原来直接报"找不到板子部件" ✗。
-      现在：路径不存在就按 **`parts/` 之后的尾巴**（`core/breadboard2.fzp` / `user/x.fzp`）
-      在本机（`$FRITZING_PARTS`、`~/Documents/Fritzing/parts`）重找 ✓；
-      再不行按**文件名**在 `core/ user/ contrib/` 下找 ✓。还找不到才原样交回 ✓（不静默 ✗）。
+    ★ 2026-11-26：原来只处理 `:/resources/…`，**绝对**路径不存在就原样交回 ⇒ 用户在
+      **新电脑**上跑本工具直接报"找不到板子部件的 fzp" ✗（草图里存的是旧机器的路径 ✗）。
+      现在实现只剩 `part_box.localize_fzp` 一份 ✓（同一个问题 8 个工具共用一套 ✓）。
     """
     if not p:
         return None
-    raw = p.replace("/", os.sep)
-    if os.path.isfile(raw):
-        return raw
-    if raw.startswith(":"):
-        # `:/resources/parts/core/x.fzp` ⇒ `<fritzing-parts>/core/x.fzp` ✓
-        m = re.match(r":\\?resources\\?parts\\?(?:core|contrib|obsolete)?\\?(.+)$", raw)
-        if m:
-            for base in parts_roots():
-                cand = os.path.join(base, m.group(1))
-                if os.path.isfile(cand):
-                    return cand
-    else:
-        m = re.search(r"(?:^|[\\/])parts[\\/](.+)$", raw, re.I)
-        tail = m.group(1) if m else ""
-        for base in parts_roots():
-            if tail:
-                cand = os.path.join(base, tail)
-                if os.path.isfile(cand):
-                    return cand
-            for sub in ("core", "user", "contrib"):
-                cand = os.path.join(base, sub, os.path.basename(raw))
-                if os.path.isfile(cand):
-                    return cand
-    return raw                      # 交回调用方去报"找不到"✓（不静默 ✗）
+    return pbox.localize_fzp(p)
 
 
 class UF(object):

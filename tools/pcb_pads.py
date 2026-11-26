@@ -374,7 +374,7 @@ def read_fzz(zpath):
         if g is None:                     # 不在 PCB 上（例如只在原理图的件 ✓）
             continue
         fzp_text = packed_fzp.get(mid)
-        fzp_path = (el.get("path") or "").replace("/", os.sep) or None
+        fzp_path = PB.localize_fzp(el.get("path") or "") or None
         if fzp_text is None and fzp_path and os.path.isfile(fzp_path):
             fzp_text = open(fzp_path, encoding="utf-8").read()
         if fzp_text is None:
