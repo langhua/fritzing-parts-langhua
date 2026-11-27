@@ -117,6 +117,7 @@ SECTIONS = {
         ("按键", ["PB86-A0-BLACK", "PB86-A0-BLUE", "PB86-A0-GRAY", "PB86-A0-GREEN",
                  "PB86-A0-RED", "PB86-A0-YELLOW"]),
         ("网络标签焊盘", ["NetLabel-Pad"]),
+        ("转接小板", ["SOT23-Adapter-7510"]),
     ],
     "passive": [
         ("SMD 电阻", ["R 01005", "R 0201", "R 0402", "R 0603", "R 0805",

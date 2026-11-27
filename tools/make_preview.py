@@ -115,6 +115,9 @@ SHEETS = {
         ("PinHeader-1x9", "PinHeader-1x9"),
         ("PinHeader-1x10", "PinHeader-1x10"),
  ("MX-1.25-2P-H", "MX-1.25-2P-H"),
+ # ★ 2026-11-27 新增 SOT-23 → 2.54mm 转接小板 ✓（7.5×10mm ✓ 丝印 2 3 1 ✓）
+ #   用户台架要拿它把 BAT54S 插到面包板上 ✓（裸 SOT-23 插不进面包板 ✗）
+ ("SOT23-Adapter-7510", "SOT23-Adapter-7510"),
         ("DPDT7x7-6P", "DPDT7x7-6P"), ("SK-12D02VG3", "SK-12D02VG3"),
         ("DSIC01LS-P", "DSIC01LS-P"), ("TS-D014", "TS-D014"),
         ("SMT-SW-PTS-820", "SMT-SW-PTS-820"),

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.5mm" height="10mm" viewBox="-3.75 -5 7.5 10">
+ <g id="copper1">
+  <g id="copper0">
+   <circle id="connector0pad" connectorname="1" cx="2.54" cy="3.5" r="1.0" fill="none" stroke="#f7bf13" stroke-width="0.5"/>
+   <circle cx="2.54" cy="3.5" r="0.45" fill="#0d0d0d" stroke="none"/>
+   <circle id="connector1pad" connectorname="2" cx="-2.54" cy="3.5" r="1.0" fill="none" stroke="#f7bf13" stroke-width="0.5"/>
+   <circle cx="-2.54" cy="3.5" r="0.45" fill="#0d0d0d" stroke="none"/>
+   <circle id="connector2pad" connectorname="3" cx="0.00" cy="3.5" r="1.0" fill="none" stroke="#f7bf13" stroke-width="0.5"/>
+   <circle cx="0.00" cy="3.5" r="0.45" fill="#0d0d0d" stroke="none"/>
+  </g>
+ </g>
+ <g id="silkscreen">
+  <rect x="-3.75" y="-5" width="7.5" height="10" fill="none" stroke="#f0f0f0" stroke-width="0.12"/>
+  <text x="-2.54" y="1.6" font-family="OCRA" font-size="0.9" fill="#f0f0f0" text-anchor="middle" stroke="none">2</text>
+  <text x="0.00" y="1.6" font-family="OCRA" font-size="0.9" fill="#f0f0f0" text-anchor="middle" stroke="none">3</text>
+  <text x="2.54" y="1.6" font-family="OCRA" font-size="0.9" fill="#f0f0f0" text-anchor="middle" stroke="none">1</text>
+ </g>
+</svg>

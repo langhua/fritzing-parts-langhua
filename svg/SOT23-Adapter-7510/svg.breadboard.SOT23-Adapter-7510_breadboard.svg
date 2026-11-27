@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.5mm" height="10mm" viewBox="0 0 295.2756 393.7008">
+ <g id="breadboard">
+  <rect x="0" y="0" width="295.2756" height="393.7008" fill="#00aa44" stroke="#00772f" stroke-width="3"/>
+  <path d="M 47.6378,84 L 47.6378,180 L 110.3,232 L 110.3,268" fill="none" stroke="#0a9b46" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 247.6378,84 L 247.6378,180 L 185,232 L 185,268" fill="none" stroke="#0a9b46" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="147.6378" y1="84" x2="147.6378" y2="268" stroke="#0a9b46" stroke-width="16" stroke-linecap="round"/>
+  <rect x="88.3000" y="267.0000" width="44" height="46" rx="4" fill="#c9c9c9" stroke="#8c8c8c" stroke-width="2"/>
+  <rect x="163.0000" y="267.0000" width="44" height="46" rx="4" fill="#c9c9c9" stroke="#8c8c8c" stroke-width="2"/>
+  <rect x="125.6378" y="189.0000" width="44" height="46" rx="4" fill="#c9c9c9" stroke="#8c8c8c" stroke-width="2"/>
+  <circle cx="147.6378" cy="188" r="8" fill="#ffffff" stroke="none"/>
+  <text x="247.6378" y="132" font-family="OCRA" font-size="58" fill="#ffffff" text-anchor="middle" stroke="none">1</text>
+  <text x="47.6378" y="132" font-family="OCRA" font-size="58" fill="#ffffff" text-anchor="middle" stroke="none">2</text>
+  <text x="147.6378" y="132" font-family="OCRA" font-size="58" fill="#ffffff" text-anchor="middle" stroke="none">3</text>
+  <circle id="connector0pin" connectorname="1" cx="247.6378" cy="50.0" r="32" fill="#f7bf13" stroke="#b98900" stroke-width="4"/>
+  <circle cx="247.6378" cy="50.0" r="14" fill="#eeeeee" stroke="#b98900" stroke-width="2"/>
+  <circle id="connector1pin" connectorname="2" cx="47.6378" cy="50.0" r="32" fill="#f7bf13" stroke="#b98900" stroke-width="4"/>
+  <circle cx="47.6378" cy="50.0" r="14" fill="#eeeeee" stroke="#b98900" stroke-width="2"/>
+  <circle id="connector2pin" connectorname="3" cx="147.6378" cy="50.0" r="32" fill="#f7bf13" stroke="#b98900" stroke-width="4"/>
+  <circle cx="147.6378" cy="50.0" r="14" fill="#eeeeee" stroke="#b98900" stroke-width="2"/>
+ </g>
+</svg>
