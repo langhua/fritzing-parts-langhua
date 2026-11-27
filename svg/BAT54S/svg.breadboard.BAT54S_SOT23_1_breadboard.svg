@@ -16,7 +16,7 @@
     </g>
    </g>
    <circle fill="#c0c0c0" cx="92.1" cy="200" r="10" stroke="none" stroke-width="0"/>
-   <text x="129.5" y="285" font-family="OCRA" fill="white" text-anchor="middle" stroke="none" id="label" stroke-width="0" font-size="50">SOT23</text>
+   <text x="129.5" y="285" font-family="OCRA" fill="white" text-anchor="middle" stroke="none" id="label" stroke-width="0" font-size="50">KL4</text>
    <g transform="translate(93,326.05)">
     <g transform="rotate(-90)">
      <text x="0" y="0" font-family="OCRA" fill="white" text-anchor="start" stroke="none" stroke-width="0" font-size="45">1</text>

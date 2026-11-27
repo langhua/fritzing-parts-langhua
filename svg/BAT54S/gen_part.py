@@ -168,7 +168,7 @@ def breadboard_svg():
         '    </g>\n'
         '   </g>\n'
         '   <circle fill="#c0c0c0" cx="92.1" cy="200" r="10" stroke="none" stroke-width="0"/>\n'
-        '   <text x="129.5" y="285" font-family="OCRA" fill="white" text-anchor="middle" stroke="none" id="label" stroke-width="0" font-size="50">SOT23</text>\n'
+        '   <text x="129.5" y="285" font-family="OCRA" fill="white" text-anchor="middle" stroke="none" id="label" stroke-width="0" font-size="50">KL4</text>\n'
         '   <g transform="translate(93,326.05)">\n'
         '    <g transform="rotate(-90)">\n'
         '     <text x="0" y="0" font-family="OCRA" fill="white" text-anchor="start" stroke="none" stroke-width="0" font-size="45">1</text>\n'
